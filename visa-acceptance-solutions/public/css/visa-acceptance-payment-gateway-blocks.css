@@ -1,0 +1,189 @@
+#number-container-1,
+#securityCode-container{
+	height: 2.5em;
+	padding: 0em 0em 0em 0.6em;
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	background-color: white;
+	transition: border-color 160ms;
+	-webkit-transition: border-color 160ms;
+	margin-bottom: 10%;
+	margin-right: 0px;
+}
+
+.wc-display-none-blocks{
+	display: none;
+}
+
+#number-container-1 iframe, #securityCode-container iframe {
+	height: 100%;
+}
+
+#wc-credit-card-account-number-label {
+	width: 10em;
+	float: left;
+}
+
+#wc-blocks-credit-card-csc-label{
+	float: left;
+}
+
+#securityCode-container{
+	width: 47%;
+	float: left;
+	margin-right: 10em;
+	margin-bottom: 0.5em;
+}
+
+#number-container-1{
+width: 70%;
+margin-bottom: 1em;
+
+}
+
+#description{
+	font-size: 15px;
+}
+
+#wc-credit-card-expiry-fields{
+	width: 350px;
+	display: flex;
+}
+
+.credit-card-form-label{
+	font-size: 16px;
+	width: max-content;
+}
+#month, #year{
+	height: 2em;
+	width: 8em;
+	margin-top: 0px;
+	border-radius: 10px;
+}
+
+.credit-card-error-month, .credit-card-card-number, .blocks-error-cvn{
+	border-radius: 0 !important;
+	position: relative;
+	width: max-content !important;
+	margin-top: 0px;
+	font-size: small;
+	color: #ff0000;
+}
+
+#wc-credit-card-cvn{
+	width: 54%;
+}
+#wc-cc-cvn-saved-card{
+	width: 50%;
+	padding-left: 1em;
+}
+
+#exp-month-div, #exp-year-div{
+	width: 25%;
+	padding: 0em 4em 0em 0em;
+	margin-right: 10px;
+	margin-top: 10px;
+}
+
+@media screen and (max-width: 1023px){
+	.saved-card-cvv-field {
+		box-sizing: border-box;
+		flex: 1 0 calc(100% - 12px) !important;
+	}
+}
+
+@media screen and (max-width: 481px){
+	#exp-month-div{
+		width: 25%;
+		padding: 0em 4em 0em 0em;
+		margin-right: 10px;
+		margin-top: 10px;
+		clear: both;
+
+	}
+	.woocommerce {
+		display: grid;
+	}
+}
+
+#visaCheckout{
+	margin-left: 7%;
+}
+
+apple-pay-button {
+	--apple-pay-button-width: 200px;
+	--apple-pay-button-height: 30px;
+	--apple-pay-button-border-radius: 5px;
+	--apple-pay-button-padding: 5px 0px;
+	margin-left: 7%;
+  }
+
+#securityCode-container-blocks {
+	height: 3.5em;
+	padding: 0em 0em 0em 0.6em;
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	background-color: white;
+	transition: border-color 160ms;
+	-webkit-transition: border-color 160ms;
+	margin-bottom: 10px;
+	margin-right: 0px;
+	width: 30%;
+}
+
+#securityCode-container-blocks::placeholder {
+	font-size: 14px;
+	color: rgb(58, 58, 58);
+  }
+
+#securityCode-container-blocks iframe{
+	height: 100%;
+}
+
+.wc-cc-cvn-label-blocks{
+	width: 100%;
+}
+
+#wc-google-pay-payment-button-container-blocks{
+	height: 40px;
+	width: 160px;
+	margin-left: 7%;
+}
+
+.credit-card-error-month, .credit-card-card-number, .blocks-error-cvn, .credit-card-flex-form-error{
+	border-radius: 0 !important;
+	position: relative;
+	width: max-content !important;
+	margin-top: 0px;
+	font-size: small;
+	color: #ff0000;
+}
+.saved-card-container {
+    display: flex;
+}
+.saved-card-cvv-field {
+    box-sizing: border-box;
+    flex: 1 0 calc(50% - 12px);
+}
+.saved-card-alignment-fix {
+    box-sizing: border-box;
+    flex: 1 0 calc(50% - 12px);
+}
+.saved-card-cvv-field input[type=password]{
+    background-color: #fff;
+    border: 1px solid hsla(0, 0%, 7%, .8);
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: #2b2d2f;
+    font-family: inherit;
+    font-size: 1em;
+    line-height: 1em;
+    margin: 0;
+    max-height: 50px;
+    min-height: 0;
+    padding: 1em;
+    width: 100%;
+}
+.saved-card-cvv-field.is-active input[type=password]{
+    padding: 1.5em .5em .5em;
+}

@@ -1,0 +1,71 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+
+.partial-capture-display {
+	display: block !important;
+}
+
+#progress {
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	z-index: 9999;
+	background-color: #00000138;
+	opacity: 1;
+	display: none;
+  }
+  #loader-inner {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+  }
+  #loader {
+	display: inline-block;
+	border: 16px solid var(--whiteSmoke);
+	border-radius: 50%;
+	border-top: 16px solid var(--cyanBlue);
+	width: 120px;
+	height: 120px;
+	-webkit-animation: spin 2s linear infinite;
+	animation: spin 2s linear infinite;
+  }
+
+a.button.wc-action-button.wc-action-button-complete.complete, a.button.wc-action-button.wc-action-button-processing.processing
+{
+	display:none;
+}
+ 
+.visa-acceptance-solutions-wc-payment-gateway-renewal-status-inactive {
+	font-size:1.4em;
+	display:block;
+	text-indent:-9999px;
+	position:relative;
+	height:1em;
+	width:1em;
+	cursor:pointer
+}
+
+.visa-acceptance-solutions-wc-payment-gateway-renewal-status-inactive:before {
+	line-height:1;
+	margin:0;
+	position:absolute;
+	width:100%;
+	height:100%;
+	content:"\e016";
+	color:#ffba00;
+	font-family:WooCommerce;
+	font-weight:400;
+	font-variant:normal;
+	text-transform:none;
+	-webkit-font-smoothing:antialiased;
+	text-indent:0;
+	top:0;
+	left:0;
+	text-align:center
+}

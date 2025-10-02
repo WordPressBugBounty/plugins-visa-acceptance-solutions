@@ -1,0 +1,262 @@
+#wc-credit-card-account-number-div, #wc-credit-card-csc-div, #wc-credit-card-saved-card-cvn{
+	height: 1.5em;
+	width: 8em;
+	padding: 0.6em 58px 0.6em 0.6em;
+	border: 1px solid #ccc;
+	background-color: white;
+	transition: border-color 160ms;
+	-webkit-transition: border-color 160ms;
+	border-radius: 10px;
+}
+
+#wc-credit-card-account-number-div, #wc-credit-card-csc-div, #wc-credit-card-saved-card-cvn, #wc-unified-checkout-saved-card-cvn{
+	height: 1.5em;
+	width: 8em;
+	margin-left: 10px !important;
+	padding: 0.6em 58px 0.6em 0.6em;
+	border: 1px solid #ccc;
+	background-color: white;
+	transition: border-color 160ms;
+	-webkit-transition: border-color 160ms;
+	border-radius: 10px;
+}
+
+#wc-google-pay-button-container{
+	height: 40px;
+	width: 160px;
+}
+
+#wc-credit-card-account-number-div iframe, #wc-credit-card-csc-div iframe{
+	height: 100%;
+}
+
+#description{
+	font-size: 10px;
+}
+
+#wc-credit-card-tokenize-payment-method{
+	margin-top: 15px;
+}
+
+#wc-credit-card-save-token-div{
+	float: left;
+}
+
+#wc-credit-card-number{
+	width: 70%;
+	float: left;
+	margin-right: 10px;
+}
+
+#wc-credit-card-csc{
+	width: 70%;
+	float: left;
+}
+
+#wc-credit-card-expiry-month-div{
+	float: left;
+	height: max-content;
+}
+
+#wc-credit-card-expiry-year-div{
+	float: right;
+	height: max-content;
+}
+
+@media screen and ( max-width : 480px ){
+	#wc-credit-card-expiry-month-div{
+		clear: both;
+		padding: 0em 1em 0em 0em;
+	}
+	#wc-credit-card-expiry-year-div{
+		float: left;
+		padding: 0em 1em 0em 0em;
+	}
+
+	.wc-credit-card-payment-form-label{
+		clear: both;
+	}
+}
+
+table.woocommerce-MyAccount-paymentMethods .woocommerce-PaymentMethod--default mark{
+	text-transform: uppercase;
+	color:white;
+	background-color:#3d9cd2;
+	text-align: center;
+	padding: 2px 4px;
+	font-size: 0.75em;
+}
+
+#wc-credit-card-number-error, #wc-visa-acceptance-solutions-csc-error, #wc-cc-expiry-date-error{
+	float: left;
+}
+
+.wc-vco-hidden-place-order-button {
+	display: none !important;
+}
+
+.wc-apay-hidden-place-order-button {
+	display: none !important;
+}
+
+.wc-gpay-hidden-place-order-button {
+	display: none !important;
+}
+
+.wc-credit-card-saved-card, .wc-unified-checkout-saved-card{
+	/* width: 97% !important;
+	padding-right: 0px !important; */
+	float: left;
+	display: none;
+	margin-top: 10px !important;
+	margin-left:30px !important;
+	margin-bottom: 10px !important;
+	margin-inline-start: 2px;
+	margin-inline-end: 2px;
+	padding-block-start: 0.35em;
+	padding-inline-start: 0.75em;
+	padding-inline-end: 0.75em;
+	padding-block-end: 0.625em;
+	min-inline-size: min-content;
+	border-width: 2px;
+	border-style: groove;
+	border-color: rgb(192, 192, 192);
+	border-image: initial;
+	border-radius: 10px;
+}
+
+.payment_box, .payment_method_visa_acceptance_solutions_unified_checkout{
+	line-height: 2 !important;
+}
+
+.wc-unified-checkout-payment-form-label{
+	margin-bottom: 0px !important;
+}
+
+#wc-credit-card-expiry-month,#wc-credit-card-expiry-year{
+	height: 2.5em;
+	width: 6em !important;
+	border-radius: 10px;
+}
+
+.wc-credit-card-payment-form-label{
+	font-size: 16px;
+}
+
+#wc-vas_credit_card-cc-form{
+	border-radius: 10px;
+	width: 80%;
+}
+
+#wc-credit-card-save-token-div, #wc-unified-checkout-save-token-div{
+	width: fit-content;
+	margin-top: 5px;
+}
+
+.cvv-div{
+	display: none;
+}
+
+apple-pay-button {
+	--apple-pay-button-width: 140px;
+	--apple-pay-button-height: 30px;
+	--apple-pay-button-border-radius: 5px;
+	--apple-pay-button-padding: 5px 0px;
+}
+
+.payment-display-none{
+	display: none;
+}
+
+.credit-card-error-message{
+	border-radius: 0 !important;
+	position: relative;
+	display: none;
+	margin-top: 10px;
+	font-size: small;
+	font-style: italic;
+	color: #ff0000;
+}
+
+.credit-card-error-message-saved-card{
+	border-radius: 0 !important;
+	position: relative;
+	margin-top: 10px;
+	font-size: small;
+	font-style: italic;
+	color: #ff0000;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation{
+	float:left;
+	width:18%
+}
+.woocommerce-account .woocommerce-MyAccount-content{
+	float:right;
+	width:82%
+}
+
+.woocommerce form#order_review .form-row{
+	margin-right: 4rem;
+}
+
+#order_review #wc-credit-card-use-new-payment-method-div{
+	width: 100%;
+	font-weight: bold;
+}
+
+#wc-credit-card-use-new-payment-method-div, #wc-unified-checkout-saved-cards-options{
+	clear:both;
+}
+
+#order_review .payment_box.payment_method_visa_acceptance_solutions_credit_card br{
+	display: none !important;
+}
+
+#order_review .payment_box.payment_method_visa_acceptance_solutions_credit_card{
+	width: 100%;
+}
+
+.wc_payment_methods.payment_methods.methods{
+	max-width: 100%;
+}
+
+#buttonPaymentListContainer{
+	margin-top: 8px;
+	margin-bottom: 1px;
+}
+
+/* Extra small devices (phones, 600px and down) */
+
+@media only screen and (max-width: 600px)
+{
+	.wc-credit-card-saved-card{
+		width: 93% !important;
+	}
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+
+@media (min-width:601px) and (max-width:767px)
+{
+	.wc-credit-card-saved-card{
+		width: 95% !important;
+	}
+}
+
+@media (min-width:768px) and (max-width:900px) {
+	.wc-credit-card-saved-card{
+		width: 96% !important;
+	}
+}
+
+.saved-card-container input#saved_card_cvv_field {
+    width: 100% !important;
+	height: 4em;
+    max-width: 100% !important;
+	padding-top: 10px;
+	padding-left: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+    display: block;
+}

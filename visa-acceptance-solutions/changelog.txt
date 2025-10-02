@@ -1,0 +1,22 @@
+*** Visa Acceptance Solutions Changelog ***
+
+2025-08-07 - version 2.0.0
+* Feature - Added support for Unified Checkout version 0.23 (Card Payment, Google Pay, Click to Pay and Apple Pay) with Cybersource Rest Client SDK integration
+* Feature - Added support for  WooCommerce Subscriptions
+* Feature - Disable Card bin
+* Feature - Supports HPOS compatibility
+* Feature - Migration support from CyberSource Payment Gateway for WooCommerce by SkyVerge to Visa Acceptance Solutions
+* Feature - Message-Level Encryption(MLE)
+* Misc - PSID Updated
+* Misc - Version Updated 
+
+2024-10-25 - version 1.0.0
+* Feature - Added support to Unified Checkout v0.19 (Card Payment, Google Pay and Click to Pay)
+* Feature - Add support for Token Management Service
+* Feature - Add support for 3D Secure v2.2
+* Feature - Add support for Enforced Strong Customer Authentication
+* Misc - PSID Updated
+* Feature - Auto Auth Reversal for DM Reject
+* Feature - Authentication signature updated
+ 
+ 
