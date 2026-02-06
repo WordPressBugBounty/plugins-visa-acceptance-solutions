@@ -17,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Include all the necessary dependencies.
  */
 require_once __DIR__ . '/../class-visa-acceptance-request.php';
-require_once __DIR__ . '/../class-visa-acceptance-api-client.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-refund-request.php';
 require_once __DIR__ . '/../response/payments/class-visa-acceptance-refund-response.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-payment-adapter.php';
@@ -258,7 +257,7 @@ class Visa_Acceptance_Refund extends Visa_Acceptance_Request {
 			if ( VISA_ACCEPTANCE_UC_ID === $order->get_payment_method( VISA_ACCEPTANCE_EDIT ) ) {
 				$api_response = $refund_api->refundPayment( $request_obj, $transaction_id );
 			}
-			$this->gateway->add_logs_service_response( $api_response[0],$api_response[2]['v-c-correlation-id'], true, VISA_ACCEPTANCE_REFUND );
+			$this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, VISA_ACCEPTANCE_REFUND );
 			$return_array = array(
 				'http_code' => $api_response[1],
 				'body'      => $api_response[0],

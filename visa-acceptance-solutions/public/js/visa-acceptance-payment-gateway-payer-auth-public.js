@@ -2,10 +2,11 @@ var pareq;
 var order_id;
 var cardtoken;
 var savedtoken;
-var tokenCheckbox;
+var isSaveCard;
 var flag;
 var blockstoken;
 var enrollment_uc_flag = false;
+var uc_token_global = null;
 const challengeWindowSizeMap = {
     '01': { width: 250, height: 400 },
     '02': { width: 390, height: 400 },
@@ -156,8 +157,8 @@ function reloadAfterError() {
                     // Fetch tokens such as saved cards token, flex token and saved card checkbox
 
                     // Step 2) Payer Auth Setup call After getting the order ID
-                    if (typeof visa_acceptance_uc_payer_auth_param !== 'undefined' && visa_acceptance_uc_payer_auth_param['payment_method'] == 'unified_checkout' && (jQuery("#transientToken").val() != undefined && jQuery("#transientToken").val() != '')) {
-                        var transientToken = jQuery("#transientToken").val();
+                    if (typeof visa_acceptance_uc_payer_auth_param !== 'undefined' && visa_acceptance_uc_payer_auth_param['payment_method'] == 'unified_checkout') {
+                        var transientToken = jQuery("#transientToken").val() || window.uc_token_global || uc_token_global || '';
                         fetchTokens_uc();
 
                         setup_uc(order_id, transientToken);
@@ -192,14 +193,14 @@ function reloadAfterError() {
                         blockstoken = anotherMatch[3];
                     }
 
-                    var transientToken = jQuery("#transientToken").val();
+                    var transientToken = jQuery("#transientToken").val() || window.uc_token_global || uc_token_global || '';
                     // Fetch tokens such as saved cards token, flex token and saved card checkbox
                     fetchTokens_uc();
 
                     // Step 2) Payer Auth Setup call After getting the order ID
 
-                    if (transientToken == undefined) {
-                        transientToken = '';
+                    if (transientToken == undefined || transientToken == '') {
+                        transientToken = window.uc_token_global || uc_token_global || '';
                     }
                     setup_uc(order_id, transientToken);
                 }
@@ -220,8 +221,8 @@ function reloadAfterError() {
                 if (data != undefined && data.Status) {
                     // Step 3) After Payer Enrollment Service is called after receiving responce for setup
                     // Passing Order ID and Reference ID
-                    if (typeof visa_acceptance_uc_payer_auth_param !== 'undefined' && visa_acceptance_uc_payer_auth_param['payment_method'] == 'unified_checkout' && (jQuery("#transientToken").val() != undefined && jQuery("#transientToken").val() != '')) {
-                        var transientToken = jQuery("#transientToken").val();
+                    if (typeof visa_acceptance_uc_payer_auth_param !== 'undefined' && visa_acceptance_uc_payer_auth_param['payment_method'] == 'unified_checkout') {
+                        var transientToken = jQuery("#transientToken").val() || window.uc_token_global || uc_token_global || '';
                         if(jQuery('#sca_form').val() == 'true'){
                             enrollment_uc(order_id, referenceId, transientToken, 'yes');
                         } else{
@@ -229,7 +230,7 @@ function reloadAfterError() {
                         }
                         
                     } else if (setup_uc_flag && referenceId) {
-                        var transientToken = jQuery("#transientToken").val();
+                        var transientToken = jQuery("#transientToken").val() || window.uc_token_global || uc_token_global || '';
                         if(jQuery('#sca_form').val() == 'true'){
                             
                             enrollment_uc(order_id, referenceId, transientToken, 'yes');
@@ -275,7 +276,7 @@ function reloadAfterError() {
                         var accessToken = encodeURIComponent(data.accessToken);
 
                         // Adding element only if it's special case of pay-order page
-                        if (document.querySelector("#order_review") != null) {
+                        if (document.querySelector("#order_review") != null || (visa_acceptance_uc_payer_auth_param["product_page"])) {
                             if (document.querySelector("#cardinal_collection_iframe") == null) {
                                 var iframe = document.createElement('iframe'); 
 
@@ -285,6 +286,7 @@ function reloadAfterError() {
                                 iframe.height = '10';
                                 iframe.width = '10';
                                 iframe.style.display = 'none';
+                                iframe.sandbox;
                                 document.body.appendChild(iframe);
                             }
                             var formElement = document.createElement("form");
@@ -303,7 +305,6 @@ function reloadAfterError() {
                             inputElement.id = "cardinal_collection_form_input";
                             inputElement.type = "hidden";
                             inputElement.name = "JWT";
-                            inputElement.value = "";
 
                             // Append the input element to the form element
                             formElement.appendChild(inputElement);
@@ -353,11 +354,18 @@ function reloadAfterError() {
                         }
                     } else {
                         if (data.checkoutRedirect) {
-                            window.location.href = data.checkoutRedirect;
+                            // redirect to product page.
+                            if( (visa_acceptance_uc_payer_auth_param["product_page"] ) && window.history.replaceState){
+                                const baseUrl = window.location.href.split('#')[0];
+                                window.history.replaceState(null, null, baseUrl);
+                                window.location.reload();
+                            } else {
+                                window.location.href = data.checkoutRedirect;
+                            }
                         } else {
-                            const currentURL = new URL(window.location.href);
-                            let baseUrl = encodeURIComponent(currentURL.origin + currentURL.pathname + currentURL.search);
-                            window.location.href = decodeURIComponent(baseUrl);
+                            if (window.history.replaceState){
+                                window.history.replaceState(null, null, window.location.href);
+                            }
                         }
                     }
                 },
@@ -398,9 +406,13 @@ function reloadAfterError() {
                         var dataCollectionUrl = encodeURI(data.dataCollectionUrl);
                         var accessToken = encodeURIComponent(data.accessToken);
                         setup_uc_flag = true;
+                        var cardinalElements = document.querySelectorAll("#cardinal_collection_form_div");
+                        if(cardinalElements.length == 2) {
+                            cardinalElements[0].remove();
+                        }
 
                         // Adding element only if it's special case of pay-order page
-                        if (document.querySelector("#order_review") != null) {
+                        if (document.querySelector("#order_review") != null || (visa_acceptance_uc_payer_auth_param["product_page"])) {
                             if (document.querySelector("#cardinal_collection_iframe") == null) {
                                 var iframe = document.createElement('iframe'); 
 
@@ -410,6 +422,7 @@ function reloadAfterError() {
                                 iframe.height = '10';
                                 iframe.width = '10';
                                 iframe.style.display = 'none';
+                                iframe.sandbox;
                                 document.body.appendChild(iframe);
                             }
                             var formElement = document.createElement("form");
@@ -427,7 +440,6 @@ function reloadAfterError() {
                             inputElement.id = "cardinal_collection_form_input";
                             inputElement.type = "hidden";
                             inputElement.name = "JWT";
-                            inputElement.value = "";
 
                             // Append the input element to the form element
                             formElement.appendChild(inputElement);
@@ -477,25 +489,54 @@ function reloadAfterError() {
                             console.log(exception);
                             alert(visa_acceptance_ajaxUCObj.error_failure);
                         }
-                    }else {
+                    } else {
                         if (data.checkoutRedirect) {
-                            window.location.href = data.checkoutRedirect;
+                            // redirect to product page.
+                            if( (visa_acceptance_uc_payer_auth_param["product_page"] ) && window.history.replaceState){
+                                const baseUrl = window.location.href.split('#')[0];
+                                window.history.replaceState(null, null, baseUrl);
+                                window.location.reload();
+                            } else {
+                                window.location.href = data.checkoutRedirect;
+                            }
                         } else {
-                            const currentURL = new URL(window.location.href);
-                            let baseUrl = encodeURIComponent(currentURL.origin + currentURL.pathname + currentURL.search);
-                            window.location.href = decodeURIComponent(baseUrl);
+                            if (window.history.replaceState){
+                                window.history.replaceState(null, null, window.location.href);
+                            }
                         }
                         // Redirecting to checkout page
                     }
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
                     console.log(errorThrown);
-                    alert(visa_acceptance_ajaxUCObj.error_failure);
+                    hideLoader();
+                    if(typeof ucBlocksSettings !== 'undefined' && document.querySelector("#order_review") == null) {
+                        window.wp.data.dispatch(window.wc.wcBlocksData.CHECKOUT_STORE_KEY).__internalSetIdle(true);
+                        window.wp.data.dispatch('core/notices').createErrorNotice(
+                            visa_acceptance_ajaxUCObj.form_load_error,
+                            {id:"checkout", context:"wc/checkout"}
+                        );
+                        reloadAfterError();
+                    } else {
+                        alert(visa_acceptance_ajaxUCObj.form_load_error);
+                        reloadAfterError();
+                    }
                 },
             });
         } catch (exception) {
             console.log(exception);
-            alert(visa_acceptance_ajaxUCObj.error_failure);
+            hideLoader();
+            if(typeof ucBlocksSettings !== 'undefined' && document.querySelector("#order_review") == null) {
+                window.wp.data.dispatch(window.wc.wcBlocksData.CHECKOUT_STORE_KEY).__internalSetIdle(true);
+                window.wp.data.dispatch('core/notices').createErrorNotice(
+                    visa_acceptance_ajaxUCObj.form_load_error,
+                    {id:"checkout", context:"wc/checkout"}
+                );
+                reloadAfterError();
+            } else {
+                alert(visa_acceptance_ajaxUCObj.form_load_error);
+                reloadAfterError();
+            }
         }
     }
 
@@ -515,7 +556,7 @@ function reloadAfterError() {
                     nonce: payer_auth_param["nonce_enrollment"],
                     cardtoken: cardtoken,
                     savedtoken: savedtoken,
-                    tokenCheckbox: tokenCheckbox,
+                    isSaveCard: isSaveCard,
                     orderid: orderid,
                     referenceId: referenceId
                 },
@@ -530,7 +571,7 @@ function reloadAfterError() {
                         var challengeWindowSize = pareqJson.challengeWindowSize;
                         const { width, height } = challengeWindowSizeMap[challengeWindowSize] || challengeWindowSizeMap['06'];
 
-                        if (document.querySelector("#order_review") != null) {
+                        if (document.querySelector("#order_review") != null || (visa_acceptance_uc_payer_auth_param["product_page"])) {
                             if (document.querySelector("#step-up-form") == null) {
                                 var modalContainer = document.createElement('div');
                                 modalContainer.id = 'modal-container';
@@ -544,6 +585,7 @@ function reloadAfterError() {
                                 var iframe = document.createElement('iframe'); 
                                 iframe.id = 'step-up-iframe-id';
                                 iframe.name = 'step-up-iframe';
+                                iframe.sandbox;
 
                                 // Create the form element
                                 var form = document.createElement('form');
@@ -557,7 +599,6 @@ function reloadAfterError() {
                                 accessTokenInput.type = 'hidden';
                                 accessTokenInput.id = 'accessToken';
                                 accessTokenInput.name = 'JWT';
-                                accessTokenInput.value = ''; // Set the initial value if needed
 
                                 // Create hidden input for merchantData
                                 var merchantDataInput = document.createElement('input');
@@ -627,11 +668,19 @@ function reloadAfterError() {
                             }
                         } else {
                             if (data.redirect) {
-                                window.location.href = data.redirect;
+                                // redirect to product page
+                                if( (visa_acceptance_uc_payer_auth_param["product_page"] ) && window.history.replaceState){
+                                    const baseUrl = window.location.href.split('#')[0];
+                                    window.history.replaceState(null, null, baseUrl);
+                                    window.location.reload();
+                                } else {
+                                    window.location.href = data.redirect;
+                                }
+ 
                             } else {
-                                const currentURL = new URL(window.location.href);
-                                let baseUrl = encodeURIComponent(currentURL.origin + currentURL.pathname + currentURL.search);
-                                window.location.href = decodeURIComponent(baseUrl);
+                                if (window.history.replaceState){
+                                    window.history.replaceState(null, null, window.location.href);
+                                }
                             }
                         }
                     }
@@ -653,6 +702,9 @@ function reloadAfterError() {
      *  Step 3)Payer Authentication Enrollment Service
      */
     function enrollment_uc(orderid, referenceId, transientToken, sca_flag) {
+        // Get the Flex CVV token if it exists
+        var flexCvvToken = jQuery('input[name="flex_cvv_token"]').val() || null;
+ 
         try {
             jQuery.ajax({
                 type: "POST",
@@ -664,13 +716,17 @@ function reloadAfterError() {
                     nonce: visa_acceptance_uc_payer_auth_param["nonce_enrollment"],
                     cardtoken: transientToken,
                     savedtoken: savedtoken,
-                    tokenCheckbox: tokenCheckbox,
+                    isSaveCard: isSaveCard,
                     orderid: orderid,
                     referenceId: referenceId,
-                    scaCase: sca_flag
+                    scaCase: sca_flag,
+                    flexCvvToken: flexCvvToken
                 },
                 success: function(data) {
-
+                    var cardinalElements = document.querySelectorAll("#cardinal_collection_form_div");
+                    if(cardinalElements.length == 2) {
+                        cardinalElements[0].remove();
+                    }
                     if (data.status == "PENDING_AUTHENTICATION") {
                         var stepUpUrl = encodeURI(data.stepUpUrl);
                         var accessToken = encodeURIComponent(data.accessToken);
@@ -680,7 +736,7 @@ function reloadAfterError() {
                         var challengeWindowSize = pareqJson.challengeWindowSize;
                         const { width, height } = challengeWindowSizeMap[challengeWindowSize] || challengeWindowSizeMap['06'];
                         enrollment_uc_flag = true;
-                        if (document.querySelector("#order_review") != null) {
+                        if (document.querySelector("#order_review") != null || (visa_acceptance_uc_payer_auth_param["product_page"])) {
                             if (document.querySelector("#step-up-form") == null) {
                                 var modalContainer = document.createElement('div');
                                 modalContainer.id = 'modal-container';
@@ -694,6 +750,7 @@ function reloadAfterError() {
                                 var iframe = document.createElement('iframe'); 
                                 iframe.id = 'step-up-iframe-id';
                                 iframe.name = 'step-up-iframe';
+                                iframe.sandbox;
 
                                 // Create the form element
                                 var form = document.createElement('form');
@@ -707,7 +764,6 @@ function reloadAfterError() {
                                 accessTokenInput.type = 'hidden';
                                 accessTokenInput.id = 'accessToken';
                                 accessTokenInput.name = 'JWT';
-                                accessTokenInput.value = ''; // Set the initial value if needed
 
                                 // Create hidden input for merchantData
                                 var merchantDataInput = document.createElement('input');
@@ -780,12 +836,19 @@ function reloadAfterError() {
                             }
                         } else {
                             if (data.redirect) {
-                                window.location.href = data.redirect;
+                                // redirect to product page
+                                if( (visa_acceptance_uc_payer_auth_param["product_page"] ) && data.status !== 'AUTHORIZED' && data.status !== 'AUTHORIZED_PENDING_REVIEW' && window.history.replaceState){
+                                    const baseUrl = window.location.href.split('#')[0];
+                                    window.history.replaceState(null, null, baseUrl);
+                                    window.location.reload();
+                                } else {
+                                    window.location.href = data.redirect;
+                                }
+ 
                             } else {
-                                const currentURL = new URL(window.location.href);
-                                let baseUrl = encodeURIComponent(currentURL.origin + currentURL.pathname + currentURL.search);
-                                window.location.href = decodeURIComponent(baseUrl);
-
+                                if (window.history.replaceState){
+                                    window.history.replaceState(null, null, window.location.href);
+                                }
                             }
                         }
                     }
@@ -808,7 +871,7 @@ function reloadAfterError() {
         var useNewCardlength = null;
         cardtoken = null;
         savedtoken = null;
-        tokenCheckbox = null;
+        isSaveCard = null;
 
         useNewCardlength = jQuery("#wc-visa-acceptance-solutions-credit-card-use-new-payment-method").length;
         if (useNewCardlength != 0) {
@@ -845,10 +908,10 @@ function reloadAfterError() {
             if (jQuery('#wc-credit-card-tokenize-payment-method').prop('checked')) {
 
                 // Checkbox is checked
-                tokenCheckbox = "yes";
+                isSaveCard = "yes";
             } else {
                 // Checkbox is not checked
-                tokenCheckbox = "no";
+                isSaveCard = "no";
             }
         }
 
@@ -858,7 +921,7 @@ function reloadAfterError() {
         var useNewCardlength = null;
         cardtoken = null;
         savedtoken = null;
-        tokenCheckbox = null;
+        isSaveCard = null;
 
         useNewCardlength = jQuery("#wc-visa-acceptance-solutions-unified-checkout-use-new-payment-method").length;
         if (useNewCardlength != 0) {
@@ -895,10 +958,10 @@ function reloadAfterError() {
             if (jQuery('#wc-unified-checkout-tokenize-payment-method').prop('checked')) {
 
                 // Checkbox is checked
-                tokenCheckbox = "yes";
+                isSaveCard = "yes";
             } else {
                 // Checkbox is not checked
-                tokenCheckbox = "no";
+                isSaveCard = "no";
             }
         }
 
@@ -933,7 +996,7 @@ function validation(authid, orderid, pareq) {
                 nonce: payer_auth_param["nonce_validation"],
                 cardtoken: cardtoken,
                 savedtoken: savedtoken,
-                tokenCheckbox: tokenCheckbox,
+                isSaveCard: isSaveCard,
                 orderid: orderid,
                 authid: authid,
                 pareq: pareq
@@ -986,12 +1049,17 @@ function validation(authid, orderid, pareq) {
                     } else {
                         // redirect to checkout page
                         if (data.redirect) {
-                            // redirect to checkout page
-                            window.location.href = data.redirect;
+                            if (window.location.href.indexOf('?') !== -1 && window.history.replaceState){
+                                const baseUrl = window.location.href.split('#')[0];
+                                window.history.replaceState(null, null, baseUrl);
+                                window.location.reload();
+                            } else {
+                                window.location.href = visa_acceptance_uc_payer_auth_param["product_name"];
+                            }
                         } else {
-                            const currentURL = new URL(window.location.href);
-                            let baseUrl = encodeURIComponent(currentURL.origin + currentURL.pathname + currentURL.search);
-                            window.location.href = decodeURIComponent(baseUrl);
+                            if (window.history.replaceState){
+                                window.history.replaceState(null, null, window.location.href);
+                            }
                         }
                     }
                 }
@@ -1014,6 +1082,7 @@ function validation(authid, orderid, pareq) {
  * Data such as Auth ID, Order ID and Pareq is passsed in it
  */
 function validation_uc(authid, orderid, pareq, transientToken, sca_flag) {
+    var flexCvvToken = jQuery('input[name="flex_cvv_token"]').val() || null;
 
     try {
         jQuery.ajax({
@@ -1026,11 +1095,12 @@ function validation_uc(authid, orderid, pareq, transientToken, sca_flag) {
                 nonce: visa_acceptance_uc_payer_auth_param["nonce_validation"],
                 cardtoken: transientToken,
                 savedtoken: savedtoken,
-                tokenCheckbox: tokenCheckbox,
+                isSaveCard: isSaveCard,
                 orderid: orderid,
                 authid: authid,
                 pareq: pareq,
                 scaCase: sca_flag,
+                flexCvvToken: flexCvvToken
             },
             success: function(data) {
 
@@ -1086,11 +1156,18 @@ function validation_uc(authid, orderid, pareq, transientToken, sca_flag) {
                     else{
                         // redirect to checkout page
                         if (data.redirect) {
-                            window.location.href = data.redirect;
+                            // redirect to product page
+                            if( (visa_acceptance_uc_payer_auth_param["product_page"] ) && window.history.replaceState){
+                                const baseUrl = window.location.href.split('#')[0];
+                                window.history.replaceState(null, null, baseUrl);
+                                window.location.reload();
+                            } else {
+                                window.location.href = data.redirect;
+                            }
                         } else {
-                            const currentURL = new URL(window.location.href);
-                            let baseUrl = encodeURIComponent(currentURL.origin + currentURL.pathname + currentURL.search);
-                            window.location.href = decodeURIComponent(baseUrl);
+                            if (window.history.replaceState){
+                                window.history.replaceState(null, null, window.location.href);
+                            }
                         }
                     }
                 }
@@ -1118,16 +1195,16 @@ function validation_uc(authid, orderid, pareq, transientToken, sca_flag) {
 function invokeValidation(authid) {
 
     hidePopup();
-    if (typeof visa_acceptance_uc_payer_auth_param !== 'undefined' && visa_acceptance_uc_payer_auth_param['payment_method'] == 'unified_checkout' && (jQuery("#transientToken").val() != undefined && jQuery("#transientToken").val() != '')) {
-        var transientToken = jQuery("#transientToken").val();
+    if (typeof visa_acceptance_uc_payer_auth_param !== 'undefined' && visa_acceptance_uc_payer_auth_param['payment_method'] == 'unified_checkout') {
+        var transientToken = jQuery("#transientToken").val() || window.uc_token_global || uc_token_global || '';
         if(jQuery('#sca_validation_form').val() == 'true' || jQuery('#sca_form').val() == 'true'){
             validation_uc(authid, order_id, pareq, transientToken, 'yes');
         } else{
             validation_uc(authid, order_id, pareq, transientToken, 'no');
         }
         
-    } else if (enrollment_uc_flag && transientToken == undefined) {
-        var transientToken = jQuery("#transientToken").val();
+    } else if (enrollment_uc_flag) {
+        var transientToken = jQuery("#transientToken").val() || window.uc_token_global || uc_token_global || '';
         if(jQuery('#sca_validation_form').val() == 'true' || jQuery('#sca_form').val() == 'true'){
             validation_uc(authid, order_id, pareq, transientToken, 'yes');
         } else{
@@ -1170,13 +1247,13 @@ function getOrderIDPayPage(orderid) {
     //myUtils.fetchTokens();
 
     // Step 2) Payer Auth Setup call After getting the order ID
-    if (typeof visa_acceptance_uc_payer_auth_param !== 'undefined' && visa_acceptance_uc_payer_auth_param['payment_method'] == 'unified_checkout' && (jQuery("#transientToken").val() != undefined && jQuery("#transientToken").val() != '')) {
-        var transientToken = jQuery("#transientToken").val();
+    if (typeof visa_acceptance_uc_payer_auth_param !== 'undefined' && visa_acceptance_uc_payer_auth_param['payment_method'] == 'unified_checkout') {
+        var transientToken = jQuery("#transientToken").val() || window.uc_token_global || uc_token_global || '';
         myUtils.fetchTokens_uc();
 
         myUtils.setup_uc(orderid, transientToken);
     } else if (jQuery('input[name="wc-visa-acceptance-solutions-unified-checkout-payment-token"]:checked').val() !== null) {
-        var transientToken = jQuery("#transientToken").val();
+        var transientToken = jQuery("#transientToken").val() || window.uc_token_global || uc_token_global || '';
         myUtils.fetchTokens_uc();
 
         myUtils.setup_uc(orderid, transientToken);

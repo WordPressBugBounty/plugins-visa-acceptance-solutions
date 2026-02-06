@@ -244,7 +244,7 @@ abstract class Visa_Acceptance_Request {
 			$order = wc_get_order( $order );
 		}
 		if ( $order instanceof \WC_Order ) {
-			if ( handle_hpos_compatibility() ) {
+			if ( visa_acceptance_handle_hpos_compatibility() ) {
 				$order->add_meta_data( VISA_ACCEPTANCE_WC_UC_ID . $key, $value, $unique );
 				$order->save_meta_data();
 			} else {
@@ -267,7 +267,7 @@ abstract class Visa_Acceptance_Request {
 			$order = wc_get_order( $order );
 		}
 		if ( $order instanceof \WC_Order ) {
-			if ( handle_hpos_compatibility() ) {
+			if ( visa_acceptance_handle_hpos_compatibility() ) {
 				$order->delete_meta_data( VISA_ACCEPTANCE_WC_UC_ID . $key );
 				$order->save_meta_data();
 			} else {
@@ -280,24 +280,30 @@ abstract class Visa_Acceptance_Request {
 	/**
 	 * Gets cybersource billing information.
 	 *
-	 * @param mixed $order  Order.
+	 * @param mixed $order Order object.
+	 * @param bool  $payer_auth_transaction Whether it's a payer auth transaction.
 	 * @return array
 	 */
-	public function get_cybersource_billing_information( $order ) {
-		$order_information_bill_to = new \CyberSource\Model\Ptsv2paymentsOrderInformationBillTo(
-			array(
-				'firstName'          => $order->get_billing_first_name(),
-				'lastName'           => $order->get_billing_last_name(),
-				'address1'           => $order->get_billing_address_1(),
-				'locality'           => $order->get_billing_city(),
-				'administrativeArea' => $order->get_billing_state(),
-				'postalCode'         => $order->get_billing_postcode(),
-				'country'            => $order->get_billing_country(),
-				'email'              => $order->get_billing_email(),
-				'phoneNumber'        => $order->get_billing_phone(),
-			)
+	public function get_cybersource_billing_information( $order, $payer_auth_transaction = false ) {
+		$country = $order->get_billing_country();
+		$state   = $order->get_billing_state();
+
+		$bill_to = array(
+			'firstName'   => $order->get_billing_first_name(),
+			'lastName'    => $order->get_billing_last_name(),
+			'address1'    => $order->get_billing_address_1(),
+			'locality'    => $order->get_billing_city(),
+			'postalCode'  => $order->get_billing_postcode(),
+			'country'     => $country,
+			'email'       => $order->get_billing_email(),
+			'phoneNumber' => $order->get_billing_phone(),
 		);
-		return $order_information_bill_to;
+
+		if ( ! $payer_auth_transaction || in_array( $country, array( 'US', 'CA', 'CN' ), true ) ) {
+			$bill_to['administrativeArea'] = $state;
+		}
+
+		return new \CyberSource\Model\Ptsv2paymentsOrderInformationBillTo( $bill_to );
 	}
 
 	/**
@@ -325,26 +331,31 @@ abstract class Visa_Acceptance_Request {
 
 	/**
 	 * Gets cybersource shipping information.
-	 *
 	 * @param mixed $order  Order.
+	 * @param bool  $payer_auth_transaction whether it's a payer auth transaction.
 	 * @return array
 	 */
-	public function get_cybersource_shipping_information( $order ) {
-		$order_information_ship_to = new \CyberSource\Model\Ptsv2paymentsOrderInformationShipTo(
-			array(
-				'firstName'          => $order->get_shipping_first_name(),
-				'lastName'           => $order->get_shipping_last_name(),
-				'address1'           => $order->get_shipping_address_1(),
-				'address2'           => $order->get_shipping_address_2(),
-				'postalCode'         => $order->get_shipping_postcode(),
-				'locality'           => $order->get_shipping_city(),
-				'administrativeArea' => $order->get_shipping_state(),
-				'country'            => $order->get_shipping_country(),
-				'phoneNumber'        => $order->get_shipping_phone(),
-				'email'              => $order->get_billing_email(),
-			)
+	public function get_cybersource_shipping_information( $order, $payer_auth_transaction = false ) {
+		$country = $order->get_shipping_country();
+		$state   = $order->get_shipping_state();
+
+		$ship_to = array(
+			'firstName'   => $order->get_shipping_first_name(),
+			'lastName'    => $order->get_shipping_last_name(),
+			'address1'    => $order->get_shipping_address_1(),
+			'address2'    => $order->get_shipping_address_2(),
+			'postalCode'  => $order->get_shipping_postcode(),
+			'locality'    => $order->get_shipping_city(),
+			'country'     => $country,
+			'phoneNumber' => $order->get_shipping_phone(),
+			'email'       => $order->get_billing_email(),
 		);
-		return $order_information_ship_to;
+
+		if ( ! $payer_auth_transaction || in_array( $country, array( 'US', 'CA', 'CN' ), true ) ) {
+			$ship_to['administrativeArea'] = $state;
+		}
+
+		return new \CyberSource\Model\Ptsv2paymentsOrderInformationShipTo( $ship_to );
 	}
 
 	/**

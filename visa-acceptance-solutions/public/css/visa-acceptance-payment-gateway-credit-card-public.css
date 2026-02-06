@@ -125,6 +125,15 @@ table.woocommerce-MyAccount-paymentMethods .woocommerce-PaymentMethod--default m
 	border-radius: 10px;
 }
 
+.wc-credit-card-saved-card, .wc-unified-checkout-saved-card, .flex-microform-field{
+	width: auto !important;
+}
+
+.wc-credit-card-saved-card, .wc-unified-checkout-saved-card, .flex-microform-field iframe{
+	left: 78px;
+    margin: -77px
+}
+
 .payment_box, .payment_method_visa_acceptance_solutions_unified_checkout{
 	line-height: 2 !important;
 }
@@ -149,8 +158,13 @@ table.woocommerce-MyAccount-paymentMethods .woocommerce-PaymentMethod--default m
 }
 
 #wc-credit-card-save-token-div, #wc-unified-checkout-save-token-div{
-	width: fit-content;
-	margin-top: 5px;
+    width: fit-content;
+    margin-top: 5px;
+    display: none !important;
+}
+ 
+.wc-block-components-payment-methods__save-card-info {
+    display: none !important;
 }
 
 .cvv-div{
@@ -259,4 +273,94 @@ apple-pay-button {
     font-size: 16px;
     box-sizing: border-box;
     display: block;
+}
+
+/* Responsive UI for express pay section */
+.wc-block-components-express-payment, .wc-block-components-express-payment-continue-rule, #wc-express-checkout-product-page-subscription-tokenization-notice-div{
+	width: 50%;
+}
+.wc-block-components-express-payment-continue-rule{
+	margin: 30px auto 20px auto !important;
+	width: 50%;
+}
+@media (min-width:782px) {
+	.wc-block-components-express-payment, .wc-block-components-express-payment-continue-rule {
+		width: 60% !important;
+	}
+}
+
+#wc-express-checkout-product, #wc-express-checkout-normal {
+	width: 50%;
+}
+@media (max-width: 600px) {
+	#wc-express-checkout-product, #wc-express-checkout-normal, .wc-block-components-express-payment, .wc-block-components-express-payment-continue-rule, #wc-express-checkout-product-page-subscription-tokenization-notice-div {
+		width: 100% !important;
+	}
+}
+@media (min-width:601px) and (max-width:781px) {
+	#wc-express-checkout-product, #wc-express-checkout-normal {
+		width: 50% !important;
+	}
+}
+@media (min-width:782px) and (max-width:1000px) {
+	#wc-express-checkout-product, #wc-express-checkout-product-page-subscription-tokenization-notice-div {
+		width: 100% !important;
+	}
+}
+@media (min-width:1001px) and (max-width:1250px) {
+	#wc-express-checkout-product {
+		width: 80% !important;
+	}
+}
+
+#wc-express-checkout-normal{
+	margin:0 auto;
+}
+
+#wc-express-checkout-product {
+	margin:15px 0;
+}
+
+#express-checkout-heading {
+	position:relative; 
+	margin-bottom:15px;
+}
+
+#express-checkout-heading h5 {
+	margin-bottom:15px;
+}
+
+#wc-express-checkout-section-divider {
+	text-align:center; 
+	margin:20px 0; 
+	position:relative;
+}
+
+#wc-express-checkout-section-divider span {
+	background:#fff; 
+	padding:0 10px; 
+	position:relative; 
+	z-index:2;
+}
+
+#express-checkout-heading span {
+	background:#fff; padding:0 10px; position:relative; z-index:2;
+}
+
+#express-checkout-heading hr, #wc-express-checkout-section-divider hr {
+	margin:-12px 0 0 0; 
+	border:0; 
+	border-top:1px solid #ddd;
+}
+
+#wc-express-checkout-section {
+	border:0.5px solid #ddd; 
+	border-radius:10px; 
+	padding:20px; 
+	margin-bottom:25px; 
+	text-align:center;
+}
+
+#wc-express-checkout-product-page-subscription-tokenization-notice-div{
+	width: 50%;
 }

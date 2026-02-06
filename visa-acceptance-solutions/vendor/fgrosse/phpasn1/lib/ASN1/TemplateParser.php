@@ -24,7 +24,6 @@ class TemplateParser
      */
     public function parseBase64($data, array $template)
     {
-        // TODO test with invalid data
         return $this->parseBinary(base64_decode($data), $template);
     }
 

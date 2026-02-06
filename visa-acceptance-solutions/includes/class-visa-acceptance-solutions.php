@@ -121,11 +121,18 @@ class Visa_Acceptance_Solutions {
 	/**
 	 * Gives the list of payment gateways.
 	 *
-	 * @since 24.1.0
+	 * @since 1.0.0
 	 * @return array
 	 */
 	public function get_gateways() {
-		// adds all Payment methods classes name.
-		return array( 'Visa_Acceptance_Payment_Gateway_Unified_Checkout' );
+		$gateways = array('Visa_Acceptance_Payment_Gateway_Unified_Checkout');
+		$payment_plugin = new Visa_Acceptance_Payment_Gateway_Unified_Checkout();
+		$is_subscription_tokenization_enabled = $payment_plugin->is_subscriptions_activated;
+		$subscription_order = ( class_exists( 'WC_Subscriptions_Cart' ) && ( WC_Subscriptions_Cart::cart_contains_subscription() || function_exists( 'wcs_cart_contains_renewal' ) && wcs_cart_contains_renewal() || ( class_exists( 'WC_Subscriptions_Change_Payment_Gateway' ) && WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment ) ) );
+
+		if ( ! $is_subscription_tokenization_enabled && $subscription_order ) {
+			$gateways = array();
+		}
+		return $gateways;
 	}
 }

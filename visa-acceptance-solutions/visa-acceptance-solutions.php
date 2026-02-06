@@ -2,16 +2,16 @@
 /**
  * Plugin Name: Visa Acceptance Solutions
  * Description: Accept payments in WooCommerce with Visa Acceptance Solutions.
- * Version: 2.0.1
+ * Version: 2.1.0
  * Author: Visa Acceptance Solutions
  * Author URI: https://visaacceptance.com
  * Developer: Visa Acceptance Solutions
  * Requires Plugins: woocommerce
- * Requires at least: 6.1
- * Tested up to: 6.8
- * Requires PHP: 8.0.0
- * WC requires at least: 7.6.0
- * WC tested up to: 10.0.4
+ * Requires at least: 6.9
+ * Tested up to: 6.9
+ * Requires PHP: 8.2.0
+ * WC requires at least: 10.3.7
+ * WC tested up to: 10.4.3
  * Text Domain: visa-acceptance-solutions
  * Domain Path: /languages
  *
@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'VISA_ACCEPTANCE_PLUGIN_VERSION', '2.0.1' );
+define( 'VISA_ACCEPTANCE_PLUGIN_VERSION', '2.1.0' );
 
 /**
  * Fallback Plugin version.
@@ -78,6 +78,11 @@ define( 'VISA_ACCEPTANCE_PLUGIN_API_TYPE', '(REST)' );
 define('VISA_ACCEPTANCE_GATEWAY_ID','visa_acceptance_solutions');
 
 /**
+* String gateway id constant.
+*/
+define('VISA_ACCEPTANCE_SOLUTION_TEXT','solutions');
+
+/**
 *
 * String gateway id constant.
 */
@@ -121,6 +126,12 @@ define('VISA_ACCEPTANCE_SPACE',' ');
 
 /**
  *
+ * Woocommerce Underscore constant.
+ */
+define('VISA_ACCEPTANCE_WC_UNDERSCORE', 'wc_');
+
+/**
+ *
  * Greater than equal to String Constant.
  */
 define('VISA_ACCEPTANCE_GREATER_THAN_OR_EQUAL_TO', '>=');
@@ -130,12 +141,6 @@ define('VISA_ACCEPTANCE_GREATER_THAN_OR_EQUAL_TO', '>=');
  * Question mark String Constant.
  */
 define('VISA_ACCEPTANCE_QUESTION_MARK', '?');
-
-/**
-*
-* Hyphen constant.
-*/
-define('VISA_ACCEPTANCE_WC_UNDERSCORE','wc_');
 
 /**
  *
@@ -170,6 +175,12 @@ define('VISA_ACCEPTANCE_UC_ID', VISA_ACCEPTANCE_GATEWAY_ID_UNDERSCORE . VISA_ACC
  
 /**
 *
+* Express Pay Unified Checkout id.
+*/
+define('VISA_ACCEPTANCE_EXPRESS_PAY_UC_ID', 'express_pay_unified_checkout');
+ 
+/**
+*
 * Unified Checkout id with hyphen constant.
 */
 define('VISA_ACCEPTANCE_UC_ID_HYPHEN', VISA_ACCEPTANCE_GATEWAY_ID_HYPHEN . '-unified-checkout');
@@ -189,7 +200,7 @@ define('VISA_ACCEPTANCE_WOOCOMMERCE_CONSTANT', 'woocommerce');
 /**
  * Partner Solution ID.
  */
-define( 'VISA_ACCEPTANCE_SOLUTION_ID', 'KL93A2PB' );
+define( 'VISA_ACCEPTANCE_SOLUTION_ID', 'SAOOMMSB');
 
 /**
  * Developer ID.
@@ -203,6 +214,12 @@ define( 'VISA_ACCEPTANCE_DEVELOPER_ID', '999' );
 define( 'VISA_ACCEPTANCE_FLEX_TEST_DOMAIN', 'https://testflex.cybersource.com' );
 
 /**
+*
+* Network error constant.
+*/
+define('VISA_ACCEPTANCE_NETWORK_ERROR','NETWORK_ERROR');
+
+/**
  *
  * Flex domain for Production Mode.
  */
@@ -210,76 +227,33 @@ define( 'VISA_ACCEPTANCE_FLEX_PROD_DOMAIN', 'https://flex.cybersource.com' );
 
 /**
  *
- * API domain for Test Mode.
+ * Flex Microform js library.
  */
-define( 'VISA_ACCEPTANCE_API_TEST_DOMAIN', 'https://apitest.cybersource.com' );
-
+define( 'VISA_ACCEPTANCE_FLEX_LIBRARY', '/microform/bundle/v2/flex-microform.min.js' );
+ 
 /**
  *
- * API domain for Production Mode.
+ * Flex Microform library for Test environment.
  */
-define( 'VISA_ACCEPTANCE_API_PROD_DOMAIN', 'https://api.cybersource.com' );
+define( 'VISA_ACCEPTANCE_FLEX_TEST_LIBRARY', VISA_ACCEPTANCE_FLEX_TEST_DOMAIN . VISA_ACCEPTANCE_FLEX_LIBRARY );
+ 
+/**
+ *
+ * Flex Microform library for Production environment.
+ */
+define( 'VISA_ACCEPTANCE_FLEX_PROD_LIBRARY', VISA_ACCEPTANCE_FLEX_PROD_DOMAIN . VISA_ACCEPTANCE_FLEX_LIBRARY );
 
 /**
  *
  * Host domain for Test Mode.
  */
-define( 'VISA_ACCEPTANCE_REQUEST_HOST_APITEST', 'apitest.cybersource.com' );
+define( 'VISA_ACCEPTANCE_REQUEST_HOST_APITEST', 'apitest.visaacceptance.com' );
 
 /**
  *
  * Host domain for Production Mode.
  */
-define( 'VISA_ACCEPTANCE_REQUEST_HOST_APIPRODUCTION', 'api.cybersource.com' );
-
-/**
- *
- * Default Resource for Payments API.
- */
-define( 'VISA_ACCEPTANCE_PAYMENT_RESOURCE', '/pts/v2/payments' );
-
-/**
- *
- * API Resource for fetching transaction details.
- */
-define( 'VISA_ACCEPTANCE_TRANSACTION_DETAILS_RESOURCE', '/tss/v2/transactions/' );
-
-/**
- *
- * API Resource for fetching payment details.
- */
-define('VISA_ACCEPTANCE_TRANSIENT_TOKEN_DETAILS', '/up/v1/payment-details/' );
-
-/**
- *
- * API Resource for capture context.
- */
-define('VISA_ACCEPTANCE_CAPTURE_CONTEXTS', '/up/v1/capture-contexts');
-
-/**
- *
- * API Resource for TMS.
- */
-define( 'VISA_ACCEPTANCE_TMS_RESOURCE', '/tms/v2/customers/' );
-
-/**
- *
- * Payment Instruments connector API String.
- */
-define( 'VISA_ACCEPTANCE_PAYMENT_INSTRUMENT_RESOURCE', '/payment-instruments/' );
-
-
-/**
- *
- * API Resource for Conversion Detail Reporting.
- */
-define( 'VISA_ACCEPTANCE_REPORTING_RESOURCE', '/reporting/v3/conversion-details?startTime=' );
-
-/**
- *
- * API Resource for Payer Authentication Setup Call.
- */
-define( 'VISA_ACCEPTANCE_PAYER_AUTH_SETUP_RESOURCE', '/risk/v1/authentication-setups' );
+define( 'VISA_ACCEPTANCE_REQUEST_HOST_APIPRODUCTION', 'api.visaacceptance.com' );
 
 /**
  *
@@ -530,6 +504,12 @@ define('VISA_ACCEPTANCE_APPLEPAY', 'APPLEPAY');
 
 /**
  *
+ * Paze Constant.
+ */
+define('VISA_ACCEPTANCE_PAZE', 'PAZE');
+
+/**
+ *
  * VCO Constant for higher versions.
  */
 define('VISA_ACCEPTANCE_CLICKTOPAY', 'CLICKTOPAY');
@@ -550,7 +530,31 @@ define('VISA_ACCEPTANCE_PLACEHOLDER_AMOUNT', '0.01');
  *
  * Unified Checkout Client Version.
  */
-define('VISA_ACCEPTANCE_UC_CLIENT_VERSION', '0.23');
+define('VISA_ACCEPTANCE_UC_CLIENT_VERSION', '0.33');
+
+/**
+ *
+ * $1 card amount Constant.
+ */
+define('VISA_ACCEPTANCE_ONE_DOLLAR_AMOUNT', '1.00');
+
+/**
+ *
+ * CUP card type Constant.
+ */
+define('VISA_ACCEPTANCE_CUP_CARD_TYPE', '062');
+
+/**
+ *
+ * CUP GPAY card type Constant.
+ */
+define('VISA_ACCEPTANCE_GPAY_PAYMENTSOLUTION_VALUE', '012');
+
+/**
+ *
+ * JAYWAN card type Constant.
+ */
+define('VISA_ACCEPTANCE_JAYWAN_CARD_TYPE', '081');
 
 /**
  *
@@ -560,9 +564,27 @@ define('VISA_ACCEPTANCE_UC_BILLING_TYPE', 'NONE');
 
 /**
  *
+ * Unified Checkout Billing Type Full.
+ */
+define('VISA_ACCEPTANCE_UC_BILLING_TYPE_FULL', 'FULL');
+
+/**
+ *
  * WooCommerce Underscore String Constant.
  */
 define('VISA_ACCEPTANCE_WOOCOMMERCE_UNDERSCORE', 'woocommerce_');
+
+/**
+ *
+ * Reverse Tokenisation Constant.
+ */
+define('VISA_ACCEPTANCE_REVERSE_TOKENISATION_AMOUNT', 'Reverse Tokenization Amount');
+
+/**
+ *
+ * Reverse Tokenisation Constant.
+ */
+define('VISA_ACCEPTANCE_V_C_CORRELATION_ID', 'v-c-correlation-id');
 
 /**
  *
@@ -1201,33 +1223,9 @@ define( 'VISA_ACCEPTANCE_DF_ORG_ID_PROD', 'k8vif92e');
 
 /**
  *
- * Request Headers Parameters for Content Type.
- */
-define( 'VISA_ACCEPTANCE_REQUEST_HEADER_PARAM_CONTENT_TYPE_UTF', 'application/json;charset=utf-8' );
-
-/**
- *
- * Request Headers Parameters for Accept.
- */
-define( 'VISA_ACCEPTANCE_REQUEST_HEADER_PARAM_ACCEPT_UTF', 'application/hal+json;charset=utf-8');
-
-/**
- *
- * Request Headers Parameters without UTF.
- */
-define( 'VISA_ACCEPTANCE_REQUEST_HEADER_PARAM', 'application/json;');
-
-/**
- *
  * UTF-8 Encoding Constant.
  */
 define( 'VISA_ACCEPTANCE_UTF_8', 'UTF-8');
-
-/**
- *
- * VISA_ACCEPTANCE_ISO Encoding Constant.
- */
-define( 'VISA_ACCEPTANCE_ISO', 'ISO-8859-1');
 
 /**
  *
@@ -1389,16 +1387,16 @@ function visa_acceptance_solutions_deactivate() {
 	Visa_Acceptance_Payment_Gateway_Deactivator::deactivate();
 }
 
-
-
-
 /**
  * Function for delaying initialization of the extension until after WooComerce is loaded.
  */
 function visa_acceptance_extension_initialize() {
 	require_once 'includes/class-visa-acceptance-solutions.php';
+	if ( file_exists (__DIR__ . '/vendor/autoload.php')){
+		require __DIR__ . '/vendor/autoload.php';
+	}
 	if ( class_exists( VISA_ACCEPTANCE_WOOCOMMERCE_CONSTANT ) ) {
-	    $GLOBALS[VISA_ACCEPTANCE_GATEWAY_ID] = Visa_Acceptance_Solutions::instance();
+	    $GLOBALS['visa_acceptance_' . VISA_ACCEPTANCE_SOLUTION_TEXT] = Visa_Acceptance_Solutions::instance();
 	} else
 	{
 		return;
@@ -1410,14 +1408,14 @@ add_action( 'plugins_loaded', 'visa_acceptance_extension_initialize', VISA_ACCEP
 
 add_action( 'woocommerce_blocks_loaded', 'visa_acceptance_block_support_for_gateway' );
 
-add_action( 'before_woocommerce_init', 'hpos_compatibility' );
+add_action( 'before_woocommerce_init', 'visa_acceptance_hpos_compatibility' );
 
 /**
  * Handles hpos compatibility
  *
  * @return boolean
  */
-function hpos_compatibility() {
+function visa_acceptance_hpos_compatibility() {
     if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
         \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
             'custom_order_tables',
@@ -1432,7 +1430,7 @@ function hpos_compatibility() {
  *
  * @return boolean
  */
-function handle_hpos_compatibility() {
+function visa_acceptance_handle_hpos_compatibility() {
 	$status = false;
     if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
         if(class_exists(\Automattic\WooCommerce\Utilities\OrderUtil::class)) {
@@ -1452,10 +1450,12 @@ function handle_hpos_compatibility() {
 function visa_acceptance_block_support_for_gateway() {
 	if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
 		require_once 'includes/gateway/class-visa-acceptance-blocks-handler-unified-checkout.php';
+		require_once 'includes/gateway/class-visa-acceptance-express-pay-unified-checkout.php';
 		add_action(
 			'woocommerce_blocks_payment_method_type_registration',
 			function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
 				$payment_method_registry->register( new Visa_Acceptance_Blocks_Handler_Unified_Checkout() );
+				$payment_method_registry->register( new Visa_Acceptance_Express_Pay_Unified_Checkout() );
 			}
 		);
 	}

@@ -17,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Include all the necessary dependencies.
  */
 require_once __DIR__ . '/../class-visa-acceptance-request.php';
-require_once __DIR__ . '/../class-visa-acceptance-api-client.php';
 require_once __DIR__ . '/../response/payments/class-visa-acceptance-capture-response.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-payment-adapter.php';
 
@@ -57,54 +56,63 @@ class Visa_Acceptance_Capture extends Visa_Acceptance_Request {
 			$order = wc_get_order( $order );
 		}
 		$authorization_amount = VISA_ACCEPTANCE_SV_GATEWAY_ID === $order->get_payment_method() ? $this->get_order_meta( $order, 'authorization_amount' ) : $this->get_order_meta( $order, VISA_ACCEPTANCE_AUTH_AMOUNT );
-		if ( ( ! $this->is_order_ready_for_capture( $order ) ) || $this->is_order_fully_captured( $order ) || $order->get_total() > $authorization_amount ) {
-			$response_data['error_message'] = __( 'Order cannot be captured', 'visa-acceptance-solutions' );
-		} else {
-			$transaction_id         = VISA_ACCEPTANCE_SV_GATEWAY_ID === $order->get_payment_method() ? $this->get_order_meta( $order, 'trans_id' ) : $this->get_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_ID );
-			$capture_response       = $this->execute_capture( $order, $transaction_id );
-			$http_code              = $capture_response['http_code'];
-			$capture_body 			= $capture_response['body'];
-			if(VISA_ACCEPTANCE_FOUR_ZERO_ONE === $http_code) {
-				$capture_body = wp_json_encode($capture_body['body']);
-			}
-			$capture_response_array = $this->get_payment_response_array(
-				$http_code,
-				$capture_body,
-				VISA_ACCEPTANCE_CAPTURE
-			);
-			$status                 = $capture_response_array['status'];
-			if ( $capture_response_obj->is_transaction_approved( $capture_response, $status ) ) {
-				$message = sprintf(
-					/* translators: %1$s - payment gateway title , %2$s - transaction amount. Definitions: Capture, as in capture funds from a credit card. */
-					__( '%1$s Capture of %2$s Approved', 'visa-acceptance-solutions' ),
-					$this->gateway->get_title(),
-					wc_price(
-						$order->get_total(),
-						array(
-							'currency' => $order->get_currency(),
-						)
-					)
-				);
-				if ( $capture_response_array['transaction_id'] ) {
-					$message .= VISA_ACCEPTANCE_SPACE . sprintf(
-						/* translators: %1$s - payment gateway title , %2$s - transaction amount. Definitions: Capture, as in capture funds from a credit card. */
-						esc_html__( '(Transaction ID %s)', 'visa-acceptance-solutions' ),
-						$capture_response_array['transaction_id']
-					);
-					$alert_message = VISA_ACCEPTANCE_CAPTURE_OF . VISA_ACCEPTANCE_SPACE . $order->get_total() . VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_APPROVED_TRANSACTION . $capture_response_array['transaction_id'] . ')';
-				}
-				if ( $capture_response_array['transaction_id'] && ( strtoupper( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PENDING ) === $capture_response_array['status'] ) ) {
-					$order->add_order_note( $message );
-					$this->do_capture_success( $order, $capture_response_array );
-					if ( $order->get_status() === VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_ON_HOLD ) {
-						$order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING, VISA_ACCEPTANCE_STRING_EMPTY );
-					}
-					$response_data[ VISA_ACCEPTANCE_SUCCESS ] = VISA_ACCEPTANCE_YES;
-					$response_data['alert_message']           = $alert_message;
-				}
+		
+		// Check if this is a free trial order (authorized with placeholder $0.01 or $0).
+		$is_free_trial_order = ( (float) $authorization_amount <= (float) VISA_ACCEPTANCE_PLACEHOLDER_AMOUNT );
+		
+		if ( $is_free_trial_order ) {
+			$response_data[ VISA_ACCEPTANCE_SUCCESS ] = VISA_ACCEPTANCE_YES;
+		}
+		else {
+			if ( ( ! $this->is_order_ready_for_capture( $order ) ) || $this->is_order_fully_captured( $order ) || $order->get_total() > $authorization_amount ) {
+				$response_data['error_message'] = __( 'Order cannot be captured', 'visa-acceptance-solutions' );
 			} else {
-				$response_data[ VISA_ACCEPTANCE_SUCCESS ] = VISA_ACCEPTANCE_NO;
-				$response_data['error_message']           = VISA_ACCEPTANCE_ORDER_NOT_CAPTURED;
+				$transaction_id         = VISA_ACCEPTANCE_SV_GATEWAY_ID === $order->get_payment_method() ? $this->get_order_meta( $order, 'trans_id' ) : $this->get_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_ID );
+				$capture_response       = $this->execute_capture( $order, $transaction_id );
+				$http_code              = $capture_response['http_code'];
+				$capture_body 			= $capture_response['body'];
+				if(VISA_ACCEPTANCE_FOUR_ZERO_ONE === $http_code) {
+					$capture_body = wp_json_encode($capture_body['body']);
+				}
+				$capture_response_array = $this->get_payment_response_array(
+					$http_code,
+					$capture_body,
+					VISA_ACCEPTANCE_CAPTURE
+				);
+				$status                 = $capture_response_array['status'];
+				if ( $capture_response_obj->is_transaction_approved( $capture_response, $status ) ) {
+					$message = sprintf(
+						/* translators: %1$s - payment gateway title , %2$s - transaction amount. Definitions: Capture, as in capture funds from a credit card. */
+						__( '%1$s Capture of %2$s Approved', 'visa-acceptance-solutions' ),
+						$this->gateway->get_title(),
+						wc_price(
+							$order->get_total(),
+							array(
+								'currency' => $order->get_currency(),
+							)
+						)
+					);
+					if ( $capture_response_array['transaction_id'] ) {
+						$message .= VISA_ACCEPTANCE_SPACE . sprintf(
+							/* translators: %1$s - payment gateway title , %2$s - transaction amount. Definitions: Capture, as in capture funds from a credit card. */
+							esc_html__( '(Transaction ID %s)', 'visa-acceptance-solutions' ),
+							$capture_response_array['transaction_id']
+						);
+						$alert_message = VISA_ACCEPTANCE_CAPTURE_OF . VISA_ACCEPTANCE_SPACE . $order->get_total() . VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_APPROVED_TRANSACTION . $capture_response_array['transaction_id'] . ')';
+					}
+					if ( $capture_response_array['transaction_id'] && ( strtoupper( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PENDING ) === $capture_response_array['status'] ) ) {
+						$order->add_order_note( $message );
+						$this->do_capture_success( $order, $capture_response_array );
+						if ( $order->get_status() === VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_ON_HOLD ) {
+							$order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING, VISA_ACCEPTANCE_STRING_EMPTY );
+						}
+						$response_data[ VISA_ACCEPTANCE_SUCCESS ] = VISA_ACCEPTANCE_YES;
+						$response_data['alert_message']           = $alert_message;
+					}
+				} else {
+					$response_data[ VISA_ACCEPTANCE_SUCCESS ] = VISA_ACCEPTANCE_NO;
+					$response_data['error_message']           = VISA_ACCEPTANCE_ORDER_NOT_CAPTURED;
+				}
 			}
 		}
 		return $response_data;
@@ -180,7 +188,7 @@ class Visa_Acceptance_Capture extends Visa_Acceptance_Request {
 				$api_response = $capture_api->capturePayment( $request_obj, $transaction_id );
 			}
 
-			$this->gateway->add_logs_service_response( $api_response[0],$api_response[2]['v-c-correlation-id'], true, ucfirst( VISA_ACCEPTANCE_CAPTURE ) );
+			$this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, ucfirst( VISA_ACCEPTANCE_CAPTURE ) );
 
 			$return_array = array(
 				'http_code' => $api_response[1],

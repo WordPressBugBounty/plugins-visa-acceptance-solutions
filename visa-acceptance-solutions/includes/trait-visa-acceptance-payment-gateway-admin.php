@@ -261,7 +261,7 @@ trait Visa_Acceptance_Payment_Gateway_Admin_Trait {
 		}
 		if ( $order instanceof \WC_Order ) {
 			$prefix = VISA_ACCEPTANCE_SV_GATEWAY_ID === $order->get_payment_method() ? '_wc_' . VISA_ACCEPTANCE_SV_GATEWAY_ID . '_' : VISA_ACCEPTANCE_WC_UC_ID;
-			if ( handle_hpos_compatibility() ) {
+			if ( visa_acceptance_handle_hpos_compatibility() ) {
 				$meta = $order->get_meta( $prefix . $key, true, VISA_ACCEPTANCE_EDIT);
 			} else {
 				$meta = get_post_meta( $order->get_id(), $prefix . $key, true );
@@ -338,7 +338,14 @@ trait Visa_Acceptance_Payment_Gateway_Admin_Trait {
 			$payment_response_array['transaction_id']
 		);
 		if ( $update_status ) {
-			$order->update_status( $update_status, $message );
+			// Prevent updating subscription to "processing" status (order-only status).
+			// For subscriptions, only use valid subscription statuses or just add a note.
+			if ( $order instanceof \WC_Subscription && VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING === $update_status ) {
+				// For subscriptions with "processing" status request, just add a note instead.
+				$order->add_order_note( $message );
+			} else {
+				$order->update_status( $update_status, $message );
+			}
 		} else {
 			$order->add_order_note( $message );
 		}

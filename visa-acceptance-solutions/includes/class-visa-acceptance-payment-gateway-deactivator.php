@@ -31,7 +31,7 @@ class Visa_Acceptance_Payment_Gateway_Deactivator {
 		$payment_method = 'visa_acceptance_solutions_unified_checkout';
 		$type           = 'shop_subscription';
 		if(is_plugin_active('woocommerce-gateway-cybersource/woocommerce-gateway-cybersource.php')) {
-			if ( handle_hpos_compatibility() ) {
+			if ( visa_acceptance_handle_hpos_compatibility() ) {
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$sv_subscriptions = $wpdb->get_results(
 					$wpdb->prepare(

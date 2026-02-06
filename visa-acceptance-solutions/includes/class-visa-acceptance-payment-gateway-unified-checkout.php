@@ -57,6 +57,13 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 	protected $plugin_public;
 
 	/**
+	 * The Public gateway object of this plugin.
+	 *
+	 * @var      object    $plugin_public    The current payment gateways public object.
+	 */
+	protected $express_pay_plugin_public;
+
+	/**
 	 * The Admin object of this plugin.
 	 *
 	 * @var      object    $plugin_admin    The current payment gateways admin object.
@@ -614,6 +621,13 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 		require_once plugin_dir_path( __DIR__ ) . 'public/class-visa-acceptance-payment-gateway-unified-checkout-public.php';
 
 		/**
+		 * The class responsible for defining all actions that occur in the public-facing
+		 * express pay side of the site.
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-visa-acceptance-payment-gateway-expresspay-public.php';
+		
+
+		/**
 		 * The class responsible for defining all actions that occur in the CURL API's
 		 */
 		require_once plugin_dir_path( __DIR__ ) . 'includes/api/payments/class-visa-acceptance-payment-uc.php';
@@ -641,7 +655,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 
 		if ( class_exists( VISA_ACCEPTANCE_WOOCOMMERCE_CONSTANT ) ) {
 			// Initialize the Visa_Acceptance_Solutions instance.
-			$GLOBALS[ VISA_ACCEPTANCE_GATEWAY_ID ] = Visa_Acceptance_Solutions::instance();
+			$GLOBALS[ 'visa_acceptance_' . VISA_ACCEPTANCE_SOLUTION_TEXT ] = Visa_Acceptance_Solutions::instance();
 		} else {
 			return;
 		}
@@ -683,6 +697,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 		}
 
 		$this->plugin_public = new Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public( $this->get_id(), $this->get_version(), $this );
+		$this->express_pay_plugin_public = new Visa_Acceptance_Payment_Gateway_Expresspay_Public( $this->get_id(), $this->get_version(), $this );
 		$settings            = $this->get_gateway_settings();
 		if ( isset( $settings['enabled'] ) && VISA_ACCEPTANCE_YES === $settings['enabled'] ) {
 			$this->loader->add_action( 'wp_enqueue_scripts', $this->plugin_public, 'enqueue_styles' );
@@ -722,6 +737,19 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 			$this->loader->add_action( 'wp_ajax_nopriv_wc_call_uc_payer_auth_error_handler', $this->plugin_public, 'call_error_handler' );
 			$this->loader->add_action( 'wp_ajax_wc_call_uc_update_price_action', $this->plugin_public, 'call_updates_action' );
 			$this->loader->add_action( 'wp_ajax_nopriv_wc_call_uc_update_price_action', $this->plugin_public, 'call_updates_action' );
+			// For Express pay product page.
+			$this->loader->add_action( 'woocommerce_after_add_to_cart_button', $this->express_pay_plugin_public, 'add_express_pay_at_product_page' );
+			$this->loader->add_action( 'wp_ajax_express_pay_for_order', $this->express_pay_plugin_public,  'express_pay_product_page_pay_for_order' );
+			$this->loader->add_action( 'wp_ajax_nopriv_express_pay_for_order', $this->express_pay_plugin_public,  'express_pay_product_page_pay_for_order' );
+			$this->loader->add_action( 'wp_ajax_product_page_quantity_update', $this->express_pay_plugin_public, 'product_page_quantity_update' );
+			$this->loader->add_action( 'wp_ajax_nopriv_product_page_quantity_update', $this->express_pay_plugin_public, 'product_page_quantity_update' );
+			// AJAX handler for getting addresses from transient token (for blocks checkout).
+			$this->loader->add_action( 'wp_ajax_get_addresses_from_transient_token', $this->express_pay_plugin_public, 'ajax_get_addresses_from_transient_token' );
+			$this->loader->add_action( 'wp_ajax_nopriv_get_addresses_from_transient_token', $this->express_pay_plugin_public, 'ajax_get_addresses_from_transient_token' );
+			// For Express pay at normal checkout page.
+			$this->loader->add_action( 'woocommerce_checkout_before_customer_details', $this->express_pay_plugin_public, 'add_express_pay_at_normal_checkout' );
+			// For Express pay at Pay for orders page.
+			$this->loader->add_action('before_woocommerce_pay', $this->express_pay_plugin_public, 'add_express_pay_at_normal_checkout', 5);
 		}
 	}
 
@@ -1037,15 +1065,15 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 	}
 
 
-		/**
-		 * Initiates the payer auth setup process.
-		 *
-		 * @param string            $token token.
-		 * @param \WC_Payment_Token $saved_token saved token.
-		 * @param int               $order_id order id.
-		 *
-		 * @return array
-		 */
+	/**
+	 * Initiates the payer auth setup process.
+	 *
+	 * @param string            $token token.
+	 * @param \WC_Payment_Token $saved_token saved token.
+	 * @param int               $order_id order id.
+	 *
+	 * @return array
+	 */
 	public function payer_auth_setup( $token, $saved_token, $order_id ) {
 
 		$setup         = new Visa_Acceptance_Setup( $this );
@@ -1053,78 +1081,74 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 
 		return $response_data;
 	}
-
-		/**
-		 * Initiates the payer auth enrollment process.
-		 *
-		 * @param int               $order_id order id.
-		 * @param string            $token jwt token .
-		 * @param \WC_Payment_Token $saved_token saved token.
-		 * @param string            $token_check_box_value indicates whether save token checkbox is checked.
-		 * @param string            $reference_id reference id.
-		 * @param string            $sca_case Verify the SCA case.
-		 *
-		 * @return array
-		 */
-	public function payer_auth_enrollment( $order_id, $token, $saved_token, $token_check_box_value, $reference_id, $sca_case ) {
-
+	/**
+	 * Initiates the payer auth enrollment process.
+	 *
+	 * @param int               $order_id order id.
+	 * @param string            $token jwt token .
+	 * @param \WC_Payment_Token $saved_token saved token.
+	 * @param string            $is_save_card_value indicates whether save token checkbox is checked.
+	 * @param string            $reference_id reference id.
+	 * @param string            $sca_case Verify the SCA case.
+	 * @param string            $flex_cvv_token JWT token from Flex microform for CVV.
+	 *
+	 * @return array
+   	*/
+	public function payer_auth_enrollment( $order_id, $token, $saved_token, $is_save_card_value, $reference_id, $sca_case, $flex_cvv_token = null ) {
 		$enrollment = new Visa_Acceptance_Enrollment( $this );
-
 		// Creating Order Object from ID.
 		$order                       = wc_get_order( $order_id );
-		$order_token_check_box_value = $this->get_order_meta( $order, VISA_ACCEPTANCE_SAVED_CARD_BLOCKS . $order_id );
-		if ( ! $token_check_box_value && ! empty( $order_token_check_box_value ) ) {
-			$token_check_box_value = $order_token_check_box_value;
+		$order_is_save_card_value = $this->get_order_meta( $order, VISA_ACCEPTANCE_SAVED_CARD_BLOCKS . $order_id, $is_save_card_value );
+		if ( ! $is_save_card_value && ! empty( $order_is_save_card_value ) ) {
+			$is_save_card_value = $order_is_save_card_value;
 		}
-		$response_data = $enrollment->do_enrollment( $order, $token, $saved_token, $token_check_box_value, $reference_id, $sca_case );
-
+		$response_data = $enrollment->do_enrollment( $order, $token, $saved_token, $is_save_card_value, $reference_id, $sca_case, $flex_cvv_token );
 		return $response_data;
 	}
 
-		/**
-		 * Initiates payer auth validation process.
-		 *
-		 * @param int               $order_id order id.
-		 * @param string            $token jwt token .
-		 * @param \WC_Payment_Token $saved_token saved token.
-		 * @param string            $token_check_box_value indicates whether save token checkbox is checked.
-		 * @param string            $auth_id auth id.
-		 * @param string            $pareq Payer Auth Request Signature.
-		 * @param string            $sca_case Verify the SCA case.
-		 *
-		 * @return array
-		 */
-	public function payer_auth_validation( $order_id, $token, $saved_token, $token_check_box_value, $auth_id, $pareq, $sca_case ) {
+	/**
+	 * Initiates payer auth validation process.
+	 *
+	 * @param int               $order_id order id.
+	 * @param string            $token jwt token .
+	 * @param \WC_Payment_Token $saved_token saved token.
+	 * @param string            $is_save_card_value indicates whether save token checkbox is checked.
+	 * @param string            $auth_id auth id.
+	 * @param string            $pareq Payer Auth Request Signature.
+	 * @param string            $sca_case Verify the SCA case.
+	 * @param string            $flex_cvv_token JWT token from Flex microform for CVV.
+	 *
+	 * @return array
+	 */
+	public function payer_auth_validation( $order_id, $token, $saved_token, $is_save_card_value, $auth_id, $pareq, $sca_case, $flex_cvv_token = null ) {
 
 		$validation = new Visa_Acceptance_Validation( $this );
-
 		$order                       = wc_get_order( $order_id );
-		$order_token_check_box_value = $this->get_order_meta( $order, VISA_ACCEPTANCE_SAVED_CARD_BLOCKS . $order_id );
-		if ( ! $token_check_box_value && ! empty( $order_token_check_box_value ) ) {
-			$token_check_box_value = $order_token_check_box_value;
+		$order_is_save_card_value = $this->get_order_meta( $order, VISA_ACCEPTANCE_SAVED_CARD_BLOCKS . $order_id, $is_save_card_value );
+		if ( ! $is_save_card_value || ! empty( $order_is_save_card_value ) ) {
+			$is_save_card_value = $order_is_save_card_value;
 		}
-		$response_data = $validation->do_validation( $order, $token, $saved_token, $token_check_box_value, $auth_id, $pareq, $sca_case );
-
+		$response_data = $validation->do_validation( $order, $token, $saved_token, $is_save_card_value, $auth_id, $pareq, $sca_case, $flex_cvv_token );
 		return $response_data;
 	}
 
-		/**
-		 * Initiates the Add Payment Method flow.
-		 *
-		 * @return array
-		 */
+	/**
+	 * Initiates the Add Payment Method flow.
+	 *
+	 * @return array
+	 */
 	public function add_payment_method() {
 		return $this->plugin_public->add_payment_method();
 	}
 
-		/**
-		 * Initiates the token delete process.
-		 *
-		 * @param array $core_token_id core token id.
-		 * @param array $core_token core token.
-		 *
-		 * @return array
-		 */
+	/**
+	 * Initiates the token delete process.
+	 *
+	 * @param array $core_token_id core token id.
+	 * @param array $core_token core token.
+	 *
+	 * @return array
+	 */
 	public function init_payment_token_deleted( $core_token_id, $core_token ) {
 		$payment_method = new Visa_Acceptance_Payment_Methods( $this );
 		$response       = $payment_method->delete_token_from_gateway( $core_token_id, $core_token );

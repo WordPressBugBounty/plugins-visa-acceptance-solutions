@@ -25,7 +25,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/../../class-visa-acceptance-request.php';
-require_once __DIR__ . '/../../class-visa-acceptance-api-client.php';
 require_once __DIR__ . '/../../request/payments/class-visa-acceptance-payment-adapter.php';
 require_once __DIR__ . '/../class-visa-acceptance-payment-methods.php';
 
@@ -171,7 +170,7 @@ class Visa_Acceptance_Setup extends Visa_Acceptance_Request {
 		
 			try {
 				$api_response = $payments_api->payerAuthSetup( $payload );
-				$this->gateway->add_logs_service_response( $api_response[0],$api_response[2]['v-c-correlation-id'], true, VISA_ACCEPTANCE_SETUP );
+				$this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, VISA_ACCEPTANCE_SETUP );
 				$return_array = array(
 					'http_code' => $api_response[1],
 					'body'      => $api_response[0],

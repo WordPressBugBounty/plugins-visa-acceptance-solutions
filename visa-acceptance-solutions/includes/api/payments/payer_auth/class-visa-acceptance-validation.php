@@ -25,7 +25,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/../../class-visa-acceptance-request.php';
-require_once __DIR__ . '/../../class-visa-acceptance-api-client.php';
 require_once __DIR__ . '/../class-visa-acceptance-payment-methods.php';
 require_once __DIR__ . '/../../request/payments/class-visa-acceptance-payment-adapter.php';
 require_once __DIR__ . '/../class-visa-acceptance-auth-reversal.php';
@@ -51,22 +50,23 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 	}
 
 	/**
-	 * Check order details for Payer-auth validation request
+	 * Checks order details for Payer-auth Validation request.
 	 *
 	 * @param \WC_Order         $order order object.
 	 * @param string            $card_token card token.
 	 * @param \WC_Payment_Token $saved_token saved token data if using saved card.
-	 * @param string            $token_check_box indicates whether token check box is checked.
+	 * @param string            $is_save_card indicates whether token check box is checked.
 	 * @param string            $auth_id auth id.
 	 * @param string            $pareq Payer Auth Request Signature.
 	 * @param string            $sca_case Flag for verifying SCA case.
+	 * @param string            $flex_cvv_token JWT token from Flex microform for CVV.
 	 *
 	 * @return array
 	 */
-	public function do_validation( $order, $card_token, $saved_token, $token_check_box, $auth_id, $pareq, $sca_case ) {
+	public function do_validation( $order, $card_token, $saved_token, $is_save_card, $auth_id, $pareq, $sca_case, $flex_cvv_token = null ) {
 		$response = array();
 		if ( $this->gateway->get_id() === $order->data['payment_method'] || 'admin' === $order->created_via ) {
-			$response = $this->handleValidationResponse( $order, $card_token, $saved_token, $token_check_box, $auth_id, $pareq, $sca_case );
+			$response = $this->handleValidationResponse( $order, $card_token, $saved_token, $is_save_card, $auth_id, $pareq, $sca_case, $flex_cvv_token );
 		}
 		return $response;
 	}
@@ -77,18 +77,31 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 	 * @param \WC_Order         $order order object.
 	 * @param string            $jwt jwt token.
 	 * @param \WC_Payment_Token $saved_token token.
-	 * @param string            $token_check_box indicates whether token check box is checked.
+	 * @param string            $is_save_card indicates whether token check box is checked.
 	 * @param string            $validation_tid validation TID.
 	 * @param string            $pareq Payer Auth Request Signature.
 	 * @param string            $sca_case Flag for verifying SCA case.
+	 * @param string            $flex_cvv_token JWT token from Flex microform for CVV.
 	 *
 	 * @return array
 	 */
-	private function handleValidationResponse( $order, $jwt, $saved_token, $token_check_box, $validation_tid, $pareq, $sca_case ) {
+	private function handleValidationResponse( $order, $jwt, $saved_token, $is_save_card, $validation_tid, $pareq, $sca_case, $flex_cvv_token = null ) {
 		$response_array = null;
 		$settings       = $this->gateway->get_config_settings();
+		// Check if this is a CUP or JAYWAN card on a zero-amount order.
+		$original_order_total = $order->get_total();
+		$is_zero_amount_order = ( VISA_ACCEPTANCE_ZERO_AMOUNT === $original_order_total );
+		$unsupported_zero_amount_card = false;
+		if ( $is_zero_amount_order ) {
+			$payment_method = new Visa_Acceptance_Payment_Methods( $this->gateway );
+			if ( ! empty( $saved_token ) ) {
+				$unsupported_zero_amount_card = $payment_method->unsupported_zero_amount_saved_card( $saved_token );
+			} else {
+				$unsupported_zero_amount_card = $payment_method->unsupported_zero_amount_card( $jwt );
+			}
+		}
 		// Getting the response from api call.
-		$validation_response                        = $this->getPayerAuthValidationResponse( $order, $jwt, $saved_token, $token_check_box, $validation_tid, $pareq, $sca_case );
+		$validation_response                        = $this->getPayerAuthValidationResponse( $order, $jwt, $saved_token, $is_save_card, $validation_tid, $pareq, $sca_case, $flex_cvv_token );
 		$auth_response                              = new Visa_Acceptance_Authorization_Response( $this->gateway );
 		$subscriptions      						= new Visa_Acceptance_Payment_Gateway_Subscriptions();
 		$request                                    = new Visa_Acceptance_Payment_Adapter( $this->gateway );
@@ -99,7 +112,7 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 		$return_response[ VISA_ACCEPTANCE_SUCCESS ] = null;
 		$return_response[ VISA_ACCEPTANCE_STRING_ERROR ] = null;
 
-		if ( VISA_ACCEPTANCE_YES === $settings['enable_saved_sca'] && VISA_ACCEPTANCE_YES === $token_check_box ) {
+		if ( VISA_ACCEPTANCE_YES === $settings['enable_saved_sca'] && VISA_ACCEPTANCE_YES === $is_save_card ) {
 			if ( VISA_ACCEPTANCE_STRING_CUSTOMER_AUTHENTICATION_REQUIRED === $payment_response_array['reason'] ) {
 				$this->mark_order_failed( $payment_response_array['reason'] );
 				$this->update_failed_order( $order, $payment_response_array );
@@ -118,7 +131,7 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 			$this->delete_order_meta( $order, VISA_ACCEPTANCE_SAVED_CARD_BLOCKS . $order->get_id() );
 			if ( ( $auth_response->is_transaction_status_approved( $payment_response_array['status'] ) ) ) {
 				if ( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $payment_response_array['status'] ) {
-					if ( VISA_ACCEPTANCE_YES === $token_check_box ) {
+					if ( VISA_ACCEPTANCE_YES === $is_save_card ) {
 						$response = $this->save_payment_method( $validation_response );
 					}
 					if ( $this->gateway->is_subscriptions_activated && ( wcs_order_contains_subscription( $order ) || wcs_order_contains_renewal( $order ) ) && ( $response['status'] && isset( $response['token'] ) || ! empty( $saved_token ) ) ) {
@@ -137,7 +150,23 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 
 					} else {
 						$this->add_transaction_data( $order, $payment_response_array );
-						$this->update_order_notes( VISA_ACCEPTANCE_AUTHORIZE_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_ON_HOLD );
+						if ( VISA_ACCEPTANCE_ZERO_AMOUNT === $order->get_total()) {
+							$this->update_order_notes( VISA_ACCEPTANCE_AUTHORIZE_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING );
+						}
+						else {
+							$this->update_order_notes( VISA_ACCEPTANCE_AUTHORIZE_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_ON_HOLD );
+						}
+					}
+					// Execute automatic authorization reversal for CUP/JAYWAN cards on free trial orders.
+					if ( $unsupported_zero_amount_card ) {
+						if ( ! isset( $payment_method ) ) {
+						$payment_method = new Visa_Acceptance_Payment_Methods( $this->gateway );
+						}
+						// Get client reference code from payment response.
+						$code = isset( $payment_response_array['client_reference_code'] ) ? $payment_response_array['client_reference_code'] : $order->get_id();
+						// Execute automatic authorization reversal for CUP/JAYWAN verification amount.
+						$payment_method->process_card_auth_reversal( $validation_response, $code, $order );
+					
 					}
 				} else {
 					$this->update_order_notes( VISA_ACCEPTANCE_REVIEW_MESSAGE, $order, $payment_response_array, null );
@@ -192,20 +221,22 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 	 * @param \WC_Order         $order order object.
 	 * @param string            $jwt jwt token.
 	 * @param \WC_Payment_Token $saved_token saved_token.
-	 * @param string            $token_check_box indicates whether the token check box is checked.
+	 * @param string            $is_save_card indicates whether the token check box is checked.
 	 * @param string            $validation_tid validation TID.
 	 * @param string            $pareq Payer Auth Request Signature.
 	 * @param string            $sca_case Flag for verifying SCA case.
+	 * @param string            $flex_cvv_token JWT token from Flex microform for CVV.
 	 *
 	 * @return array
 	 */
-	private function getPayerAuthValidationResponse( $order, $jwt, $saved_token, $token_check_box, $validation_tid, $pareq, $sca_case ) {
+	private function getPayerAuthValidationResponse( $order, $jwt, $saved_token, $is_save_card, $validation_tid, $pareq, $sca_case, $flex_cvv_token = null ) {
 		$settings       = $this->gateway->get_config_settings();
 		$log_header     = ( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $settings['transaction_type'] ) ? VISA_ACCEPTANCE_VALIDATION_CHARGE : VISA_ACCEPTANCE_VALIDATION_AUTHORIZATION;
 		$saved_card_cvv = $this->get_order_meta( $order, VISA_ACCEPTANCE_SAVED_CARD_NORMAL . $order->get_id() );
 		$request      	= new Visa_Acceptance_Payment_Adapter( $this->gateway );
 		$api_client   	= $request->get_api_client();
 		$payments_api 	= new PaymentsApi( $api_client );
+		$is_validation  = true;
 		if ( $saved_token ) {
 			$is_stored_card = false;
 			$payment_method = new Visa_Acceptance_Payment_Methods( $this );
@@ -223,8 +254,35 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 				}
 			}
 		}
-
-		$processing_information_data = $request->get_processing_info( $order, $settings, $token_check_box, 'validate', $is_stored_card );
+		// Check if this is a CUP or JAYWAN card on a zero-amount order for payer auth validation.
+		$original_order_total = $order->get_total();
+		$is_zero_amount_order = ( VISA_ACCEPTANCE_ZERO_AMOUNT === $original_order_total );
+		$unsupported_zero_amount_card = false;
+		$payment_method = new Visa_Acceptance_Payment_Methods( $this->gateway );
+	
+		// For subscription products with TOKEN_CREATE, always check if it's CUP/JAYWAN (regardless of amount).
+		// For non-subscription, only check on zero-amount orders.
+		if ( VISA_ACCEPTANCE_YES === $is_save_card || $is_zero_amount_order ) {
+			if ( ! empty( $saved_token ) ) {
+				$unsupported_zero_amount_card = $payment_method->unsupported_zero_amount_saved_card( $saved_token );
+			} else {
+				$unsupported_zero_amount_card = $payment_method->unsupported_zero_amount_card( $jwt );
+			}
+		}
+		// Temporarily override order total to $1.00 for CUP/JAYWAN on zero-amount orders with payer auth.
+		if ( $unsupported_zero_amount_card && $is_zero_amount_order ) {
+		add_filter( 'woocommerce_order_get_total', function( $total, $filter_order ) use ( $order ) {
+			if ( $filter_order->get_id() === $order->get_id() ) {
+			return VISA_ACCEPTANCE_ONE_DOLLAR_AMOUNT;
+			}
+			return $total;
+		}, 10, 2 );
+		}
+		$processing_information_data = $request->get_processing_info( $order, $settings, $is_save_card, 'validate', $is_stored_card );
+		// For CUP/JAYWAN cards on free trial, force authorization-only (no capture) for reversal.
+		if ( $unsupported_zero_amount_card && $is_zero_amount_order ) {
+			$processing_information_data['capture'] = false;
+		}
 		$processing_information      = new \CyberSource\Model\Ptsv2paymentsProcessingInformation( $processing_information_data );
 
 		if ( ! empty( $pareq ) && VISA_ACCEPTANCE_YES === $sca_case ) {
@@ -247,18 +305,30 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 			'clientReferenceInformation'        => $request->client_reference_information( $order ),
 			'processingInformation'             => $processing_information,
 			'consumerAuthenticationInformation' => $consumer_authentication_information,
-			'orderInformation'                  => $request->get_payment_order_information( $order ),
+			'orderInformation'                  => $request->get_payment_order_information( $order, $is_validation ),
 			'deviceInformation'                 => $request->get_device_information(),
 			'buyerInformation'                  => $request->get_payment_buyer_information( $order ),
 		);
+		// Remove the temporary filter after building the request.
+		if ( $unsupported_zero_amount_card ) {
+			remove_all_filters( 'woocommerce_order_get_total' );
+		}
 		if ( $is_stored_card && empty( $jwt ) ) {
-			$validation_request['paymentInformation'] = $request->get_cybersource_payment_information( $token_data, $saved_card_cvv );
-
+			// For saved cards with CVV, use Flex token if available, otherwise fall back to encrypted CVV.
+			if ( ! empty( $flex_cvv_token ) ) {
+				// Use Flex token for CVV verification in validation.
+				$validation_request['paymentInformation'] = $request->get_cybersource_payment_information( $token_data, null, $flex_cvv_token );
+				// Add token information for the Flex CVV token.
+				$validation_request['tokenInformation'] = $request->get_cybersource_token_information( $flex_cvv_token );
+			} else {
+				// Fall back to regular encrypted CVV method.
+				$validation_request['paymentInformation'] = $request->get_cybersource_payment_information( $token_data, $saved_card_cvv );
+			}
 			$payload = new CreatePaymentRequest( $validation_request );
 		} else {
 			$validation_request['tokenInformation'] = $request->get_cybersource_token_information( $jwt );
 			$payload                                = new CreatePaymentRequest( $validation_request );
-			if ( VISA_ACCEPTANCE_YES === $token_check_box ) {
+			if ( VISA_ACCEPTANCE_YES === $is_save_card ) {
 				$payload = $request->get_action_token_type( $payload );
 			}
 		}
@@ -267,7 +337,7 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 			$this->gateway->add_logs_data( $payload, true, $log_header );
 			try {
 				$api_response = $payments_api->createPayment( $payload );
-				$this->gateway->add_logs_service_response( $api_response[0],$api_response[2]['v-c-correlation-id'], true, $log_header );
+				$this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
 				$return_array = array(
 				'http_code' => $api_response[1],
 				'body'      => $api_response[0],

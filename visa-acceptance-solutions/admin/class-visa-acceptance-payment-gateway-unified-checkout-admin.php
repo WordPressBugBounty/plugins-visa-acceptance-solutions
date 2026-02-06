@@ -172,6 +172,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 				if ($(this).text().trim()) {
 					var logo = $("<img>", {
 					src: "<?php echo esc_url( plugins_url( '../public/img/visa-logo.png', __FILE__ ) ); ?>",
+					alt: "Visa Logo",
 					css: {
 						height: "25px",
 						marginLeft: "8px",
@@ -504,6 +505,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
                     'enable_apay' => __( 'Apple Pay', 'visa-acceptance-solutions' ),
                     'enable_gpay' => __( 'Google Pay', 'visa-acceptance-solutions' ),
                     'enable_vco'  => __( 'Click to Pay', 'visa-acceptance-solutions' ),
+                    'enable_paze'  => __( 'Paze', 'visa-acceptance-solutions' ),
                 ),
             ),
  
@@ -538,7 +540,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 				'type'        => 'checkbox',
 				'default'     => VISA_ACCEPTANCE_NO,
 				'class'       => 'shared-settings-field',
-				'label'       => __( 'Enable Cybersource Fraud Screening.', 'visa-acceptance-solutions' ),
+				'label'       => __( 'Enable Fraud Screening', 'visa-acceptance-solutions' ),
 			),
 		);
 
@@ -565,8 +567,11 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 		array_merge(
 			$default_supported_cards,
 			array(
-				'DINERSCLUB' => __( 'Diners', 'visa-acceptance-solutions' ),
-				'JCB'        => __( 'JCB', 'visa-acceptance-solutions' ),
+				'DINERSCLUB' 	=> __( 'Diners', 'visa-acceptance-solutions' ),
+				'JCB'        	=> __( 'JCB', 'visa-acceptance-solutions' ),
+				'CUP'        	=>__( 'China UnionPay', 'visa-acceptance-solutions' ),
+                'MAESTRO'    	=>__( 'Maestro', 'visa-acceptance-solutions'),
+				'JAYWAN'        =>__( 'Jaywan', 'visa-acceptance-solutions'),
 			)
 		);
 	}

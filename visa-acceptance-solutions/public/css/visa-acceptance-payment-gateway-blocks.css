@@ -15,6 +15,11 @@
 	display: none;
 }
 
+/* .wc-block-components-express-payment__content{
+	width:40%; 
+	margin:15px 0;
+} */
+
 #number-container-1 iframe, #securityCode-container iframe {
 	height: 100%;
 }
@@ -161,6 +166,12 @@ apple-pay-button {
 .saved-card-container {
     display: flex;
 }
+
+.saved-card-container .saved-card-flex-container .flex-cvv-container .flex-microform-field iframe {
+	margin: -3rem;
+	left: 48px;
+}
+
 .saved-card-cvv-field {
     box-sizing: border-box;
     flex: 1 0 calc(50% - 12px);

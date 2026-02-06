@@ -17,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Include all the necessary dependencies.
  */
 require_once __DIR__ . '/../class-visa-acceptance-request.php';
-require_once __DIR__ . '/../class-visa-acceptance-api-client.php';
 require_once __DIR__ . '/../payments/class-visa-acceptance-payment-methods.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-authorization-request.php';
 require_once __DIR__ . '/../response/payments/class-visa-acceptance-authorization-response.php';
@@ -56,13 +55,14 @@ class Visa_Acceptance_Authorization_Saved_Card extends Visa_Acceptance_Request {
 	 * @param \WC_Payment_Token $token token.
 	 * @param string            $saved_card_cvv saved card cvv.
 	 * @param boolean           $merchant_initiated merchant initiated transaction.
+	 * @param string            $flex_cvv_token JWT token from Flex microform.
 	 *
 	 * @return array|null
 	 */
-	public function do_transaction( $order, $token, $saved_card_cvv, $merchant_initiated = false ) {
+	public function do_transaction( $order, $token, $saved_card_cvv, $merchant_initiated = false, $flex_cvv_token = null ) {
 		try {
 			if ( $token->get_meta( 'environment' ) === $this->gateway->get_environment() ) {
-				return $this->do_saved_card_transaction( $order, $token, $saved_card_cvv, $merchant_initiated );
+				return $this->do_saved_card_transaction( $order, $token, $saved_card_cvv, $merchant_initiated, $flex_cvv_token );
 			} else {
 				return; // phpcs:ignore WordPress.Security.NonceVerification
 			}
@@ -78,28 +78,35 @@ class Visa_Acceptance_Authorization_Saved_Card extends Visa_Acceptance_Request {
 	 * @param \WC_Payment_Token $token token object.
 	 * @param string            $saved_card_cvv saved card cvv.
 	 * @param boolean           $merchant_initiated merchant initiated transaction.
+	 * @param string            $flex_cvv_token JWT token from Flex microform.
 	 *
 	 * @return array
 	 */
-	public function do_saved_card_transaction( $order, $token, $saved_card_cvv, $merchant_initiated ) {
+	public function do_saved_card_transaction( $order, $token, $saved_card_cvv, $merchant_initiated, $flex_cvv_token = null ) {
 		$settings                                        = $this->gateway->get_config_settings();
-		$payment_method                                  = new Visa_Acceptance_Payment_Methods( $this );
+		$payment_method                                  = new Visa_Acceptance_Payment_Methods( $this->gateway );
 		$auth_response          						 = new Visa_Acceptance_Authorization_Response( $this->gateway );
 		$request                						 = new Visa_Acceptance_Payment_Adapter( $this->gateway );
 		$subscriptions 									 = new Visa_Acceptance_Payment_Gateway_Subscriptions();
 		$return_response[ VISA_ACCEPTANCE_SUCCESS ]      = null;
 		$return_response[ VISA_ACCEPTANCE_STRING_ERROR ] = null;
+				
+		// Check if this is a CUP or JAYWAN stored card for free trial.
+		$is_zero_amount_order = ( VISA_ACCEPTANCE_ZERO_AMOUNT === $order->get_total() );
+		$unsupported_zero_amount_card = $is_zero_amount_order && $token && $payment_method->unsupported_zero_amount_saved_card( $token );
+		
 		try {
 			if ( $token ) {
 				$data = $payment_method->build_token_data( $token );
 				if ( $data ) {
-					$payment_response       = $this->get_payment_response_saved_card( $order, $data, $saved_card_cvv, $merchant_initiated );
+					$payment_response       = $this->get_payment_response_saved_card( $order, $data, $saved_card_cvv, $merchant_initiated, $flex_cvv_token, $token );
 					if ( ! empty( $payment_response ) && is_array( $payment_response ) ) {
 						$http_code              = $payment_response['http_code'];
 						$payment_body 			= $payment_response['body'];
-						if(VISA_ACCEPTANCE_FOUR_ZERO_ONE === $http_code) {
-							$payment_body = wp_json_encode($payment_response['body']);
-						}
+						// Ensure body is JSON string for get_payment_response_array.
+                        if ( VISA_ACCEPTANCE_FOUR_ZERO_ONE === $http_code || is_array( $payment_body ) ) {
+                            $payment_body = wp_json_encode( $payment_response['body'] );
+                        }
 						$payment_response_array = $this->get_payment_response_array( $http_code, $payment_body, VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED );
 						$status                 = $payment_response_array['status'];
 						if ( $auth_response->is_transaction_approved( $payment_response, $payment_response_array['status'] ) ) {
@@ -120,10 +127,29 @@ class Visa_Acceptance_Authorization_Saved_Card extends Visa_Acceptance_Request {
 										$this->update_order_notes( VISA_ACCEPTANCE_AUTHORIZE_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_ON_HOLD );
 									}
 								} else {
+									// AUTHORIZED_PENDING_REVIEW - DM review.
+									$is_charge_transaction = VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $settings['transaction_type'] || $request->check_virtual_order_enabled( $settings, $order );
+									
+									// Store whether this was a charge or auth transaction for later status update.
+									$this->update_order_meta( $order, '_dm_review_is_charge', $is_charge_transaction ? VISA_ACCEPTANCE_YES : VISA_ACCEPTANCE_NO );
 									$this->update_order_notes( VISA_ACCEPTANCE_REVIEW_MESSAGE, $order, $payment_response_array, null );
 									$this->add_review_transaction_data( $order, $payment_response_array );
 									$this->update_order_notes( VISA_ACCEPTANCE_REVIEW_TRANSACTION, $order, $payment_response_array, null );
 
+								}
+								// Execute automatic authorization reversal for CUP/JAYWAN stored cards on free trial orders.
+								if ( $unsupported_zero_amount_card && VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $status ) {
+
+									// Get client reference code from response.
+									if ( is_object( $payment_response['body'] ) && method_exists( $payment_response['body'], 'getClientReferenceInformation' ) ) {
+										$client_reference_info = $payment_response['body']->getClientReferenceInformation();
+										$code = $client_reference_info ? $client_reference_info->getCode() : $order->get_id();
+									} else {
+										$code = isset( $payment_response_array['client_reference_code'] ) ? $payment_response_array['client_reference_code'] : $order->get_id();
+									}
+									
+									// Process the authorization reversal.
+								$payment_method->process_card_auth_reversal( $payment_response, $code, $order );
 								}
 								$return_response[ VISA_ACCEPTANCE_SUCCESS ] = true;
 							} else {
@@ -161,34 +187,68 @@ class Visa_Acceptance_Authorization_Saved_Card extends Visa_Acceptance_Request {
 	 * @param array     $token_data saved card token data.
 	 * @param string    $saved_card_cvv saved card cvv.
 	 * @param boolean   $merchant_initiated merchant initiated transaction.
+	 * @param string    $flex_cvv_token JWT token from Flex microform.
+     * @param \WC_Payment_Token $token payment token object.
 	 */
-	public function get_payment_response_saved_card( $order, $token_data, $saved_card_cvv, $merchant_initiated ) {
+	public function get_payment_response_saved_card( $order, $token_data, $saved_card_cvv, $merchant_initiated, $flex_cvv_token = null, $token = null ) {
 		$settings     = $this->gateway->get_config_settings();
 		$log_header   = ( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $settings['transaction_type'] ) ? ucfirst( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE ) : VISA_ACCEPTANCE_AUTHORIZATION;
 		$request      = new Visa_Acceptance_Payment_Adapter( $this->gateway );
 		$api_client   = $request->get_api_client();
 		$payments_api = new PaymentsApi( $api_client );
 
+		// Check if this is a CUP or JAYWAN stored card on a zero-amount order.
+		$original_order_total = $order->get_total();
+		$is_zero_amount_order = ( VISA_ACCEPTANCE_ZERO_AMOUNT === $original_order_total );
+		$payment_method = new Visa_Acceptance_Payment_Methods( $this->gateway );
+		$unsupported_zero_amount_card = $is_zero_amount_order && $token && $payment_method->unsupported_zero_amount_saved_card( $token );
+		
+		if ( $unsupported_zero_amount_card ) {
+			// Temporarily override order total to $1.00 for CUP/JAYWAN tokenization.
+			add_filter( 'woocommerce_order_get_total', function( $total, $filter_order ) use ( $order ) {
+				if ( $filter_order->get_id() === $order->get_id() ) {
+					return VISA_ACCEPTANCE_ONE_DOLLAR_AMOUNT;
+				}
+				return $total;
+			}, 10, 2 );
+		}
+
 		// Build the payload using CyberSource SDK models.
 		$processing_information = $request->get_processing_info( $order, $settings, null, null, true, $merchant_initiated );
-
+		
+		// For CUP/JAYWAN cards on free trial, force authorization-only (no capture) so we can reverse it.
+		if ( $unsupported_zero_amount_card ) {
+			$processing_information['capture'] = false;
+		}
+		
 		$processing_information = new \CyberSource\Model\Ptsv2paymentsProcessingInformation( $processing_information );
 
-		$payload = new \CyberSource\Model\CreatePaymentRequest(
-			array(
-				'clientReferenceInformation' => $request->client_reference_information( $order ),
-				'processingInformation'      => $processing_information,
-				'paymentInformation'         => $request->get_cybersource_payment_information( $token_data, $saved_card_cvv ),
-				'orderInformation'           => $request->get_payment_order_information( $order ),
-				'deviceInformation'          => $request->get_device_information(),
-				'buyerInformation'           => $request->get_payment_buyer_information( $order ),
-			)
+		// Prepare payload array.
+		$payload_data = array(
+			'clientReferenceInformation' => $request->client_reference_information( $order ),
+			'processingInformation'      => $processing_information,
+			'paymentInformation'         => $request->get_cybersource_payment_information( $token_data, $saved_card_cvv, $flex_cvv_token ),
+			'orderInformation'           => $request->get_payment_order_information( $order ),
+			'deviceInformation'          => $request->get_device_information(),
+			'buyerInformation'           => $request->get_payment_buyer_information( $order ),
 		);
+				
+		// Remove the temporary filter after building the request.
+		if ( $unsupported_zero_amount_card ) {
+			remove_all_filters( 'woocommerce_order_get_total' );
+		}
+
+		// Add token information if JWT token is available - use the payment adapter method.
+		if ( ! empty( $flex_cvv_token ) ) {
+			$payload_data['tokenInformation'] = $request->get_cybersource_token_information( $flex_cvv_token );
+			
+		}
+		$payload = new \CyberSource\Model\CreatePaymentRequest( $payload_data );
 		if ( ! empty( $payload ) ) {
 			$this->gateway->add_logs_data( $payload, true, $log_header );
 			try {
 				$api_response = $payments_api->createPayment( $payload );
-				$this->gateway->add_logs_service_response( $api_response[0],$api_response[2]['v-c-correlation-id'], true, $log_header );
+				$this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
 				$return_array = array(
 				'http_code' => $api_response[1],
 				'body'      => $api_response[0],

@@ -54,6 +54,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 		add_filter( 'woocommerce_subscriptions_process_payment_for_change_method_via_pay_shortcode', array( $this, 'remove_order_meta_from_change_payment' ), VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY, VISA_ACCEPTANCE_VAL_TWO );
 		add_action( 'woocommerce_update_options_checkout_' . $this->get_id(), array( $this, 'visa_acceptance_solutions_subscription_notice' ) );
 		add_action( 'woocommerce_subscription_validate_payment_meta_' . $this->get_id(), array( $this, 'admin_validate_payment_meta' ), 9 );
+		add_filter( 'woocommerce_order_needs_payment', array( $this, 'dm_review_early_renewal_needs_payment' ), 10, 2 );
 	}
 
 	/**
@@ -66,7 +67,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 */
 	public function add_subscription_token_meta_for_migration( $subscription, $key, $value, $unique = false ) {
 		if ( $subscription instanceof \WC_Subscription ) {
-			if ( handle_hpos_compatibility() ) {
+			if ( visa_acceptance_handle_hpos_compatibility() ) {
 				$subscription->add_meta_data( VISA_ACCEPTANCE_WC_UC_ID . $key, $value, $unique );
 				$subscription->save_meta_data();
 			} else {
@@ -95,7 +96,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 			global $wpdb;
 			$payment_method = 'cybersource_credit_card';
 			$type           = 'shop_subscription';
-			if ( handle_hpos_compatibility() ) {
+			if ( visa_acceptance_handle_hpos_compatibility() ) {
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$sv_subscriptions = $wpdb->get_results(
 					$wpdb->prepare(
@@ -158,17 +159,16 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 */
 	public function subscriptions_maybe_edit_renewal_support_status( $html, $gateway ) {
 		if ( ( $gateway->id === $this->id ) && ( VISA_ACCEPTANCE_YES === $this->enabled && ! ( VISA_ACCEPTANCE_YES === $this->get_option( 'tokenization' ) ) ) ) {
-				$tool_tip = esc_attr__( 'You must enable tokenization for this gateway in order to support automatic renewal payments with the WooCommerce Subscriptions extension.', 'visa-acceptance-solutions' );
-				$status   = esc_html__( 'Inactive', 'visa-acceptance-solutions' );
+			$tool_tip = esc_attr__( 'You must enable tokenization for this gateway in order to support automatic renewal payments with the WooCommerce Subscriptions extension.', 'visa-acceptance-solutions' );
+			$status   = esc_html__( 'Inactive', 'visa-acceptance-solutions' );
 
-				$html = sprintf(
-					'<a href="%1$s"><span class="visa-acceptance-solutions-wc-payment-gateway-renewal-status-inactive tips" data-tip="%2$s">%3$s</span></a>',
-					esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $this->id ) ),
-					$tool_tip,
-					$status
-				);
+			$html = sprintf(
+				'<a href="%1$s"><span class="visa-acceptance-solutions-wc-payment-gateway-renewal-status-inactive tips" data-tip="%2$s">%3$s</span></a>',
+				esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $this->id ) ),
+				$tool_tip,
+				$status
+			);
 		}
-
 		return $html;
 	}
 
@@ -181,40 +181,112 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 * @return array $result
 	 */
 	public function scheduled_subscription_payment( $amount_to_charge, $order ) {
-		$result = array( 'success' => false );
-		if ( $order->get_payment_method( 'edit' ) === $this->get_id() ) {
-			try {
-				$token           = null;
-				$token           = $this->get_order_meta( $order, 'subscription_token' );
-				$current_user_id = $order->get_user_id();
+        $result = array( 'success' => false );
+        if ( $order->get_payment_method( 'edit' ) === $this->get_id() ) {
+            try {
+                $token           = $this->get_order_meta( $order, 'subscription_token' );
+                $current_user_id = $order->get_user_id();
+                $is_early_renewal = false;
+                $accepted_via_modal = false;
+ 
+                if ( ! empty( $token ) ) {
+                    $authorization_saved_card = new Visa_Acceptance_Authorization_Saved_Card( $this );
+                    $token                    = $this->get_wc_token( $token, $current_user_id );
+                }
+ 
+                if ( ! empty($order)) {
+                    if ( method_exists( $order, 'get_meta' ) ) {
+                        $is_early_renewal = (bool) $order->get_meta( '_subscription_renewal_early' );
+                    }
+                }
+ 
+                if ( ! $accepted_via_modal ) {
+                    $accepted_via_modal = ( VISA_ACCEPTANCE_YES === get_option( 'woocommerce_subscriptions_enable_early_renewal_via_modal', VISA_ACCEPTANCE_NO ) ) ? true : false ;
+                }
+ 
+                if ( ! empty( $token ) && $token instanceof \WC_Payment_Token ) {
+                    $result = $authorization_saved_card->do_transaction( $order, $token, null, wcs_order_contains_early_renewal( $order ) ? false : true );
+                } else {
+                    $subscriptions = wcs_get_subscriptions_for_order(
+                        $order,
+                        array(
+                            'order_type'  => array( 'any' ),
+                            'customer_id' => $current_user_id,
+                        )
+                    );
+                    $this->add_logs_data( 'Payment token not found for autorenewal transaction for order ' . $order->get_id() . ' of subscription ' . wp_json_encode( $subscriptions ), true, 'Auto renewal subscription order payment' );
+                }
+ 
+                if ( $result[ VISA_ACCEPTANCE_SUCCESS ] ) {
+                    // Refresh order to get latest status after transaction.
+                    $order = wc_get_order( $order->get_id() );
+                    
+                    // Check if order is in Decision Manager review (pending/on-hold status).
+                    $is_dm_review = $order->has_status( array( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_ON_HOLD, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PENDING ) );
+                    
+                    // For early renewal orders in DM review, add a flag.
+                    if ( $is_dm_review && $is_early_renewal && $accepted_via_modal ) {
+                        $order->update_meta_data( '_visa_dm_review_early_renewal', 'yes' );
+                        $order->save();
+                    
+                        // Add success message for DM review orders.
+                        if ( function_exists( 'wc_add_notice' ) ) {
+                        wc_add_notice( __( 'Your early renewal order was successful.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_SUCCESS );
+                        }
+                    }
+                    
+                    // Only update subscription payment data if NOT in DM review.
+                    // DM review orders will update subscription when approved via reporting cron.
+                    if ( ! $is_dm_review ) {
+                        $this->add_payment_data_to_subscription( $order );
+                    }
+                } else {
+                    $is_dm_reject = $order->has_status( array( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_CANCELLED ) );
+ 
+                    // For early renewal orders in DM review, add a flag.
+                    if ( $is_dm_reject && $is_early_renewal && $accepted_via_modal ) {
+                        $order->update_meta_data( '_visa_dm_reject_early_renewal', 'no' );
+                        $order->save();
+                    
+                        // Add success message for DM review orders.
+                        if ( function_exists( 'wc_add_notice' ) ) {
+                        wc_add_notice( __( 'Unable to complete your order. Please check your details and try again.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_STRING_ERROR );
+                        }
+                    }
+                }
+                return $result;
+            } catch ( Exception $e ) {
+                $this->add_logs_data( __CLASS__ . __FUNCTION__ . VISA_ACCEPTANCE_SPACE . $e->getMessage() . VISA_ACCEPTANCE_SPACE . 'for the auto renewal order ' . $order->get_id(), true, 'Auto renewal subscription order payment' );
+                WC_Subscriptions_Manager::process_subscription_payment_failure_on_order( $order );
+            }
+        }
+    }
 
-				if ( ! empty( $token ) ) {
-					$authorization_saved_card = new Visa_Acceptance_Authorization_Saved_Card( $this );
-					$token                    = $this->get_wc_token( $token, $current_user_id );
-				}
-
-				if ( ! empty( $token ) && $token instanceof \WC_Payment_Token ) {
-					$result = $authorization_saved_card->do_transaction( $order, $token, null, wcs_order_contains_early_renewal( $order ) ? false : true );
-				} else {
-					$subscriptions = wcs_get_subscriptions_for_order(
-						$order,
-						array(
-							'order_type'  => array( 'any' ),
-							'customer_id' => $current_user_id,
-						)
-					);
-					$this->add_logs_data( 'Payment token not found for autorenewal transaction for order ' . $order->get_id() . ' of subscription ' . wp_json_encode( $subscriptions ), true, 'Auto renewal subscription order payment' );
-				}
-
-				if ( $result[ VISA_ACCEPTANCE_SUCCESS ] ) {
-					$this->add_payment_data_to_subscription( $order );
-				}
-				return $result;
-			} catch ( Exception $e ) {
-				$this->add_logs_data( __CLASS__ . __FUNCTION__ . VISA_ACCEPTANCE_SPACE . $e->getMessage() . VISA_ACCEPTANCE_SPACE . 'for the auto renewal order ' . $order->get_id(), true, 'Auto renewal subscription order payment' );
-				WC_Subscriptions_Manager::process_subscription_payment_failure_on_order( $order );
-			}
-		}
+	/**
+	 * Prevent DM review early renewal orders from being considered as "needs payment"
+	 * This prevents the WooCommerce Subscriptions modal handler from deleting them
+	 *
+	 * @param bool $needs_payment Whether the order needs payment.
+	 * @param WC_Order $order The order object.
+	 * @return bool
+	 */
+	public function dm_review_early_renewal_needs_payment( $needs_payment, $order ) {
+		$result = $needs_payment;
+        // Only apply to our payment gateway.
+        if ( $order->get_payment_method() === $this->id ) {
+            // Check if this is an early renewal order in DM review.
+            $is_early_renewal = $order->get_meta( '_subscription_renewal_early' );
+ 
+            if ( $is_early_renewal ) {
+                $has_dm_flag = VISA_ACCEPTANCE_YES === $order->get_meta( '_visa_dm_review_early_renewal' );
+                $has_dm_flag_reject = VISA_ACCEPTANCE_YES === $order->get_meta( '_visa_dm_reject_early_renewal' );
+ 
+                if ( $has_dm_flag || $has_dm_flag_reject ) {
+                    $result = false; // Tell WooCommerce this order doesn't need payment (even though it's pending).
+                }
+            }
+        }
+        return $result;
 	}
 
 	/**
@@ -300,22 +372,19 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 */
 	public function saved_token_subscriptions_payload( $order, $payload, $merchant_initiated ) {
 		if ( wcs_order_contains_subscription( $order ) || wcs_order_contains_renewal( $order ) ) {
-			if ( wcs_order_contains_renewal( $order ) ) {
-				if ( $merchant_initiated ) {
-					$payload['authorizationOptions']['initiator']['type'] = 'merchant';
-					if ( ! in_array( VISA_ACCEPTANCE_DECISION_SKIP, $payload['actionList'], true ) ) {
-						array_push( $payload['actionList'], VISA_ACCEPTANCE_DECISION_SKIP );
-					}
+			if ( wcs_order_contains_renewal( $order ) && $merchant_initiated ) {
+				$payload['authorizationOptions']['initiator']['type'] = 'merchant';
+				if ( ! in_array( VISA_ACCEPTANCE_DECISION_SKIP, $payload['actionList'], true ) ) {
+					array_push( $payload['actionList'], VISA_ACCEPTANCE_DECISION_SKIP );
 				}
 			}
-			$contain_token = $this->has_subscription_token ( $order );
-			if ( ( ! empty( $this->get_order_meta( $order, 'subscription_token' ) ) || $contain_token ) && wcs_order_contains_renewal( $order ) ){
+			if ( ! empty( $this->get_order_meta( $order, 'subscription_token' ) ) && wcs_order_contains_renewal( $order ) && ! is_checkout() ) {
 				$payload['commerceIndicator'] = VISA_ACCEPTANCE_RECURRING;
-			}
-			else {
+			} else {
 				$payload['recurringOptions']['firstRecurringPayment'] = true;
 			}
 		}
+
 		return $payload;
 	}
 
@@ -344,16 +413,17 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 * @return bool True if subscription token exists, otherwise false.
 	 */
 	private function has_subscription_token ( $order ) {
+		$token = false;
 		if ( empty( $this->get_order_meta( $order, 'subscription_token' ) ) && function_exists( 'wcs_get_subscriptions_for_renewal_order' ) && wcs_order_contains_early_renewal( $order ) ) {
 			$subscriptions = wcs_get_subscriptions_for_renewal_order( $order );
 			foreach ( $subscriptions as $subscription ) {
 				$subscription_token = $this->get_order_meta( $subscription, 'subscription_token' );
 				if ( $subscription_token ) {
-					return true;
+					$token = true;
 				}
 			}
 		}
-		return false;
+		return $token;
 	}
 
 	/**

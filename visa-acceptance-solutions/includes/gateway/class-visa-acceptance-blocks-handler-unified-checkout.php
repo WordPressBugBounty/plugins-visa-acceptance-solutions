@@ -74,9 +74,39 @@ class Visa_Acceptance_Blocks_Handler_Unified_Checkout extends AbstractPaymentMet
 		$force_tokenization  = false;
 		$uc_settings         = get_option( VISA_ACCEPTANCE_WOOCOMMERCE_UNDERSCORE . $this->gateway->get_id() . VISA_ACCEPTANCE_UNDERSCORE_SETTINGS, array() );
 		$token_key 			 = isset( $uc_settings['test_api_key'] ) ? $uc_settings['test_api_key'] : '';
+		$subscription_order = false;
+		
+		// Initialize Flex capture context variables.
+		$flex_capture_context = null;
+		$capture_context_response = null;
 		$payment_gateway_unified_checkout = new Visa_Acceptance_Payment_Gateway_Unified_Checkout();
-		if ( isset( $uc_settings['enabled'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enabled'] && is_checkout() ) {
+		
+		if ( isset( $uc_settings['enabled'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enabled'] && ( is_checkout() || is_admin() )) {
 			$saved_card_token_cvv = ( isset( $uc_settings['enable_token_csc'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enable_token_csc'] ) ? true : false;
+			$cart_total = WC()->cart ? WC()->cart->get_total( 'edit' ) : VISA_ACCEPTANCE_ZERO_AMOUNT;
+			$is_zero_initial_payment = ( VISA_ACCEPTANCE_ZERO_AMOUNT === $cart_total && VISA_ACCEPTANCE_YES === get_option( 'woocommerce_subscriptions_zero_initial_payment_requires_payment', 'no' ) ) ? true : false;
+
+			$user_has_saved_cards = false;
+			if ( is_user_logged_in() ) {
+				$customer_tokens = WC_Payment_Tokens::get_customer_tokens( get_current_user_id(), $this->gateway->id );
+				$user_has_saved_cards = ! empty( $customer_tokens );
+			}
+			
+			// Only generate Flex microform capture context when saved card CVV is enabled.
+			if ( $saved_card_token_cvv && ! $is_zero_initial_payment && is_user_logged_in() && VISA_ACCEPTANCE_YES === $uc_settings['tokenization'] && $user_has_saved_cards) {
+				$flex_request = new Visa_Acceptance_Key_Generation( $this->gateway );
+				$capture_context_response = $flex_request->get_flex_microform_capture_context();
+				
+				// Extract the actual capture context string for Flex microforms.
+				if (isset($capture_context_response['http_code']) && 201 === (int) $capture_context_response['http_code']) {
+					$flex_capture_context = !empty($capture_context_response['body']) ? $capture_context_response['body'] : null;
+				}
+				
+				// Load Flex library only when saved card CVV is enabled.
+				$url = 'test' !== $general_settings['environment'] ? VISA_ACCEPTANCE_FLEX_PROD_LIBRARY : VISA_ACCEPTANCE_FLEX_TEST_LIBRARY;
+				wp_enqueue_script( 'wc-credit-card-flex-microform', $url, array(), VISA_ACCEPTANCE_PLUGIN_VERSION, true );
+			}
+			$tokenization 		  = ( isset( $uc_settings['tokenization'] ) && VISA_ACCEPTANCE_YES === $uc_settings['tokenization'] ) ? true : false;
 			$enable_tokenization  = ( isset( $uc_settings['tokenization'] ) && VISA_ACCEPTANCE_YES === $general_settings['tokenization'] && is_user_logged_in() ) ? true : false;
 			$payer_auth_enabled   = ( isset( $uc_settings['enable_threed_secure'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enable_threed_secure'] ) ? $uc_settings['enable_threed_secure'] : VISA_ACCEPTANCE_STRING_EMPTY;
 			$payment_method       = new Visa_Acceptance_Payment_Methods( $this );
@@ -89,8 +119,9 @@ class Visa_Acceptance_Blocks_Handler_Unified_Checkout extends AbstractPaymentMet
 					$last_four[ $token->get_id() ]  = $data['last4'];
 				}
 			}
-			$subscription_active              = $payment_gateway_unified_checkout->is_wc_subscriptions_activated();
+			$subscription_active = $payment_gateway_unified_checkout->is_wc_subscriptions_activated();
 			if ( $subscription_active ) {
+				$subscription_order = WC_Subscriptions_Cart::cart_contains_subscription() || wcs_cart_contains_renewal() || WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment;
 				$force_tokenization = $this->gateway->is_subscriptions_activated && ( WC_Subscriptions_Cart::cart_contains_subscription() || wcs_cart_contains_renewal() || WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment );
 				if ( $force_tokenization ) {
 					$enable_tokenization = false;
@@ -108,8 +139,12 @@ class Visa_Acceptance_Blocks_Handler_Unified_Checkout extends AbstractPaymentMet
 				'token_type'                      => $token_type,
 				'payer_auth_enabled'              => $payer_auth_enabled,
 				'saved_card_cvv'                  => $saved_card_token_cvv,
+				'flex_capture_context'            => $flex_capture_context,
 				'visa_acceptance_solutions_uc_id' => VISA_ACCEPTANCE_UC_ID,
 				'token_key'                       => $token_key,
+				'capture_context'                 => $capture_context_response,
+				'subscription_order'		  	  => $subscription_order,
+				'tokenization'                    => $tokenization,
 				'encrypt_const'                   => __( 'encrypt', 'visa-acceptance-solutions' ),
 				'form_load_error'                 => __( 'Unable to load the payment form. Please contact customer care for any assistance.', 'visa-acceptance-solutions' ),
 				'cvv_error'                       => __( 'Please enter valid Security Code.', 'visa-acceptance-solutions' ),

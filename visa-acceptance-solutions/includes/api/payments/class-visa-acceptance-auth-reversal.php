@@ -19,7 +19,6 @@ use Automattic\WooCommerce\Caches\OrderCache;
  * Include all the necessary dependencies.
  */
 require_once __DIR__ . '/../class-visa-acceptance-request.php';
-require_once __DIR__ . '/../class-visa-acceptance-api-client.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-authorization-reversal-request.php';
 require_once __DIR__ . '/../response/payments/class-visa-acceptance-authorization-reversal-response.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-payment-adapter.php';
@@ -58,13 +57,14 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 	 */
 	public function process_void( $order, $amount, $reason ) {
 		$auth_rev_response = new Visa_Acceptance_Authorization_Reversal_Response( $this->gateway );
+		$reversal_order_id = VISA_ACCEPTANCE_STRING_EMPTY;
 		if ( is_numeric( $order ) ) {
 			$order = wc_get_order( $order );
 		}
 		try {
 			if ( VISA_ACCEPTANCE_VAL_ZERO != $order->get_total() && $order->get_total() == $amount ) { //phpcs:ignore
 				$transaction_id          = $this->get_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_ID );
-				$reversal_response       = $this->get_reversal_response( $order, $amount, $reason, $transaction_id );
+				$reversal_response       = $this->get_reversal_response( $order, $amount, $reason, $transaction_id ,$reversal_order_id);
 				$http_code               = $reversal_response['http_code'];
 				$reversal_body = $reversal_response['body'];
 				if(VISA_ACCEPTANCE_FOUR_ZERO_ONE === $http_code) {
@@ -133,15 +133,15 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 	 * @param string    $amount auth reversal amount.
 	 * @param string    $reason auth reversal reason.
 	 * @param string    $transaction_id transaction id.
-	 *
+	 * @param string    $reversal_order_id client reference id.
+	 * 
 	 * @return array
 	 */
-	public function get_reversal_response( $order, $amount, $reason, $transaction_id ) {
-		$settings     = $this->gateway->get_config_settings();
+	public function get_reversal_response( $order, $amount, $reason, $transaction_id ,$reversal_order_id =VISA_ACCEPTANCE_STRING_EMPTY) {
 		$request      = new Visa_Acceptance_Payment_Adapter( $this->gateway );
 		$api_client   = $request->get_api_client();
 		$reversal_api = new \CyberSource\Api\ReversalApi( $api_client );
-
+		
 		// Build the payload for the reversal request.
 		$client_reference_information_partner = new \CyberSource\Model\Ptsv2paymentsidreversalsClientReferenceInformationPartner(
 			array(
@@ -150,9 +150,13 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 			)
 		);
 
+		if($order) {
+			$reversal_order_id = $order->get_id();
+		}
+
 		$client_reference_information = new \CyberSource\Model\Ptsv2paymentsidreversalsClientReferenceInformation(
 			array(
-				'code'               => $order->get_id(),
+				'code'               => $reversal_order_id,
 				'partner'            => $client_reference_information_partner,
 				'applicationName'    => VISA_ACCEPTANCE_PLUGIN_APPLICATION_NAME . VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_PLUGIN_API_TYPE,
 				'applicationVersion' => VISA_ACCEPTANCE_PLUGIN_VERSION,
@@ -184,7 +188,7 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 			)
 		);
 
-		if ( VISA_ACCEPTANCE_UC_ID === $order->get_payment_method( VISA_ACCEPTANCE_EDIT ) ) {
+		if ( (!empty($order)) && VISA_ACCEPTANCE_UC_ID === $order->get_payment_method( VISA_ACCEPTANCE_EDIT ) ) {
 			$payment_solution = $this->get_order_meta( $order, 'payment_solution' );
 			$reversal_request = array(
 				'clientReferenceInformation' => $client_reference_information,
@@ -195,21 +199,26 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 			if ( ! empty( $payment_solution ) ) {
 				$reversal_request['processingInformation'] = $processing_information;
 			}
-
-			$reversal_request_array = new \CyberSource\Model\AuthReversalRequest( $reversal_request );
-			if ( ! empty( $reversal_request_array ) ) {
-				$this->gateway->add_logs_data( $reversal_request_array, true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
-				try {
-					$api_response = $reversal_api->authReversal( $transaction_id, $reversal_request_array );
-					$this->gateway->add_logs_service_response( $api_response[0],$api_response[2]['v-c-correlation-id'], true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
-					$return_array = array(
-						'http_code' => $api_response[1],
-						'body'      => $api_response[0],
-					);
-					return $return_array;
-				} catch ( \CyberSource\ApiException $e ) {
-					$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
-				}
+		}
+		else {
+			$reversal_request = array(
+			'clientReferenceInformation' => $client_reference_information,
+			'reversalInformation'        => $reversal_information,
+			);
+		}
+		$reversal_request_array = new \CyberSource\Model\AuthReversalRequest( $reversal_request );
+		if ( ! empty( $reversal_request_array ) ) {
+			$this->gateway->add_logs_data( $reversal_request_array, true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
+			try {
+				$api_response = $reversal_api->authReversal( $transaction_id, $reversal_request_array );
+				$this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
+				$return_array = array(
+					'http_code' => $api_response[1],
+					'body'      => $api_response[0],
+				);
+				return $return_array;
+			} catch ( \CyberSource\ApiException $e ) {
+				$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
 			}
 		}
 	}

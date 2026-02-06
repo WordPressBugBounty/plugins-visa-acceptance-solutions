@@ -113,6 +113,13 @@ define( 'VISA_ACCEPTANCE_REFUND_MESSAGE', __( 'Refunded because of reason - %1$s
 trait Visa_Acceptance_Payment_Gateway_Includes_Trait {
 
 	/**
+	 * The gateway object of this plugin.
+	 *
+	 * @var      object    $plugin_public    The current payment gateways public object.
+	 */
+	public $is_subscriptions_activated = false;
+
+	/**
 	 * Gets the token based on token id.
 	 *
 	 * @param string $token_id token id.
@@ -214,7 +221,7 @@ trait Visa_Acceptance_Payment_Gateway_Includes_Trait {
 		}
 		if ( $order instanceof \WC_Order ) {
 			$prefix = VISA_ACCEPTANCE_SV_GATEWAY_ID === $order->get_payment_method() ? '_wc_' . VISA_ACCEPTANCE_SV_GATEWAY_ID . '_' : $this->get_order_meta_prefix_includes();
-			if ( handle_hpos_compatibility() ) {
+			if ( visa_acceptance_handle_hpos_compatibility() ) {
 				$order->update_meta_data( $prefix . $key, $value );
 				$order->save_meta_data();
 			} else {
@@ -242,17 +249,25 @@ trait Visa_Acceptance_Payment_Gateway_Includes_Trait {
 		$services_supported = array(
 			'products',
 			'tokenization',
-			'subscriptions',
-			'subscription_cancellation',
-			'subscription_suspension',
-			'subscription_reactivation',
-			'subscription_amount_changes',
-			'subscription_date_changes',
-			'subscription_payment_method_change',
-			'subscription_payment_method_change_customer',
-			'subscription_payment_method_change_admin',
-			'multiple_subscriptions',
 		);
+		
+		if ( $this->gateway->is_subscriptions_activated ) {
+			$services_supported = array_merge(
+				$services_supported,
+				array(
+					'subscriptions',
+					'subscription_cancellation',
+					'subscription_suspension',
+					'subscription_reactivation',
+					'subscription_amount_changes',
+					'subscription_date_changes',
+					'subscription_payment_method_change',
+					'subscription_payment_method_change_customer',
+					'subscription_payment_method_change_admin',
+					'multiple_subscriptions',
+				)
+			);
+		}
 		return $services_supported;
 	}
 

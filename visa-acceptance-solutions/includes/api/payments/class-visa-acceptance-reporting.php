@@ -17,8 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Include all the necessary dependencies.
  */
 require_once __DIR__ . '/../class-visa-acceptance-request.php';
-require_once __DIR__ . '/../class-visa-acceptance-api-client.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-payment-adapter.php';
+
+use CyberSource\Api\ConversionDetailsApi;
 
 /**
  * Visa Acceptance Reporting Class
@@ -105,6 +106,7 @@ class Visa_Acceptance_Reporting extends Visa_Acceptance_Request {
 									$this->update_captured_order_status( $order, $conversion_detail, $payment_gateway_id );
 									$order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING, $message );
 								} elseif ( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $payment_acceptance_service || $request->check_virtual_order_enabled( $settings, $order ) ) {
+									$this->update_captured_order_status( $order, $conversion_detail, $payment_gateway_id );
 									$order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING, $message );
 								} elseif ( VISA_ACCEPTANCE_STRING_EMPTY !== $payment_acceptance_service ) {
 									$order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_ON_HOLD, $message );
@@ -133,17 +135,55 @@ class Visa_Acceptance_Reporting extends Visa_Acceptance_Request {
 	 * @return array
 	 */
 	private function getCDReportData( $start_time, $end_time ) {
-		$api = new Visa_Acceptance_Api_Client( $this->gateway );
-		try {
-			$resource = VISA_ACCEPTANCE_REPORTING_RESOURCE . $start_time . '&endTime=' . $end_time;
-			return $api->processor( null, $resource, true, null, $this->gateway->get_config_settings() );
-		} catch ( \Exception $e ) {
-			$this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to retrieves conversion detail report from an API.', true );
-		}
-	}
+        $payment_adapter = new Visa_Acceptance_Payment_Adapter( $this->gateway );
+        $log_header      = 'Conversion Detail Report';
+       
+        try {
+            // Get merchant configuration and API client.
+            $api_client = $payment_adapter->get_api_client(true);
+           
+            // Create ConversionDetailsApi instance.
+            $conversion_api = new ConversionDetailsApi( $api_client );
+           
+            // Format dates as DateTime objects (SDK requires DateTime).
+            $start_datetime = new \DateTime( $start_time );
+            $end_datetime   = new \DateTime( $end_time );
+           
+            // Get organization ID from merchant config.
+            $organization_id = $this->gateway->get_merchant_id();
+            $request_log = array(
+                'start_time'       => $start_datetime,
+                'end_time'         => $end_datetime,
+                'merchant_id'      => $organization_id,
+            );
+            $this->gateway->add_logs_data( wp_json_encode( $request_log ), true, $log_header );
+            $api_response = $conversion_api->getConversionDetail( $start_datetime, $end_datetime, $organization_id );
+ 
+            $response_array = array(
+                'http_code' => $api_response[1],
+                'body'      => $api_response[0]
+            );
+           
+            // Log the response.
+            $this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
+            
+            return $response_array;
+           
+        } catch ( \CyberSource\ApiException $e ) {
+            $error_message = 'SDK API Error: ' . $e->getMessage();
+            if ( $e->getResponseBody() ) {
+                $error_message .= ' | Response: ' . $e->getResponseBody();
+            }
+            $this->gateway->add_logs_data( array( $error_message ), false, 'Unable to retrieve conversion detail report from SDK.', true );
+            return array();
+        } catch ( \Exception $e ) {
+            $this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to retrieve conversion detail report from SDK.', true );
+            return array();
+        }
+    }
 
 	/**
-	 * Retrieves conversion detail report using getCDReportData function
+	 * Retrieves conversion detail report using getCDReportData function.
 	 *
 	 * @param array $rows rows in CDReportData.
 	 *
@@ -209,10 +249,24 @@ class Visa_Acceptance_Reporting extends Visa_Acceptance_Request {
 		// add capture transaction ID.
 		if ( $captured_data ) {
 			$this->update_order_meta_updated( $order, VISA_ACCEPTANCE_CAPTURE_TRANSACTION_ID, $captured_data, $payment_gateway_id );
+		} else {
+			// If no capture transaction ID from settlement, use the authorization transaction ID.
+			$auth_transaction_id = $this->get_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_ID );
+			if ( $auth_transaction_id ) {
+				$this->update_order_meta_updated( $order, VISA_ACCEPTANCE_CAPTURE_TRANSACTION_ID, $auth_transaction_id, $payment_gateway_id );
+			}
 		}
+
+		// Check if this was originally a charge or auth transaction.
+		$is_charge = $order->get_meta( '_dm_review_is_charge' );
+
 		// update capture related data.
 		$this->update_order_meta_updated( $order, VISA_ACCEPTANCE_CAPTURE_TOTAL, $order->get_total(), $payment_gateway_id );
-		$this->update_order_meta_updated( $order, VISA_ACCEPTANCE_CHARGE_CAPTURED, VISA_ACCEPTANCE_YES, $payment_gateway_id );
+
+		// Only mark as captured if it's a charge transaction or not a DM review order.
+		if ( VISA_ACCEPTANCE_YES === $is_charge || empty( $is_charge ) ) {
+			$this->update_order_meta_updated( $order, VISA_ACCEPTANCE_CHARGE_CAPTURED, VISA_ACCEPTANCE_YES, $payment_gateway_id );
+		}
 	}
 
 	/**
@@ -231,7 +285,7 @@ class Visa_Acceptance_Reporting extends Visa_Acceptance_Request {
 				$order = wc_get_order( $order );
 			}
 			if ( $order instanceof \WC_Order ) {
-				if ( handle_hpos_compatibility() ) {
+				if ( visa_acceptance_handle_hpos_compatibility() ) {
 					$order->update_meta_data( $this->get_order_meta_prefix_includes_updated( $payment_gateway_id ) . $key, $value );
 					$order->save_meta_data();
 				} else {

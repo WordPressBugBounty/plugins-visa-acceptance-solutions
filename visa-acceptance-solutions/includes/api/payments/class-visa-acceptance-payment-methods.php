@@ -17,13 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Include all the necessary dependencies.
  */
 require_once __DIR__ . '/../class-visa-acceptance-request.php';
-require_once __DIR__ . '/../class-visa-acceptance-api-client.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-authorization-request.php';
 require_once __DIR__ . '/../response/payments/class-visa-acceptance-authorization-response.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-zero-auth-request.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-payment-adapter.php';
-
-use CyberSource\Api\PaymentsApi;
+require_once __DIR__ . '/class-visa-acceptance-auth-reversal.php';
 
 /**
  * Visa Acceptance Payment Methods Class
@@ -110,7 +108,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 	public function get_delete_response( $token, $token_data ) {
 		// Initialize CyberSource API Client using visa acceptance adapter class.
 		$request                = new Visa_Acceptance_Payment_Adapter( $this->gateway );
-		$api_client             = $request->get_api_client();
+		$api_client             = $request->get_api_client(true);
 		$payment_instrument_api = new \CyberSource\Api\CustomerPaymentInstrumentApi( $api_client );
 
 		try {
@@ -132,6 +130,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 
 	/**
 	 * Create payment tokens through payment gateway API
+	 * Enhanced with automatic authorization reversal for China UnionPay (CUP) cards
 	 *
 	 * @param string $transient_token transient token value.
 	 * @param object $order order details.
@@ -145,14 +144,44 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 			$return_result['status']  = null;
 			$customer_data            = $this->get_order_for_add_payment_method();
 			$customer                 = WC()->customer;
+		
+			// Check if this is a CUP or JAYWAN card for automatic authorization reversal.
+			$unsupported_zero_amount_card = $this->unsupported_zero_amount_card( $transient_token );
+
 			if ( $customer->get_billing_first_name() && $customer->get_billing_last_name() ) {
 				$response = $this->get_token_response( $transient_token, $customer, $order );
+				if ( empty( $response ) || ! isset( $response['body'] ) || ! $response['body'] ) {
+                    $return_result['message'] = __( 'Unable to save card. Please try again', 'visa-acceptance-solutions' );
+                    $return_result['status']  = false;
+                    return $return_result;
+                }
+				$client_reference_info = $response['body']->getClientReferenceInformation();
+				$code = $client_reference_info->getCode();
+			
 				if ( VISA_ACCEPTANCE_TWO_ZERO_ONE === (int) $response['http_code'] ) {
 					$core_token = $this->check_token_exist( $response, $customer_data );
+				
 					if ( $core_token ) {
 						$return_result = $this->update_token( $core_token, $response, $settings, $customer_data );
 					} else {
 						$return_result = $this->gettokenResponseArray( $response, $customer_data );
+					}
+	
+					if ( $unsupported_zero_amount_card && isset( $return_result['status'] ) && $return_result['status'] ) {
+						// Execute automatic authorization reversal for CUP/JAYWAN verification amount.
+						$reversal_result = $this->process_card_auth_reversal( $response, $code, $order );
+
+						// Process authorization reversal results.
+						if ( $reversal_result['status'] ) {
+							$return_result['auth_reversal_status'] = 'success';
+							$return_result['auth_reversal_transaction_id'] = $reversal_result['reversal_id'];
+							$return_result['original_transaction_id'] = $reversal_result['original_id'];
+							$return_result['message'] = $return_result['message'] . ' ' . __( 'Verification amount ($1) automatically reversed.', 'visa-acceptance-solutions' );
+						} else {
+							$return_result['auth_reversal_status'] = 'failed';
+							$return_result['auth_reversal_message'] = $reversal_result['message'];
+							$return_result['message'] = $return_result['message'] . ' ' . __( 'Note: Verification amount reversal pending.', 'visa-acceptance-solutions' );
+						}
 					}
 				} else {
 					$return_result['message'] = __( 'Unable to save card. Please try again later.', 'visa-acceptance-solutions' );
@@ -163,10 +192,166 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 				$return_result['status']  = false;
 			}
 			return $return_result;
+		
 		} catch ( \Exception $e ) {
 			$this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to create payment tokens through payment gateway API.', true );
+		
+			// Return error result.
+			return array(
+				'message' => __( 'An error occurred while processing your card. Please try again.', 'visa-acceptance-solutions' ),
+				'status' => false
+			);
 		}
 	}
+ 
+	/**
+	 * Checks if the transient token represents a CUP or JAYWAN card (combined check)
+	 *
+	 * @param string $transient_token transient token.
+	 *
+	 * @return boolean
+	 */
+	public function unsupported_zero_amount_card( $transient_token ) {
+		$result = false;
+        try {
+            if ( ! empty( $transient_token ) ) {
+                $card_type = $this->get_card_type_from_token( $transient_token );
+                $result = ( VISA_ACCEPTANCE_CUP_CARD_TYPE === $card_type || VISA_ACCEPTANCE_JAYWAN_CARD_TYPE === $card_type );
+            }
+        } catch ( \Exception $e ) {
+            $this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Error checking card type for CUP/JAYWAN validation.', true );
+            $result = false;
+        }
+        return $result;
+	}
+
+	/**
+     * Gets the card type from transient token
+     *
+     * @param string $transient_token transient token.
+     * @return string|null card type value or null if not found
+	 * 
+     */
+	public function get_card_type_from_token( $transient_token ) {
+        $card_type = null;
+        try {
+            if ( ! empty( $transient_token ) ) {
+                $decoded_transient_token = json_decode( base64_decode( explode( '.', $transient_token )[VISA_ACCEPTANCE_ONE] ), true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+               
+                if ( isset( $decoded_transient_token['content']['paymentInformation']['card']['type']['value'] ) ) {
+                    $card_type = $decoded_transient_token['content']['paymentInformation']['card']['type']['value'];
+                }
+            }
+        } catch ( \Exception $e ) {
+            $this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to extract card type from token.', true );
+            $card_type = null;
+        }
+        return $card_type;
+    }
+
+	/**
+	 * Checks if a saved payment token is a CUP or JAYWAN card
+	 *
+	 * @param \WC_Payment_Token $token token object.
+	 *
+	 * @return boolean
+	 */
+	public function unsupported_zero_amount_saved_card( $token ) {
+		$result = false;
+        try {
+            if ( $token ) {
+                $card_type = $token->get_card_type();
+               
+                // Check both the numeric code and the card network name.
+                if ( VISA_ACCEPTANCE_CUP_CARD_TYPE === $card_type ||
+                     VISA_ACCEPTANCE_JAYWAN_CARD_TYPE === $card_type ||
+                     'China UnionPay' === $card_type || 'JAYWAN' === $card_type ||
+                     stripos( $card_type, 'union' ) !== false ||
+                     stripos( $card_type, 'jaywan' ) !== false ) {
+                    $result = true;
+                }
+            }
+        } catch ( \Exception $e ) {
+            $this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to check if saved card is CUP or JAYWAN.', true );
+            $result = false;
+        }
+        return $result;
+	}
+
+	/**
+     * Process automatic authorization reversal for CUP cards.
+     *
+     * @param array  $tokenization_response tokenization response from create_token.
+     * @param string $code client reference code.
+     * @param mixed  $order order details.
+     *
+     * @return array
+     */
+    public function process_card_auth_reversal( $tokenization_response, $code, $order) {
+    try {
+        $auth_reversal = new Visa_Acceptance_Auth_Reversal( $this->gateway );
+        // Extract transaction ID from tokenization response.
+        $json = json_decode( $tokenization_response['body'] );
+        $transaction_id = isset( $json->id ) ? $json->id : null;
+        if ( empty( $transaction_id ) ) {
+            return array( 'status' => false, 'message' => 'No transaction ID found for reversal' );
+        }
+		$reversal_result = $auth_reversal->get_reversal_response($order,
+			VISA_ACCEPTANCE_ONE_DOLLAR_AMOUNT,
+			'tokenization verification amount - automatic authorization reversal',
+			$transaction_id, $code
+		);
+			// Process authorization reversal API response.
+			if ( $reversal_result && isset( $reversal_result['http_code'] ) && VISA_ACCEPTANCE_TWO_ZERO_ONE === (int) $reversal_result['http_code'] ) {
+				// SUCCESS: Authorization reversal completed.
+				$reversal_json = json_decode( $reversal_result['body'] );
+				$reversal_transaction_id = isset( $reversal_json->id ) ? $reversal_json->id : 'N/A';
+				
+				// Determine card type for specific success message.
+				$card_type_message = 'CUP/JAYWAN';
+				if ( isset( $json->paymentInformation ) && isset( $json->paymentInformation->card ) && isset( $json->paymentInformation->card->type ) ) { //phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					$card_type = $json->paymentInformation->card->type; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					if ( VISA_ACCEPTANCE_CUP_CARD_TYPE === $card_type ) {
+						$card_type_message = 'China UnionPay (CUP)';
+					} elseif ( VISA_ACCEPTANCE_JAYWAN_CARD_TYPE === $card_type ) {
+						$card_type_message = 'JAYWAN';
+					}
+				}
+				
+				return array(
+					'status' => true,
+					'message' => $card_type_message . ' verification amount reversed successfully',
+					'reversal_id' => $reversal_transaction_id,
+					'original_id' => $transaction_id,
+					'card_type' => $card_type_message
+				);
+			} else {
+				// FAILED: Authorization reversal failed.
+				$error_details = '';
+				if ( $reversal_result && isset( $reversal_result['body'] ) ) {
+					if ( is_array( $reversal_result['body'] ) ) {
+						$error_details = implode( ', ', $reversal_result['body'] );
+					} else {
+						$error_details = (string) $reversal_result['body'];
+					}
+				}
+				
+				return array(
+					'status' => false,
+					'message' => 'Authorization reversal failed - ' . ( $error_details ? $error_details : 'please contact support if verification amount not reversed within 24 hours' ),
+					'original_id' => $transaction_id
+				);
+			}
+			
+		} catch ( \Exception $e ) {
+			$this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Authorization reversal processing error - please contact support', true );
+			return array( 
+				'status' => false, 
+				'message' => 'Authorization reversal exception: ' . $e->getMessage() 
+			);
+		}
+	}
+
 
 	/**
 	 * Updates the token if based on response
@@ -385,6 +570,10 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 				'004' => 'Discover',
 				'005' => 'DinersClub',
 				'007' => 'JCB',
+				'062' => 'China UnionPay',
+				'024' => 'Maestro',
+				'042' => 'Maestro',
+				'081' => 'JAYWAN',
 			);
 			return ( ! empty( $types[ $card_type ] ) ) ? $types[ $card_type ] : 'NA';
 		} catch ( \Exception $e ) {
@@ -430,12 +619,10 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			if ( isset( $json->tokenInformation ) && isset( $json->tokenInformation->customer ) && isset( $json->tokenInformation->customer->id ) ) {
 				$tokens['id'] = $json->tokenInformation->customer->id; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-			} 
-			// Fallback: Check for customer ID in paymentInformation.
-			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-			elseif ( isset( $json->paymentInformation ) && isset( $json->paymentInformation->customer ) && isset( $json->paymentInformation->customer->id ) ) {
+			} elseif ( isset( $json->paymentInformation ) && isset( $json->paymentInformation->customer ) && isset( $json->paymentInformation->customer->id ) ) { //phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				$tokens['id'] = $json->paymentInformation->customer->id; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-			}       // CustomerId - at checkout.
+			}
+			// CustomerId - at checkout.
 			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			if ( empty( $tokens['id'] ) ) {
 				$tokens['id'] = $request->get_customer_id();
@@ -483,7 +670,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 	}
 
 	/**
-	 * Gets card details
+	 * Gets card details.
 	 *
 	 * @param array $tokens tokens array.
 	 * @param array $settings settings.
@@ -493,7 +680,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 	public function get_card_details( $tokens, $settings ) {
 		try {
 			$request                = new Visa_Acceptance_Payment_Adapter( $this->gateway );
-			$api_client             = $request->get_api_client();
+			$api_client             = $request->get_api_client(true);
 			$payment_instrument_api = new \CyberSource\Api\CustomerPaymentInstrumentApi( $api_client );
 			$card_details_response  = $payment_instrument_api->getCustomerPaymentInstrument( $tokens['id'], $tokens['payment_instrument_id'] );
 			return $card_details_response;
@@ -503,7 +690,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 	}
 
 	/**
-	 * Gets token response payload
+	 * Gets token response payload.
 	 *
 	 * @param string $transient_token transient token.
 	 * @param array  $customer customer data.
@@ -512,13 +699,21 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 	 * @return array
 	 */
 	public function get_token_response( $transient_token, $customer, $order = null ) {
-		$action_list = array( VISA_ACCEPTANCE_DECISION_SKIP, VISA_ACCEPTANCE_TOKEN_CREATE );
-
-		// Initialize CyberSource API Client.
-		$request      = new Visa_Acceptance_Payment_Adapter( $this->gateway );
-		$api_client   = $request->get_api_client();
-		$payments_api = new \CyberSource\Api\PaymentsApi( $api_client );
-		$buyer_information = '';
+        $action_list = array( VISA_ACCEPTANCE_DECISION_SKIP, VISA_ACCEPTANCE_TOKEN_CREATE );
+        $total_amount=VISA_ACCEPTANCE_ZERO_AMOUNT;
+        // Initialize CyberSource API Client.
+        $request      = new Visa_Acceptance_Payment_Adapter( $this->gateway );
+        $api_client   = $request->get_api_client();
+        $payments_api = new \CyberSource\Api\PaymentsApi( $api_client );
+        $decoded_transient_token = ! empty( $transient_token ) ? json_decode( base64_decode( explode( '.', $transient_token )[1] ), true ) : null; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+ 
+       if ( isset( $decoded_transient_token['content']['paymentInformation']['card']['type']['value'] ) ) {
+            $card_type_value = $decoded_transient_token['content']['paymentInformation']['card']['type']['value'];
+            if ( VISA_ACCEPTANCE_CUP_CARD_TYPE === $card_type_value || VISA_ACCEPTANCE_JAYWAN_CARD_TYPE === $card_type_value ) {
+                $total_amount = VISA_ACCEPTANCE_ONE_DOLLAR_AMOUNT;
+            }
+        }
+		
 		// Build the payload.
 		$client_reference_information = new \CyberSource\Model\Ptsv2paymentsClientReferenceInformation(
 			array(
@@ -545,7 +740,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 				),
 				'amountDetails' => new \CyberSource\Model\Ptsv2paymentsOrderInformationAmountDetails(
 					array(
-						'totalAmount' => VISA_ACCEPTANCE_ZERO_AMOUNT,
+						'totalAmount' => $total_amount,
 						'currency'    => get_woocommerce_currency(),
 					)
 				),
@@ -579,7 +774,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 			);
 		}
 		
-		$payload                = new \CyberSource\Model\CreatePaymentRequest(
+		$payload = new \CyberSource\Model\CreatePaymentRequest(
 			array(
 				'clientReferenceInformation' => $client_reference_information,
 				'orderInformation'           => $order_information,
@@ -596,7 +791,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 			try {
 				// Make the API call.
 				$api_response = $payments_api->createPayment( $payload );
-				$this->gateway->add_logs_service_response( $api_response[0],$api_response[2]['v-c-correlation-id'], true, ucfirst( VISA_ACCEPTANCE_TOKENIZATION ) );
+				$this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, ucfirst( VISA_ACCEPTANCE_TOKENIZATION ) );
 				$return_array = array(
 					'http_code' => $api_response[1],
 					'body'      => $api_response[0],
