@@ -153,21 +153,4 @@ class Visa_Acceptance_Zero_Auth_Request extends Visa_Acceptance_Request {
 		}
 		return $processing_information;
 	}
-
-	/**
-	 * Get buyer information.
-	 *
-	 * @param object $order order details.
-	 *
-	 * @return array $buyer_information
-	 */
-	public function get_buyer_information( $order ) {
-		$buyer_information = array();
-		if ( ! empty( $order ) && $order instanceof \WC_Order ) {
-			$buyer_information['merchantCustomerId'] = $order->get_user_id() ? strval( $order->get_user_id() ) : 'wc-vas-guest-' . $order->get_id();
-		} else {
-			$buyer_information['merchantCustomerId'] = get_current_user_id();
-		}
-		return $buyer_information;
-	}
 }

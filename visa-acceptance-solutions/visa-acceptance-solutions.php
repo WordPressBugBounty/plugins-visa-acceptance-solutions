@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Visa Acceptance Solutions
  * Description: Accept payments in WooCommerce with Visa Acceptance Solutions.
- * Version: 2.0.0
+ * Version: 2.0.1
  * Author: Visa Acceptance Solutions
  * Author URI: https://visaacceptance.com
  * Developer: Visa Acceptance Solutions
@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'VISA_ACCEPTANCE_PLUGIN_VERSION', '2.0.0' );
+define( 'VISA_ACCEPTANCE_PLUGIN_VERSION', '2.0.1' );
 
 /**
  * Fallback Plugin version.
@@ -1388,6 +1388,9 @@ function visa_acceptance_solutions_deactivate() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-visa-acceptance-payment-gateway-deactivator.php';
 	Visa_Acceptance_Payment_Gateway_Deactivator::deactivate();
 }
+
+
+
 
 /**
  * Function for delaying initialization of the extension until after WooComerce is loaded.

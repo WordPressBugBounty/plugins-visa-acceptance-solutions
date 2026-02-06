@@ -270,21 +270,6 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	}
 
 	/**
-	 * Client Reference Information
-	 *
-	 * @param object $order order.
-	 * @return array
-	 */
-	public function get_payment_buyer_information( $order ) {
-		$buyer_information = new \CyberSource\Model\Ptsv2paymentsBuyerInformation(
-			array(
-				'merchantCustomerId' => $order->get_user_id() ? strval( $order->get_user_id() ) : 'wc-vas-guest-' . $order->get_id(),
-			)
-		);
-		return $buyer_information;
-	}
-
-	/**
 	 * Order Information
 	 *
 	 * @param object $order order.
@@ -352,7 +337,6 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	public function get_processing_info( $order, $gateway_settings, $is_save_card, $service = null, $is_stored_card = false, $merchant_initiated = false ) {
 		$subscriptions = new Visa_Acceptance_Payment_Gateway_Subscriptions();
 		$processing_information = array(
-			'commerceIndicator' => VISA_ACCEPTANCE_INTERNET,
 			'capture'           => $this->get_capture( $gateway_settings, $order ),
 			'actionList'        => $this->get_action_list( $gateway_settings, $is_save_card, $service ),
 		);
@@ -380,6 +364,23 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 			}
 		}
 		return $processing_information;
+	}
+
+	/**
+	 * Client Reference Information
+	 *
+	 * @param object $order order.
+	 * @return array
+	 */
+	public function get_payment_buyer_information( $order ) {
+		if($order->get_user_id()) {
+			$buyer_information = new \CyberSource\Model\Ptsv2paymentsBuyerInformation(
+				array(
+					'merchantCustomerId' => strval( $order->get_user_id() ),
+				)
+			);
+		}
+		return $buyer_information;
 	}
 
 	/**

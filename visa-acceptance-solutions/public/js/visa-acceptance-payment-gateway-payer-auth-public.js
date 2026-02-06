@@ -277,7 +277,7 @@ function reloadAfterError() {
                         // Adding element only if it's special case of pay-order page
                         if (document.querySelector("#order_review") != null) {
                             if (document.querySelector("#cardinal_collection_iframe") == null) {
-                                var iframe = document.createElement('iframe');
+                                var iframe = document.createElement('iframe'); 
 
                                 // Set the attributes for the iframe
                                 iframe.id = 'cardinal_collection_iframe';
@@ -303,7 +303,7 @@ function reloadAfterError() {
                             inputElement.id = "cardinal_collection_form_input";
                             inputElement.type = "hidden";
                             inputElement.name = "JWT";
-                            inputElement.value = "your_value_here"; // Set the actual value you want
+                            inputElement.value = "";
 
                             // Append the input element to the form element
                             formElement.appendChild(inputElement);
@@ -402,7 +402,7 @@ function reloadAfterError() {
                         // Adding element only if it's special case of pay-order page
                         if (document.querySelector("#order_review") != null) {
                             if (document.querySelector("#cardinal_collection_iframe") == null) {
-                                var iframe = document.createElement('iframe');
+                                var iframe = document.createElement('iframe'); 
 
                                 // Set the attributes for the iframe
                                 iframe.id = 'cardinal_collection_iframe';
@@ -427,7 +427,7 @@ function reloadAfterError() {
                             inputElement.id = "cardinal_collection_form_input";
                             inputElement.type = "hidden";
                             inputElement.name = "JWT";
-                            inputElement.value = "your_value_here"; // Set the actual value you want
+                            inputElement.value = "";
 
                             // Append the input element to the form element
                             formElement.appendChild(inputElement);
@@ -541,7 +541,7 @@ function reloadAfterError() {
                                 modalContent.id = 'modal-content';
 
                                 // Create the iframe element
-                                var iframe = document.createElement('iframe');
+                                var iframe = document.createElement('iframe'); 
                                 iframe.id = 'step-up-iframe-id';
                                 iframe.name = 'step-up-iframe';
 
@@ -691,7 +691,7 @@ function reloadAfterError() {
                                 modalContent.id = 'modal-content';
 
                                 // Create the iframe element
-                                var iframe = document.createElement('iframe');
+                                var iframe = document.createElement('iframe'); 
                                 iframe.id = 'step-up-iframe-id';
                                 iframe.name = 'step-up-iframe';
 

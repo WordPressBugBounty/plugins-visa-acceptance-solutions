@@ -518,7 +518,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 		$request      = new Visa_Acceptance_Payment_Adapter( $this->gateway );
 		$api_client   = $request->get_api_client();
 		$payments_api = new \CyberSource\Api\PaymentsApi( $api_client );
-
+		$buyer_information = '';
 		// Build the payload.
 		$client_reference_information = new \CyberSource\Model\Ptsv2paymentsClientReferenceInformation(
 			array(
@@ -571,11 +571,14 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 				'authorizationOptions' => $authorization_options,
 			)
 		);
-		$buyer_information      = new \CyberSource\Model\Ptsv2paymentsBuyerInformation(
-			array(
-				'merchantCustomerId' => $order ? $order->get_user_id() : 'guest_' . uniqid(),
-			)
-		);
+		if($order) {
+			$buyer_information      = new \CyberSource\Model\Ptsv2paymentsBuyerInformation(
+				array(
+					'merchantCustomerId' => $order->get_user_id(),
+				)
+			);
+		}
+		
 		$payload                = new \CyberSource\Model\CreatePaymentRequest(
 			array(
 				'clientReferenceInformation' => $client_reference_information,

@@ -6,7 +6,7 @@ Tags: woocommerce, payments, visa
 Requires at least: 6.1
 Tested up to: 6.8
 Requires PHP: 8.0.0
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 WC tested up to: 10.0.4
 WC requires at least: 7.6.0
 License: GNU General Public License v3.0
@@ -29,14 +29,14 @@ Compatible with [WooCommerce Subscriptions](https://woocommerce.com/products/woo
 5. Checkout 2
 6. Checkout 3
 
-//filename (screenshot-1, screenshot-2 etcof screenshot must correspond to the line.  1200x630 
+//filename (screenshot-1, screenshot-2 etc.  # of screenshot must correspond to the line.  1200x630 
 
 == Installation ==
 1. Upload the entire “visa-acceptance-solutions” folder to the “/wp-content/plugins/” directory in your WordPress installation.
 2. Activate the plugin through the “Plugins” menu in WordPress.
 3. Configure the plugin settings in WooCommerce → Settings → Payments → Visa Acceptance Solutions.
 
-For full documentation, please visit our [documentation center](https://developer.visaacceptance.com/docs/vas/en-us/isv-plugins/admin/all/na/isv-plugin-o/built-by-us/vas-woocommerce-intro.html)
+For full documentation, please visit our [documentation center](https://developer.visaacceptance.com/docs/vas/en-us/isv-plugins/admin/all/na/isv-plugin-o/built-by-us/wc-introduction.html)
 
 == Privacy Policy and Terms of Service ==
 
@@ -54,49 +54,31 @@ Configure Plugin in "Test" Environment. Then submit an order with valid billing 
 = What are the required credentials to set up the plugin? =
 You'll need your Visa Acceptance Solutions Merchant ID, API Key ID, and Shared Secret Key. For production, you'll need production credentials, and for testing, you'll need test credentials from your Visa Acceptance Solutions account.  Please visit [Support](https://support.visaacceptance.com) or contact your reseller.
 
+= How do I get support with this plugin? =
+In most cases we can provide support through the WordPress or WooCommerce forums.  In some cases we may need you to contact our [Support Team](https://support.visaacceptance.com) or your reseller, if some information is required that should not be in the public domain.  
+
 = How can I get a sandbox account? =
 Sign up [here](https://developer.visaacceptance.com/hello-world/sandbox.html).  Note sandbox accounts are configured for USD currency
 
-== Change Log ==
+== Changelog ==
+= 2.0.1 =
+**Bug Fix**
+* Removed the Customer ID for guest user due to exceeding limits within the platform for some processors
+* Removed Commerce Indicator from the Payment Acceptance Request
+
+= 2.0.0 =
+**Enhancements**
+* Unified Checkout v0.23
+* Apple Pay
+* Adopt Visa Acceptance REST Client SDK
+* Message-Level Encryption
+* WooCommerce Subscriptions & HPOS Compatibility
+
 = 1.0.0 =
 **Initial release** supporting Card Payments, Tokenisation, Payer Authentication (3D Secure), and Fraud Screening tools.
 
-= 2.0.0 =
-** Enhancements **
-
-
 == Upgrade Notice ==
-Version 2.0.0 is now available.  Please upgrade for Apple Pay and WooCommerce Subscriptions.
+Version 2.0.1 is now available.  Please refer to change log for details.
 
 == Admin Notice ==
-
-Version 2.0.0 is now available.  Please upgrade for Apple Pay and WooCommerce Subscriptions.
-
-== External Domains Used ==
-
-Below are the external domains contacted by the plugin, along with an explanation of their usage. 
-Production endpoints are used in live mode; test endpoints are used in sandbox or staging environments.
-
-1. https://flex.cybersource.com & https://testflex.cybersource.com
-
-• Purpose: Tokenizing payment card data securely via Flex API operations.
-• How it works: The plugin sends card details (like PAN, expiry date) to generate a transient token.
-• When: During checkout or payment method setup in production/test mode.
-
-2. https://api.cybersource.com & https://apitest.cybersource.com
-
-• Purpose: Base API domain for Cybersource requests (payments, tokenization, reporting, etc.).
-• How it works: The plugin sends various requests (payment processing, token management, etc.).
-• When: Executed whenever the plugin operates in production/test mode.
-
-3. https://centinelapi.cardinalcommerce.com & https://centinelapistag.cardinalcommerce.com
-
-• Purpose: 3D Secure authentication via the Cardinal Cruise Library.
-• How it works: The plugin interacts with these domains for 3D Secure flows (production/test).
-• When: Used when 3D Secure authentication is required.
-
-4. https://h.online-metrix.net/fp/tags
-
-• Purpose: Device fingerprinting for Online Metrix fraud prevention.
-• How it works: The plugin loads scripts to gather browser/device data for fraud analysis.
-• When: During checkout or payment attempts to assess risk.
+Version 2.0.1 is now available.  Please refer to change log for details.

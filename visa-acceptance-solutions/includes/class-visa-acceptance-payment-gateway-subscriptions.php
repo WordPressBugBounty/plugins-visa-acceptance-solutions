@@ -308,13 +308,14 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 					}
 				}
 			}
-			if ( ! empty( $this->get_order_meta( $order, 'subscription_token' ) ) && wcs_order_contains_renewal( $order ) ) {
+			$contain_token = $this->has_subscription_token ( $order );
+			if ( ( ! empty( $this->get_order_meta( $order, 'subscription_token' ) ) || $contain_token ) && wcs_order_contains_renewal( $order ) ){
 				$payload['commerceIndicator'] = VISA_ACCEPTANCE_RECURRING;
-			} else {
+			}
+			else {
 				$payload['recurringOptions']['firstRecurringPayment'] = true;
 			}
 		}
-
 		return $payload;
 	}
 
@@ -327,13 +328,32 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 * @return array $payload
 	 */
 	public function customer_subscription_payload( $order, $payload ) {
-		if ( ! empty( $this->get_order_meta( $order, 'subscription_token' ) ) && wcs_order_contains_renewal( $order ) ) {
+		$contain_token = $this->has_subscription_token ( $order );
+		if ( ( ! empty( $this->get_order_meta( $order, 'subscription_token' ) ) || $contain_token ) && wcs_order_contains_renewal( $order ) ) { 
 			$payload['commerceIndicator'] = VISA_ACCEPTANCE_RECURRING;
 		} elseif ( wcs_order_contains_subscription( $order ) || wcs_order_contains_renewal( $order ) ) {
 			$payload['recurringOptions']['firstRecurringPayment'] = true;
 		}
-
 		return $payload;
+	}
+
+	/**
+	 * Check if the subscription token associated with renewal order.
+	 *
+	 * @param order $order The WooCommerce order object.
+	 * @return bool True if subscription token exists, otherwise false.
+	 */
+	private function has_subscription_token ( $order ) {
+		if ( empty( $this->get_order_meta( $order, 'subscription_token' ) ) && function_exists( 'wcs_get_subscriptions_for_renewal_order' ) && wcs_order_contains_early_renewal( $order ) ) {
+			$subscriptions = wcs_get_subscriptions_for_renewal_order( $order );
+			foreach ( $subscriptions as $subscription ) {
+				$subscription_token = $this->get_order_meta( $subscription, 'subscription_token' );
+				if ( $subscription_token ) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**

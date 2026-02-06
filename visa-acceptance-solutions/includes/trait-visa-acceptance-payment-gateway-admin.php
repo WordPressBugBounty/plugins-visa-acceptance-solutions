@@ -262,12 +262,13 @@ trait Visa_Acceptance_Payment_Gateway_Admin_Trait {
 		if ( $order instanceof \WC_Order ) {
 			$prefix = VISA_ACCEPTANCE_SV_GATEWAY_ID === $order->get_payment_method() ? '_wc_' . VISA_ACCEPTANCE_SV_GATEWAY_ID . '_' : VISA_ACCEPTANCE_WC_UC_ID;
 			if ( handle_hpos_compatibility() ) {
-				$meta = $order->get_meta( $prefix . $key, true, VISA_ACCEPTANCE_EDIT );
+				$meta = $order->get_meta( $prefix . $key, true, VISA_ACCEPTANCE_EDIT);
 			} else {
 				$meta = get_post_meta( $order->get_id(), $prefix . $key, true );
 
 			}
 		}
+
 		return $meta;
 	}
 
