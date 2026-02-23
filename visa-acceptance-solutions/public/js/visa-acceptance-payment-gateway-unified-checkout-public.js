@@ -9,6 +9,36 @@
     // Flex microform variables for saved card CVV.
     var flexInstances = {};
     var flexFieldsValid = {};
+    // Collect and send browser data for 3DS device information.
+    function collectBrowserData() {
+        if (typeof visa_acceptance_ajaxUCObj === 'undefined') {
+            return;
+        }
+        
+        var browserData = {
+            action: 'store_browser_data',
+            nonce: visa_acceptance_ajaxUCObj.store_browser_data_nonce || '',
+            gateway_id: visa_acceptance_ajaxUCObj.gateway_id || '',
+            screen_height: window.screen.height,
+            screen_width: window.screen.width,
+            color_depth: window.screen.colorDepth,
+            tz_offset: new Date().getTimezoneOffset(),
+            java_enabled: navigator.javaEnabled ? navigator.javaEnabled() : false,
+            js_enabled: true
+        };
+        
+        $.ajax({
+            url: visa_acceptance_ajaxUCObj.ajax_url,
+            type: 'POST',
+            data: browserData,
+            async: false
+        });
+    }
+    
+    // Collect browser data on page load.
+    $(document).ready(function() {
+        collectBrowserData();
+    });
     
     jQuery(document).on('wc_checkout_form_error', function() {
         window.flexSubmissionInProgress = false;

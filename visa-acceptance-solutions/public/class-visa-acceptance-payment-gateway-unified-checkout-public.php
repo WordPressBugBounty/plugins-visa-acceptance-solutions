@@ -109,7 +109,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 				$notice_message = isset( $stored_notice_data['message'] ) ? $stored_notice_data['message'] : '';
 				
 				// Only show notice if we're on the same product page where error occurred.
-				if ( $current_product_id == $stored_product_id && ! empty( $notice_message ) ) {
+				if ( $current_product_id === $stored_product_id && ! empty( $notice_message ) ) {
 					wc_add_notice( $notice_message, 'error' );
 				}
 				// Clear the stored notice after checking.
@@ -143,7 +143,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	 *
 	 * @param string $tag    The script tag.
 	 * @param string $handle The script handle.
-	 * @param string $src    The script source URL.
+	 * @param string $src    The script source URL (unused but required by WordPress filter).
 	 * @return string Modified script tag with integrity attribute.
 	 */
 	public function add_sri_integrity_to_script( $tag, $handle, $src ) {
@@ -319,6 +319,8 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 						'offline_text'                    => __( 'You are not connected to internet!!', 'visa-acceptance-solutions' ),
 						'error_failure'                   => __( 'Unable to process your request. Please try again later.', 'visa-acceptance-solutions' ),
 						'is_subscription_tokenization_enabled' => $is_subscription_tokenization_enabled,
+						'store_browser_data_nonce'        => wp_create_nonce( 'store_browser_data_action' ),
+						'gateway_id'                      => $this->gateway->get_id(),
 					)
 				);
 				if ( VISA_ACCEPTANCE_YES === $payer_auth_enable ) {
@@ -1382,10 +1384,21 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	 * @param int    $id Id.
 	 */
 	public function custom_gateway_icon( $icon, $id ) {
-		$notice_message = esc_html__( 'We will contact your card issuer to verify your account. No payment will be taken.', 'visa-acceptance-solutions' );
-		if ( is_add_payment_method_page() && $id === $this->wc_payment_gateway_id ) {
-			wc_print_notice( $notice_message, 'notice' );
+		if ( $id === $this->wc_payment_gateway_id ) {
+			if ( is_add_payment_method_page() ) {
+				static $notice_printed = false;
+				if ( ! $notice_printed ) {
+					$notice_message = esc_html__(
+						'We will contact your card issuer to verify your account. No payment will be taken.',
+						'visa-acceptance-solutions'
+					);
+					wc_print_notice( $notice_message, 'notice' );
+					$notice_printed = true;
+				}
+			}
+			return '';
 		}
+		return $icon;
 	}
 
 	/**
@@ -1539,5 +1552,44 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 			}
 		}
 		return $method;
+	}
+
+	/**
+	 * AJAX handler to store browser data for 3DS device information.
+	 */
+	public function store_browser_data() {
+		check_ajax_referer( 'store_browser_data_action', 'nonce' );
+		
+		$gateway_id = isset( $_POST['gateway_id'] ) ? sanitize_text_field( wp_unslash( $_POST['gateway_id'] ) ) : '';
+		
+		if ( empty( $gateway_id ) || ! isset( WC()->session ) ) {
+			wp_send_json_error();
+		}
+		
+		if ( isset( $_POST['screen_height'] ) ) {
+			WC()->session->set( "wc_{$gateway_id}_browser_screen_height", absint( $_POST['screen_height'] ) );
+		}
+		
+		if ( isset( $_POST['screen_width'] ) ) {
+			WC()->session->set( "wc_{$gateway_id}_browser_screen_width", absint( $_POST['screen_width'] ) );
+		}
+		
+		if ( isset( $_POST['color_depth'] ) ) {
+			WC()->session->set( "wc_{$gateway_id}_browser_color_depth", absint( $_POST['color_depth'] ) );
+		}
+		
+		if ( isset( $_POST['tz_offset'] ) ) {
+			WC()->session->set( "wc_{$gateway_id}_browser_tz_offset", intval( $_POST['tz_offset'] ) );
+		}
+		
+		if ( isset( $_POST['java_enabled'] ) ) {
+			WC()->session->set( "wc_{$gateway_id}_browser_java_enabled", filter_var( wp_unslash( $_POST['java_enabled'] ), FILTER_VALIDATE_BOOLEAN ) );
+		}
+		
+		if ( isset( $_POST['js_enabled'] ) ) {
+			WC()->session->set( "wc_{$gateway_id}_browser_js_enabled", filter_var( wp_unslash( $_POST['js_enabled'] ), FILTER_VALIDATE_BOOLEAN ) );
+		}
+		
+		wp_send_json_success();
 	}
 }

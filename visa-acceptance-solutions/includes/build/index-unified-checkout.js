@@ -1325,7 +1325,7 @@ registerPaymentMethod(ucOptions);
 
 if ( ucExpressPaySettings.subscription_order && ! ucExpressPaySettings.is_subscriptions_tokenization_enabled ){}
 else {
-    if(ucExpressPaySettings.enabled_payment_methods.length !== 0 ) {
+      if (ucExpressPaySettings && ucExpressPaySettings.enabled_payment_methods.length !== 0) {
         var expressPayUCId = typeof ucExpressPaySettings.express_pay_uc_id === 'string' && ucExpressPaySettings.express_pay_uc_id.length ? ucExpressPaySettings.express_pay_uc_id : 'express_pay_uc';
         var expressCheckoutForm = {
             name: expressPayUCId,

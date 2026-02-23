@@ -220,9 +220,43 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 	 */
 	public function handle_order_updates( $gateway ) {
 
+		$settings = $this->get_gateway_settings();
+		// Check if Decision Manager is enabled OR if there are pending orders to process.
+		// This ensures orders placed when DM was enabled still get processed even if DM is later disabled.
+		$has_pending_orders = $this->has_pending_review_orders();
+		
+		if ( ! $has_pending_orders && ( ! isset( $settings[ VISA_ACCEPTANCE_SETTING_ENABLE_DECISION_MANAGER ] ) || VISA_ACCEPTANCE_YES !== $settings[ VISA_ACCEPTANCE_SETTING_ENABLE_DECISION_MANAGER ] ) ) {
+			return;
+		}
+
 		$reporting = new Visa_Acceptance_Reporting( $this );
 		$response  = $reporting->get_conversion_details( $this->get_merchant_id() );
 	}
+	/**
+	 * Check if there are any pending review orders that need processing.
+	 *
+	 * @return boolean
+	 */
+	private function has_pending_review_orders() {
+		$pending_orders = wc_get_orders(
+			array(
+				'status'      => VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PENDING,
+				'limit'       => 1,
+				'payment_method' => $this->get_id(),
+				'meta_query'  => array(// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					array(
+						'key'   => VISA_ACCEPTANCE_WC_UC_ID . VISA_ACCEPTANCE_UNDERSCORE_PAYMENT_STATUS,
+						'value' => VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED_PENDING_REVIEW,
+					),
+				),
+			)
+		);
+		
+		$has_pending = ! empty( $pending_orders );
+		
+		return $has_pending;
+	}
+
 
 	/**
 	 * Schedules the order update routines.
@@ -230,13 +264,24 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 	 * Only schedule a routine for a gateway if it's
 	 * - Not inheriting another's settings
 	 * - Configured and Decision Manager is enabled
+	 * - OR if there are pending orders that need processing
 	 *
-	 * @return void
+	 * @return void 
 	 */
 	public function schedule_order_updates() {
-			$args = array( $this->get_title_dasherized( $this->method_title ) );
-		if ( false === as_next_scheduled_action( 'wc_payment_gateway_update_orders', $args ) ) {
-			as_schedule_recurring_action( time() + $this->get_order_update_interval(), $this->get_order_update_interval(), 'wc_payment_gateway_update_orders', $args, VISA_ACCEPTANCE_PLUGIN_VERSION );
+		$settings           = $this->get_gateway_settings();
+		$args               = array( $this->get_title_dasherized( $this->method_title ) );
+		$dm_enabled         = isset( $settings[ VISA_ACCEPTANCE_SETTING_ENABLE_DECISION_MANAGER ] ) && VISA_ACCEPTANCE_YES === $settings[ VISA_ACCEPTANCE_SETTING_ENABLE_DECISION_MANAGER ];
+		$has_pending_orders = $this->has_pending_review_orders();
+		
+		// Schedule cron job if Decision Manager is enabled OR there are pending orders to process.
+		if ( $dm_enabled || $has_pending_orders ) {
+			if ( false === as_next_scheduled_action( 'wc_payment_gateway_update_orders', $args ) ) {
+				as_schedule_recurring_action( time() + $this->get_order_update_interval(), $this->get_order_update_interval(), 'wc_payment_gateway_update_orders', $args, VISA_ACCEPTANCE_PLUGIN_VERSION );
+			}
+		} else {
+			// Unschedule the cron job if Decision Manager is disabled AND no pending orders exist.
+			as_unschedule_all_actions( 'wc_payment_gateway_update_orders', $args );
 		}
 	}
 
@@ -737,6 +782,10 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 			$this->loader->add_action( 'wp_ajax_nopriv_wc_call_uc_payer_auth_error_handler', $this->plugin_public, 'call_error_handler' );
 			$this->loader->add_action( 'wp_ajax_wc_call_uc_update_price_action', $this->plugin_public, 'call_updates_action' );
 			$this->loader->add_action( 'wp_ajax_nopriv_wc_call_uc_update_price_action', $this->plugin_public, 'call_updates_action' );
+
+			// Browser data collection for 3DS device information.
+			$this->loader->add_action( 'wp_ajax_store_browser_data', $this->plugin_public, 'store_browser_data' );
+			$this->loader->add_action( 'wp_ajax_nopriv_store_browser_data', $this->plugin_public, 'store_browser_data' );	
 			// For Express pay product page.
 			$this->loader->add_action( 'woocommerce_after_add_to_cart_button', $this->express_pay_plugin_public, 'add_express_pay_at_product_page' );
 			$this->loader->add_action( 'wp_ajax_express_pay_for_order', $this->express_pay_plugin_public,  'express_pay_product_page_pay_for_order' );
@@ -990,7 +1039,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 		$settings = $this->get_gateway_settings();
 		if ( isset( $settings['enable_logs'] ) && ( VISA_ACCEPTANCE_YES === $settings['enable_logs'] ) ) {
 			$logger = wc_get_logger();
-			// Change Log name as Title.
+			// Change log name to gateway title.
 			$context = array( 'source' => $this->get_title_dasherized( $this->method_title ) );
 			if ( $is_request ) {
 				//$data = $this->mask_response( $data );
@@ -1015,7 +1064,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 		$settings = $this->get_gateway_settings();
 		if ( isset( $settings['enable_logs'] ) && ( VISA_ACCEPTANCE_YES === $settings['enable_logs'] ) ) {
 			$logger = wc_get_logger();
-			// Change Log name as Title.
+			// Change log name to gateway title.
 			$context = array( 'source' => $this->get_title_dasherized( $this->method_title ) );
 			if ( $is_request ) {
 				$data = $this->mask_response( $data );

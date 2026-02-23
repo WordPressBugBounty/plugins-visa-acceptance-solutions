@@ -276,6 +276,14 @@ apple-pay-button {
 }
 
 /* Responsive UI for express pay section */
+
+/* Target any parent container that might be using flex */
+form.cart:has(#wc-express-checkout-product),
+.cart:has(#wc-express-checkout-product),
+div:has(> #wc-express-checkout-product) {
+	flex-wrap: wrap !important;
+}
+
 .wc-block-components-express-payment, .wc-block-components-express-payment-continue-rule, #wc-express-checkout-product-page-subscription-tokenization-notice-div{
 	width: 50%;
 }
@@ -289,7 +297,14 @@ apple-pay-button {
 	}
 }
 
-#wc-express-checkout-product, #wc-express-checkout-normal {
+#wc-express-checkout-product {
+	width: 100% !important;
+	margin-top: 1em !important;
+	display: block;
+	position: relative !important;
+}
+
+#wc-express-checkout-normal {
 	width: 50%;
 }
 @media (max-width: 600px) {
@@ -315,10 +330,6 @@ apple-pay-button {
 
 #wc-express-checkout-normal{
 	margin:0 auto;
-}
-
-#wc-express-checkout-product {
-	margin:15px 0;
 }
 
 #express-checkout-heading {

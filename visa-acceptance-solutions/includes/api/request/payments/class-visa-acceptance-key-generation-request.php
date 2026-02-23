@@ -768,7 +768,7 @@ class Visa_Acceptance_Key_Generation_Request extends Visa_Acceptance_Request {
 		);
 		
 		// Add billing information with first name, last name, and email.
-		$is_express_pay_data = ! in_array( VISA_ACCEPTANCE_PANENTRY, $payment_method_array );
+		$is_express_pay_data = ! in_array( VISA_ACCEPTANCE_PANENTRY, $payment_method_array, true );
         if(! $is_express_pay_data) {
             // Add billing information with first name, last name, and email.
             $bill_to_data = array();

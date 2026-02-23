@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Visa Acceptance Solutions
  * Description: Accept payments in WooCommerce with Visa Acceptance Solutions.
- * Version: 2.1.0
+ * Version: 2.1.1
  * Author: Visa Acceptance Solutions
  * Author URI: https://visaacceptance.com
  * Developer: Visa Acceptance Solutions
@@ -10,7 +10,7 @@
  * Requires at least: 6.9
  * Tested up to: 6.9
  * Requires PHP: 8.2.0
- * WC requires at least: 10.3.7
+ * WC requires at least: 10.5.1
  * WC tested up to: 10.4.3
  * Text Domain: visa-acceptance-solutions
  * Domain Path: /languages
@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'VISA_ACCEPTANCE_PLUGIN_VERSION', '2.1.0' );
+define( 'VISA_ACCEPTANCE_PLUGIN_VERSION', '2.1.1' );
 
 /**
  * Fallback Plugin version.
@@ -61,6 +61,11 @@ define( 'VISA_ACCEPTANCE_PLUGIN_NAME', 'Visa-Acceptance-Solutions' );
  * Name of the current plugin.
  */
 define( 'VISA_ACCEPTANCE_PLUGIN_DISPLAY_NAME', 'Visa Acceptance Solutions' );
+
+/**
+ * Name of device channel browser.
+ */
+define('VISA_ACCEPTANCE_DEVICE_CHANNEL_BROWSER', 'Browser');
 
 /**
  * Name of the current plugin.

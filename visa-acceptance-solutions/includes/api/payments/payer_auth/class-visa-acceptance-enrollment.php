@@ -315,7 +315,7 @@ class Visa_Acceptance_Enrollment extends Visa_Acceptance_Request {
 			'processingInformation'             => $processing_information,
 			'consumerAuthenticationInformation' => $consumer_authentication_information,
 			'orderInformation'                  => $request->get_payment_order_information( $order, $is_enrollment ),
-			'deviceInformation'                 => $request->get_device_information(),
+			'deviceInformation'                 => $request->get_device_information(false, true),
 			'buyerInformation'                  => $request->get_payment_buyer_information( $order ),
 		);
 		// Remove the temporary filter after building the request.

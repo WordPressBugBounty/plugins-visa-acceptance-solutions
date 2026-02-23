@@ -1,0 +1,30 @@
+{
+    "name": "woocommerce/visa-acceptance-solutions",
+    "description": "Take Unified Checkout payments on your store using Visa Acceptance Solutions.",
+    "type": "composer-plugin",
+    "config": {
+        "platform": {
+          "php": "8.2"
+        },
+          "allow-plugins": {
+              "dealerdirect/phpcodesniffer-composer-installer": true,
+              "cybersource/rest-client-php": true,
+              "composer/installers": true
+          }
+    },
+    "require": {
+        "composer-plugin-api": "^2.0",
+        "cybersource/rest-client-php": "0.0.63"
+    },
+    "require-dev": {
+        "composer/installers": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+        "WC_Vas_Gateway\\": "includes/"
+        }
+    },
+    "extra": {
+        "installer-disable": true
+    }
+}

@@ -96,6 +96,7 @@ class Visa_Acceptance_Payment_UC extends Visa_Acceptance_Request {
 		}
 
 		// Extract billing address.
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- CyberSource API uses camelCase.
 		if ( isset( $payment_details->orderInformation ) && isset( $payment_details->orderInformation->billTo ) ) {
 			$bill_to = $payment_details->orderInformation->billTo;
 			
@@ -163,6 +164,7 @@ class Visa_Acceptance_Payment_UC extends Visa_Acceptance_Request {
 				$order->set_shipping_phone( sanitize_text_field( $ship_to->phoneNumber ) );
 			}
 		}
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 		// Save the order with updated addresses.
 		$order->save();

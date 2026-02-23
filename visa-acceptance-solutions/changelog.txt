@@ -1,4 +1,9 @@
 *** Visa Acceptance Solutions Changelog ***
+2026-02-20 - version 2.1.1
+* Bug Fix - CRON job works only when Fraud Screening is enabled
+* Bug Fix - UI fix for Express Pay button on product page
+* Bug Fix - Added fallback to capture Device Data Collection (DDC) fields
+* Bug Fix - Payment Provider logos issue addressed
 
 2026-02-06 - version 2.1.0
 * Feature - Updated Unified Checkout to v0.33
@@ -7,7 +12,7 @@
 * Feature - Express Pay for Product & Checkout pages
 * Feature - Replaced Cybersource endpoints with Visa Acceptance Solutions endpoints
 * Feature - Wordpress v6.9 compatibility
-* Bug Fix -  IP address collected for all requests
+* Bug Fix - IP address collected for all requests
 * Bug Fix - Updated CVV input field text
 * Bug Fix - Saved card tokens accessible only when tokenization is enabled
 * Bug Fix - Administrative state field not passed for non-US addresses in 3DS transactions

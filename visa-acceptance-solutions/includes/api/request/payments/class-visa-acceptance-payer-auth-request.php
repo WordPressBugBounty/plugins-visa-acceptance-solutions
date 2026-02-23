@@ -54,6 +54,7 @@ class Visa_Acceptance_Payer_Auth_Request extends Visa_Acceptance_Request {
 		$consumer_authentication_info = array(
 			'referenceId' => $reference_id,
 			'returnUrl'   => $return_url,
+			'deviceChannel' => VISA_ACCEPTANCE_DEVICE_CHANNEL_BROWSER,
 		);
 
 		if ( VISA_ACCEPTANCE_YES === $sca_case || ( VISA_ACCEPTANCE_YES === $settings['enable_saved_sca'] && VISA_ACCEPTANCE_YES === $token_checkbox ) ) {

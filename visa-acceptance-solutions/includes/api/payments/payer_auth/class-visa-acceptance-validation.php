@@ -290,6 +290,7 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 					array(
 						'authenticationTransactionId' => $validation_tid,
 						'signedPares'                 => $pareq,
+						'deviceChannel'               => VISA_ACCEPTANCE_DEVICE_CHANNEL_BROWSER,
 					)
 				);
 		} else {
@@ -297,6 +298,7 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 				array(
 					'authenticationTransactionId' => $validation_tid,
 					'signedPares'                 => null,
+					'deviceChannel'               => VISA_ACCEPTANCE_DEVICE_CHANNEL_BROWSER,
 				)
 			);
 		}

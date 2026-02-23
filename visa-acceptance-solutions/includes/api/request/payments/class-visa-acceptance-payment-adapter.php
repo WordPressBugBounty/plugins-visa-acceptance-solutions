@@ -62,6 +62,7 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
      *
      * Configure Merchant Configuration for payment methods.
      *
+     * @param bool $authentication_type Authentication type flag.
      * @return string $merchant_configuration.
      */
     public function get_merchant_configuration($authentication_type) {
@@ -108,8 +109,8 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
      *
      * Api Client function.
      *
+     * @param bool $authentication_type Authentication type.
      * @return string $api_client
-     * @param bool $authentication_type authentication type
      */
     public function get_api_client($authentication_type = false) {
         $merchant_config = $this->get_merchant_configuration($authentication_type);
@@ -494,24 +495,78 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * Generates the device information for the request.
 	 *
 	 * @param mixed  $merchant_initiated merchant initiated transaction.
+	 * @param bool   $is_enrollment Whether this is a payer auth enrollment request.
 	 */
-	public function get_device_information( $merchant_initiated = false ) {
+	public function get_device_information( $merchant_initiated = false, $is_enrollment = false ) {
 		$settings = $this->gateway->get_config_settings();
+		$session_id = VISA_ACCEPTANCE_STRING_EMPTY;
+		
 		if ( isset( $settings[ VISA_ACCEPTANCE_SETTING_ENABLE_DECISION_MANAGER ] ) && VISA_ACCEPTANCE_YES === $settings[ VISA_ACCEPTANCE_SETTING_ENABLE_DECISION_MANAGER ] && ! $merchant_initiated ) {
 			$gateway_id = $this->gateway->get_id();
-			$session_id = isset( WC()->session ) ? WC()->session->get( "wc_{$gateway_id}_device_data_session_id", VISA_ACCEPTANCE_STRING_EMPTY ) : null;
+			$session_id = isset( WC()->session ) ? WC()->session->get( "wc_{$gateway_id}_device_data_session_id", VISA_ACCEPTANCE_STRING_EMPTY ) : VISA_ACCEPTANCE_STRING_EMPTY;
 		}
-		$session_id = ! empty( $session_id ) ? $session_id : VISA_ACCEPTANCE_STRING_EMPTY;
 		
 		// Get client IP address.
 		$ip_address = $this->get_client_ip_address();
 		
-		$device_information = new \CyberSource\Model\Ptsv2paymentsDeviceInformation(
-			array(
-				'fingerprintSessionId' => $session_id,
-				'ipAddress'            => $ip_address,
-			)
+		// Build device information array.
+		$device_info_array = array(
+			'fingerprintSessionId' => $session_id,
+			'ipAddress'            => $this->mask_value( $ip_address ),
 		);
+		
+		// Add browser information for 3DS - ONLY for enrollment requests.
+		if ( $is_enrollment && ! $merchant_initiated ) {
+			// HTTP headers.
+			if ( isset( $_SERVER['HTTP_ACCEPT'] ) ) {
+				$device_info_array['httpAcceptBrowserValue'] = sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT'] ) );
+			}
+			
+			if ( isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
+				$device_info_array['httpBrowserLanguage'] = sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) );
+			}
+			
+			if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+				$device_info_array['userAgentBrowserValue'] = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
+			}
+			
+			// Browser capabilities from session.
+			if ( isset( WC()->session ) ) {
+				$gateway_id = $this->gateway->get_id();
+				
+				$java_enabled = WC()->session->get( "wc_{$gateway_id}_browser_java_enabled", null );
+				if ( null !== $java_enabled ) {
+					$device_info_array['httpBrowserJavaEnabled'] = (bool) $java_enabled;
+				}
+				
+				$js_enabled = WC()->session->get( "wc_{$gateway_id}_browser_js_enabled", null );
+				if ( null !== $js_enabled ) {
+					$device_info_array['httpBrowserJavaScriptEnabled'] = (bool) $js_enabled;
+				}
+				
+				$color_depth = WC()->session->get( "wc_{$gateway_id}_browser_color_depth", null );
+				if ( $color_depth ) {
+					$device_info_array['httpBrowserColorDepth'] = (string) $color_depth;
+				}
+				
+				$screen_height = WC()->session->get( "wc_{$gateway_id}_browser_screen_height", null );
+				if ( $screen_height ) {
+					$device_info_array['httpBrowserScreenHeight'] = (string) $screen_height;
+				}
+				
+				$screen_width = WC()->session->get( "wc_{$gateway_id}_browser_screen_width", null );
+				if ( $screen_width ) {
+					$device_info_array['httpBrowserScreenWidth'] = (string) $screen_width;
+				}
+				
+				$tz_offset = WC()->session->get( "wc_{$gateway_id}_browser_tz_offset", null );
+				if ( null !== $tz_offset ) {
+					$device_info_array['httpBrowserTimeDifference'] = (string) $tz_offset;
+				}
+			}
+		}
+		
+		$device_information = new \CyberSource\Model\Ptsv2paymentsDeviceInformation( $device_info_array );
 		return $device_information;
 	}
 

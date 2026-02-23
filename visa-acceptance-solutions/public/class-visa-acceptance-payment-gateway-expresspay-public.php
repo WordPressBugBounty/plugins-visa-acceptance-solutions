@@ -86,7 +86,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			$subscription_order = WC_Subscriptions_Cart::cart_contains_subscription() || wcs_cart_contains_renewal() || WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment;
 		}
 		$get_data = $_GET; // phpcs:ignore WordPress.Security.NonceVerification
-		//if ( (is_checkout() || isset( $get_data['pay_for_order'] ) ) && is_user_logged_in() && ! $is_zero_initial_payment) {
+		// Check if on checkout page or pay for order page and not zero initial payment.
 		if ( (is_checkout() || isset( $get_data['pay_for_order'] ) ) && ! $is_zero_initial_payment) {
 			$ep_title        = __( 'Express Checkout', 'visa-acceptance-solutions' );
 			$ep_divider_text = __( 'Or continue below', 'visa-acceptance-solutions' );
@@ -158,7 +158,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 		$is_variable_product = $product && ( $product->is_type( 'variable' ) || $product->is_type( 'variable-subscription' ) );
 		$is_grouped = $product && $product->is_type( 'grouped' );
 		
-		//if ( ( $enable_gpay || $enable_apay || $enable_paze ) && is_product() && is_user_logged_in()) {
+		// Check if express payment is enabled and on product page.
 		if ( ( $enable_gpay || $enable_apay || $enable_paze ) && is_product()) {
 			$user_id 	= get_current_user_id();
 			$customer 	= new WC_Customer( $user_id );
@@ -191,7 +191,8 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			// Hide Express Pay for variable products until variation is selected and for grouped products until a product is selected.
 			$hide_style = ( $is_variable_product || $is_grouped ) ? ' style="display:none;"' : '';
 			?>
-			<div id="wc-express-checkout-product"<?php echo $hide_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<div class="wc-vas-clear" style="clear:both;"></div>
+			<div id="wc-express-checkout-product" class="wc-vas-product-checkout-container bottom active"<?php echo $hide_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<div id="wc-express-checkout-section">
 					<div id="express-checkout-heading">
 						<span><?php echo esc_html( $ep_title ); ?></span>
@@ -399,6 +400,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 		if ( isset( $payment_details->orderInformation ) && isset( $payment_details->orderInformation->billTo ) ) {
 			$bill_to = $payment_details->orderInformation->billTo;
 			
+			// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- External API uses camelCase.
 			$billing = array(
 				'first_name' => isset( $bill_to->firstName ) ? sanitize_text_field( $bill_to->firstName ) : '',
 				'last_name'  => isset( $bill_to->lastName ) ? sanitize_text_field( $bill_to->lastName ) : '',
@@ -412,9 +414,11 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 				'email'      => isset( $bill_to->email ) ? sanitize_email( $bill_to->email ) : '',
 				'phone'      => isset( $bill_to->phoneNumber ) ? sanitize_text_field( $bill_to->phoneNumber ) : '',
 			);
+			// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		}
 		
 		// Extract shipping address.
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- External API uses camelCase.
 		if ( isset( $payment_details->orderInformation ) && isset( $payment_details->orderInformation->shipTo ) ) {
 			$ship_to = $payment_details->orderInformation->shipTo;
 			
@@ -431,6 +435,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 				'phone'      => isset( $ship_to->phoneNumber ) ? sanitize_text_field( $ship_to->phoneNumber ) : '',
 			);
 		}
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		
 		return array( 'billing' => $billing, 'shipping' => $shipping );
 	}
@@ -750,7 +755,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 				$order->update_meta_data('_transientToken', $transient_token);
 				
 				// Retrieve and update address from Google Pay using CyberSource API.
-				$decoded_transient_token = json_decode( base64_decode( explode( '.', $transient_token )[VISA_ACCEPTANCE_ONE] ), true );
+				$decoded_transient_token = json_decode( base64_decode( explode( '.', $transient_token )[VISA_ACCEPTANCE_ONE] ), true );//phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 				if ( ! empty( $decoded_transient_token['content']['processingInformation']['paymentSolution']['value'] ) && 
 				     VISA_ACCEPTANCE_GPAY_PAYMENTSOLUTION_VALUE === $decoded_transient_token['content']['processingInformation']['paymentSolution']['value'] ) {
 					$payment_uc = new Visa_Acceptance_Payment_UC( $this->gateway );
@@ -994,25 +999,6 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 	 * @param WC_Order $order The order object to set attributes for.
 	 */
 	private function set_express_pay_order_attributes($order) {
-
-		/**
-		 * Helper function to parse SourceBuster cookie parts into key-value array.
-		 *
-		 * @param string $cookie_value The cookie value to parse.
-		 * @return array Parsed cookie data.
-		 */
-		function visa_acceptance_parse_sbjs_cookie ($cookie_value) {
-			$data = array();
-			$parts = explode('|||', $cookie_value);
-			foreach ($parts as $part) {
-				if (strpos($part, '=') !== false) {
-					list($key, $value) = explode('=', $part, 2);
-					$data[$key] = $value;
-				}
-			}
-			return $data;
-		}
-
 		// Default values.
 		$source_type = 'typein'; // For Direct.
 		$device_type = 'Desktop';
@@ -1021,14 +1007,14 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 		// Parse sbjs_session for page views with enhanced reliability.
 		if (isset($_COOKIE['sbjs_session'])) {
 			$cookie_value = sanitize_text_field( wp_unslash( $_COOKIE['sbjs_session'] ) );
-			$session_data = visa_acceptance_parse_sbjs_cookie ($cookie_value);
+			$session_data = $this->visa_acceptance_parse_sbjs_cookie ($cookie_value);
 			$pgs = $session_data['pgs'] ?? null;
 
 			if (null === $pgs) {
 				// Attempt base64 decode if plain parsing fails.
 				$decoded = base64_decode($cookie_value, true); //phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 				if (false !== $decoded) {
-					$session_data = visa_acceptance_parse_sbjs_cookie ($decoded);
+					$session_data = $this->visa_acceptance_parse_sbjs_cookie ($decoded);
 					$pgs = $session_data['pgs'] ?? null;
 				}
 			}
@@ -1311,7 +1297,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			$order->update_meta_data('_transientToken', $transient_token);
 			
 			// Retrieve and update address from Google Pay using CyberSource API.
-			$decoded_transient_token = json_decode( base64_decode( explode( '.', $transient_token )[VISA_ACCEPTANCE_ONE] ), true );
+			$decoded_transient_token = json_decode( base64_decode( explode( '.', $transient_token )[VISA_ACCEPTANCE_ONE] ), true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding JWT token.
 			if ( ! empty( $decoded_transient_token['content']['processingInformation']['paymentSolution']['value'] ) && 
 			     VISA_ACCEPTANCE_GPAY_PAYMENTSOLUTION_VALUE === $decoded_transient_token['content']['processingInformation']['paymentSolution']['value'] ) {
 				$payment_uc = new Visa_Acceptance_Payment_UC( $this->gateway );
@@ -1360,8 +1346,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 		$contents_cost = 0;
 		
 		foreach ($grouped_items as $item_id => $item_qty) {
-			if ($item_qty <= 0) continue;
-			
+			if ($item_qty <= 0) continue;			
 			$item_product = wc_get_product($item_id);
 			if (!$item_product) continue;
 			
@@ -1502,5 +1487,22 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			$subscription->calculate_totals();
 			$subscription->save();
 		}
+	}
+	/**
+	 * Helper function to parse SourceBuster cookie parts into key-value array.
+	 *
+	 * @param string $cookie_value The cookie value to parse.
+	 * @return array Parsed cookie data.
+	 */
+	private function visa_acceptance_parse_sbjs_cookie ($cookie_value) {
+		$data = array();
+		$parts = explode('|||', $cookie_value);
+		foreach ($parts as $part) {
+			if (strpos($part, '=') !== false) {
+				list($key, $value) = explode('=', $part, 2);
+				$data[$key] = $value;
+			}
+		}
+		return $data;
 	}
 }
