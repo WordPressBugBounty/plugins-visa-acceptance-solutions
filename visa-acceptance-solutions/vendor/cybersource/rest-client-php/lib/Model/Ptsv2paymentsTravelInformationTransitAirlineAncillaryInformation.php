@@ -57,7 +57,8 @@ class Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformation implement
         'passengerName' => 'string',
         'connectedTicketNumber' => 'string',
         'creditReasonIndicator' => 'string',
-        'service' => '\CyberSource\Model\Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformationService[]'
+        'service' => '\CyberSource\Model\Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformationService[]',
+        'feeDescription' => 'string'
     ];
 
     /**
@@ -69,7 +70,8 @@ class Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformation implement
         'passengerName' => null,
         'connectedTicketNumber' => null,
         'creditReasonIndicator' => null,
-        'service' => null
+        'service' => null,
+        'feeDescription' => null
     ];
 
     public static function swaggerTypes()
@@ -91,7 +93,8 @@ class Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformation implement
         'passengerName' => 'passengerName',
         'connectedTicketNumber' => 'connectedTicketNumber',
         'creditReasonIndicator' => 'creditReasonIndicator',
-        'service' => 'service'
+        'service' => 'service',
+        'feeDescription' => 'feeDescription'
     ];
 
 
@@ -104,7 +107,8 @@ class Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformation implement
         'passengerName' => 'setPassengerName',
         'connectedTicketNumber' => 'setConnectedTicketNumber',
         'creditReasonIndicator' => 'setCreditReasonIndicator',
-        'service' => 'setService'
+        'service' => 'setService',
+        'feeDescription' => 'setFeeDescription'
     ];
 
 
@@ -117,7 +121,8 @@ class Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformation implement
         'passengerName' => 'getPassengerName',
         'connectedTicketNumber' => 'getConnectedTicketNumber',
         'creditReasonIndicator' => 'getCreditReasonIndicator',
-        'service' => 'getService'
+        'service' => 'getService',
+        'feeDescription' => 'getFeeDescription'
     ];
 
     public static function attributeMap()
@@ -156,6 +161,7 @@ class Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformation implement
         $this->container['connectedTicketNumber'] = isset($data['connectedTicketNumber']) ? $data['connectedTicketNumber'] : null;
         $this->container['creditReasonIndicator'] = isset($data['creditReasonIndicator']) ? $data['creditReasonIndicator'] : null;
         $this->container['service'] = isset($data['service']) ? $data['service'] : null;
+        $this->container['feeDescription'] = isset($data['feeDescription']) ? $data['feeDescription'] : null;
     }
 
     /**
@@ -284,6 +290,27 @@ class Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformation implement
     public function setService($service)
     {
         $this->container['service'] = $service;
+
+        return $this;
+    }
+
+    /**
+     * Gets feeDescription
+     * @return string
+     */
+    public function getFeeDescription()
+    {
+        return $this->container['feeDescription'];
+    }
+
+    /**
+     * Sets feeDescription
+     * @param string $feeDescription This field contains the fee description for the airline ancillary service provided. Format: Alphanumeric, 100 characters maximum. Optional field for ancillary services.
+     * @return $this
+     */
+    public function setFeeDescription($feeDescription)
+    {
+        $this->container['feeDescription'] = $feeDescription;
 
         return $this;
     }

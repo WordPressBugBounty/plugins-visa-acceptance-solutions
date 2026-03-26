@@ -53,12 +53,13 @@ class InlineResponse2005 implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'totalCount' => 'int',
-        'offset' => 'int',
-        'limit' => 'int',
-        'sort' => 'string',
-        'count' => 'int',
-        'devices' => '\CyberSource\Model\InlineResponse2005Devices[]'
+        'registrationInformation' => '\CyberSource\Model\Boardingv1registrationsRegistrationInformation',
+        'integrationInformation' => '\CyberSource\Model\InlineResponse2005IntegrationInformation',
+        'organizationInformation' => '\CyberSource\Model\Boardingv1registrationsOrganizationInformation',
+        'productInformation' => '\CyberSource\Model\Boardingv1registrationsProductInformation',
+        'productInformationSetups' => '\CyberSource\Model\InlineResponse2014ProductInformationSetups[]',
+        'documentInformation' => '\CyberSource\Model\Boardingv1registrationsDocumentInformation',
+        'details' => 'map[string,object[]]'
     ];
 
     /**
@@ -66,12 +67,13 @@ class InlineResponse2005 implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'totalCount' => null,
-        'offset' => null,
-        'limit' => null,
-        'sort' => null,
-        'count' => null,
-        'devices' => null
+        'registrationInformation' => null,
+        'integrationInformation' => null,
+        'organizationInformation' => null,
+        'productInformation' => null,
+        'productInformationSetups' => null,
+        'documentInformation' => null,
+        'details' => null
     ];
 
     public static function swaggerTypes()
@@ -89,12 +91,13 @@ class InlineResponse2005 implements ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'totalCount' => 'totalCount',
-        'offset' => 'offset',
-        'limit' => 'limit',
-        'sort' => 'sort',
-        'count' => 'count',
-        'devices' => 'devices'
+        'registrationInformation' => 'registrationInformation',
+        'integrationInformation' => 'integrationInformation',
+        'organizationInformation' => 'organizationInformation',
+        'productInformation' => 'productInformation',
+        'productInformationSetups' => 'productInformationSetups',
+        'documentInformation' => 'documentInformation',
+        'details' => 'details'
     ];
 
 
@@ -103,12 +106,13 @@ class InlineResponse2005 implements ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'totalCount' => 'setTotalCount',
-        'offset' => 'setOffset',
-        'limit' => 'setLimit',
-        'sort' => 'setSort',
-        'count' => 'setCount',
-        'devices' => 'setDevices'
+        'registrationInformation' => 'setRegistrationInformation',
+        'integrationInformation' => 'setIntegrationInformation',
+        'organizationInformation' => 'setOrganizationInformation',
+        'productInformation' => 'setProductInformation',
+        'productInformationSetups' => 'setProductInformationSetups',
+        'documentInformation' => 'setDocumentInformation',
+        'details' => 'setDetails'
     ];
 
 
@@ -117,12 +121,13 @@ class InlineResponse2005 implements ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'totalCount' => 'getTotalCount',
-        'offset' => 'getOffset',
-        'limit' => 'getLimit',
-        'sort' => 'getSort',
-        'count' => 'getCount',
-        'devices' => 'getDevices'
+        'registrationInformation' => 'getRegistrationInformation',
+        'integrationInformation' => 'getIntegrationInformation',
+        'organizationInformation' => 'getOrganizationInformation',
+        'productInformation' => 'getProductInformation',
+        'productInformationSetups' => 'getProductInformationSetups',
+        'documentInformation' => 'getDocumentInformation',
+        'details' => 'getDetails'
     ];
 
     public static function attributeMap()
@@ -156,12 +161,13 @@ class InlineResponse2005 implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['totalCount'] = isset($data['totalCount']) ? $data['totalCount'] : null;
-        $this->container['offset'] = isset($data['offset']) ? $data['offset'] : null;
-        $this->container['limit'] = isset($data['limit']) ? $data['limit'] : null;
-        $this->container['sort'] = isset($data['sort']) ? $data['sort'] : null;
-        $this->container['count'] = isset($data['count']) ? $data['count'] : null;
-        $this->container['devices'] = isset($data['devices']) ? $data['devices'] : null;
+        $this->container['registrationInformation'] = isset($data['registrationInformation']) ? $data['registrationInformation'] : null;
+        $this->container['integrationInformation'] = isset($data['integrationInformation']) ? $data['integrationInformation'] : null;
+        $this->container['organizationInformation'] = isset($data['organizationInformation']) ? $data['organizationInformation'] : null;
+        $this->container['productInformation'] = isset($data['productInformation']) ? $data['productInformation'] : null;
+        $this->container['productInformationSetups'] = isset($data['productInformationSetups']) ? $data['productInformationSetups'] : null;
+        $this->container['documentInformation'] = isset($data['documentInformation']) ? $data['documentInformation'] : null;
+        $this->container['details'] = isset($data['details']) ? $data['details'] : null;
     }
 
     /**
@@ -190,127 +196,148 @@ class InlineResponse2005 implements ArrayAccess
 
 
     /**
-     * Gets totalCount
-     * @return int
+     * Gets registrationInformation
+     * @return \CyberSource\Model\Boardingv1registrationsRegistrationInformation
      */
-    public function getTotalCount()
+    public function getRegistrationInformation()
     {
-        return $this->container['totalCount'];
+        return $this->container['registrationInformation'];
     }
 
     /**
-     * Sets totalCount
-     * @param int $totalCount Total number of results.
+     * Sets registrationInformation
+     * @param \CyberSource\Model\Boardingv1registrationsRegistrationInformation $registrationInformation
      * @return $this
      */
-    public function setTotalCount($totalCount)
+    public function setRegistrationInformation($registrationInformation)
     {
-        $this->container['totalCount'] = $totalCount;
+        $this->container['registrationInformation'] = $registrationInformation;
 
         return $this;
     }
 
     /**
-     * Gets offset
-     * @return int
+     * Gets integrationInformation
+     * @return \CyberSource\Model\InlineResponse2005IntegrationInformation
      */
-    public function getOffset()
+    public function getIntegrationInformation()
     {
-        return $this->container['offset'];
+        return $this->container['integrationInformation'];
     }
 
     /**
-     * Sets offset
-     * @param int $offset Controls the starting point within the collection of results, which defaults to 0. The first item in the collection is retrieved by setting a zero offset.  For example, if you have a collection of 15 items to be retrieved from a resource and you specify limit=5, you can retrieve the entire set of results in 3 successive requests by varying the offset value like this:  `offset=0` `offset=5` `offset=10`  **Note:** If an offset larger than the number of results is provided, this will result in no embedded object being returned.
+     * Sets integrationInformation
+     * @param \CyberSource\Model\InlineResponse2005IntegrationInformation $integrationInformation
      * @return $this
      */
-    public function setOffset($offset)
+    public function setIntegrationInformation($integrationInformation)
     {
-        $this->container['offset'] = $offset;
+        $this->container['integrationInformation'] = $integrationInformation;
 
         return $this;
     }
 
     /**
-     * Gets limit
-     * @return int
+     * Gets organizationInformation
+     * @return \CyberSource\Model\Boardingv1registrationsOrganizationInformation
      */
-    public function getLimit()
+    public function getOrganizationInformation()
     {
-        return $this->container['limit'];
+        return $this->container['organizationInformation'];
     }
 
     /**
-     * Sets limit
-     * @param int $limit Controls the maximum number of items that may be returned for a single request. The default is 20, the maximum is 2500.
+     * Sets organizationInformation
+     * @param \CyberSource\Model\Boardingv1registrationsOrganizationInformation $organizationInformation
      * @return $this
      */
-    public function setLimit($limit)
+    public function setOrganizationInformation($organizationInformation)
     {
-        $this->container['limit'] = $limit;
+        $this->container['organizationInformation'] = $organizationInformation;
 
         return $this;
     }
 
     /**
-     * Gets sort
-     * @return string
+     * Gets productInformation
+     * @return \CyberSource\Model\Boardingv1registrationsProductInformation
      */
-    public function getSort()
+    public function getProductInformation()
     {
-        return $this->container['sort'];
+        return $this->container['productInformation'];
     }
 
     /**
-     * Sets sort
-     * @param string $sort A comma separated list of the following form:  `submitTimeUtc:desc`
+     * Sets productInformation
+     * @param \CyberSource\Model\Boardingv1registrationsProductInformation $productInformation
      * @return $this
      */
-    public function setSort($sort)
+    public function setProductInformation($productInformation)
     {
-        $this->container['sort'] = $sort;
+        $this->container['productInformation'] = $productInformation;
 
         return $this;
     }
 
     /**
-     * Gets count
-     * @return int
+     * Gets productInformationSetups
+     * @return \CyberSource\Model\InlineResponse2014ProductInformationSetups[]
      */
-    public function getCount()
+    public function getProductInformationSetups()
     {
-        return $this->container['count'];
+        return $this->container['productInformationSetups'];
     }
 
     /**
-     * Sets count
-     * @param int $count Results for this page, this could be below the limit.
+     * Sets productInformationSetups
+     * @param \CyberSource\Model\InlineResponse2014ProductInformationSetups[] $productInformationSetups
      * @return $this
      */
-    public function setCount($count)
+    public function setProductInformationSetups($productInformationSetups)
     {
-        $this->container['count'] = $count;
+        $this->container['productInformationSetups'] = $productInformationSetups;
 
         return $this;
     }
 
     /**
-     * Gets devices
-     * @return \CyberSource\Model\InlineResponse2005Devices[]
+     * Gets documentInformation
+     * @return \CyberSource\Model\Boardingv1registrationsDocumentInformation
      */
-    public function getDevices()
+    public function getDocumentInformation()
     {
-        return $this->container['devices'];
+        return $this->container['documentInformation'];
     }
 
     /**
-     * Sets devices
-     * @param \CyberSource\Model\InlineResponse2005Devices[] $devices A collection of devices
+     * Sets documentInformation
+     * @param \CyberSource\Model\Boardingv1registrationsDocumentInformation $documentInformation
      * @return $this
      */
-    public function setDevices($devices)
+    public function setDocumentInformation($documentInformation)
     {
-        $this->container['devices'] = $devices;
+        $this->container['documentInformation'] = $documentInformation;
+
+        return $this;
+    }
+
+    /**
+     * Gets details
+     * @return map[string,object[]]
+     */
+    public function getDetails()
+    {
+        return $this->container['details'];
+    }
+
+    /**
+     * Sets details
+     * @param map[string,object[]] $details
+     * @return $this
+     */
+    public function setDetails($details)
+    {
+        $this->container['details'] = $details;
 
         return $this;
     }

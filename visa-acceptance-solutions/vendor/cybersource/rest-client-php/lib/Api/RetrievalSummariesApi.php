@@ -177,8 +177,8 @@ class RetrievalSummariesApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getRetrievalSummary,getRetrievalSummaryWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getRetrievalSummary,getRetrievalSummaryWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -204,6 +204,10 @@ class RetrievalSummariesApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\ReportingV3RetrievalSummariesGet200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getRetrievalSummary,getRetrievalSummaryWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -213,7 +217,8 @@ class RetrievalSummariesApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\ReportingV3RetrievalSummariesGet200Response',
-                '/reporting/v3/retrieval-summaries'
+                '/reporting/v3/retrieval-summaries',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

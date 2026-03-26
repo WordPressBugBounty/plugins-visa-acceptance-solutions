@@ -94,7 +94,7 @@ class Visa_Acceptance_Setup extends Visa_Acceptance_Request {
 						$checkout_url                       = wc_get_checkout_url();
 						$response_array['status']           = $json->status;
 						$response_array['checkoutRedirect'] = $checkout_url;
-						$response_array['error']            = $message;
+						$response_array[VISA_ACCEPTANCE_ERROR]            = $message;
 					}
 				}
 			}
@@ -170,10 +170,10 @@ class Visa_Acceptance_Setup extends Visa_Acceptance_Request {
 		
 			try {
 				$api_response = $payments_api->payerAuthSetup( $payload );
-				$this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, VISA_ACCEPTANCE_SETUP );
+				$this->gateway->add_logs_service_response( $api_response[VISA_ACCEPTANCE_VAL_ZERO],$api_response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, VISA_ACCEPTANCE_SETUP );
 				$return_array = array(
-					'http_code' => $api_response[1],
-					'body'      => $api_response[0],
+					'http_code' => $api_response[VISA_ACCEPTANCE_VAL_ONE],
+					'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 				);
 				return $return_array;
 			} catch ( \CyberSource\ApiException $e ) {

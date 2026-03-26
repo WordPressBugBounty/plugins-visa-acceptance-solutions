@@ -117,7 +117,10 @@
                         quantity: $('input.qty').val() || 1,
                         product_id: variation.variation_id,
                         timestamp: new Date().getTime(),
-                        force_refresh: 1
+                        force_refresh: 1,
+                        is_switch: express_pay_ajaxUCObj.is_switch || false,
+                        switch_subscription_id: express_pay_ajaxUCObj.switch_subscription_id || '',
+                        switch_item_id: express_pay_ajaxUCObj.switch_item_id || ''
                     },
                     success: function(response) {
                         console.log('AJAX Response:', response);
@@ -239,6 +242,9 @@
                             product_id: express_pay_ajaxUCObj['product_id'],
                             grouped_items: groupedProductQuantities,
                             force_refresh: 1,
+                            is_switch: express_pay_ajaxUCObj.is_switch || false,
+                            switch_subscription_id: express_pay_ajaxUCObj.switch_subscription_id || '',
+                            switch_item_id: express_pay_ajaxUCObj.switch_item_id || ''
                         },
                         success: function(response) {
                             if (response.success && response.capture_context_ep_jwt) {
@@ -315,6 +321,9 @@
                         quantity: updatedQuantity,
                         product_id: productIdToUse,
                         force_refresh: selectedVariationId ? 1 : 0,
+                        is_switch: express_pay_ajaxUCObj.is_switch || false,
+                        switch_subscription_id: express_pay_ajaxUCObj.switch_subscription_id || '',
+                        switch_item_id: express_pay_ajaxUCObj.switch_item_id || ''
                     },
                     success: function(response) {
                         if (response.success && response.capture_context_ep_jwt) {
@@ -390,7 +399,10 @@
                             payment_method: express_pay_ajaxUCObj['visa_acceptance_solutions_uc_id'],
                             payer_auth_enabled: express_pay_ajaxUCObj['payer_auth_enabled'],
                             transientToken: tt,
-                            quantity: currentQuantity
+                            quantity: currentQuantity,
+                            is_switch: express_pay_ajaxUCObj.is_switch || false,
+                            switch_subscription_id: express_pay_ajaxUCObj.switch_subscription_id || '',
+                            switch_item_id: express_pay_ajaxUCObj.switch_item_id || ''
                         };
                         
                         // For variable products, add the variation ID

@@ -163,8 +163,8 @@ class InvoicesApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "createInvoice,createInvoiceWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "createInvoice,createInvoiceWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -187,6 +187,10 @@ class InvoicesApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\InvoicingV2InvoicesPost201Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "createInvoice,createInvoiceWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -196,7 +200,8 @@ class InvoicesApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\InvoicingV2InvoicesPost201Response',
-                '/invoicing/v2/invoices'
+                '/invoicing/v2/invoices',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -312,8 +317,8 @@ class InvoicesApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getAllInvoices,getAllInvoicesWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getAllInvoices,getAllInvoicesWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -339,6 +344,10 @@ class InvoicesApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\InvoicingV2InvoicesAllGet200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getAllInvoices,getAllInvoicesWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -348,7 +357,8 @@ class InvoicesApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\InvoicingV2InvoicesAllGet200Response',
-                '/invoicing/v2/invoices'
+                '/invoicing/v2/invoices',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -447,8 +457,8 @@ class InvoicesApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getInvoice,getInvoiceWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getInvoice,getInvoiceWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -471,6 +481,10 @@ class InvoicesApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\InvoicingV2InvoicesGet200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getInvoice,getInvoiceWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -480,7 +494,8 @@ class InvoicesApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\InvoicingV2InvoicesGet200Response',
-                '/invoicing/v2/invoices/{id}'
+                '/invoicing/v2/invoices/{id}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -579,8 +594,8 @@ class InvoicesApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "performCancelAction,performCancelActionWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "performCancelAction,performCancelActionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -603,6 +618,10 @@ class InvoicesApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\InvoicingV2InvoicesCancel200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "performCancelAction,performCancelActionWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -612,7 +631,8 @@ class InvoicesApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\InvoicingV2InvoicesCancel200Response',
-                '/invoicing/v2/invoices/{id}/cancelation'
+                '/invoicing/v2/invoices/{id}/cancelation',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -622,6 +642,143 @@ class InvoicesApi
             switch ($e->getCode()) {
                 case 200:
                     $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InvoicingV2InvoicesCancel200Response', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 400:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InvoicingV2InvoicesAllGet400Response', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 404:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InvoicingV2InvoicesAllGet404Response', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 502:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InvoicingV2InvoicesAllGet502Response', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+            }
+
+            self::$logger->error("ApiException : $e");
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation performPublishAction
+     *
+     * Publish an Invoice
+     *
+     * @param string $id The invoice number. (required)
+     * @throws \CyberSource\ApiException on non-2xx response
+     * @return array of \CyberSource\Model\InvoicingV2InvoicesPublish200Response, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function performPublishAction($id)
+    {
+        self::$logger->info('CALL TO METHOD performPublishAction STARTED');
+        list($response, $statusCode, $httpHeader) = $this->performPublishActionWithHttpInfo($id);
+        self::$logger->info('CALL TO METHOD performPublishAction ENDED');
+        self::$logger->close();
+        return [$response, $statusCode, $httpHeader];
+    }
+
+    /**
+     * Operation performPublishActionWithHttpInfo
+     *
+     * Publish an Invoice
+     *
+     * @param string $id The invoice number. (required)
+     * @throws \CyberSource\ApiException on non-2xx response
+     * @return array of \CyberSource\Model\InvoicingV2InvoicesPublish200Response, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function performPublishActionWithHttpInfo($id)
+    {
+        // verify the required parameter 'id' is set
+        if ($id === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter $id when calling performPublishAction");
+            throw new \InvalidArgumentException('Missing the required parameter $id when calling performPublishAction');
+        }
+        // parse inputs
+        $resourcePath = "/invoicing/v2/invoices/{id}/publication";
+        $httpBody = '';
+        $queryParams = [];
+        $headerParams = [];
+        $formParams = [];
+        
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json', 'application/hal+json', 'application/json;charset=utf-8', 'application/hal+json;charset=utf-8']);
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json;charset=utf-8']);
+
+        // path params
+        if ($id !== null) {
+            $resourcePath = str_replace(
+                "{" . "id" . "}",
+                $this->apiClient->getSerializer()->toPathValue($id),
+                $resourcePath
+            );
+        }
+        if ('POST' == 'POST') {
+            $_tempBody = '{}';
+        }
+
+        // for model (json/xml)
+        if (isset($_tempBody) and count($formParams) <= 0) {
+            $httpBody = $_tempBody; // $_tempBody is the method argument, if present
+        } elseif (count($formParams) > 0) {
+            $httpBody = MultipartHelper::build_data_files($boundary, $formParams); // for HTTP post (form)
+        }
+
+        //MLE check and mle encryption for req body
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "performPublishAction,performPublishActionWithHttpInfo")) {
+            try {
+                $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
+            } catch (Exception $e) {
+                self::$logger->error("Failed to encrypt request body:  $e");
+                throw new ApiException("Failed to encrypt request body : " . $e->getMessage());
+            }
+        }
+
+        
+        // Logging
+        self::$logger->debug("Resource : POST $resourcePath");
+        if (isset($httpBody) and count($formParams) <= 0) {
+            if ($this->apiClient->merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
+                $printHttpBody = \CyberSource\Utilities\Helpers\DataMasker::maskData($httpBody);
+            } else {
+                $printHttpBody = $httpBody;
+            }
+            
+            self::$logger->debug("Body Parameter :\n" . $printHttpBody); 
+        }
+
+        self::$logger->debug("Return Type : \CyberSource\Model\InvoicingV2InvoicesPublish200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "performPublishAction,performPublishActionWithHttpInfo");
+        
+        // make the API Call
+        try {
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
+                $resourcePath,
+                'POST',
+                $queryParams,
+                $httpBody,
+                $headerParams,
+                '\CyberSource\Model\InvoicingV2InvoicesPublish200Response',
+                '/invoicing/v2/invoices/{id}/publication',
+                $isResponseMLEForAPI
+            );
+            
+            self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
+
+            return [$this->apiClient->getSerializer()->deserialize($response, '\CyberSource\Model\InvoicingV2InvoicesPublish200Response', $httpHeader), $statusCode, $httpHeader];
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InvoicingV2InvoicesPublish200Response', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 400:
@@ -711,8 +868,8 @@ class InvoicesApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "performSendAction,performSendActionWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "performSendAction,performSendActionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -735,6 +892,10 @@ class InvoicesApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\InvoicingV2InvoicesSend200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "performSendAction,performSendActionWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -744,7 +905,8 @@ class InvoicesApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\InvoicingV2InvoicesSend200Response',
-                '/invoicing/v2/invoices/{id}/delivery'
+                '/invoicing/v2/invoices/{id}/delivery',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -857,8 +1019,8 @@ class InvoicesApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "updateInvoice,updateInvoiceWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "updateInvoice,updateInvoiceWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -881,6 +1043,10 @@ class InvoicesApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\InvoicingV2InvoicesPut200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "updateInvoice,updateInvoiceWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -890,7 +1056,8 @@ class InvoicesApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\InvoicingV2InvoicesPut200Response',
-                '/invoicing/v2/invoices/{id}'
+                '/invoicing/v2/invoices/{id}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

@@ -53,6 +53,7 @@ class Ptsv2creditsProcessingInformation implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
+        'actionList' => 'string[]',
         'commerceIndicator' => 'string',
         'processorId' => 'string',
         'paymentSolution' => 'string',
@@ -79,6 +80,7 @@ class Ptsv2creditsProcessingInformation implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
+        'actionList' => null,
         'commerceIndicator' => null,
         'processorId' => null,
         'paymentSolution' => null,
@@ -115,6 +117,7 @@ class Ptsv2creditsProcessingInformation implements ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
+        'actionList' => 'actionList',
         'commerceIndicator' => 'commerceIndicator',
         'processorId' => 'processorId',
         'paymentSolution' => 'paymentSolution',
@@ -142,6 +145,7 @@ class Ptsv2creditsProcessingInformation implements ArrayAccess
      * @var string[]
      */
     protected static $setters = [
+        'actionList' => 'setActionList',
         'commerceIndicator' => 'setCommerceIndicator',
         'processorId' => 'setProcessorId',
         'paymentSolution' => 'setPaymentSolution',
@@ -169,6 +173,7 @@ class Ptsv2creditsProcessingInformation implements ArrayAccess
      * @var string[]
      */
     protected static $getters = [
+        'actionList' => 'getActionList',
         'commerceIndicator' => 'getCommerceIndicator',
         'processorId' => 'getProcessorId',
         'paymentSolution' => 'getPaymentSolution',
@@ -221,6 +226,7 @@ class Ptsv2creditsProcessingInformation implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
+        $this->container['actionList'] = isset($data['actionList']) ? $data['actionList'] : null;
         $this->container['commerceIndicator'] = isset($data['commerceIndicator']) ? $data['commerceIndicator'] : null;
         $this->container['processorId'] = isset($data['processorId']) ? $data['processorId'] : null;
         $this->container['paymentSolution'] = isset($data['paymentSolution']) ? $data['paymentSolution'] : null;
@@ -266,6 +272,27 @@ class Ptsv2creditsProcessingInformation implements ArrayAccess
         return true;
     }
 
+
+    /**
+     * Gets actionList
+     * @return string[]
+     */
+    public function getActionList()
+    {
+        return $this->container['actionList'];
+    }
+
+    /**
+     * Sets actionList
+     * @param string[] $actionList Array of actions (one or more) to be included in the payment to invoke bundled services along with Standalone Credit.  Possible values are one or more of follows:   - `DECISION_SKIP`: Use this when you want to skip Decision Manager service(s).
+     * @return $this
+     */
+    public function setActionList($actionList)
+    {
+        $this->container['actionList'] = $actionList;
+
+        return $this;
+    }
 
     /**
      * Gets commerceIndicator

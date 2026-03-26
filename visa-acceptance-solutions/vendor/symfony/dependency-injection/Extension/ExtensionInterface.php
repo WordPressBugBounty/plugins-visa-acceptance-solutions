@@ -23,6 +23,10 @@ interface ExtensionInterface
     /**
      * Loads a specific configuration.
      *
+     * @param array<array<mixed>> $configs
+     *
+     * @return void
+     *
      * @throws \InvalidArgumentException When provided tag is not defined in this extension
      */
     public function load(array $configs, ContainerBuilder $container);
@@ -31,6 +35,8 @@ interface ExtensionInterface
      * Returns the namespace to be used for this extension (XML namespace).
      *
      * @return string
+     *
+     * @deprecated since Symfony 7.4, to be removed in Symfony 8.0 together with XML support.
      */
     public function getNamespace();
 
@@ -38,6 +44,8 @@ interface ExtensionInterface
      * Returns the base path for the XSD files.
      *
      * @return string|false
+     *
+     * @deprecated since Symfony 7.4, to be removed in Symfony 8.0 together with XML support.
      */
     public function getXsdValidationBasePath();
 

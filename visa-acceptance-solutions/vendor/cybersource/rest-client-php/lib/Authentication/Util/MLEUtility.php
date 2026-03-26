@@ -11,11 +11,13 @@ use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\Encryption\JWEBuilder;
 use Jose\Component\Encryption\Serializer\CompactSerializer;
 use Jose\Component\KeyManagement\JWKFactory;
+use Jose\Component\Encryption\Algorithm\KeyEncryption\RSAOAEP;
 use Jose\Component\Encryption\Algorithm\KeyEncryption\RSAOAEP256;
 use Jose\Component\Encryption\Algorithm\ContentEncryption\A256GCM;
 use Jose\Component\Encryption\Compression\CompressionMethodManager;
 use Jose\Component\Encryption\Compression\Deflate;
 use CyberSource\Authentication\Util\MLEException;
+use \CyberSource\Authentication\Util\JWE\JWEUtility;
 
 /*
 Purpose : MLE encryption for request body
@@ -27,25 +29,63 @@ class MLEUtility
 
     private static $cache = null;
 
-    public static function checkIsMLEForAPI($merchantConfig, $isMLESupportedByCybsForApi, $operationIds)
+    public static function checkIsMLEForAPI($merchantConfig, $inboundMLEStatus, $operationIds)
     {
         $isMLEForAPI = false;
 
-        if ($isMLESupportedByCybsForApi && $merchantConfig->getUseMLEGlobally()) {
+        if (
+            isset($inboundMLEStatus) &&
+            strtolower($inboundMLEStatus) === 'optional' &&
+            $merchantConfig->getEnableRequestMLEForOptionalApisGlobally()
+        ) {
             $isMLEForAPI = true;
+        }
+
+        if (
+            isset($inboundMLEStatus) &&
+            strtolower($inboundMLEStatus) === 'mandatory'
+        ) {
+            $isMLEForAPI = !$merchantConfig->getDisableRequestMLEForMandatoryApisGlobally();
         }
 
         $operationArray = array_map('trim', explode(',', $operationIds));
 
-        if (!empty($merchantConfig->getMapToControlMLEonAPI())) {
+        if (!empty($merchantConfig->getInternalMapToControlRequestMLEonAPI())) {
             foreach ($operationArray as $operationId) {
-                if (array_key_exists($operationId, $merchantConfig->getMapToControlMLEonAPI())) {
-                    $isMLEForAPI = $merchantConfig->getMapToControlMLEonAPI()[$operationId];
+                if (array_key_exists($operationId, $merchantConfig->getInternalMapToControlRequestMLEonAPI())) {
+                    $isMLEForAPI = $merchantConfig->getInternalMapToControlRequestMLEonAPI()[$operationId];
                     break;
                 }
             }
         }
         return $isMLEForAPI;
+    }
+
+    public static function checkIsResponseMLEForAPI($merchantConfig, $operationIds)
+    {
+        // default false
+        $isResponseMLEForAPI = false;
+
+        // Global flag
+        if ($merchantConfig->getEnableResponseMleGlobally()) {
+            $isResponseMLEForAPI = true;
+        }
+
+        // Multiple operation ids (e.g., apiCall, apiCallAsync)
+        $operationArray = array_map('trim', explode(',', (string)$operationIds));
+
+        // Per-operation override map (internal response map)
+        $map = $merchantConfig->getInternalMapToControlResponseMLEonAPI();
+        if (is_array($map) && !empty($map)) {
+            foreach ($operationArray as $operationId) {
+                if (array_key_exists($operationId, $map)) {
+                    $isResponseMLEForAPI = (bool)$map[$operationId];
+                    break;
+                }
+            }
+        }
+
+        return $isResponseMLEForAPI;
     }
 
     public static function encryptRequestPayload($merchantConfig, $requestBody)
@@ -56,7 +96,14 @@ class MLEUtility
         if (self::$logger === null) {
             self::$logger = (new LogFactory())->getLogger(\CyberSource\Utilities\Helpers\ClassHelper::getClassName(static::class), $merchantConfig->getLogConfiguration());
         }
+        
         $mleCert = self::getMLECert($merchantConfig);
+
+        if ($mleCert == false && GlobalParameter::HTTP_SIGNATURE == $merchantConfig->getAuthenticationType()) {
+            self::$logger->debug("The certificate to use for MLE for requests is not provided in the merchant configuration. Please ensure that the certificate path is provided.");
+            self::$logger->debug("Currently, MLE for requests using HTTP Signature as authentication is not supported by Cybersource. By default, the SDK will fall back to non-encrypted requests.");
+            return $requestBody;
+        }
 
         if ($merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
             $printRequestBody = \CyberSource\Utilities\Helpers\DataMasker::maskData($requestBody);
@@ -73,10 +120,69 @@ class MLEUtility
         return $mleRequest;
     }
 
+    public static function checkIsMleEncryptedResponse($responseBody)
+    {
+        if ($responseBody === null) { return false; }
+        $trim = trim($responseBody);
+        if ($trim === '' || $trim[0] !== '{') { return false; }
+        try {
+            $decoded = json_decode($responseBody, true);
+            if (!is_array($decoded)) { return false; }
+            if (count($decoded) !== 1) { return false; }
+            return array_key_exists('encryptedResponse', $decoded) && is_string($decoded['encryptedResponse']);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public static function decryptMleResponsePayload($merchantConfig, $mleResponseBody)
+    {
+        if (self::$logger === null) {
+            self::$logger = (new LogFactory())->getLogger(\CyberSource\Utilities\Helpers\ClassHelper::getClassName(static::class), $merchantConfig->getLogConfiguration());
+        }
+
+        if (!self::checkIsMleEncryptedResponse($mleResponseBody)) {
+            throw new MLEException("Response body is not MLE encrypted.");
+        }
+        $jweToken = self::getResponseMleToken($mleResponseBody);
+        if (empty($jweToken)) {
+            // when mle token is empty or null then fall back to non mle encrypted response
+            return $mleResponseBody;
+        }
+        $privateKey = self::getMleResponsePrivateKey($merchantConfig);
+        if (empty($privateKey)) {
+            throw new MLEException("Response MLE private key not available for decryption.");
+        }
+        if ($merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
+            $maskedResponseBody = \CyberSource\Utilities\Helpers\DataMasker::maskData($mleResponseBody);
+            self::$logger->debug("LOG_NETWORK_RESPONSE_BEFORE_MLE_DECRYPTION: " . $maskedResponseBody);
+        } else {
+            self::$logger->debug("LOG_NETWORK_RESPONSE_BEFORE_MLE_DECRYPTION: " . $mleResponseBody);
+        }
+        try {
+            $decrypted = JWEUtility::decryptJWEUsingPrivateKey($privateKey, $jweToken);
+            if ($decrypted === null) {
+                throw new MLEException("Failed to decrypt MLE response payload.");
+            }
+            if ($merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
+                $maskedDecrypted = \CyberSource\Utilities\Helpers\DataMasker::maskData($decrypted);
+                self::$logger->debug("LOG_NETWORK_RESPONSE_AFTER_MLE_DECRYPTION: " . $maskedDecrypted);
+            } else {
+                self::$logger->debug("LOG_NETWORK_RESPONSE_AFTER_MLE_DECRYPTION: " . $decrypted);
+            }
+            return $decrypted;
+        } catch (\Exception $e) {
+            throw new MLEException("MLE Response decryption error: " . $e->getMessage());
+        }
+    }
+
     private static function generateToken($cert, $requestBody)
     {
         try {
-            $serialNumber = self::extractSerialNumber($cert);
+            $serialNumber = self::extractSerialNumber(
+                $cert, 
+                "Serial number not found in certificate subject field for Request MLE encryption"
+            );
 
             $publicKey = openssl_pkey_get_details(openssl_pkey_get_public($cert))['key'];
 
@@ -93,6 +199,7 @@ class MLEUtility
             ];
 
             $algorithmManager = new AlgorithmManager([
+                new RSAOAEP(),
                 new RSAOAEP256(),
                 new A256GCM()
             ]);
@@ -122,75 +229,135 @@ class MLEUtility
         }
     }
 
+    private static function getResponseMleToken($mleResponseBody)
+    {
+        try {
+            $decoded = json_decode($mleResponseBody, true);
+            return $decoded['encryptedResponse'] ?? null;
+        } catch (\Exception $e) {
+            self::$logger->error("Failed to extract Response MLE token: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    private static function getMleResponsePrivateKey($merchantConfig)
+    {
+        if (null != $merchantConfig->getResponseMlePrivateKey()) {
+            $privateKey = $merchantConfig->getResponseMlePrivateKey();
+            if ($privateKey !== null && !is_string($privateKey)) {
+                try {
+                    $privateKey = Utility::convertKeyObjectToPem($privateKey);
+                } catch (\Exception $e) {
+                    self::$logger->error("Failed to convert key object to PEM: " . $e->getMessage());
+                    throw new MLEException("Failed to convert key object to PEM: " . $e->getMessage());
+                }
+                return $privateKey;
+            }
+        }
+
+        if (!isset(self::$cache)) {
+
+            self::$cache = new Cache();
+        }
+        return self::$cache->getMleResponsePrivateKeyFromFilePath($merchantConfig);
+    }
+
     public static function getMLECert($merchantConfig)
     {
         try {
             if (!isset(self::$cache)) {
                 self::$cache = new Cache();
             }
+            return self::$cache->getRequestMLECertFromCache($merchantConfig);
 
-            $fileCache = self::$cache->grabFileFromP12($merchantConfig);
-
-            $x509Cert = $fileCache['mle_cert'];
-
-            if ($x509Cert) {
-                self::validateCertificateExpiry($x509Cert, $merchantConfig->getMleKeyAlias());
-                return $x509Cert;
-            } else {
-                throw new MLEException("Certificate with alias " . $merchantConfig->getMleKeyAlias() . " not found");
-            }
         } catch (\Exception $e) {
             self::$logger->error("Error fetching MLE certificate: " . $e->getMessage());
             throw new MLEException("Error fetching MLE certificate: " . $e->getMessage());
         }
     }
 
-    public static function extractSerialNumber($cert)
+    public static function extractSerialNumber($cert, $errorMessage = null)
     {
         try {
             $certDetails = openssl_x509_parse($cert);
 
-            $serialNumber = null;
             if (isset($certDetails['subject']['serialNumber'])) {
-                $serialNumber = $certDetails['subject']['serialNumber'];
+                return $certDetails['subject']['serialNumber'];
             }
 
-            if ($serialNumber === null) {
-                self::$logger->warning("Serial number not found in MLE certificate for alias.");
-                $serialNumber = $certDetails['serialNumber'];
-            }
-            return $serialNumber;
+            $errorMsg = $errorMessage ?? "Serial number not found in certificate subject field.";
+            self::$logger->error($errorMsg);
+            throw new MLEException($errorMsg);
+            
+        } catch (MLEException $e) {
+            throw $e;
         } catch (\Exception $e) {
             self::$logger->error("Error extracting serial number from certificate: " . $e->getMessage());
             throw new MLEException("Error extracting serial number from certificate: " . $e->getMessage());
         }
     }
 
-    public static function validateCertificateExpiry($certificate, $keyAlias)
+    /**
+     * Validates and auto-extracts the Response MLE KID from merchant configuration
+     * 
+     * This function checks if the Response MLE KID is already configured. If not,
+     * it attempts to extract it from the Response MLE private key file (P12/PFX).
+     * 
+     * @param \CyberSource\Authentication\Core\MerchantConfiguration $merchantConfig The merchant configuration
+     * @return string The validated or extracted Response MLE KID
+     * @throws MLEException If KID cannot be determined or extraction fails
+     */
+    public static function validateAndAutoExtractResponseMleKid($merchantConfig)
     {
-        try {
-            $certDetails = openssl_x509_parse($certificate);
-            $notValidAfter = isset($certDetails['validTo_time_t']) ? $certDetails['validTo_time_t'] : null;
+        if (self::$logger === null) {
+            self::$logger = (new LogFactory())->getLogger(\CyberSource\Utilities\Helpers\ClassHelper::getClassName(static::class), $merchantConfig->getLogConfiguration());
+        }
 
-            if ($notValidAfter === null) {
-                self::$logger->warning("Certificate with MLE alias $keyAlias does not have a valid expiry date.");
+        // If responseMlePrivateKey is provided directly (in-memory), use the configured responseMleKID
+        if ($merchantConfig->getResponseMlePrivateKey() !== null) {
+            self::$logger->debug("responseMlePrivateKey is provided directly, using configured responseMleKID");
+            return $merchantConfig->getResponseMleKID();
+        }
+
+        // Attempt to auto-extract KID from Response MLE private key file (CyberSource P12)
+        $cybsKid = null;
+        try {
+            if (!isset(self::$cache)) {
+                self::$cache = new Cache();
             }
 
-            if ($notValidAfter < time()) {
-                self::$logger->warning("Certificate with MLE alias $keyAlias is expired as of " . date('Y-m-d H:i:s', $notValidAfter) . ". Please update p12 file.");
-                // throw new MLEException("Certificate with MLE alias $keyAlias is expired.");
-            } else {
-                $timeToExpire = $notValidAfter - time();
-                $warningPeriod = GlobalParameter::CERTIFICATE_EXPIRY_DATE_WARNING_DAYS * 24 * 60 * 60;
+            $kidData = self::$cache->getMLEKIdDataFromCache($merchantConfig);
 
-                if ($timeToExpire < $warningPeriod) {
-                    self::$logger->warning("Certificate for MLE with alias $keyAlias is going to expire on " . date('Y-m-d H:i:s', $notValidAfter) . ". Please update p12 file before that.");
-                }
+            if ($kidData !== null && isset($kidData['kid']) && !empty($kidData['kid'])) {
+                $cybsKid = $kidData['kid'];
+                self::$logger->debug("Successfully auto-extracted responseMleKID from CyberSource P12 certificate");
             }
         } catch (\Exception $e) {
-            self::$logger->error("Error validating certificate expiry: " . $e->getMessage());
-            // throw new MLEException("Error validating certificate expiry: " . $e->getMessage());
-        } 
+            self::$logger->debug("Could not auto-extract responseMleKID from certificate: " . $e->getMessage());
+        }
+
+        // Get manually configured KID
+        $configuredKID = $merchantConfig->getResponseMleKID();
+        $configuredKID = (is_string($configuredKID) && trim($configuredKID) !== '') ? trim($configuredKID) : null;
+
+        // Validate and determine which KID to use
+        if ($cybsKid === null && $configuredKID === null) {
+            throw new MLEException(
+                "responseMleKID is required when response MLE is enabled. " .
+                "Could not auto-extract from certificate and no manual configuration provided. " .
+                "Please provide responseMleKID explicitly in your configuration."
+            );
+        } else if ($cybsKid === null) {
+            self::$logger->debug("Using manually configured responseMleKID");
+            return $configuredKID;
+        } else if ($configuredKID === null) {
+            self::$logger->debug("Using auto-extracted responseMleKID from CyberSource certificate");
+            return $cybsKid;
+        } else if ($cybsKid !== $configuredKID) {
+            self::$logger->warning("Auto-extracted responseMleKID does not match manually configured responseMleKID. Using configured value as preference");
+        }
+
+        return $configuredKID;
     }
 }
 ?>

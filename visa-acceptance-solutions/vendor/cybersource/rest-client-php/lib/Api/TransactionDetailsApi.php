@@ -164,8 +164,8 @@ class TransactionDetailsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getTransaction,getTransactionWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getTransaction,getTransactionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -188,6 +188,10 @@ class TransactionDetailsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\TssV2TransactionsGet200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getTransaction,getTransactionWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -197,7 +201,8 @@ class TransactionDetailsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\TssV2TransactionsGet200Response',
-                '/tss/v2/transactions/{id}'
+                '/tss/v2/transactions/{id}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

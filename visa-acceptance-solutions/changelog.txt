@@ -1,4 +1,13 @@
 *** Visa Acceptance Solutions Changelog ***
+
+2026-03-24 - version 2.2.0
+* Feature - Updated Unified Checkout to v0.34 
+* Feature - updated Cybersource Rest Client SDK to v0.0.71
+* Feature - Added support to eCheck payment method
+* Feature - Cardinal Commerce Data Centre Migration URL update
+* Feature - Display of additional response fields for refunds in back office to support Merchandise Return Authorization mandate
+* Bug Fix - Updated the UI positioning of Visa Acceptance Solutions payment method with respect to Terms & Conditions in Classic Checkout Layout
+
 2026-02-20 - version 2.1.1
 * Bug Fix - CRON job works only when Fraud Screening is enabled
 * Bug Fix - UI fix for Express Pay button on product page
@@ -12,10 +21,10 @@
 * Feature - Express Pay for Product & Checkout pages
 * Feature - Replaced Cybersource endpoints with Visa Acceptance Solutions endpoints
 * Feature - Wordpress v6.9 compatibility
-* Bug Fix - IP address collected for all requests
-* Bug Fix - Updated CVV input field text
-* Bug Fix - Saved card tokens accessible only when tokenization is enabled
-* Bug Fix - Administrative state field not passed for non-US addresses in 3DS transactions
+* Bug Fix – IP address collected for all requests
+* Bug Fix – Updated CVV input field text
+* Bug Fix – Saved card tokens accessible only when tokenization is enabled
+* Bug Fix – Administrative state field not passed for non-US addresses in 3DS transactions
 * Bug Fix - Resolved Woo Block Warning in Checkout page editor
 
 2025-10-09 - version 2.0.1

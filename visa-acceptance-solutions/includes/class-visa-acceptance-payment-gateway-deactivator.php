@@ -55,7 +55,7 @@ class Visa_Acceptance_Payment_Gateway_Deactivator {
 			foreach ( $sv_subscriptions as $sv_subsription_id ) {
 				$sv_subsription_id = (array) $sv_subsription_id;
 				if(is_plugin_active('woocommerce-subscriptions/woocommerce-subscriptions.php')) {
-					$sv_subscription   = wcs_get_subscription( $sv_subsription_id[0] );
+					$sv_subscription   = wcs_get_subscription( $sv_subsription_id[VISA_ACCEPTANCE_VAL_ZERO] );
 					if ( VISA_ACCEPTANCE_UC_ID === $sv_subscription->get_payment_method( VISA_ACCEPTANCE_EDIT ) ) {
 							$sv_subscription->set_payment_method( VISA_ACCEPTANCE_SV_GATEWAY_ID );
 							$sv_subscription->save();

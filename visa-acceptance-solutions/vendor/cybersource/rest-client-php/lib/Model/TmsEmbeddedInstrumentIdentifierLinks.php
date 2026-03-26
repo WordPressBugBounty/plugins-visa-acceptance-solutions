@@ -54,7 +54,8 @@ class TmsEmbeddedInstrumentIdentifierLinks implements ArrayAccess
       */
     protected static $swaggerTypes = [
         'self' => '\CyberSource\Model\TmsEmbeddedInstrumentIdentifierLinksSelf',
-        'paymentInstruments' => '\CyberSource\Model\TmsEmbeddedInstrumentIdentifierLinksPaymentInstruments'
+        'paymentInstruments' => '\CyberSource\Model\TmsEmbeddedInstrumentIdentifierLinksPaymentInstruments',
+        'tokenizedCards' => '\CyberSource\Model\TmsEmbeddedInstrumentIdentifierLinksTokenizedcards'
     ];
 
     /**
@@ -63,7 +64,8 @@ class TmsEmbeddedInstrumentIdentifierLinks implements ArrayAccess
       */
     protected static $swaggerFormats = [
         'self' => null,
-        'paymentInstruments' => null
+        'paymentInstruments' => null,
+        'tokenizedCards' => null
     ];
 
     public static function swaggerTypes()
@@ -82,7 +84,8 @@ class TmsEmbeddedInstrumentIdentifierLinks implements ArrayAccess
      */
     protected static $attributeMap = [
         'self' => 'self',
-        'paymentInstruments' => 'paymentInstruments'
+        'paymentInstruments' => 'paymentInstruments',
+        'tokenizedCards' => 'tokenized-cards'
     ];
 
 
@@ -92,7 +95,8 @@ class TmsEmbeddedInstrumentIdentifierLinks implements ArrayAccess
      */
     protected static $setters = [
         'self' => 'setSelf',
-        'paymentInstruments' => 'setPaymentInstruments'
+        'paymentInstruments' => 'setPaymentInstruments',
+        'tokenizedCards' => 'setTokenizedCards'
     ];
 
 
@@ -102,7 +106,8 @@ class TmsEmbeddedInstrumentIdentifierLinks implements ArrayAccess
      */
     protected static $getters = [
         'self' => 'getSelf',
-        'paymentInstruments' => 'getPaymentInstruments'
+        'paymentInstruments' => 'getPaymentInstruments',
+        'tokenizedCards' => 'getTokenizedCards'
     ];
 
     public static function attributeMap()
@@ -138,6 +143,7 @@ class TmsEmbeddedInstrumentIdentifierLinks implements ArrayAccess
     {
         $this->container['self'] = isset($data['self']) ? $data['self'] : null;
         $this->container['paymentInstruments'] = isset($data['paymentInstruments']) ? $data['paymentInstruments'] : null;
+        $this->container['tokenizedCards'] = isset($data['tokenizedCards']) ? $data['tokenizedCards'] : null;
     }
 
     /**
@@ -203,6 +209,27 @@ class TmsEmbeddedInstrumentIdentifierLinks implements ArrayAccess
     public function setPaymentInstruments($paymentInstruments)
     {
         $this->container['paymentInstruments'] = $paymentInstruments;
+
+        return $this;
+    }
+
+    /**
+     * Gets tokenizedCards
+     * @return \CyberSource\Model\TmsEmbeddedInstrumentIdentifierLinksTokenizedcards
+     */
+    public function getTokenizedCards()
+    {
+        return $this->container['tokenizedCards'];
+    }
+
+    /**
+     * Sets tokenizedCards
+     * @param \CyberSource\Model\TmsEmbeddedInstrumentIdentifierLinksTokenizedcards $tokenizedCards
+     * @return $this
+     */
+    public function setTokenizedCards($tokenizedCards)
+    {
+        $this->container['tokenizedCards'] = $tokenizedCards;
 
         return $this;
     }

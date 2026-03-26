@@ -195,8 +195,8 @@ class PaymentBatchSummariesApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getPaymentBatchSummary,getPaymentBatchSummaryWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getPaymentBatchSummary,getPaymentBatchSummaryWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -225,6 +225,10 @@ class PaymentBatchSummariesApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\ReportingV3PaymentBatchSummariesGet200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getPaymentBatchSummary,getPaymentBatchSummaryWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -234,7 +238,8 @@ class PaymentBatchSummariesApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\ReportingV3PaymentBatchSummariesGet200Response',
-                '/reporting/v3/payment-batch-summaries'
+                '/reporting/v3/payment-batch-summaries',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

@@ -163,8 +163,8 @@ class PayerAuthenticationApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = true;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "checkPayerAuthEnrollment,checkPayerAuthEnrollmentWithHttpInfo")) {
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "checkPayerAuthEnrollment,checkPayerAuthEnrollmentWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -187,6 +187,10 @@ class PayerAuthenticationApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\RiskV1AuthenticationsPost201Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "checkPayerAuthEnrollment,checkPayerAuthEnrollmentWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -196,7 +200,8 @@ class PayerAuthenticationApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\RiskV1AuthenticationsPost201Response',
-                '/risk/v1/authentications'
+                '/risk/v1/authentications',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -290,8 +295,8 @@ class PayerAuthenticationApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = true;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "payerAuthSetup,payerAuthSetupWithHttpInfo")) {
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "payerAuthSetup,payerAuthSetupWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -314,6 +319,10 @@ class PayerAuthenticationApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\RiskV1AuthenticationSetupsPost201Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "payerAuthSetup,payerAuthSetupWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -323,7 +332,8 @@ class PayerAuthenticationApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\RiskV1AuthenticationSetupsPost201Response',
-                '/risk/v1/authentication-setups'
+                '/risk/v1/authentication-setups',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -417,8 +427,8 @@ class PayerAuthenticationApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = true;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "validateAuthenticationResults,validateAuthenticationResultsWithHttpInfo")) {
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "validateAuthenticationResults,validateAuthenticationResultsWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -441,6 +451,10 @@ class PayerAuthenticationApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\RiskV1AuthenticationResultsPost201Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "validateAuthenticationResults,validateAuthenticationResultsWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -450,7 +464,8 @@ class PayerAuthenticationApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\RiskV1AuthenticationResultsPost201Response',
-                '/risk/v1/authentication-results'
+                '/risk/v1/authentication-results',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

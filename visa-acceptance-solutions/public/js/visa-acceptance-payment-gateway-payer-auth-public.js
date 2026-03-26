@@ -70,7 +70,7 @@ function reloadAfterError() {
     var currentHash = '';
     var setup_uc_flag = false;
     var sca_flag = 'no';
-
+    var ddcOrigin = null; // Dynamic origin extracted from dataCollectionUrl
 
     /**
      *
@@ -216,7 +216,7 @@ function reloadAfterError() {
     window.addEventListener(
         "message",
         function(event) {
-            if ((typeof payer_auth_param !== 'undefined' && event.origin === payer_auth_param["cardinal_url"]) || (typeof visa_acceptance_uc_payer_auth_param !== 'undefined' && event.origin === visa_acceptance_uc_payer_auth_param["cardinal_url"])) {
+            if (ddcOrigin && event.origin === ddcOrigin) {
                 let data = JSON.parse(event.data);
                 if (data != undefined && data.Status) {
                     // Step 3) After Payer Enrollment Service is called after receiving responce for setup
@@ -273,6 +273,11 @@ function reloadAfterError() {
                     if (data.status == "COMPLETED") {
                         referenceId = encodeURI(data.referenceId);
                         var dataCollectionUrl = encodeURI(data.dataCollectionUrl);
+                        try {
+                            ddcOrigin = new URL(data.dataCollectionUrl).origin;
+                        } catch (e) {
+                            console.log('Unable to parse dataCollectionUrl origin:', e);
+                        }
                         var accessToken = encodeURIComponent(data.accessToken);
 
                         // Adding element only if it's special case of pay-order page
@@ -404,6 +409,12 @@ function reloadAfterError() {
                     if (data.status == "COMPLETED") {
                         referenceId = encodeURI(data.referenceId);
                         var dataCollectionUrl = encodeURI(data.dataCollectionUrl);
+                         // Extract origin from dynamic dataCollectionUrl for postMessage validation.
+                        try {
+                            ddcOrigin = new URL(data.dataCollectionUrl).origin;
+                        } catch (e) {
+                            console.log('Unable to parse dataCollectionUrl origin:', e);
+                        }
                         var accessToken = encodeURIComponent(data.accessToken);
                         setup_uc_flag = true;
                         var cardinalElements = document.querySelectorAll("#cardinal_collection_form_div");

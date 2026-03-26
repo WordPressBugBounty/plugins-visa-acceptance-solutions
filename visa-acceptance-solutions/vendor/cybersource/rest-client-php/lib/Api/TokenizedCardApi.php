@@ -170,8 +170,8 @@ class TokenizedCardApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "deleteTokenizedCard,deleteTokenizedCardWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "deleteTokenizedCard,deleteTokenizedCardWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -194,6 +194,10 @@ class TokenizedCardApi
         }
 
         self::$logger->debug("Return Type : null");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "deleteTokenizedCard,deleteTokenizedCardWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -203,7 +207,8 @@ class TokenizedCardApi
                 $httpBody,
                 $headerParams,
                 null,
-                '/tms/v2/tokenized-cards/{tokenizedCardId}'
+                '/tms/v2/tokenized-cards/{tokenizedCardId}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -250,7 +255,7 @@ class TokenizedCardApi
      * @param string $tokenizedCardId The Id of a tokenized card. (required)
      * @param string $profileId The Id of a profile containing user specific TMS configuration. (optional)
      * @throws \CyberSource\ApiException on non-2xx response
-     * @return array of \CyberSource\Model\TokenizedcardRequest, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \CyberSource\Model\InlineResponse2001, HTTP status code, HTTP response headers (array of strings)
      */
     public function getTokenizedCard($tokenizedCardId, $profileId = null)
     {
@@ -269,7 +274,7 @@ class TokenizedCardApi
      * @param string $tokenizedCardId The Id of a tokenized card. (required)
      * @param string $profileId The Id of a profile containing user specific TMS configuration. (optional)
      * @throws \CyberSource\ApiException on non-2xx response
-     * @return array of \CyberSource\Model\TokenizedcardRequest, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \CyberSource\Model\InlineResponse2001, HTTP status code, HTTP response headers (array of strings)
      */
     public function getTokenizedCardWithHttpInfo($tokenizedCardId, $profileId = null)
     {
@@ -316,8 +321,8 @@ class TokenizedCardApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getTokenizedCard,getTokenizedCardWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getTokenizedCard,getTokenizedCardWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -339,7 +344,11 @@ class TokenizedCardApi
             self::$logger->debug("Body Parameter :\n" . $printHttpBody); 
         }
 
-        self::$logger->debug("Return Type : \CyberSource\Model\TokenizedcardRequest");
+        self::$logger->debug("Return Type : \CyberSource\Model\InlineResponse2001");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getTokenizedCard,getTokenizedCardWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -348,17 +357,18 @@ class TokenizedCardApi
                 $queryParams,
                 $httpBody,
                 $headerParams,
-                '\CyberSource\Model\TokenizedcardRequest',
-                '/tms/v2/tokenized-cards/{tokenizedCardId}'
+                '\CyberSource\Model\InlineResponse2001',
+                '/tms/v2/tokenized-cards/{tokenizedCardId}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
 
-            return [$this->apiClient->getSerializer()->deserialize($response, '\CyberSource\Model\TokenizedcardRequest', $httpHeader), $statusCode, $httpHeader];
+            return [$this->apiClient->getSerializer()->deserialize($response, '\CyberSource\Model\InlineResponse2001', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\TokenizedcardRequest', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse2001', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 400:
@@ -389,43 +399,55 @@ class TokenizedCardApi
     }
 
     /**
-     * Operation postTokenizedCard
+     * Operation postIssuerLifeCycleSimulation
      *
-     * Create a Tokenized Card
+     * Simulate Issuer Life Cycle Management Events
      *
-     * @param \CyberSource\Model\TokenizedcardRequest $tokenizedcardRequest  (required)
-     * @param string $profileId The Id of a profile containing user specific TMS configuration. (optional)
+     * @param string $profileId The Id of a profile containing user specific TMS configuration. (required)
+     * @param string $tokenizedCardId The Id of a tokenized card. (required)
+     * @param \CyberSource\Model\PostIssuerLifeCycleSimulationRequest $postIssuerLifeCycleSimulationRequest  (required)
      * @throws \CyberSource\ApiException on non-2xx response
-     * @return array of \CyberSource\Model\TokenizedcardRequest, HTTP status code, HTTP response headers (array of strings)
+     * @return array of void, HTTP status code, HTTP response headers (array of strings)
      */
-    public function postTokenizedCard($tokenizedcardRequest, $profileId = null)
+    public function postIssuerLifeCycleSimulation($profileId, $tokenizedCardId, $postIssuerLifeCycleSimulationRequest)
     {
-        self::$logger->info('CALL TO METHOD postTokenizedCard STARTED');
-        list($response, $statusCode, $httpHeader) = $this->postTokenizedCardWithHttpInfo($tokenizedcardRequest, $profileId);
-        self::$logger->info('CALL TO METHOD postTokenizedCard ENDED');
+        self::$logger->info('CALL TO METHOD postIssuerLifeCycleSimulation STARTED');
+        list($response, $statusCode, $httpHeader) = $this->postIssuerLifeCycleSimulationWithHttpInfo($profileId, $tokenizedCardId, $postIssuerLifeCycleSimulationRequest);
+        self::$logger->info('CALL TO METHOD postIssuerLifeCycleSimulation ENDED');
         self::$logger->close();
         return [$response, $statusCode, $httpHeader];
     }
 
     /**
-     * Operation postTokenizedCardWithHttpInfo
+     * Operation postIssuerLifeCycleSimulationWithHttpInfo
      *
-     * Create a Tokenized Card
+     * Simulate Issuer Life Cycle Management Events
      *
-     * @param \CyberSource\Model\TokenizedcardRequest $tokenizedcardRequest  (required)
-     * @param string $profileId The Id of a profile containing user specific TMS configuration. (optional)
+     * @param string $profileId The Id of a profile containing user specific TMS configuration. (required)
+     * @param string $tokenizedCardId The Id of a tokenized card. (required)
+     * @param \CyberSource\Model\PostIssuerLifeCycleSimulationRequest $postIssuerLifeCycleSimulationRequest  (required)
      * @throws \CyberSource\ApiException on non-2xx response
-     * @return array of \CyberSource\Model\TokenizedcardRequest, HTTP status code, HTTP response headers (array of strings)
+     * @return array of null, HTTP status code, HTTP response headers (array of strings)
      */
-    public function postTokenizedCardWithHttpInfo($tokenizedcardRequest, $profileId = null)
+    public function postIssuerLifeCycleSimulationWithHttpInfo($profileId, $tokenizedCardId, $postIssuerLifeCycleSimulationRequest)
     {
-        // verify the required parameter 'tokenizedcardRequest' is set
-        if ($tokenizedcardRequest === null) {
-            self::$logger->error("InvalidArgumentException : Missing the required parameter $tokenizedcardRequest when calling postTokenizedCard");
-            throw new \InvalidArgumentException('Missing the required parameter $tokenizedcardRequest when calling postTokenizedCard');
+        // verify the required parameter 'profileId' is set
+        if ($profileId === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter $profileId when calling postIssuerLifeCycleSimulation");
+            throw new \InvalidArgumentException('Missing the required parameter $profileId when calling postIssuerLifeCycleSimulation');
+        }
+        // verify the required parameter 'tokenizedCardId' is set
+        if ($tokenizedCardId === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter $tokenizedCardId when calling postIssuerLifeCycleSimulation");
+            throw new \InvalidArgumentException('Missing the required parameter $tokenizedCardId when calling postIssuerLifeCycleSimulation');
+        }
+        // verify the required parameter 'postIssuerLifeCycleSimulationRequest' is set
+        if ($postIssuerLifeCycleSimulationRequest === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter $postIssuerLifeCycleSimulationRequest when calling postIssuerLifeCycleSimulation");
+            throw new \InvalidArgumentException('Missing the required parameter $postIssuerLifeCycleSimulationRequest when calling postIssuerLifeCycleSimulation');
         }
         // parse inputs
-        $resourcePath = "/tms/v2/tokenized-cards";
+        $resourcePath = "/tms/v2/tokenized-cards/{tokenizedCardId}/issuer-life-cycle-event-simulations";
         $httpBody = '';
         $queryParams = [];
         $headerParams = [];
@@ -442,14 +464,22 @@ class TokenizedCardApi
         if ($profileId !== null) {
             $headerParams['profile-id'] = $this->apiClient->getSerializer()->toHeaderValue($profileId);
         }
+        // path params
+        if ($tokenizedCardId !== null) {
+            $resourcePath = str_replace(
+                "{" . "tokenizedCardId" . "}",
+                $this->apiClient->getSerializer()->toPathValue($tokenizedCardId),
+                $resourcePath
+            );
+        }
         // body params
         $_tempBody = null;
-        if (isset($tokenizedcardRequest)) {
-            $_tempBody = $tokenizedcardRequest;
+        if (isset($postIssuerLifeCycleSimulationRequest)) {
+            $_tempBody = $postIssuerLifeCycleSimulationRequest;
         }
         
         $sdkTracker = new \CyberSource\Utilities\Tracking\SdkTracker();
-        $modelClassLocation = explode('\\', '\CyberSource\Model\TokenizedcardRequest');
+        $modelClassLocation = explode('\\', '\CyberSource\Model\PostIssuerLifeCycleSimulationRequest');
 
         $_tempBody = $sdkTracker->insertDeveloperIdTracker($_tempBody, end($modelClassLocation), $this->apiClient->merchantConfig->getRunEnvironment(), $this->apiClient->merchantConfig->getDefaultDeveloperId());
 
@@ -461,8 +491,8 @@ class TokenizedCardApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "postTokenizedCard,postTokenizedCardWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "postIssuerLifeCycleSimulation,postIssuerLifeCycleSimulationWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -484,7 +514,11 @@ class TokenizedCardApi
             self::$logger->debug("Body Parameter :\n" . $printHttpBody); 
         }
 
-        self::$logger->debug("Return Type : \CyberSource\Model\TokenizedcardRequest");
+        self::$logger->debug("Return Type : null");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "postIssuerLifeCycleSimulation,postIssuerLifeCycleSimulationWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -493,21 +527,164 @@ class TokenizedCardApi
                 $queryParams,
                 $httpBody,
                 $headerParams,
-                '\CyberSource\Model\TokenizedcardRequest',
-                '/tms/v2/tokenized-cards'
+                null,
+                '/tms/v2/tokenized-cards/{tokenizedCardId}/issuer-life-cycle-event-simulations',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
 
-            return [$this->apiClient->getSerializer()->deserialize($response, '\CyberSource\Model\TokenizedcardRequest', $httpHeader), $statusCode, $httpHeader];
+            return [$response, $statusCode, $httpHeader];
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 400:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse400', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 403:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse403', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 404:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse424', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 500:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse500', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+            }
+
+            self::$logger->error("ApiException : $e");
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation postTokenizedCard
+     *
+     * Create a Tokenized Card
+     *
+     * @param \CyberSource\Model\PostTokenizedCardRequest $postTokenizedCardRequest  (required)
+     * @param string $profileId The Id of a profile containing user specific TMS configuration. (optional)
+     * @throws \CyberSource\ApiException on non-2xx response
+     * @return array of \CyberSource\Model\InlineResponse2001, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function postTokenizedCard($postTokenizedCardRequest, $profileId = null)
+    {
+        self::$logger->info('CALL TO METHOD postTokenizedCard STARTED');
+        list($response, $statusCode, $httpHeader) = $this->postTokenizedCardWithHttpInfo($postTokenizedCardRequest, $profileId);
+        self::$logger->info('CALL TO METHOD postTokenizedCard ENDED');
+        self::$logger->close();
+        return [$response, $statusCode, $httpHeader];
+    }
+
+    /**
+     * Operation postTokenizedCardWithHttpInfo
+     *
+     * Create a Tokenized Card
+     *
+     * @param \CyberSource\Model\PostTokenizedCardRequest $postTokenizedCardRequest  (required)
+     * @param string $profileId The Id of a profile containing user specific TMS configuration. (optional)
+     * @throws \CyberSource\ApiException on non-2xx response
+     * @return array of \CyberSource\Model\InlineResponse2001, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function postTokenizedCardWithHttpInfo($postTokenizedCardRequest, $profileId = null)
+    {
+        // verify the required parameter 'postTokenizedCardRequest' is set
+        if ($postTokenizedCardRequest === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter $postTokenizedCardRequest when calling postTokenizedCard");
+            throw new \InvalidArgumentException('Missing the required parameter $postTokenizedCardRequest when calling postTokenizedCard');
+        }
+        // parse inputs
+        $resourcePath = "/tms/v2/tokenized-cards";
+        $httpBody = '';
+        $queryParams = [];
+        $headerParams = [];
+        $formParams = [];
+        
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json;charset=utf-8']);
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json;charset=utf-8']);
+
+        // header params
+        if ($profileId !== null) {
+            $headerParams['profile-id'] = $this->apiClient->getSerializer()->toHeaderValue($profileId);
+        }
+        // body params
+        $_tempBody = null;
+        if (isset($postTokenizedCardRequest)) {
+            $_tempBody = $postTokenizedCardRequest;
+        }
+        
+        $sdkTracker = new \CyberSource\Utilities\Tracking\SdkTracker();
+        $modelClassLocation = explode('\\', '\CyberSource\Model\PostTokenizedCardRequest');
+
+        $_tempBody = $sdkTracker->insertDeveloperIdTracker($_tempBody, end($modelClassLocation), $this->apiClient->merchantConfig->getRunEnvironment(), $this->apiClient->merchantConfig->getDefaultDeveloperId());
+
+        // for model (json/xml)
+        if (isset($_tempBody) and count($formParams) <= 0) {
+            $httpBody = $_tempBody; // $_tempBody is the method argument, if present
+        } elseif (count($formParams) > 0) {
+            $httpBody = MultipartHelper::build_data_files($boundary, $formParams); // for HTTP post (form)
+        }
+
+        //MLE check and mle encryption for req body
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "postTokenizedCard,postTokenizedCardWithHttpInfo")) {
+            try {
+                $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
+            } catch (Exception $e) {
+                self::$logger->error("Failed to encrypt request body:  $e");
+                throw new ApiException("Failed to encrypt request body : " . $e->getMessage());
+            }
+        }
+
+        
+        // Logging
+        self::$logger->debug("Resource : POST $resourcePath");
+        if (isset($httpBody) and count($formParams) <= 0) {
+            if ($this->apiClient->merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
+                $printHttpBody = \CyberSource\Utilities\Helpers\DataMasker::maskData($httpBody);
+            } else {
+                $printHttpBody = $httpBody;
+            }
+            
+            self::$logger->debug("Body Parameter :\n" . $printHttpBody); 
+        }
+
+        self::$logger->debug("Return Type : \CyberSource\Model\InlineResponse2001");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "postTokenizedCard,postTokenizedCardWithHttpInfo");
+        
+        // make the API Call
+        try {
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
+                $resourcePath,
+                'POST',
+                $queryParams,
+                $httpBody,
+                $headerParams,
+                '\CyberSource\Model\InlineResponse2001',
+                '/tms/v2/tokenized-cards',
+                $isResponseMLEForAPI
+            );
+            
+            self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
+
+            return [$this->apiClient->getSerializer()->deserialize($response, '\CyberSource\Model\InlineResponse2001', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\TokenizedcardRequest', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse2001', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 201:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\TokenizedcardRequest', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse2001', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 400:

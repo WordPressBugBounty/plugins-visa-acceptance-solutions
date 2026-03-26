@@ -54,7 +54,9 @@ class Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformationService im
       */
     protected static $swaggerTypes = [
         'categoryCode' => 'string',
-        'subCategoryCode' => 'string'
+        'subCategoryCode' => 'string',
+        'feeAmount' => 'string',
+        'feeCode' => 'string'
     ];
 
     /**
@@ -63,7 +65,9 @@ class Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformationService im
       */
     protected static $swaggerFormats = [
         'categoryCode' => null,
-        'subCategoryCode' => null
+        'subCategoryCode' => null,
+        'feeAmount' => null,
+        'feeCode' => null
     ];
 
     public static function swaggerTypes()
@@ -82,7 +86,9 @@ class Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformationService im
      */
     protected static $attributeMap = [
         'categoryCode' => 'categoryCode',
-        'subCategoryCode' => 'subCategoryCode'
+        'subCategoryCode' => 'subCategoryCode',
+        'feeAmount' => 'feeAmount',
+        'feeCode' => 'feeCode'
     ];
 
 
@@ -92,7 +98,9 @@ class Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformationService im
      */
     protected static $setters = [
         'categoryCode' => 'setCategoryCode',
-        'subCategoryCode' => 'setSubCategoryCode'
+        'subCategoryCode' => 'setSubCategoryCode',
+        'feeAmount' => 'setFeeAmount',
+        'feeCode' => 'setFeeCode'
     ];
 
 
@@ -102,7 +110,9 @@ class Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformationService im
      */
     protected static $getters = [
         'categoryCode' => 'getCategoryCode',
-        'subCategoryCode' => 'getSubCategoryCode'
+        'subCategoryCode' => 'getSubCategoryCode',
+        'feeAmount' => 'getFeeAmount',
+        'feeCode' => 'getFeeCode'
     ];
 
     public static function attributeMap()
@@ -138,6 +148,8 @@ class Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformationService im
     {
         $this->container['categoryCode'] = isset($data['categoryCode']) ? $data['categoryCode'] : null;
         $this->container['subCategoryCode'] = isset($data['subCategoryCode']) ? $data['subCategoryCode'] : null;
+        $this->container['feeAmount'] = isset($data['feeAmount']) ? $data['feeAmount'] : null;
+        $this->container['feeCode'] = isset($data['feeCode']) ? $data['feeCode'] : null;
     }
 
     /**
@@ -203,6 +215,48 @@ class Ptsv2paymentsTravelInformationTransitAirlineAncillaryInformationService im
     public function setSubCategoryCode($subCategoryCode)
     {
         $this->container['subCategoryCode'] = $subCategoryCode;
+
+        return $this;
+    }
+
+    /**
+     * Gets feeAmount
+     * @return string
+     */
+    public function getFeeAmount()
+    {
+        return $this->container['feeAmount'];
+    }
+
+    /**
+     * Sets feeAmount
+     * @param string $feeAmount This field contains the fee amount. This value cannot be negative.  You can include a decimal point (.), but no other special characters. Format: String, 15 characters maximum. Optional field for ancillary services.
+     * @return $this
+     */
+    public function setFeeAmount($feeAmount)
+    {
+        $this->container['feeAmount'] = $feeAmount;
+
+        return $this;
+    }
+
+    /**
+     * Gets feeCode
+     * @return string
+     */
+    public function getFeeCode()
+    {
+        return $this->container['feeCode'];
+    }
+
+    /**
+     * Sets feeCode
+     * @param string $feeCode This field contains the ancillary fee code. Format: Alphanumeric, 4 characters maximum. Optional field for ancillary services.
+     * @return $this
+     */
+    public function setFeeCode($feeCode)
+    {
+        $this->container['feeCode'] = $feeCode;
 
         return $this;
     }

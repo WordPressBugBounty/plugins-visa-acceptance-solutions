@@ -62,6 +62,7 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
         'responseCodeSource' => 'string',
         'responseDetails' => 'string',
         'responseCategoryCode' => 'string',
+        'responseSourceCode' => 'string',
         'forwardedAcquirerCode' => 'string',
         'settlementDate' => 'string',
         'sequenceNumber' => 'string',
@@ -97,7 +98,8 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
         'expirationTimeUtc' => 'string',
         'orderId' => 'string',
         'orderStatus' => 'string',
-        'merchantRiskPrediction' => 'string'
+        'merchantRiskPrediction' => 'string',
+        'network' => '\CyberSource\Model\Ptsv2paymentsProcessorInformationReversalNetwork'
     ];
 
     /**
@@ -114,6 +116,7 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
         'responseCodeSource' => null,
         'responseDetails' => null,
         'responseCategoryCode' => null,
+        'responseSourceCode' => null,
         'forwardedAcquirerCode' => null,
         'settlementDate' => null,
         'sequenceNumber' => null,
@@ -149,7 +152,8 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
         'expirationTimeUtc' => null,
         'orderId' => null,
         'orderStatus' => null,
-        'merchantRiskPrediction' => null
+        'merchantRiskPrediction' => null,
+        'network' => null
     ];
 
     public static function swaggerTypes()
@@ -176,6 +180,7 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
         'responseCodeSource' => 'responseCodeSource',
         'responseDetails' => 'responseDetails',
         'responseCategoryCode' => 'responseCategoryCode',
+        'responseSourceCode' => 'responseSourceCode',
         'forwardedAcquirerCode' => 'forwardedAcquirerCode',
         'settlementDate' => 'settlementDate',
         'sequenceNumber' => 'sequenceNumber',
@@ -211,7 +216,8 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
         'expirationTimeUtc' => 'expirationTimeUtc',
         'orderId' => 'orderId',
         'orderStatus' => 'orderStatus',
-        'merchantRiskPrediction' => 'merchantRiskPrediction'
+        'merchantRiskPrediction' => 'merchantRiskPrediction',
+        'network' => 'network'
     ];
 
 
@@ -229,6 +235,7 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
         'responseCodeSource' => 'setResponseCodeSource',
         'responseDetails' => 'setResponseDetails',
         'responseCategoryCode' => 'setResponseCategoryCode',
+        'responseSourceCode' => 'setResponseSourceCode',
         'forwardedAcquirerCode' => 'setForwardedAcquirerCode',
         'settlementDate' => 'setSettlementDate',
         'sequenceNumber' => 'setSequenceNumber',
@@ -264,7 +271,8 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
         'expirationTimeUtc' => 'setExpirationTimeUtc',
         'orderId' => 'setOrderId',
         'orderStatus' => 'setOrderStatus',
-        'merchantRiskPrediction' => 'setMerchantRiskPrediction'
+        'merchantRiskPrediction' => 'setMerchantRiskPrediction',
+        'network' => 'setNetwork'
     ];
 
 
@@ -282,6 +290,7 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
         'responseCodeSource' => 'getResponseCodeSource',
         'responseDetails' => 'getResponseDetails',
         'responseCategoryCode' => 'getResponseCategoryCode',
+        'responseSourceCode' => 'getResponseSourceCode',
         'forwardedAcquirerCode' => 'getForwardedAcquirerCode',
         'settlementDate' => 'getSettlementDate',
         'sequenceNumber' => 'getSequenceNumber',
@@ -317,7 +326,8 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
         'expirationTimeUtc' => 'getExpirationTimeUtc',
         'orderId' => 'getOrderId',
         'orderStatus' => 'getOrderStatus',
-        'merchantRiskPrediction' => 'getMerchantRiskPrediction'
+        'merchantRiskPrediction' => 'getMerchantRiskPrediction',
+        'network' => 'getNetwork'
     ];
 
     public static function attributeMap()
@@ -360,6 +370,7 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
         $this->container['responseCodeSource'] = isset($data['responseCodeSource']) ? $data['responseCodeSource'] : null;
         $this->container['responseDetails'] = isset($data['responseDetails']) ? $data['responseDetails'] : null;
         $this->container['responseCategoryCode'] = isset($data['responseCategoryCode']) ? $data['responseCategoryCode'] : null;
+        $this->container['responseSourceCode'] = isset($data['responseSourceCode']) ? $data['responseSourceCode'] : null;
         $this->container['forwardedAcquirerCode'] = isset($data['forwardedAcquirerCode']) ? $data['forwardedAcquirerCode'] : null;
         $this->container['settlementDate'] = isset($data['settlementDate']) ? $data['settlementDate'] : null;
         $this->container['sequenceNumber'] = isset($data['sequenceNumber']) ? $data['sequenceNumber'] : null;
@@ -396,6 +407,7 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
         $this->container['orderId'] = isset($data['orderId']) ? $data['orderId'] : null;
         $this->container['orderStatus'] = isset($data['orderStatus']) ? $data['orderStatus'] : null;
         $this->container['merchantRiskPrediction'] = isset($data['merchantRiskPrediction']) ? $data['merchantRiskPrediction'] : null;
+        $this->container['network'] = isset($data['network']) ? $data['network'] : null;
     }
 
     /**
@@ -581,7 +593,7 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
 
     /**
      * Sets responseDetails
-     * @param string $responseDetails This field might contain information about a decline. This field is supported only for **CyberSource through VisaNet**.
+     * @param string $responseDetails This field might contain information about a decline.
      * @return $this
      */
     public function setResponseDetails($responseDetails)
@@ -608,6 +620,27 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
     public function setResponseCategoryCode($responseCategoryCode)
     {
         $this->container['responseCategoryCode'] = $responseCategoryCode;
+
+        return $this;
+    }
+
+    /**
+     * Gets responseSourceCode
+     * @return string
+     */
+    public function getResponseSourceCode()
+    {
+        return $this->container['responseSourceCode'];
+    }
+
+    /**
+     * Sets responseSourceCode
+     * @param string $responseSourceCode This field is used by Visa only and contains the response source/reason code that identifies the source of the response decision. Use this field only for clearing with your acquirer.
+     * @return $this
+     */
+    public function setResponseSourceCode($responseSourceCode)
+    {
+        $this->container['responseSourceCode'] = $responseSourceCode;
 
         return $this;
     }
@@ -1364,6 +1397,27 @@ class PtsV2PaymentsPost201ResponseProcessorInformation implements ArrayAccess
     public function setMerchantRiskPrediction($merchantRiskPrediction)
     {
         $this->container['merchantRiskPrediction'] = $merchantRiskPrediction;
+
+        return $this;
+    }
+
+    /**
+     * Gets network
+     * @return \CyberSource\Model\Ptsv2paymentsProcessorInformationReversalNetwork
+     */
+    public function getNetwork()
+    {
+        return $this->container['network'];
+    }
+
+    /**
+     * Sets network
+     * @param \CyberSource\Model\Ptsv2paymentsProcessorInformationReversalNetwork $network
+     * @return $this
+     */
+    public function setNetwork($network)
+    {
+        $this->container['network'] = $network;
 
         return $this;
     }

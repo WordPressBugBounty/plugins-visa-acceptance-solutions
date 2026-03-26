@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Visa Acceptance Solutions
  * Description: Accept payments in WooCommerce with Visa Acceptance Solutions.
- * Version: 2.1.1
+ * Version: 2.2.0
  * Author: Visa Acceptance Solutions
  * Author URI: https://visaacceptance.com
  * Developer: Visa Acceptance Solutions
@@ -10,8 +10,8 @@
  * Requires at least: 6.9
  * Tested up to: 6.9
  * Requires PHP: 8.2.0
- * WC requires at least: 10.5.1
- * WC tested up to: 10.4.3
+ * WC tested up to: 10.6.1
+ * WC requires at least: 10.3.7
  * Text Domain: visa-acceptance-solutions
  * Domain Path: /languages
  *
@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'VISA_ACCEPTANCE_PLUGIN_VERSION', '2.1.1' );
+define( 'VISA_ACCEPTANCE_PLUGIN_VERSION', '2.2.0' );
 
 /**
  * Fallback Plugin version.
@@ -197,6 +197,48 @@ define('VISA_ACCEPTANCE_UC_ID_HYPHEN', VISA_ACCEPTANCE_GATEWAY_ID_HYPHEN . '-uni
 define('VISA_ACCEPTANCE_WC_UC_ID', '_wc_' . VISA_ACCEPTANCE_UC_ID . VISA_ACCEPTANCE_UNDERSCORE);
 
 /**
+ *
+ * WooCommerce variable product type constant.
+ */
+define('VISA_ACCEPTANCE_PRODUCT_TYPE_VARIABLE', 'variable');
+
+/**
+ *
+ * WooCommerce Subscriptions variable subscription product type constant.
+ */
+define('VISA_ACCEPTANCE_PRODUCT_TYPE_VARIABLE_SUBSCRIPTION', 'variable-subscription');
+
+/**
+ *
+ * WooCommerce subscription product type constant.
+ */
+define('VISA_ACCEPTANCE_PRODUCT_TYPE_SUBSCRIPTION', 'subscription');
+
+/**
+ *
+ * Subscription token meta key String Constant.
+ */
+define('VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN', 'subscription_token');
+
+/**
+ *
+ * WooCommerce grouped product type constant.
+ */
+define('VISA_ACCEPTANCE_PRODUCT_TYPE_GROUPED', 'grouped');
+
+/**
+ *
+ * WooCommerce product variation type constant.
+ */
+define('VISA_ACCEPTANCE_PRODUCT_TYPE_VARIATION', 'variation');
+
+/**
+ *
+ * WooCommerce virtual product type constant.
+ */
+define('VISA_ACCEPTANCE_PRODUCT_TYPE_VIRTUAL', 'virtual');
+
+/**
 *
 * Woocommerce constant.
 */
@@ -205,7 +247,7 @@ define('VISA_ACCEPTANCE_WOOCOMMERCE_CONSTANT', 'woocommerce');
 /**
  * Partner Solution ID.
  */
-define( 'VISA_ACCEPTANCE_SOLUTION_ID', 'SAOOMMSB');
+define( 'VISA_ACCEPTANCE_SOLUTION_ID', 'TDVTYOLT');
 
 /**
  * Developer ID.
@@ -259,18 +301,6 @@ define( 'VISA_ACCEPTANCE_REQUEST_HOST_APITEST', 'apitest.visaacceptance.com' );
  * Host domain for Production Mode.
  */
 define( 'VISA_ACCEPTANCE_REQUEST_HOST_APIPRODUCTION', 'api.visaacceptance.com' );
-
-/**
- *
- * Cardinal Cruise Test Library.
- */
-define( 'VISA_ACCEPTANCE_CARDINAL_TEST_LIBRARY', 'https://centinelapistag.cardinalcommerce.com' );
-
-/**
- *
- * Cardinal Cruise Test Library.
- */
-define( 'VISA_ACCEPTANCE_CARDINAL_PRODUCTION_LIBRARY', 'https://centinelapi.cardinalcommerce.com' );
 
 /**
  *
@@ -457,6 +487,18 @@ define( 'VISA_ACCEPTANCE_VAL_FIVE', 5 );
  * Integer value constant.
  *
  */
+define( 'VISA_ACCEPTANCE_VAL_NINE', 9 );
+
+/**
+ * Integer value constant.
+ *
+ */
+define( 'VISA_ACCEPTANCE_VAL_TEN', 10 );
+
+/**
+ * Integer value constant.
+ *
+ */
 define( 'VISA_ACCEPTANCE_VAL_SIX_ZERO', 60 );
 
 /**
@@ -475,7 +517,7 @@ define( 'VISA_ACCEPTANCE_STRING_CUSTOMER_AUTHENTICATION_REQUIRED', 'CUSTOMER_AUT
  * string value constant.
  *
  */
-define( 'VISA_ACCEPTANCE_STRING_ERROR', 'error' );
+define( 'VISA_ACCEPTANCE_ERROR', 'error' );
 
 /**
  * string value constant.
@@ -490,10 +532,64 @@ define( 'VISA_ACCEPTANCE_STRING_EMPTY', '' );
 define( 'VISA_ACCEPTANCE_FULL_STOP', '.' );
 
 /**
+ * HTML line break String Constant.
+ *
+ */
+define( 'VISA_ACCEPTANCE_BR', '<br>' );
+
+/**
  *
  * VISA_ACCEPTANCE_PANENTRY Constant.
  */
 define('VISA_ACCEPTANCE_PANENTRY', 'PANENTRY');
+
+/**
+ *
+ * VISA_ACCEPTANCE_CHECK Constant.
+ */
+define('VISA_ACCEPTANCE_CHECK', 'CHECK');
+
+/**
+ *
+ * VISA_ACCEPTANCE_PAYMENT_TYPE_CARD Constant.
+ */
+define('VISA_ACCEPTANCE_PAYMENT_TYPE_CARD', 'CARD');
+
+/**
+ *
+ * eCheck Constant.
+ */
+define('VISA_ACCEPTANCE_SETTING_ENABLE_ECHECK', 'enable_echeck');
+
+/**
+ *
+ * Api Response for eCheck/ACH Transmitted Status.
+ */
+define( 'VISA_ACCEPTANCE_API_RESPONSE_STATUS_TRANSMITTED', 'TRANSMITTED' );
+
+/**
+ *
+ * Api Response for eCheck/ACH pending Status.
+ */
+define( 'VISA_ACCEPTANCE_API_RESPONSE_ECHECK_STATUS', 'PENDING' );
+
+/**
+ *
+ * Api Response for eCheck/ACH DM pending Status.
+ */
+define( 'VISA_ACCEPTANCE_API_RESPONSE_ECHECK_DM_STATUS', 'PENDING_REVIEW' );
+
+/**
+ *
+ * eCheck SEC Code for internet-initiated transactions.
+ */
+define( 'VISA_ACCEPTANCE_ECHECK_SEC_CODE_WEB', 'WEB' );
+
+/**
+ *
+ * eCheck token type constant.
+ */
+define( 'VISA_ACCEPTANCE_TOKEN_TYPE_ECHECK', 'eCheck' );
 
 /**
  *
@@ -535,7 +631,7 @@ define('VISA_ACCEPTANCE_PLACEHOLDER_AMOUNT', '0.01');
  *
  * Unified Checkout Client Version.
  */
-define('VISA_ACCEPTANCE_UC_CLIENT_VERSION', '0.33');
+define('VISA_ACCEPTANCE_UC_CLIENT_VERSION', '0.34');
 
 /**
  *
@@ -560,6 +656,18 @@ define('VISA_ACCEPTANCE_GPAY_PAYMENTSOLUTION_VALUE', '012');
  * JAYWAN card type Constant.
  */
 define('VISA_ACCEPTANCE_JAYWAN_CARD_TYPE', '081');
+
+/**
+ *
+ * China UnionPay card network name Constant.
+ */
+define('VISA_ACCEPTANCE_CHINA_UNION_PAY', 'China UnionPay');
+
+/**
+ *
+ * JAYWAN card network name Constant.
+ */
+define('VISA_ACCEPTANCE_JAYWAN', 'JAYWAN');
 
 /**
  *
@@ -870,10 +978,43 @@ define('VISA_ACCEPTANCE_SLASH_CAPTURES', '/captures');
 define('VISA_ACCEPTANCE_UC_CAPTURE_CONTEXT', 'UC Capture Context');
 
 /**
+ * Credit Card label String Constant.
+ */
+define( 'VISA_ACCEPTANCE_CREDIT_CARD', 'Credit Card' );
+
+/**
+ * Express Pay label String Constant.
+ */
+define( 'VISA_ACCEPTANCE_EXPRESS_PAY', 'Express Pay' );
+
+/**
+ * N/A String Constant.
+ */
+define( 'VISA_ACCEPTANCE_NOT_APPLICABLE', 'N/A' );
+
+/**
  *
  * Card delete String Constant.
  */
 define('VISA_ACCEPTANCE_CARD_DELETE', 'Card Delete');
+
+/**
+ *
+ * Credit auth code String Constant.
+ */
+define('VISA_ACCEPTANCE_CREDIT_AUTH_CODE', 'credit_auth_code');
+ 
+/**
+ *
+ * Credit auth response String Constant.
+ */
+define('VISA_ACCEPTANCE_CREDIT_AUTH_RESPONSE', 'credit_auth_response');
+ 
+/**
+ *
+ * Network transaction id String Constant.
+ */
+define('VISA_ACCEPTANCE_NETWORK_TRANSACTION_ID', 'network_transaction_id');
 
 /**
  *
@@ -1039,15 +1180,15 @@ define('VISA_ACCEPTANCE_DATE_Y_M_D_TH_I_S', 'Y-m-d\TH:i:s');
 
 /**
  *
- * Order Pay Constant.
+ * Date time format String Constant.
  */
-define('VISA_ACCEPTANCE_ORDER_PAY', '/order-pay/');
+define('VISA_ACCEPTANCE_DATE_Y_M_D_H_I_S', 'Y-m-d H:i:s');
 
 /**
  *
- * ONE Constant.
+ * Order Pay Constant.
  */
-define('VISA_ACCEPTANCE_ONE', 1);
+define('VISA_ACCEPTANCE_ORDER_PAY', '/order-pay/');
 
 /**
  *
@@ -1172,6 +1313,13 @@ define( 'VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PENDING', 'pending' );
  * WooCommerce Order Status for captured order.
  */
 define( 'VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_COMPLETED', 'completed' );
+
+/**
+ *
+ * WooCommerce Subscription Status for active subscriptions.
+ */
+define( 'VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_ACTIVE', 'active' );
+
 /**
  *
  * Api Response (EBC) Authorized Status.

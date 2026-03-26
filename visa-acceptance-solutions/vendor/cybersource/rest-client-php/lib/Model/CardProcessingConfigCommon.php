@@ -74,6 +74,7 @@ class CardProcessingConfigCommon implements ArrayAccess
         'subMerchantBusinessName' => 'string',
         'preferCobadgedSecondaryBrand' => 'bool',
         'merchantDescriptorInformation' => '\CyberSource\Model\CardProcessingConfigCommonMerchantDescriptorInformation',
+        'acquirerAgreement' => '\CyberSource\Model\CardProcessingConfigCommonAcquirerAgreement',
         'governmentControlled' => 'bool',
         'dropBillingInfo' => 'bool'
     ];
@@ -104,6 +105,7 @@ class CardProcessingConfigCommon implements ArrayAccess
         'subMerchantBusinessName' => null,
         'preferCobadgedSecondaryBrand' => null,
         'merchantDescriptorInformation' => null,
+        'acquirerAgreement' => null,
         'governmentControlled' => null,
         'dropBillingInfo' => null
     ];
@@ -144,6 +146,7 @@ class CardProcessingConfigCommon implements ArrayAccess
         'subMerchantBusinessName' => 'subMerchantBusinessName',
         'preferCobadgedSecondaryBrand' => 'preferCobadgedSecondaryBrand',
         'merchantDescriptorInformation' => 'merchantDescriptorInformation',
+        'acquirerAgreement' => 'acquirerAgreement',
         'governmentControlled' => 'governmentControlled',
         'dropBillingInfo' => 'dropBillingInfo'
     ];
@@ -175,6 +178,7 @@ class CardProcessingConfigCommon implements ArrayAccess
         'subMerchantBusinessName' => 'setSubMerchantBusinessName',
         'preferCobadgedSecondaryBrand' => 'setPreferCobadgedSecondaryBrand',
         'merchantDescriptorInformation' => 'setMerchantDescriptorInformation',
+        'acquirerAgreement' => 'setAcquirerAgreement',
         'governmentControlled' => 'setGovernmentControlled',
         'dropBillingInfo' => 'setDropBillingInfo'
     ];
@@ -206,6 +210,7 @@ class CardProcessingConfigCommon implements ArrayAccess
         'subMerchantBusinessName' => 'getSubMerchantBusinessName',
         'preferCobadgedSecondaryBrand' => 'getPreferCobadgedSecondaryBrand',
         'merchantDescriptorInformation' => 'getMerchantDescriptorInformation',
+        'acquirerAgreement' => 'getAcquirerAgreement',
         'governmentControlled' => 'getGovernmentControlled',
         'dropBillingInfo' => 'getDropBillingInfo'
     ];
@@ -262,6 +267,7 @@ class CardProcessingConfigCommon implements ArrayAccess
         $this->container['subMerchantBusinessName'] = isset($data['subMerchantBusinessName']) ? $data['subMerchantBusinessName'] : null;
         $this->container['preferCobadgedSecondaryBrand'] = isset($data['preferCobadgedSecondaryBrand']) ? $data['preferCobadgedSecondaryBrand'] : null;
         $this->container['merchantDescriptorInformation'] = isset($data['merchantDescriptorInformation']) ? $data['merchantDescriptorInformation'] : null;
+        $this->container['acquirerAgreement'] = isset($data['acquirerAgreement']) ? $data['acquirerAgreement'] : null;
         $this->container['governmentControlled'] = isset($data['governmentControlled']) ? $data['governmentControlled'] : null;
         $this->container['dropBillingInfo'] = isset($data['dropBillingInfo']) ? $data['dropBillingInfo'] : null;
     }
@@ -728,6 +734,27 @@ class CardProcessingConfigCommon implements ArrayAccess
     public function setMerchantDescriptorInformation($merchantDescriptorInformation)
     {
         $this->container['merchantDescriptorInformation'] = $merchantDescriptorInformation;
+
+        return $this;
+    }
+
+    /**
+     * Gets acquirerAgreement
+     * @return \CyberSource\Model\CardProcessingConfigCommonAcquirerAgreement
+     */
+    public function getAcquirerAgreement()
+    {
+        return $this->container['acquirerAgreement'];
+    }
+
+    /**
+     * Sets acquirerAgreement
+     * @param \CyberSource\Model\CardProcessingConfigCommonAcquirerAgreement $acquirerAgreement
+     * @return $this
+     */
+    public function setAcquirerAgreement($acquirerAgreement)
+    {
+        $this->container['acquirerAgreement'] = $acquirerAgreement;
 
         return $this;
     }

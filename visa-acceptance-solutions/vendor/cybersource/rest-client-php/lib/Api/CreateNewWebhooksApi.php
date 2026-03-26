@@ -103,7 +103,7 @@ class CreateNewWebhooksApi
      *
      * @param string $organizationId The Organization Identifier. (required)
      * @throws \CyberSource\ApiException on non-2xx response
-     * @return array of \CyberSource\Model\InlineResponse2003[], HTTP status code, HTTP response headers (array of strings)
+     * @return array of \CyberSource\Model\InlineResponse2006[], HTTP status code, HTTP response headers (array of strings)
      */
     public function findProductsToSubscribe($organizationId)
     {
@@ -121,7 +121,7 @@ class CreateNewWebhooksApi
      *
      * @param string $organizationId The Organization Identifier. (required)
      * @throws \CyberSource\ApiException on non-2xx response
-     * @return array of \CyberSource\Model\InlineResponse2003[], HTTP status code, HTTP response headers (array of strings)
+     * @return array of \CyberSource\Model\InlineResponse2006[], HTTP status code, HTTP response headers (array of strings)
      */
     public function findProductsToSubscribeWithHttpInfo($organizationId)
     {
@@ -164,8 +164,8 @@ class CreateNewWebhooksApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "findProductsToSubscribe,findProductsToSubscribeWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "findProductsToSubscribe,findProductsToSubscribeWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -187,7 +187,11 @@ class CreateNewWebhooksApi
             self::$logger->debug("Body Parameter :\n" . $printHttpBody); 
         }
 
-        self::$logger->debug("Return Type : \CyberSource\Model\InlineResponse2003[]");
+        self::$logger->debug("Return Type : \CyberSource\Model\InlineResponse2006[]");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "findProductsToSubscribe,findProductsToSubscribeWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -196,17 +200,18 @@ class CreateNewWebhooksApi
                 $queryParams,
                 $httpBody,
                 $headerParams,
-                '\CyberSource\Model\InlineResponse2003[]',
-                '/notification-subscriptions/v2/products/{organizationId}'
+                '\CyberSource\Model\InlineResponse2006[]',
+                '/notification-subscriptions/v2/products/{organizationId}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
 
-            return [$this->apiClient->getSerializer()->deserialize($response, '\CyberSource\Model\InlineResponse2003[]', $httpHeader), $statusCode, $httpHeader];
+            return [$this->apiClient->getSerializer()->deserialize($response, '\CyberSource\Model\InlineResponse2006[]', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse2003[]', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse2006[]', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
             }
@@ -223,7 +228,7 @@ class CreateNewWebhooksApi
      *
      * @param \CyberSource\Model\CreateWebhook $createWebhook The webhook payload (optional)
      * @throws \CyberSource\ApiException on non-2xx response
-     * @return array of \CyberSource\Model\InlineResponse2014, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \CyberSource\Model\InlineResponse2016, HTTP status code, HTTP response headers (array of strings)
      */
     public function notificationSubscriptionsV2WebhooksPost($createWebhook = null)
     {
@@ -241,7 +246,7 @@ class CreateNewWebhooksApi
      *
      * @param \CyberSource\Model\CreateWebhook $createWebhook The webhook payload (optional)
      * @throws \CyberSource\ApiException on non-2xx response
-     * @return array of \CyberSource\Model\InlineResponse2014, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \CyberSource\Model\InlineResponse2016, HTTP status code, HTTP response headers (array of strings)
      */
     public function notificationSubscriptionsV2WebhooksPostWithHttpInfo($createWebhook = null)
     {
@@ -278,8 +283,8 @@ class CreateNewWebhooksApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "notificationSubscriptionsV2WebhooksPost,notificationSubscriptionsV2WebhooksPostWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "notificationSubscriptionsV2WebhooksPost,notificationSubscriptionsV2WebhooksPostWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -301,7 +306,11 @@ class CreateNewWebhooksApi
             self::$logger->debug("Body Parameter :\n" . $printHttpBody); 
         }
 
-        self::$logger->debug("Return Type : \CyberSource\Model\InlineResponse2014");
+        self::$logger->debug("Return Type : \CyberSource\Model\InlineResponse2016");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "notificationSubscriptionsV2WebhooksPost,notificationSubscriptionsV2WebhooksPostWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -310,17 +319,18 @@ class CreateNewWebhooksApi
                 $queryParams,
                 $httpBody,
                 $headerParams,
-                '\CyberSource\Model\InlineResponse2014',
-                '/notification-subscriptions/v2/webhooks'
+                '\CyberSource\Model\InlineResponse2016',
+                '/notification-subscriptions/v2/webhooks',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
 
-            return [$this->apiClient->getSerializer()->deserialize($response, '\CyberSource\Model\InlineResponse2014', $httpHeader), $statusCode, $httpHeader];
+            return [$this->apiClient->getSerializer()->deserialize($response, '\CyberSource\Model\InlineResponse2016', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 201:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse2014', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse2016', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
             }
@@ -340,7 +350,7 @@ class CreateNewWebhooksApi
      * @param string $vCCorrelationId A globally unique id associated with your request (optional)
      * @param \CyberSource\Model\SaveSymEgressKey $saveSymEgressKey Provide egress Symmetric key information to save (create or store or refresh) (optional)
      * @throws \CyberSource\ApiException on non-2xx response
-     * @return array of \CyberSource\Model\InlineResponse2013, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \CyberSource\Model\InlineResponse2015, HTTP status code, HTTP response headers (array of strings)
      */
     public function saveSymEgressKey($vCSenderOrganizationId, $vCPermissions, $vCCorrelationId = null, $saveSymEgressKey = null)
     {
@@ -361,7 +371,7 @@ class CreateNewWebhooksApi
      * @param string $vCCorrelationId A globally unique id associated with your request (optional)
      * @param \CyberSource\Model\SaveSymEgressKey $saveSymEgressKey Provide egress Symmetric key information to save (create or store or refresh) (optional)
      * @throws \CyberSource\ApiException on non-2xx response
-     * @return array of \CyberSource\Model\InlineResponse2013, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \CyberSource\Model\InlineResponse2015, HTTP status code, HTTP response headers (array of strings)
      */
     public function saveSymEgressKeyWithHttpInfo($vCSenderOrganizationId, $vCPermissions, $vCCorrelationId = null, $saveSymEgressKey = null)
     {
@@ -420,8 +430,8 @@ class CreateNewWebhooksApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "saveSymEgressKey,saveSymEgressKeyWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "saveSymEgressKey,saveSymEgressKeyWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -443,7 +453,11 @@ class CreateNewWebhooksApi
             self::$logger->debug("Body Parameter :\n" . $printHttpBody); 
         }
 
-        self::$logger->debug("Return Type : \CyberSource\Model\InlineResponse2013");
+        self::$logger->debug("Return Type : \CyberSource\Model\InlineResponse2015");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "saveSymEgressKey,saveSymEgressKeyWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -452,17 +466,18 @@ class CreateNewWebhooksApi
                 $queryParams,
                 $httpBody,
                 $headerParams,
-                '\CyberSource\Model\InlineResponse2013',
-                '/kms/egress/v2/keys-sym'
+                '\CyberSource\Model\InlineResponse2015',
+                '/kms/egress/v2/keys-sym',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
 
-            return [$this->apiClient->getSerializer()->deserialize($response, '\CyberSource\Model\InlineResponse2013', $httpHeader), $statusCode, $httpHeader];
+            return [$this->apiClient->getSerializer()->deserialize($response, '\CyberSource\Model\InlineResponse2015', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 201:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse2013', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse2015', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
             }

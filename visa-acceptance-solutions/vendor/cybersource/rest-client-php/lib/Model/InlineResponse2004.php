@@ -53,18 +53,18 @@ class InlineResponse2004 implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'webhookId' => 'string',
-        'organizationId' => 'string',
-        'products' => '\CyberSource\Model\Notificationsubscriptionsv2webhooksProducts[]',
-        'webhookUrl' => 'string',
-        'healthCheckUrl' => 'string',
-        'status' => 'string',
-        'name' => 'string',
-        'description' => 'string',
-        'retryPolicy' => '\CyberSource\Model\Notificationsubscriptionsv2webhooksRetryPolicy',
-        'securityPolicy' => '\CyberSource\Model\Notificationsubscriptionsv2webhooksSecurityPolicy',
-        'createdOn' => 'string',
-        'updatedOn' => 'string'
+        'id' => 'int',
+        'fieldType' => 'string',
+        'label' => 'string',
+        'customerVisible' => 'bool',
+        'textMinLength' => 'int',
+        'textMaxLength' => 'int',
+        'possibleValues' => 'string',
+        'textDefaultValue' => 'string',
+        'merchantId' => 'string',
+        'referenceType' => 'string',
+        'readOnly' => 'bool',
+        'merchantDefinedDataIndex' => 'int'
     ];
 
     /**
@@ -72,18 +72,18 @@ class InlineResponse2004 implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'webhookId' => null,
-        'organizationId' => null,
-        'products' => null,
-        'webhookUrl' => null,
-        'healthCheckUrl' => null,
-        'status' => null,
-        'name' => null,
-        'description' => null,
-        'retryPolicy' => null,
-        'securityPolicy' => null,
-        'createdOn' => null,
-        'updatedOn' => null
+        'id' => 'int64',
+        'fieldType' => null,
+        'label' => null,
+        'customerVisible' => null,
+        'textMinLength' => 'int32',
+        'textMaxLength' => 'int32',
+        'possibleValues' => null,
+        'textDefaultValue' => null,
+        'merchantId' => null,
+        'referenceType' => null,
+        'readOnly' => null,
+        'merchantDefinedDataIndex' => 'int32'
     ];
 
     public static function swaggerTypes()
@@ -101,18 +101,18 @@ class InlineResponse2004 implements ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'webhookId' => 'webhookId',
-        'organizationId' => 'organizationId',
-        'products' => 'products',
-        'webhookUrl' => 'webhookUrl',
-        'healthCheckUrl' => 'healthCheckUrl',
-        'status' => 'status',
-        'name' => 'name',
-        'description' => 'description',
-        'retryPolicy' => 'retryPolicy',
-        'securityPolicy' => 'securityPolicy',
-        'createdOn' => 'createdOn',
-        'updatedOn' => 'updatedOn'
+        'id' => 'id',
+        'fieldType' => 'fieldType',
+        'label' => 'label',
+        'customerVisible' => 'customerVisible',
+        'textMinLength' => 'textMinLength',
+        'textMaxLength' => 'textMaxLength',
+        'possibleValues' => 'possibleValues',
+        'textDefaultValue' => 'textDefaultValue',
+        'merchantId' => 'merchantId',
+        'referenceType' => 'referenceType',
+        'readOnly' => 'readOnly',
+        'merchantDefinedDataIndex' => 'merchantDefinedDataIndex'
     ];
 
 
@@ -121,18 +121,18 @@ class InlineResponse2004 implements ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'webhookId' => 'setWebhookId',
-        'organizationId' => 'setOrganizationId',
-        'products' => 'setProducts',
-        'webhookUrl' => 'setWebhookUrl',
-        'healthCheckUrl' => 'setHealthCheckUrl',
-        'status' => 'setStatus',
-        'name' => 'setName',
-        'description' => 'setDescription',
-        'retryPolicy' => 'setRetryPolicy',
-        'securityPolicy' => 'setSecurityPolicy',
-        'createdOn' => 'setCreatedOn',
-        'updatedOn' => 'setUpdatedOn'
+        'id' => 'setId',
+        'fieldType' => 'setFieldType',
+        'label' => 'setLabel',
+        'customerVisible' => 'setCustomerVisible',
+        'textMinLength' => 'setTextMinLength',
+        'textMaxLength' => 'setTextMaxLength',
+        'possibleValues' => 'setPossibleValues',
+        'textDefaultValue' => 'setTextDefaultValue',
+        'merchantId' => 'setMerchantId',
+        'referenceType' => 'setReferenceType',
+        'readOnly' => 'setReadOnly',
+        'merchantDefinedDataIndex' => 'setMerchantDefinedDataIndex'
     ];
 
 
@@ -141,18 +141,18 @@ class InlineResponse2004 implements ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'webhookId' => 'getWebhookId',
-        'organizationId' => 'getOrganizationId',
-        'products' => 'getProducts',
-        'webhookUrl' => 'getWebhookUrl',
-        'healthCheckUrl' => 'getHealthCheckUrl',
-        'status' => 'getStatus',
-        'name' => 'getName',
-        'description' => 'getDescription',
-        'retryPolicy' => 'getRetryPolicy',
-        'securityPolicy' => 'getSecurityPolicy',
-        'createdOn' => 'getCreatedOn',
-        'updatedOn' => 'getUpdatedOn'
+        'id' => 'getId',
+        'fieldType' => 'getFieldType',
+        'label' => 'getLabel',
+        'customerVisible' => 'getCustomerVisible',
+        'textMinLength' => 'getTextMinLength',
+        'textMaxLength' => 'getTextMaxLength',
+        'possibleValues' => 'getPossibleValues',
+        'textDefaultValue' => 'getTextDefaultValue',
+        'merchantId' => 'getMerchantId',
+        'referenceType' => 'getReferenceType',
+        'readOnly' => 'getReadOnly',
+        'merchantDefinedDataIndex' => 'getMerchantDefinedDataIndex'
     ];
 
     public static function attributeMap()
@@ -186,18 +186,18 @@ class InlineResponse2004 implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['webhookId'] = isset($data['webhookId']) ? $data['webhookId'] : null;
-        $this->container['organizationId'] = isset($data['organizationId']) ? $data['organizationId'] : null;
-        $this->container['products'] = isset($data['products']) ? $data['products'] : null;
-        $this->container['webhookUrl'] = isset($data['webhookUrl']) ? $data['webhookUrl'] : null;
-        $this->container['healthCheckUrl'] = isset($data['healthCheckUrl']) ? $data['healthCheckUrl'] : null;
-        $this->container['status'] = isset($data['status']) ? $data['status'] : 'INACTIVE';
-        $this->container['name'] = isset($data['name']) ? $data['name'] : null;
-        $this->container['description'] = isset($data['description']) ? $data['description'] : null;
-        $this->container['retryPolicy'] = isset($data['retryPolicy']) ? $data['retryPolicy'] : null;
-        $this->container['securityPolicy'] = isset($data['securityPolicy']) ? $data['securityPolicy'] : null;
-        $this->container['createdOn'] = isset($data['createdOn']) ? $data['createdOn'] : null;
-        $this->container['updatedOn'] = isset($data['updatedOn']) ? $data['updatedOn'] : null;
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        $this->container['fieldType'] = isset($data['fieldType']) ? $data['fieldType'] : null;
+        $this->container['label'] = isset($data['label']) ? $data['label'] : null;
+        $this->container['customerVisible'] = isset($data['customerVisible']) ? $data['customerVisible'] : null;
+        $this->container['textMinLength'] = isset($data['textMinLength']) ? $data['textMinLength'] : null;
+        $this->container['textMaxLength'] = isset($data['textMaxLength']) ? $data['textMaxLength'] : null;
+        $this->container['possibleValues'] = isset($data['possibleValues']) ? $data['possibleValues'] : null;
+        $this->container['textDefaultValue'] = isset($data['textDefaultValue']) ? $data['textDefaultValue'] : null;
+        $this->container['merchantId'] = isset($data['merchantId']) ? $data['merchantId'] : null;
+        $this->container['referenceType'] = isset($data['referenceType']) ? $data['referenceType'] : null;
+        $this->container['readOnly'] = isset($data['readOnly']) ? $data['readOnly'] : null;
+        $this->container['merchantDefinedDataIndex'] = isset($data['merchantDefinedDataIndex']) ? $data['merchantDefinedDataIndex'] : null;
     }
 
     /**
@@ -226,253 +226,253 @@ class InlineResponse2004 implements ArrayAccess
 
 
     /**
-     * Gets webhookId
+     * Gets id
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->container['id'];
+    }
+
+    /**
+     * Sets id
+     * @param int $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->container['id'] = $id;
+
+        return $this;
+    }
+
+    /**
+     * Gets fieldType
      * @return string
      */
-    public function getWebhookId()
+    public function getFieldType()
     {
-        return $this->container['webhookId'];
+        return $this->container['fieldType'];
     }
 
     /**
-     * Sets webhookId
-     * @param string $webhookId Webhook Id. This is generated by the server.
+     * Sets fieldType
+     * @param string $fieldType
      * @return $this
      */
-    public function setWebhookId($webhookId)
+    public function setFieldType($fieldType)
     {
-        $this->container['webhookId'] = $webhookId;
+        $this->container['fieldType'] = $fieldType;
 
         return $this;
     }
 
     /**
-     * Gets organizationId
+     * Gets label
      * @return string
      */
-    public function getOrganizationId()
+    public function getLabel()
     {
-        return $this->container['organizationId'];
+        return $this->container['label'];
     }
 
     /**
-     * Sets organizationId
-     * @param string $organizationId Organization ID.
+     * Sets label
+     * @param string $label
      * @return $this
      */
-    public function setOrganizationId($organizationId)
+    public function setLabel($label)
     {
-        $this->container['organizationId'] = $organizationId;
+        $this->container['label'] = $label;
 
         return $this;
     }
 
     /**
-     * Gets products
-     * @return \CyberSource\Model\Notificationsubscriptionsv2webhooksProducts[]
+     * Gets customerVisible
+     * @return bool
      */
-    public function getProducts()
+    public function getCustomerVisible()
     {
-        return $this->container['products'];
+        return $this->container['customerVisible'];
     }
 
     /**
-     * Sets products
-     * @param \CyberSource\Model\Notificationsubscriptionsv2webhooksProducts[] $products
+     * Sets customerVisible
+     * @param bool $customerVisible
      * @return $this
      */
-    public function setProducts($products)
+    public function setCustomerVisible($customerVisible)
     {
-        $this->container['products'] = $products;
+        $this->container['customerVisible'] = $customerVisible;
 
         return $this;
     }
 
     /**
-     * Gets webhookUrl
+     * Gets textMinLength
+     * @return int
+     */
+    public function getTextMinLength()
+    {
+        return $this->container['textMinLength'];
+    }
+
+    /**
+     * Sets textMinLength
+     * @param int $textMinLength
+     * @return $this
+     */
+    public function setTextMinLength($textMinLength)
+    {
+        $this->container['textMinLength'] = $textMinLength;
+
+        return $this;
+    }
+
+    /**
+     * Gets textMaxLength
+     * @return int
+     */
+    public function getTextMaxLength()
+    {
+        return $this->container['textMaxLength'];
+    }
+
+    /**
+     * Sets textMaxLength
+     * @param int $textMaxLength
+     * @return $this
+     */
+    public function setTextMaxLength($textMaxLength)
+    {
+        $this->container['textMaxLength'] = $textMaxLength;
+
+        return $this;
+    }
+
+    /**
+     * Gets possibleValues
      * @return string
      */
-    public function getWebhookUrl()
+    public function getPossibleValues()
     {
-        return $this->container['webhookUrl'];
+        return $this->container['possibleValues'];
     }
 
     /**
-     * Sets webhookUrl
-     * @param string $webhookUrl The client's endpoint (URL) to receive webhooks.
+     * Sets possibleValues
+     * @param string $possibleValues
      * @return $this
      */
-    public function setWebhookUrl($webhookUrl)
+    public function setPossibleValues($possibleValues)
     {
-        $this->container['webhookUrl'] = $webhookUrl;
+        $this->container['possibleValues'] = $possibleValues;
 
         return $this;
     }
 
     /**
-     * Gets healthCheckUrl
+     * Gets textDefaultValue
      * @return string
      */
-    public function getHealthCheckUrl()
+    public function getTextDefaultValue()
     {
-        return $this->container['healthCheckUrl'];
+        return $this->container['textDefaultValue'];
     }
 
     /**
-     * Sets healthCheckUrl
-     * @param string $healthCheckUrl The client's health check endpoint (URL). This should be as close as possible to the actual webhookUrl.
+     * Sets textDefaultValue
+     * @param string $textDefaultValue
      * @return $this
      */
-    public function setHealthCheckUrl($healthCheckUrl)
+    public function setTextDefaultValue($textDefaultValue)
     {
-        $this->container['healthCheckUrl'] = $healthCheckUrl;
+        $this->container['textDefaultValue'] = $textDefaultValue;
 
         return $this;
     }
 
     /**
-     * Gets status
+     * Gets merchantId
      * @return string
      */
-    public function getStatus()
+    public function getMerchantId()
     {
-        return $this->container['status'];
+        return $this->container['merchantId'];
     }
 
     /**
-     * Sets status
-     * @param string $status Webhook status.
+     * Sets merchantId
+     * @param string $merchantId
      * @return $this
      */
-    public function setStatus($status)
+    public function setMerchantId($merchantId)
     {
-        $this->container['status'] = $status;
+        $this->container['merchantId'] = $merchantId;
 
         return $this;
     }
 
     /**
-     * Gets name
+     * Gets referenceType
      * @return string
      */
-    public function getName()
+    public function getReferenceType()
     {
-        return $this->container['name'];
+        return $this->container['referenceType'];
     }
 
     /**
-     * Sets name
-     * @param string $name Client friendly webhook name.
+     * Sets referenceType
+     * @param string $referenceType
      * @return $this
      */
-    public function setName($name)
+    public function setReferenceType($referenceType)
     {
-        $this->container['name'] = $name;
+        $this->container['referenceType'] = $referenceType;
 
         return $this;
     }
 
     /**
-     * Gets description
-     * @return string
+     * Gets readOnly
+     * @return bool
      */
-    public function getDescription()
+    public function getReadOnly()
     {
-        return $this->container['description'];
+        return $this->container['readOnly'];
     }
 
     /**
-     * Sets description
-     * @param string $description Client friendly webhook description.
+     * Sets readOnly
+     * @param bool $readOnly
      * @return $this
      */
-    public function setDescription($description)
+    public function setReadOnly($readOnly)
     {
-        $this->container['description'] = $description;
+        $this->container['readOnly'] = $readOnly;
 
         return $this;
     }
 
     /**
-     * Gets retryPolicy
-     * @return \CyberSource\Model\Notificationsubscriptionsv2webhooksRetryPolicy
+     * Gets merchantDefinedDataIndex
+     * @return int
      */
-    public function getRetryPolicy()
+    public function getMerchantDefinedDataIndex()
     {
-        return $this->container['retryPolicy'];
+        return $this->container['merchantDefinedDataIndex'];
     }
 
     /**
-     * Sets retryPolicy
-     * @param \CyberSource\Model\Notificationsubscriptionsv2webhooksRetryPolicy $retryPolicy
+     * Sets merchantDefinedDataIndex
+     * @param int $merchantDefinedDataIndex
      * @return $this
      */
-    public function setRetryPolicy($retryPolicy)
+    public function setMerchantDefinedDataIndex($merchantDefinedDataIndex)
     {
-        $this->container['retryPolicy'] = $retryPolicy;
-
-        return $this;
-    }
-
-    /**
-     * Gets securityPolicy
-     * @return \CyberSource\Model\Notificationsubscriptionsv2webhooksSecurityPolicy
-     */
-    public function getSecurityPolicy()
-    {
-        return $this->container['securityPolicy'];
-    }
-
-    /**
-     * Sets securityPolicy
-     * @param \CyberSource\Model\Notificationsubscriptionsv2webhooksSecurityPolicy $securityPolicy
-     * @return $this
-     */
-    public function setSecurityPolicy($securityPolicy)
-    {
-        $this->container['securityPolicy'] = $securityPolicy;
-
-        return $this;
-    }
-
-    /**
-     * Gets createdOn
-     * @return string
-     */
-    public function getCreatedOn()
-    {
-        return $this->container['createdOn'];
-    }
-
-    /**
-     * Sets createdOn
-     * @param string $createdOn Date on which webhook was created/registered.
-     * @return $this
-     */
-    public function setCreatedOn($createdOn)
-    {
-        $this->container['createdOn'] = $createdOn;
-
-        return $this;
-    }
-
-    /**
-     * Gets updatedOn
-     * @return string
-     */
-    public function getUpdatedOn()
-    {
-        return $this->container['updatedOn'];
-    }
-
-    /**
-     * Sets updatedOn
-     * @param string $updatedOn Date on which webhook was most recently updated.
-     * @return $this
-     */
-    public function setUpdatedOn($updatedOn)
-    {
-        $this->container['updatedOn'] = $updatedOn;
+        $this->container['merchantDefinedDataIndex'] = $merchantDefinedDataIndex;
 
         return $this;
     }

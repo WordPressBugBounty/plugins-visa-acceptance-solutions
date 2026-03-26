@@ -163,8 +163,8 @@ class VerificationApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "validateExportCompliance,validateExportComplianceWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "validateExportCompliance,validateExportComplianceWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -187,6 +187,10 @@ class VerificationApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\RiskV1ExportComplianceInquiriesPost201Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "validateExportCompliance,validateExportComplianceWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -196,7 +200,8 @@ class VerificationApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\RiskV1ExportComplianceInquiriesPost201Response',
-                '/risk/v1/export-compliance-inquiries'
+                '/risk/v1/export-compliance-inquiries',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -290,8 +295,8 @@ class VerificationApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "verifyCustomerAddress,verifyCustomerAddressWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "verifyCustomerAddress,verifyCustomerAddressWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -314,6 +319,10 @@ class VerificationApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\RiskV1AddressVerificationsPost201Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "verifyCustomerAddress,verifyCustomerAddressWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -323,7 +332,8 @@ class VerificationApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\RiskV1AddressVerificationsPost201Response',
-                '/risk/v1/address-verifications'
+                '/risk/v1/address-verifications',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

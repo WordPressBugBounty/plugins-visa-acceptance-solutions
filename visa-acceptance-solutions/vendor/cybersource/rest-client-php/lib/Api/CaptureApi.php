@@ -178,8 +178,8 @@ class CaptureApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = true;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "capturePayment,capturePaymentWithHttpInfo")) {
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "capturePayment,capturePaymentWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -202,6 +202,10 @@ class CaptureApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\PtsV2PaymentsCapturesPost201Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "capturePayment,capturePaymentWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -211,7 +215,8 @@ class CaptureApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\PtsV2PaymentsCapturesPost201Response',
-                '/pts/v2/payments/{id}/captures'
+                '/pts/v2/payments/{id}/captures',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

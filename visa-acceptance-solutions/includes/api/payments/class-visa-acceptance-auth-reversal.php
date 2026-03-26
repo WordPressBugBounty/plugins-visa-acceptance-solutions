@@ -89,8 +89,9 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 				$order->add_order_note( $response->get_error_message() );
 			}
 			return $response;
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
 			$this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to handles Void transaction', true );
+			return new \WP_Error( 'vas_void_failed', $this->gateway->get_title() . ' ' . __( 'Void Failed:', 'visa-acceptance-solutions' ) );
 		}
 	}
 
@@ -211,14 +212,15 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 			$this->gateway->add_logs_data( $reversal_request_array, true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
 			try {
 				$api_response = $reversal_api->authReversal( $transaction_id, $reversal_request_array );
-				$this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
+				$this->gateway->add_logs_service_response( $api_response[VISA_ACCEPTANCE_VAL_ZERO],$api_response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
 				$return_array = array(
-					'http_code' => $api_response[1],
-					'body'      => $api_response[0],
+					'http_code' => $api_response[VISA_ACCEPTANCE_VAL_ONE],
+					'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 				);
 				return $return_array;
-			} catch ( \CyberSource\ApiException $e ) {
+			} catch ( \Throwable $e ) {
 				$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
+				throw $e;
 			}
 		}
 	}
@@ -263,7 +265,7 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 		}
 		// mark order as cancelled, since no money was actually transferred.
 		if ( ! $order->has_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_CANCELLED ) ) {
-			add_filter( 'woocommerce_order_fully_refunded_status', array( $this, 'cancel_voided_order' ), 10, 2 );
+			add_filter( 'woocommerce_order_fully_refunded_status', array( $this, 'cancel_voided_order' ), VISA_ACCEPTANCE_VAL_TEN, VISA_ACCEPTANCE_VAL_TWO );
 		}
 		$order->add_order_note( $message );
 	}

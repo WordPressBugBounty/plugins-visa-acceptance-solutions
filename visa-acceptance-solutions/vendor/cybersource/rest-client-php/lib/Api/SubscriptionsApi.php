@@ -99,17 +99,17 @@ class SubscriptionsApi
     /**
      * Operation activateSubscription
      *
-     * Activate a Subscription
+     * Reactivating a Suspended Subscription
      *
      * @param string $id Subscription Id (required)
-     * @param bool $processSkippedPayments Indicates if skipped payments should be processed from the period when the subscription was suspended. By default, this is set to true. (optional, default to true)
+     * @param bool $processMissedPayments Indicates if missed payments should be processed from the period when the subscription was suspended. By default, this is set to true. When any option other than \&quot;Ask each time before reactivating\&quot; is selected in the reactivation settings, the value that you enter will be ignored. (optional, default to true)
      * @throws \CyberSource\ApiException on non-2xx response
      * @return array of \CyberSource\Model\ActivateSubscriptionResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function activateSubscription($id, $processSkippedPayments = 'true')
+    public function activateSubscription($id, $processMissedPayments = 'true')
     {
         self::$logger->info('CALL TO METHOD activateSubscription STARTED');
-        list($response, $statusCode, $httpHeader) = $this->activateSubscriptionWithHttpInfo($id, $processSkippedPayments);
+        list($response, $statusCode, $httpHeader) = $this->activateSubscriptionWithHttpInfo($id, $processMissedPayments);
         self::$logger->info('CALL TO METHOD activateSubscription ENDED');
         self::$logger->close();
         return [$response, $statusCode, $httpHeader];
@@ -118,14 +118,14 @@ class SubscriptionsApi
     /**
      * Operation activateSubscriptionWithHttpInfo
      *
-     * Activate a Subscription
+     * Reactivating a Suspended Subscription
      *
      * @param string $id Subscription Id (required)
-     * @param bool $processSkippedPayments Indicates if skipped payments should be processed from the period when the subscription was suspended. By default, this is set to true. (optional, default to true)
+     * @param bool $processMissedPayments Indicates if missed payments should be processed from the period when the subscription was suspended. By default, this is set to true. When any option other than \&quot;Ask each time before reactivating\&quot; is selected in the reactivation settings, the value that you enter will be ignored. (optional, default to true)
      * @throws \CyberSource\ApiException on non-2xx response
      * @return array of \CyberSource\Model\ActivateSubscriptionResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function activateSubscriptionWithHttpInfo($id, $processSkippedPayments = 'true')
+    public function activateSubscriptionWithHttpInfo($id, $processMissedPayments = 'true')
     {
         // verify the required parameter 'id' is set
         if ($id === null) {
@@ -147,8 +147,8 @@ class SubscriptionsApi
         $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json;charset=utf-8']);
 
         // query params
-        if ($processSkippedPayments !== null) {
-            $queryParams['processSkippedPayments'] = $this->apiClient->getSerializer()->toQueryValue($processSkippedPayments);
+        if ($processMissedPayments !== null) {
+            $queryParams['processMissedPayments'] = $this->apiClient->getSerializer()->toQueryValue($processMissedPayments);
         }
         // path params
         if ($id !== null) {
@@ -170,8 +170,8 @@ class SubscriptionsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "activateSubscription,activateSubscriptionWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "activateSubscription,activateSubscriptionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -195,6 +195,10 @@ class SubscriptionsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\ActivateSubscriptionResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "activateSubscription,activateSubscriptionWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -204,7 +208,8 @@ class SubscriptionsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\ActivateSubscriptionResponse',
-                '/rbs/v1/subscriptions/{id}/activate'
+                '/rbs/v1/subscriptions/{id}/activate',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -303,8 +308,8 @@ class SubscriptionsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "cancelSubscription,cancelSubscriptionWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "cancelSubscription,cancelSubscriptionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -327,6 +332,10 @@ class SubscriptionsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\CancelSubscriptionResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "cancelSubscription,cancelSubscriptionWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -336,7 +345,8 @@ class SubscriptionsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\CancelSubscriptionResponse',
-                '/rbs/v1/subscriptions/{id}/cancel'
+                '/rbs/v1/subscriptions/{id}/cancel',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -434,8 +444,8 @@ class SubscriptionsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "createSubscription,createSubscriptionWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "createSubscription,createSubscriptionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -458,6 +468,10 @@ class SubscriptionsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\CreateSubscriptionResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "createSubscription,createSubscriptionWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -467,7 +481,8 @@ class SubscriptionsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\CreateSubscriptionResponse',
-                '/rbs/v1/subscriptions'
+                '/rbs/v1/subscriptions',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -503,13 +518,14 @@ class SubscriptionsApi
      * @param int $limit Number of items to be returned. Default - &#x60;20&#x60;, Max - &#x60;100&#x60; (optional)
      * @param string $code Filter by Subscription Code (optional)
      * @param string $status Filter by Subscription Status (optional)
+     * @param string $customerId Filter by Customer Id (optional)
      * @throws \CyberSource\ApiException on non-2xx response
      * @return array of \CyberSource\Model\GetAllSubscriptionsResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getAllSubscriptions($offset = null, $limit = null, $code = null, $status = null)
+    public function getAllSubscriptions($offset = null, $limit = null, $code = null, $status = null, $customerId = null)
     {
         self::$logger->info('CALL TO METHOD getAllSubscriptions STARTED');
-        list($response, $statusCode, $httpHeader) = $this->getAllSubscriptionsWithHttpInfo($offset, $limit, $code, $status);
+        list($response, $statusCode, $httpHeader) = $this->getAllSubscriptionsWithHttpInfo($offset, $limit, $code, $status, $customerId);
         self::$logger->info('CALL TO METHOD getAllSubscriptions ENDED');
         self::$logger->close();
         return [$response, $statusCode, $httpHeader];
@@ -524,10 +540,11 @@ class SubscriptionsApi
      * @param int $limit Number of items to be returned. Default - &#x60;20&#x60;, Max - &#x60;100&#x60; (optional)
      * @param string $code Filter by Subscription Code (optional)
      * @param string $status Filter by Subscription Status (optional)
+     * @param string $customerId Filter by Customer Id (optional)
      * @throws \CyberSource\ApiException on non-2xx response
      * @return array of \CyberSource\Model\GetAllSubscriptionsResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getAllSubscriptionsWithHttpInfo($offset = null, $limit = null, $code = null, $status = null)
+    public function getAllSubscriptionsWithHttpInfo($offset = null, $limit = null, $code = null, $status = null, $customerId = null)
     {
         // parse inputs
         $resourcePath = "/rbs/v1/subscriptions";
@@ -559,6 +576,10 @@ class SubscriptionsApi
         if ($status !== null) {
             $queryParams['status'] = $this->apiClient->getSerializer()->toQueryValue($status);
         }
+        // query params
+        if ($customerId !== null) {
+            $queryParams['customerId'] = $this->apiClient->getSerializer()->toQueryValue($customerId);
+        }
         if ('GET' == 'POST') {
             $_tempBody = '{}';
         }
@@ -571,8 +592,8 @@ class SubscriptionsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getAllSubscriptions,getAllSubscriptionsWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getAllSubscriptions,getAllSubscriptionsWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -588,6 +609,7 @@ class SubscriptionsApi
         self::$logger->debug("Query Parameters :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($queryParams));
         self::$logger->debug("Query Parameters :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($queryParams));
         self::$logger->debug("Query Parameters :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($queryParams));
+        self::$logger->debug("Query Parameters :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($queryParams));
         if (isset($httpBody) and count($formParams) <= 0) {
             if ($this->apiClient->merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
                 $printHttpBody = \CyberSource\Utilities\Helpers\DataMasker::maskData($httpBody);
@@ -599,6 +621,10 @@ class SubscriptionsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\GetAllSubscriptionsResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getAllSubscriptions,getAllSubscriptionsWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -608,7 +634,8 @@ class SubscriptionsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\GetAllSubscriptionsResponse',
-                '/rbs/v1/subscriptions'
+                '/rbs/v1/subscriptions',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -703,8 +730,8 @@ class SubscriptionsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getSubscription,getSubscriptionWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getSubscription,getSubscriptionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -727,6 +754,10 @@ class SubscriptionsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\GetSubscriptionResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getSubscription,getSubscriptionWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -736,7 +767,8 @@ class SubscriptionsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\GetSubscriptionResponse',
-                '/rbs/v1/subscriptions/{id}'
+                '/rbs/v1/subscriptions/{id}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -820,8 +852,8 @@ class SubscriptionsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getSubscriptionCode,getSubscriptionCodeWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getSubscriptionCode,getSubscriptionCodeWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -844,6 +876,10 @@ class SubscriptionsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\GetSubscriptionCodeResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getSubscriptionCode,getSubscriptionCodeWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -853,7 +889,8 @@ class SubscriptionsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\GetSubscriptionCodeResponse',
-                '/rbs/v1/subscriptions/code'
+                '/rbs/v1/subscriptions/code',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -948,8 +985,8 @@ class SubscriptionsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "suspendSubscription,suspendSubscriptionWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "suspendSubscription,suspendSubscriptionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -972,6 +1009,10 @@ class SubscriptionsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\SuspendSubscriptionResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "suspendSubscription,suspendSubscriptionWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -981,7 +1022,8 @@ class SubscriptionsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\SuspendSubscriptionResponse',
-                '/rbs/v1/subscriptions/{id}/suspend'
+                '/rbs/v1/subscriptions/{id}/suspend',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -1094,8 +1136,8 @@ class SubscriptionsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "updateSubscription,updateSubscriptionWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "updateSubscription,updateSubscriptionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -1118,6 +1160,10 @@ class SubscriptionsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\UpdateSubscriptionResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "updateSubscription,updateSubscriptionWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -1127,7 +1173,8 @@ class SubscriptionsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\UpdateSubscriptionResponse',
-                '/rbs/v1/subscriptions/{id}'
+                '/rbs/v1/subscriptions/{id}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

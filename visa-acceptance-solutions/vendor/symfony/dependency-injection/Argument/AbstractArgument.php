@@ -16,8 +16,10 @@ namespace Symfony\Component\DependencyInjection\Argument;
  */
 final class AbstractArgument
 {
-    private $text;
-    private $context;
+    use ArgumentTrait;
+
+    private string $text;
+    private string $context = '';
 
     public function __construct(string $text = '')
     {

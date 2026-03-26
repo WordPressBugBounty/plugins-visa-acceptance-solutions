@@ -65,10 +65,15 @@ class TssV2TransactionsGet200ResponseProcessorInformation implements ArrayAccess
         'cardVerification' => '\CyberSource\Model\Riskv1decisionsProcessorInformationCardVerification',
         'achVerification' => '\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessorInformationAchVerification',
         'electronicVerificationResults' => '\CyberSource\Model\TssV2TransactionsGet200ResponseProcessorInformationElectronicVerificationResults',
+        'issuerInformation' => '\CyberSource\Model\PtsV2PaymentsPost201Response1IssuerInformation',
         'eventStatus' => 'string',
         'systemTraceAuditNumber' => 'string',
         'responseCodeSource' => 'string',
-        'paymentAccountReferenceNumber' => 'string'
+        'paymentAccountReferenceNumber' => 'string',
+        'responseDetails' => 'string',
+        'rawResponseLocal' => 'string',
+        'rawResponse' => 'string',
+        'routing' => '\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessorInformationRouting'
     ];
 
     /**
@@ -88,10 +93,15 @@ class TssV2TransactionsGet200ResponseProcessorInformation implements ArrayAccess
         'cardVerification' => null,
         'achVerification' => null,
         'electronicVerificationResults' => null,
+        'issuerInformation' => null,
         'eventStatus' => null,
         'systemTraceAuditNumber' => null,
         'responseCodeSource' => null,
-        'paymentAccountReferenceNumber' => null
+        'paymentAccountReferenceNumber' => null,
+        'responseDetails' => null,
+        'rawResponseLocal' => null,
+        'rawResponse' => null,
+        'routing' => null
     ];
 
     public static function swaggerTypes()
@@ -121,10 +131,15 @@ class TssV2TransactionsGet200ResponseProcessorInformation implements ArrayAccess
         'cardVerification' => 'cardVerification',
         'achVerification' => 'achVerification',
         'electronicVerificationResults' => 'electronicVerificationResults',
+        'issuerInformation' => 'issuerInformation',
         'eventStatus' => 'eventStatus',
         'systemTraceAuditNumber' => 'systemTraceAuditNumber',
         'responseCodeSource' => 'responseCodeSource',
-        'paymentAccountReferenceNumber' => 'paymentAccountReferenceNumber'
+        'paymentAccountReferenceNumber' => 'paymentAccountReferenceNumber',
+        'responseDetails' => 'responseDetails',
+        'rawResponseLocal' => 'rawResponseLocal',
+        'rawResponse' => 'rawResponse',
+        'routing' => 'routing'
     ];
 
 
@@ -145,10 +160,15 @@ class TssV2TransactionsGet200ResponseProcessorInformation implements ArrayAccess
         'cardVerification' => 'setCardVerification',
         'achVerification' => 'setAchVerification',
         'electronicVerificationResults' => 'setElectronicVerificationResults',
+        'issuerInformation' => 'setIssuerInformation',
         'eventStatus' => 'setEventStatus',
         'systemTraceAuditNumber' => 'setSystemTraceAuditNumber',
         'responseCodeSource' => 'setResponseCodeSource',
-        'paymentAccountReferenceNumber' => 'setPaymentAccountReferenceNumber'
+        'paymentAccountReferenceNumber' => 'setPaymentAccountReferenceNumber',
+        'responseDetails' => 'setResponseDetails',
+        'rawResponseLocal' => 'setRawResponseLocal',
+        'rawResponse' => 'setRawResponse',
+        'routing' => 'setRouting'
     ];
 
 
@@ -169,10 +189,15 @@ class TssV2TransactionsGet200ResponseProcessorInformation implements ArrayAccess
         'cardVerification' => 'getCardVerification',
         'achVerification' => 'getAchVerification',
         'electronicVerificationResults' => 'getElectronicVerificationResults',
+        'issuerInformation' => 'getIssuerInformation',
         'eventStatus' => 'getEventStatus',
         'systemTraceAuditNumber' => 'getSystemTraceAuditNumber',
         'responseCodeSource' => 'getResponseCodeSource',
-        'paymentAccountReferenceNumber' => 'getPaymentAccountReferenceNumber'
+        'paymentAccountReferenceNumber' => 'getPaymentAccountReferenceNumber',
+        'responseDetails' => 'getResponseDetails',
+        'rawResponseLocal' => 'getRawResponseLocal',
+        'rawResponse' => 'getRawResponse',
+        'routing' => 'getRouting'
     ];
 
     public static function attributeMap()
@@ -218,10 +243,15 @@ class TssV2TransactionsGet200ResponseProcessorInformation implements ArrayAccess
         $this->container['cardVerification'] = isset($data['cardVerification']) ? $data['cardVerification'] : null;
         $this->container['achVerification'] = isset($data['achVerification']) ? $data['achVerification'] : null;
         $this->container['electronicVerificationResults'] = isset($data['electronicVerificationResults']) ? $data['electronicVerificationResults'] : null;
+        $this->container['issuerInformation'] = isset($data['issuerInformation']) ? $data['issuerInformation'] : null;
         $this->container['eventStatus'] = isset($data['eventStatus']) ? $data['eventStatus'] : null;
         $this->container['systemTraceAuditNumber'] = isset($data['systemTraceAuditNumber']) ? $data['systemTraceAuditNumber'] : null;
         $this->container['responseCodeSource'] = isset($data['responseCodeSource']) ? $data['responseCodeSource'] : null;
         $this->container['paymentAccountReferenceNumber'] = isset($data['paymentAccountReferenceNumber']) ? $data['paymentAccountReferenceNumber'] : null;
+        $this->container['responseDetails'] = isset($data['responseDetails']) ? $data['responseDetails'] : null;
+        $this->container['rawResponseLocal'] = isset($data['rawResponseLocal']) ? $data['rawResponseLocal'] : null;
+        $this->container['rawResponse'] = isset($data['rawResponse']) ? $data['rawResponse'] : null;
+        $this->container['routing'] = isset($data['routing']) ? $data['routing'] : null;
     }
 
     /**
@@ -502,6 +532,27 @@ class TssV2TransactionsGet200ResponseProcessorInformation implements ArrayAccess
     }
 
     /**
+     * Gets issuerInformation
+     * @return \CyberSource\Model\PtsV2PaymentsPost201Response1IssuerInformation
+     */
+    public function getIssuerInformation()
+    {
+        return $this->container['issuerInformation'];
+    }
+
+    /**
+     * Sets issuerInformation
+     * @param \CyberSource\Model\PtsV2PaymentsPost201Response1IssuerInformation $issuerInformation
+     * @return $this
+     */
+    public function setIssuerInformation($issuerInformation)
+    {
+        $this->container['issuerInformation'] = $issuerInformation;
+
+        return $this;
+    }
+
+    /**
      * Gets eventStatus
      * @return string
      */
@@ -581,6 +632,90 @@ class TssV2TransactionsGet200ResponseProcessorInformation implements ArrayAccess
     public function setPaymentAccountReferenceNumber($paymentAccountReferenceNumber)
     {
         $this->container['paymentAccountReferenceNumber'] = $paymentAccountReferenceNumber;
+
+        return $this;
+    }
+
+    /**
+     * Gets responseDetails
+     * @return string
+     */
+    public function getResponseDetails()
+    {
+        return $this->container['responseDetails'];
+    }
+
+    /**
+     * Sets responseDetails
+     * @param string $responseDetails This field might contain information about a decline.
+     * @return $this
+     */
+    public function setResponseDetails($responseDetails)
+    {
+        $this->container['responseDetails'] = $responseDetails;
+
+        return $this;
+    }
+
+    /**
+     * Gets rawResponseLocal
+     * @return string
+     */
+    public function getRawResponseLocal()
+    {
+        return $this->container['rawResponseLocal'];
+    }
+
+    /**
+     * Sets rawResponseLocal
+     * @param string $rawResponseLocal Failure reason returned by the processor in the local language of the processor.
+     * @return $this
+     */
+    public function setRawResponseLocal($rawResponseLocal)
+    {
+        $this->container['rawResponseLocal'] = $rawResponseLocal;
+
+        return $this;
+    }
+
+    /**
+     * Gets rawResponse
+     * @return string
+     */
+    public function getRawResponse()
+    {
+        return $this->container['rawResponse'];
+    }
+
+    /**
+     * Sets rawResponse
+     * @param string $rawResponse Failure reason returned by the processor.
+     * @return $this
+     */
+    public function setRawResponse($rawResponse)
+    {
+        $this->container['rawResponse'] = $rawResponse;
+
+        return $this;
+    }
+
+    /**
+     * Gets routing
+     * @return \CyberSource\Model\PtsV2PaymentsPost201ResponseProcessorInformationRouting
+     */
+    public function getRouting()
+    {
+        return $this->container['routing'];
+    }
+
+    /**
+     * Sets routing
+     * @param \CyberSource\Model\PtsV2PaymentsPost201ResponseProcessorInformationRouting $routing
+     * @return $this
+     */
+    public function setRouting($routing)
+    {
+        $this->container['routing'] = $routing;
 
         return $this;
     }

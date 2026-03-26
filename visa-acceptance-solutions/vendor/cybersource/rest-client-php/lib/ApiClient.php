@@ -32,6 +32,7 @@ use CyberSource\Authentication\Core\Authentication as Authentication;
 use CyberSource\Authentication\Util\GlobalParameter as GlobalParameter;
 use CyberSource\Authentication\PayloadDigest\PayloadDigest as PayloadDigest;
 use \CyberSource\Logging\LogFactory as LogFactory;
+use \CyberSource\Authentication\Util\MLEUtility;
 
 $stream_headers = array();
 
@@ -46,7 +47,7 @@ $stream_headers = array();
 class ApiClient
 {
     private static $logger = null;
-    
+    private static $shareHandle;
     public static $PATCH = "PATCH";
     public static $POST = "POST";
     public static $GET = "GET";
@@ -109,6 +110,11 @@ class ApiClient
         
         if ($merchantConfig === null) {
             echo "Merchant Configuration cannot be null.";
+        }
+
+        if (self::$shareHandle === null) {
+            self::$shareHandle = curl_share_init();
+            curl_share_setopt(self::$shareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_CONNECT);
         }
 
         $this->config = $config;
@@ -221,7 +227,7 @@ class ApiClient
      * @throws \CyberSource\ApiException on a non 2xx response
      * @return mixed
      */
-    public function callApi($resourcePath, $method, $queryParams, $postData, $headerParams, $responseType = null, $endpointPath = null)
+    public function callApi($resourcePath, $method, $queryParams, $postData, $headerParams, $responseType = null, $endpointPath = null, $isResponseMLEForAPI=false)
     {
         self::$logger->info("CALLING API \"$resourcePath\" STARTED");
         $headers = [];
@@ -258,7 +264,7 @@ class ApiClient
 
         if($this->merchantConfig->getAuthenticationType() != GlobalParameter::MUTUAL_AUTH)
         {
-            $authHeader = $this->callAuthenticationHeader($method, $postData, $resourcePath);
+            $authHeader = $this->callAuthenticationHeader($method, $postData, $resourcePath, $isResponseMLEForAPI);
         }
 
         $requestHeaders=[];
@@ -311,6 +317,8 @@ class ApiClient
         self::$logger->debug("Request Headers :\n" . \CyberSource\Utilities\Helpers\DataMasker::maskAuthenticationData(\CyberSource\Utilities\Helpers\ListHelper::toString($reqHeaders)));
 
         $curl = curl_init();
+
+        curl_setopt($curl, CURLOPT_SHARE, self::$shareHandle);
         // set timeout, if needed
         if ($this->config->getCurlTimeout() !== 0) {
             curl_setopt($curl, CURLOPT_TIMEOUT, $this->config->getCurlTimeout());
@@ -348,6 +356,32 @@ class ApiClient
         if ($this->config->getCurlProxyUser()) {
             curl_setopt($curl, CURLOPT_PROXYUSERPWD, $this->config->getCurlProxyUser() . ':' .$this->config->getCurlProxyPassword());
         }
+
+        if ($this->config->getTlsVersion()) {
+            curl_setopt($curl, CURLOPT_SSLVERSION, $this->config->getTlsVersion());
+        }
+
+        if ($this->config->getTlsCipherList()) {
+            if (
+                defined('CURL_SSLVERSION_TLSv1_3') &&
+                defined('CURLOPT_TLS13_CIPHERS') && 
+                $this->config->getTlsVersion() === CURL_SSLVERSION_TLSv1_3
+            ) {
+                curl_setopt($curl, CURLOPT_TLS13_CIPHERS, $this->config->getTlsCipherList());
+            } else {
+                curl_setopt($curl, CURLOPT_SSL_CIPHER_LIST, $this->config->getTlsCipherList());
+            }
+        }
+
+        // Set maximum age for connection reuse in the connection pool
+        if ($this->config->getKeepAliveTime()) {
+            if (defined('CURLOPT_MAXAGE_CONN')) {
+                curl_setopt($curl, CURLOPT_MAXAGE_CONN, $this->config->getKeepAliveTime());
+            } else {
+                self::$logger->warning("CURLOPT_MAXAGE_CONN is not supported in your cURL version. Keep-alive time setting will be ignored.");
+            }
+        }
+        
 
         if (!empty($queryParams)) {
             $url = ($url . '?' . http_build_query($queryParams));
@@ -457,7 +491,7 @@ class ApiClient
                 }
     
                 self::$logger->error("ApiException : " . print_r($error_message, true));
-                $exception = new ApiException($error_message, 0, null, null);
+                $exception = new ApiException($error_message, 0, [], null);
                 $exception->setResponseObject($response_info);
                 self::$logger->close();
                 throw $exception;
@@ -467,12 +501,34 @@ class ApiClient
                     self::$logger->close();
                     return [$http_body, $response_info['http_code'], $http_header];
                 }
-    
+
+                // Decrypt BEFORE json_decode
+                if (MLEUtility::checkIsMleEncryptedResponse($http_body)) {
+
+                    try {
+                        $http_body = MLEUtility::decryptMleResponsePayload($this->merchantConfig, $http_body);
+                    } catch (\Exception $e) {
+                        $error_message = "Response MLE decryption failed: " . $e->getMessage();
+                        self::$logger->error("ApiException : " . $error_message);
+                        self::$logger->close();
+                        throw new ApiException($error_message);
+                    }
+                }
+
                 $data = json_decode($http_body);
                 if (json_last_error() > 0) { // if response is a string
                     $data = $http_body;
                 }
             } else {
+                // Error path: still attempt decryption so error payload can be read
+                if (MLEUtility::checkIsMleEncryptedResponse($http_body)) {
+                    try {
+                        $http_body = MLEUtility::decryptMleResponsePayload($this->merchantConfig, $http_body);
+                    } catch (\Exception $e) {
+                        // Ignore; proceeding with encrypted body
+                    }
+                }
+
                 $data = json_decode($http_body);
                 if (json_last_error() > 0) { // if response is a string
                     $data = $http_body;
@@ -487,6 +543,7 @@ class ApiClient
                     $data
                 );
             }
+
             self::$logger->close();
             return [$data, $response_info['http_code'], $http_header];
         } else {
@@ -496,14 +553,12 @@ class ApiClient
             $response_info = curl_getinfo($curl);
             curl_close($curl);
             
-            if ($fileHandle) {
-                fclose($fileHandle);
-            }
-            
-            $downloadFilePath = null;
-            
             // Handle the response
             if ($response_info['http_code'] === 0) {
+                if ($fileHandle) {
+                    fclose($fileHandle);
+                }
+                
                 $curl_error_message = curl_error($curl);
 
                 // curl_exec can sometimes fail but still return a blank message from curl_error().
@@ -515,16 +570,68 @@ class ApiClient
                 }
 
                 self::$logger->error("ApiException : " . print_r($error_message, true));
-                $exception = new ApiException($error_message, 0, null, null);
+                $exception = new ApiException($error_message, 0, $stream_headers, null);
                 $exception->setResponseObject($response_info);
                 self::$logger->close();
                 throw $exception;
             } elseif ($response_info['http_code'] >= 200 && $response_info['http_code'] <= 299) {
+                // For file downloads, read the file content for decryption check
+                if ($fileHandle) {
+                    rewind($fileHandle);
+                    $http_body = stream_get_contents($fileHandle);
+                }
+                
+                if (MLEUtility::checkIsMleEncryptedResponse($http_body)) {                    
+                    try {
+                        $decrypted_body = MLEUtility::decryptMleResponsePayload($this->merchantConfig, $http_body);
+                        
+                        // Write decrypted content back to the file
+                        if ($fileHandle) {
+                            rewind($fileHandle);
+                            ftruncate($fileHandle, 0);
+                            fwrite($fileHandle, $decrypted_body);
+                            fflush($fileHandle);
+                        }
+                        
+                        $http_body = $decrypted_body;
+                    } catch (\Exception $e) {
+                        if ($fileHandle) {
+                            fclose($fileHandle);
+                        }
+                        $error_message = "File download MLE decryption failed: " . $e->getMessage();
+                        self::$logger->error("ApiException : " . $error_message);
+                        self::$logger->close();
+                        throw new ApiException($error_message);
+                    }
+                }
+                
+                if ($fileHandle) {
+                    fclose($fileHandle);
+                }
+
                 $stream_headers['http_code'] = $response_info['http_code'];
 
                 self::$logger->close();
                 return [$http_body, $stream_headers['http_code'], $stream_headers];
             } else {
+                // Error path: attempt decryption for file downloads too
+                if ($fileHandle) {
+                    rewind($fileHandle);
+                    $http_body = stream_get_contents($fileHandle);
+                }
+                
+                if (MLEUtility::checkIsMleEncryptedResponse($http_body)) {                    
+                    try {
+                        $http_body = MLEUtility::decryptMleResponsePayload($this->merchantConfig, $http_body);
+                    } catch (\Exception $e) {
+                        // Ignore; proceeding with encrypted body for error case
+                    }
+                }
+                
+                if ($fileHandle) {
+                    fclose($fileHandle);
+                }
+                
                 self::$logger->error("ApiException : [".$response_info['http_code']."] Error connecting to the API ($url)");
                 self::$logger->close();
                 throw new ApiException(
@@ -623,11 +730,11 @@ class ApiClient
     * Purpose : This function calling the Authentication and making an Auth Header
     *
     */
-    public function callAuthenticationHeader($method, $postData, $resourcePath)
+    public function callAuthenticationHeader($method, $postData, $resourcePath, $isResponseMLEForAPI)
     {
         $merchantConfig = $this->merchantConfig;
         $authentication = new Authentication($merchantConfig->getLogConfiguration());
-        $getToken = $authentication->generateToken($resourcePath, $postData, $method, $merchantConfig); 
+        $getToken = $authentication->generateToken($resourcePath, $postData, $method, $merchantConfig, $isResponseMLEForAPI); 
         if($merchantConfig->getAuthenticationType() == GlobalParameter::HTTP_SIGNATURE){
             $host = "Host:".$merchantConfig->getHost();
             $vcMerchant = "v-c-merchant-id:".$merchantConfig->getMerchantID();

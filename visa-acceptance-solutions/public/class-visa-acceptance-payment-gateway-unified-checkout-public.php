@@ -87,11 +87,11 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 		$this->version               = $version;
 		$this->gateway               = $gateway;
 		// Add filter to include SRI integrity in script tags.
-		add_filter( 'script_loader_tag', array( $this, 'add_sri_integrity_to_script' ), 10, 3 );
+		add_filter( 'script_loader_tag', array( $this, 'add_sri_integrity_to_script' ), VISA_ACCEPTANCE_VAL_TEN, VISA_ACCEPTANCE_VAL_THREE );
 		// Clear session flag after order is processed.
-		add_action( 'woocommerce_checkout_order_processed', array( $this, 'clear_ep_jwt_session' ), 10 );
+		add_action( 'woocommerce_checkout_order_processed', array( $this, 'clear_ep_jwt_session' ), VISA_ACCEPTANCE_VAL_TEN );
 		// Restore notices from session for guest users on product page.
-		add_action( 'woocommerce_before_single_product', array( $this, 'restore_notices_from_session' ), 5 );
+		add_action( 'woocommerce_before_single_product', array( $this, 'restore_notices_from_session' ), VISA_ACCEPTANCE_VAL_FIVE );
 	}
 
 	/**
@@ -100,17 +100,16 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	 * Only displays notice on the specific product page where the error occurred.
 	 */
 	public function restore_notices_from_session() {
-		// Only proceed if WooCommerce session is available and user is guest.
 		if ( ! is_user_logged_in() && WC()->session && is_product() ) {
 			$stored_notice_data = WC()->session->get( 'uc_error_notice' );
 			if ( ! empty( $stored_notice_data ) && is_array( $stored_notice_data ) ) {
 				$current_product_id = get_the_ID();
-				$stored_product_id = isset( $stored_notice_data['product_id'] ) ? $stored_notice_data['product_id'] : 0;
-				$notice_message = isset( $stored_notice_data['message'] ) ? $stored_notice_data['message'] : '';
+				$stored_product_id = isset( $stored_notice_data['product_id'] ) ? $stored_notice_data['product_id'] : VISA_ACCEPTANCE_VAL_ZERO;
+				$notice_message = isset( $stored_notice_data['message'] ) ? $stored_notice_data['message'] : VISA_ACCEPTANCE_STRING_EMPTY;
 				
 				// Only show notice if we're on the same product page where error occurred.
 				if ( $current_product_id === $stored_product_id && ! empty( $notice_message ) ) {
-					wc_add_notice( $notice_message, 'error' );
+					wc_add_notice( $notice_message, VISA_ACCEPTANCE_ERROR );
 				}
 				// Clear the stored notice after checking.
 				WC()->session->set( 'uc_error_notice', null );
@@ -173,7 +172,10 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	public function enqueue_styles() {
 		$uc_settings = $this->get_uc_settings();
 		if ( isset( $uc_settings['enabled'] ) && ( VISA_ACCEPTANCE_YES === $uc_settings['enabled'] ) ) {
-			wp_enqueue_style( $this->wc_payment_gateway_id, plugin_dir_url( __FILE__ ) . 'css/visa-acceptance-payment-gateway-credit-card-public.css', array(), $this->version, 'all' );
+			// Don't load credit card CSS on product pages - express pay product page CSS handles that.
+			if ( ! is_product() ) {
+				wp_enqueue_style( $this->wc_payment_gateway_id, plugin_dir_url( __FILE__ ) . 'css/visa-acceptance-payment-gateway-credit-card-public.css', array(), $this->version, 'all' );
+			}
 		}
 	}
 
@@ -221,14 +223,15 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
                 }
                 $data = $token->get_data();
                 if ( $data['id'] ) {
-                    $token_type[ $data['id'] ] = $data['card_type'];
+                    // Handle both credit card and eCheck tokens - if card_type is null/empty, it's an eCheck.
+                    $token_type[ $data['id'] ] = ! empty( $data['card_type'] ) ? $data['card_type'] : VISA_ACCEPTANCE_TOKEN_TYPE_ECHECK;
                 }
             }
 			if ( isset( $uc_settings[ VISA_ACCEPTANCE_SETTING_ENABLE_DECISION_MANAGER ] ) && VISA_ACCEPTANCE_YES === $uc_settings[ VISA_ACCEPTANCE_SETTING_ENABLE_DECISION_MANAGER ] ) {
 				$session_id = wp_generate_uuid4();
 				WC()->session->set( "wc_{$this->wc_payment_gateway_id}_device_data_session_id", wc_clean( $session_id ) );
 				$sessionid       = WC()->session->get( "wc_{$this->wc_payment_gateway_id}_device_data_session_id", VISA_ACCEPTANCE_STRING_EMPTY );
-				$organization_id = VISA_ACCEPTANCE_ENVIRONMENT_TEST === $uc_settings['environment'] ? VISA_ACCEPTANCE_DF_ORG_ID_TEST : VISA_ACCEPTANCE_DF_ORG_ID_PROD;
+				$organization_id = VISA_ACCEPTANCE_ENVIRONMENT_TEST === $uc_settings[VISA_ACCEPTANCE_ENVIRONMENT] ? VISA_ACCEPTANCE_DF_ORG_ID_TEST : VISA_ACCEPTANCE_DF_ORG_ID_PROD;
 				wp_enqueue_script( "wc-{$this->wc_payment_gateway_id}-device-data", self::get_dfp_url( $organization_id, $this->get_merchant_id(), $sessionid, true ), array(), $this->version, false );
 			}
 			// Load Captue Context for both checkouts.
@@ -289,12 +292,14 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 				$saved_card_token_cvv = ( isset( $uc_settings['enable_token_csc'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enable_token_csc'] ) ? true : false;
 				
 				if ( $saved_card_token_cvv ) {
-					$flex_url = 'test' !== $uc_settings['environment'] ? VISA_ACCEPTANCE_FLEX_PROD_LIBRARY : VISA_ACCEPTANCE_FLEX_TEST_LIBRARY;
+					$flex_url = 'test' !== $uc_settings[VISA_ACCEPTANCE_ENVIRONMENT] ? VISA_ACCEPTANCE_FLEX_PROD_LIBRARY : VISA_ACCEPTANCE_FLEX_TEST_LIBRARY;
 					wp_enqueue_script( 'wc-credit-card-flex-microform', $flex_url, array(), $this->version, true );
 				}
 				
 				wp_enqueue_script( VISA_ACCEPTANCE_GATEWAY_ID_UNDERSCORE . $this->wc_payment_gateway_id, plugin_dir_url( __FILE__ ) . 'js/visa-acceptance-payment-gateway-unified-checkout-public.js', array( 'jquery' ), $this->version, true );
 
+				$echeck_enabled = isset( $uc_settings['enable_echeck'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enable_echeck'];
+				
 				wp_localize_script(
 					VISA_ACCEPTANCE_GATEWAY_ID_UNDERSCORE . $this->wc_payment_gateway_id,
 					'visa_acceptance_ajaxUCObj',
@@ -306,6 +311,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 						'payment_method'                  => VISA_ACCEPTANCE_GATEWAY_UC,
 						'checkout_page'                   => is_checkout(),
 						'payer_auth_enabled'              => $payer_auth_enable,
+						'echeck_enabled'                  => $echeck_enabled,
 						'tokenization'                    => $tokenization,
 						'subscription_order'               => $subscription_order,
 						'visa_acceptance_solutions_uc_id' => VISA_ACCEPTANCE_UC_ID,
@@ -324,7 +330,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 					)
 				);
 				if ( VISA_ACCEPTANCE_YES === $payer_auth_enable ) {
-					$this->load_payer_auth_script( $payer_auth_enable, $uc_settings );
+					$this->load_payer_auth_script( $payer_auth_enable );
 				}
 			}
 		}
@@ -334,16 +340,14 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	 * Initializes payer auth script if enabled.
 	 *
 	 * @param string $payer_auth_enable payer auth condition.
-	 * @param array  $uc_settings configuration.
 	 */
-	public function load_payer_auth_script( $payer_auth_enable, $uc_settings ) {
+	public function load_payer_auth_script( $payer_auth_enable ) {
 		$nonce_setup         = wp_create_nonce( 'wc_call_uc_payer_auth_setup_action' );
 		$nonce_enrollment    = wp_create_nonce( 'wc_call_uc_payer_auth_enrollment_action' );
 		$nonce_validation    = wp_create_nonce( 'wc_call_uc_payer_auth_validation_action' );
 		$nonce_error_handler = wp_create_nonce( 'wc_call_uc_payer_auth_error_handler' );
-		$cardinal_url        = ( VISA_ACCEPTANCE_ENVIRONMENT_TEST === $uc_settings['environment'] ) ? VISA_ACCEPTANCE_CARDINAL_TEST_LIBRARY : VISA_ACCEPTANCE_CARDINAL_PRODUCTION_LIBRARY;
 		$product_page        = is_product();
-        $product_name = '';
+        $product_name = VISA_ACCEPTANCE_STRING_EMPTY;
         if( ! is_product() ) {
             if ( $product_page ) {
                 global $product;
@@ -356,7 +360,6 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
         }
 		$payer_auth_params = array(
 			'admin_url'                              => admin_url( 'admin-ajax.php' ),
-			'cardinal_url'                           => $cardinal_url,
 			'payer_auth_enabled'                     => $payer_auth_enable,
 			'nonce_setup'                            => $nonce_setup,
 			'nonce_enrollment'                       => $nonce_enrollment,
@@ -376,7 +379,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	 */
 	public function get_merchant_id() {
 		$settings = $this->gateway->get_config_settings();
-		if ( isset( $settings['environment'] ) && VISA_ACCEPTANCE_ENVIRONMENT_PRODUCTION === $settings['environment'] ) {
+		if ( isset( $settings[VISA_ACCEPTANCE_ENVIRONMENT] ) && VISA_ACCEPTANCE_ENVIRONMENT_PRODUCTION === $settings[VISA_ACCEPTANCE_ENVIRONMENT] ) {
 			$merchant_id = isset( $settings['merchant_id'] ) ? $settings['merchant_id'] : null;
 		} else {
 			$merchant_id = isset( $settings['test_merchant_id'] ) ? $settings['test_merchant_id'] : null;
@@ -399,7 +402,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	public function payment_fields() {
 		$get_data = $_GET; // phpcs:ignore WordPress.Security.NonceVerification
 		$settings           = $this->get_uc_settings();
-		$is_zero_initial_payment = ( VISA_ACCEPTANCE_ZERO_AMOUNT === WC()->cart->get_total( 'edit' ) && VISA_ACCEPTANCE_YES === get_option( 'woocommerce_subscriptions_zero_initial_payment_requires_payment', 'no' ) ) ? true : false;
+		$is_zero_initial_payment = ( VISA_ACCEPTANCE_ZERO_AMOUNT === WC()->cart->get_total( 'edit' ) && VISA_ACCEPTANCE_YES === get_option( 'woocommerce_subscriptions_zero_initial_payment_requires_payment', VISA_ACCEPTANCE_NO ) ) ? true : false;
 		$flex_request           = new Visa_Acceptance_Key_Generation( $this->gateway );
 		$force_tokenization = false;
 		if ( is_checkout() ) {
@@ -415,17 +418,17 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 			if ( ! empty( $core_tokens ) ) {
 				foreach ( $core_tokens as $token ) {
 					$environment_saved = $token->get_meta( VISA_ACCEPTANCE_ENVIRONMENT );
-					if ( $environment_saved === $settings['environment'] ) {
+					if ( $environment_saved === $settings[VISA_ACCEPTANCE_ENVIRONMENT] ) {
 						$token_data    = $token->get_data();
-						$card_type     = $token_data['card_type'];
-						$last_four     = $token_data['last4'];
+						$card_type     = $token_data['card_type'] ?? VISA_ACCEPTANCE_STRING_EMPTY;
+                        $last_four     = $token_data['last4'] ?? VISA_ACCEPTANCE_STRING_EMPTY;
 						$id_dasherized = $this->gateway->get_id_dasherized();
 						// CustomerId change for Cvv.
 						$id        = $token_data['id'];
 						$image_url = $this->get_image_url( $card_type );
 						$checked   = checked( $token->is_default(), true, false );
-						$exp_month = $token_data['expiry_month'];
-						$exp_year  = $token_data['expiry_year'];
+						$exp_month = $token_data['expiry_month'] ?? VISA_ACCEPTANCE_STRING_EMPTY;
+                        $exp_year  = $token_data['expiry_year'] ?? VISA_ACCEPTANCE_STRING_EMPTY;
 						$image_id  = attachment_url_to_postid( $image_url ); // Get the attachment ID from the URL.
 
 						echo '<div id="wc-unified-checkout-saved-cards-options">' .
@@ -446,10 +449,13 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 								)
 							);
 						}
+						$is_echeck_token = ( VISA_ACCEPTANCE_TOKEN_TYPE_ECHECK === $card_type ) || ( VISA_ACCEPTANCE_TOKEN_TYPE_ECHECK === $token->get_type() );
+						$expiry_text = $is_echeck_token ? VISA_ACCEPTANCE_STRING_EMPTY : ' (expires ' . esc_html( $exp_month ) . esc_html( VISA_ACCEPTANCE_SLASH ) . esc_html( $exp_year ) . ')';
+						
 						echo '<label class="wc-payment-gateway-payment-form-saved-payment-method" for="wc-' . esc_attr( $id_dasherized ) . '-payment-token-' . esc_attr( $id ) . '">' .
-							'&bull; &bull; &bull; ' . esc_html( $last_four ) . ' (expires ' . esc_html( $exp_month ) . esc_html( VISA_ACCEPTANCE_SLASH ) . esc_html( $exp_year ) . ')' .
+							'&bull; &bull; &bull; ' . esc_html( $last_four ) . esc_html( $expiry_text ) .
 							'</label></div>';
-						if ( VISA_ACCEPTANCE_YES === $settings['enable_token_csc'] ) {
+						if ( VISA_ACCEPTANCE_YES === $settings['enable_token_csc'] && ! $is_echeck_token ) {
 							echo '<div class="wc-unified-checkout-saved-card"  id="token-' . esc_attr( $id ) . '">' .
 								'<label class="wc-unified-checkout-payment-form-label"> ' . esc_html__( 'Enter Security Code', 'visa-acceptance-solutions' ) . '<span class="required">*</span>' .
 								'<div class="cvv-field-container">' .
@@ -630,7 +636,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 		}
 		// It's needed to get any order details.
 		$setting = $this->get_uc_settings();
-		$digital_payment_method = '';
+		$digital_payment_method = VISA_ACCEPTANCE_STRING_EMPTY;
 		if(!empty($setting['enabled_payment_methods'])) {
 			foreach($setting['enabled_payment_methods'] as $digital_method) {
 				if('enable_gpay' === $digital_method) {
@@ -670,7 +676,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 			$ref_id         = sanitize_text_field( wp_unslash( $post_data[ 'refId-' . $token_id ] ) );
 			$saved_card_cvv = $decrypt_data->decrypt_cvv( $encrypted_csc, $ext_id, $val_id, $ref_id );
 		}
-		$decoded_transient_token = ! empty( $transient_token ) ? json_decode( base64_decode( explode( '.', $transient_token )[VISA_ACCEPTANCE_ONE] ), true ) : null;// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+		$decoded_transient_token = ! empty( $transient_token ) ? json_decode( base64_decode( explode( VISA_ACCEPTANCE_FULL_STOP, $transient_token )[VISA_ACCEPTANCE_VAL_ONE] ), true ) : null;// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 		
 		// Retrieve and update address from Google Pay using CyberSource API BEFORE any processing.
 		if ( ! empty( $decoded_transient_token['content']['processingInformation']['paymentSolution']['value'] ) && 
@@ -706,7 +712,17 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 			$saved_token_id = ! empty( $token_id ) ? $token_id : $blocks_token;
 			return $subscriptions->change_payment_method( $saved_token_id, $order, $transient_token );
 		}
-		if(isset( $setting['enable_threed_secure'] ) && VISA_ACCEPTANCE_YES === $setting['enable_threed_secure'] && VISA_ACCEPTANCE_YES === $payer_auth_enabled) {
+
+		// Detect eCheck for both new transient tokens and saved tokens — 3DS does not apply to eCheck/ACH.
+		$is_echeck = $payment_uc->is_echeck_from_transient_token( (string) $transient_token );
+		if ( ! $is_echeck && ( $token_id || $blocks_token ) ) {
+			$saved_token_lookup = $token_id ? $this->get_meta_data_token( $token_id ) : $this->get_meta_data_token( $blocks_token );
+			if ( $saved_token_lookup && VISA_ACCEPTANCE_TOKEN_TYPE_ECHECK === $saved_token_lookup->get_type() ) {
+				$is_echeck = true;
+			}
+		}
+
+		if( ! $is_echeck && isset( $setting['enable_threed_secure'] ) && VISA_ACCEPTANCE_YES === $setting['enable_threed_secure'] && VISA_ACCEPTANCE_YES === $payer_auth_enabled) {
             if(('enable_gpay' === $digital_payment_method && false === $decoded_transient_token['metadata']['cardholderAuthenticationStatus'] && isset( $decoded_transient_token['content']['processingInformation']['paymentSolution']['value'] ) && VISA_ACCEPTANCE_GPAY_PAYMENTSOLUTION_VALUE === $decoded_transient_token['content']['processingInformation']['paymentSolution']['value'] ) || ( ! isset( $decoded_transient_token['content']['processingInformation']['paymentSolution']['value'] )) ) {
 				// Store Flex CVV token in order meta for later use in 3DS flow.
                 if ( ! empty( $flex_cvv_token ) ) {
@@ -790,14 +806,14 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 				'result'   => VISA_ACCEPTANCE_SUCCESS,
 				'redirect' => $this->gateway->get_return_url( $order ),
 			);
-		} elseif ( is_array($result) && $result[ VISA_ACCEPTANCE_STRING_ERROR ] ) {
-			$message = $result[ VISA_ACCEPTANCE_STRING_ERROR ];
+		} elseif ( is_array($result) && $result[ VISA_ACCEPTANCE_ERROR ] ) {
+			$message = $result[ VISA_ACCEPTANCE_ERROR ];
 			if ( isset( $result['message'] ) && $result['message'] ) {
 				$message = $result['message'];
 			}
 
 			if ( isset( $result['detailed_reason'] ) ) {
-				$message .= '<br>';
+				$message .= VISA_ACCEPTANCE_BR;
 				$message .= $this->add_detailed_message( $result['detailed_reason'] );
 			}
 			$this->mark_order_failed( $message );
@@ -809,7 +825,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 		} else {
 			$message = __( 'Unable to complete your order. Please check your details and try again.', 'visa-acceptance-solutions' );
 			if ( isset( $result['detailed_reason'] ) ) {
-				$message .= '<br>';
+				$message .= VISA_ACCEPTANCE_BR;
 				$message .= $this->add_detailed_message( $result['detailed_reason'] );
 			}
 			$this->mark_order_failed( $message );
@@ -817,7 +833,6 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 				'result'  => VISA_ACCEPTANCE_FAILURE,
 				'message' => $message,
 			);
-
 		}
 		return $response_array;
 	}
@@ -826,7 +841,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	 * Payer Auth AJAX Setup Callback.
 	 */
 	public function call_setup_action() {
-		$nonce = isset( $_POST['nounce'] ) ? sanitize_text_field( wp_unslash( $_POST['nounce'] ) ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.
+		$nonce = isset( $_POST['nounce'] ) ? sanitize_text_field( wp_unslash( $_POST['nounce'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY; //phpcs:ignore WordPress.Security.NonceVerification.
 		wp_verify_nonce( $nonce, 'wc_call_uc_payer_auth_setup_action' );//phpcs:ignore WordPress.Security.NonceVerification.
 		$post_data          = $_POST;
 		$data               = ( ! empty( $post_data['data'] ) ) ? wc_clean( wp_unslash( $post_data['data'] ) ) : null;
@@ -835,7 +850,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 		$order_id           = ( ! empty( $post_data['orderid'] ) ) ? absint( wp_unslash( $post_data['orderid'] ) ) : null;
 		$uc_payment_gateway = new Visa_Acceptance_Payment_Gateway_Unified_Checkout();
 		$return_response    = array(
-			'error'             => VISA_ACCEPTANCE_VAL_ZERO,
+			VISA_ACCEPTANCE_ERROR  => VISA_ACCEPTANCE_VAL_ZERO,
 			'message'           => VISA_ACCEPTANCE_STRING_EMPTY,
 			'status'            => VISA_ACCEPTANCE_STRING_EMPTY,
 			'dataCollectionUrl' => VISA_ACCEPTANCE_STRING_EMPTY,
@@ -851,12 +866,11 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 			$return_response['referenceId']       = $api_response['referenceId'];
 		} else {
 			$return_response = $api_response;
-			if ( isset( $return_response['error'] ) ) {
+			if ( isset( $return_response[VISA_ACCEPTANCE_ERROR] ) ) {
 				wc_clear_notices();
-				wc_add_notice( $return_response['error'], VISA_ACCEPTANCE_STRING_ERROR );
+				wc_add_notice( $return_response[VISA_ACCEPTANCE_ERROR], VISA_ACCEPTANCE_ERROR );
 			}
 		}
-
 		wp_send_json( $return_response );
 	}
 
@@ -874,7 +888,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
      */
 	public function updates_capture_context() {
         $return_response        = array(
-            'success'         			=> true,
+            VISA_ACCEPTANCE_SUCCESS => true,
             'capture_context_jwt' 		=> null,
             'capture_context_ep_jwt' 	=> null,
         );
@@ -913,7 +927,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
         );
         // Generate new capture context if: amount changed, OR no session amount exists (first load), OR shipping changed.
         if ( empty( $total_amount ) || $checkout_order_total !== $total_amount || $last_shipping_hash !== $current_shipping_hash ) { // phpcs:ignore WordPress.Security.NonceVerification.
-            $return_response['success'] = false;
+            $return_response[VISA_ACCEPTANCE_SUCCESS] = false;
             $response_jwt           = $flex_request->get_unified_checkout_capture_context();
             if (! empty( $digital_payment_methods ) && ! $this->is_user_in_add_payment_method_page()) {
                 $response_ep_jwt            = $flex_request->get_unified_checkout_capture_context(true);
@@ -949,10 +963,9 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
                     }
                 }
             }
-            
             // Set success to true if at least one context is available.
             if ( ! empty( $return_response['capture_context_jwt'] ) || ! empty( $return_response['capture_context_ep_jwt'] ) ) {
-                $return_response['success'] = true;
+                $return_response[VISA_ACCEPTANCE_SUCCESS] = true;
                 // Update session with new total and shipping hash.
                 WC()->session->set( "wc_{$this->wc_payment_gateway_id}_capture_context_total_amount", $checkout_order_total );
                 if ( isset( $current_shipping_hash ) ) {
@@ -993,7 +1006,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	 * Payer Auth AJAX Enrollment Callback.
 	 */
 	public function call_enrollment_action() {
-		$nonce = isset( $_POST['nounce'] ) ? sanitize_text_field( wp_unslash( $_POST['nounce'] ) ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.
+		$nonce = isset( $_POST['nounce'] ) ? sanitize_text_field( wp_unslash( $_POST['nounce'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY; //phpcs:ignore WordPress.Security.NonceVerification.
 		wp_verify_nonce( $nonce, 'wc_call_uc_payer_auth_enrollment_action' ); //phpcs:ignore WordPress.Security.NonceVerification.
 		$post_data          = $_POST;
 		$is_save_card     = ( ! empty( $post_data['isSaveCard'] ) ) ? wc_clean( wp_unslash( $post_data['isSaveCard'] ) ) : null;
@@ -1005,7 +1018,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 		$sca_case           = ( ! empty( $post_data['scaCase'] ) ) ? wc_clean( wp_unslash( $post_data['scaCase'] ) ) : null;
 		$flex_cvv_token     = ( ! empty( $post_data['flexCvvToken'] ) ) ? sanitize_text_field( wp_unslash( $post_data['flexCvvToken'] ) ) : null;
 		$return_response    = array(
-		'error'       => VISA_ACCEPTANCE_VAL_ZERO,
+		VISA_ACCEPTANCE_ERROR  => VISA_ACCEPTANCE_VAL_ZERO,
 		'message'     => VISA_ACCEPTANCE_STRING_EMPTY,
 		'status'      => VISA_ACCEPTANCE_STRING_EMPTY,
 		'stepUpUrl'   => VISA_ACCEPTANCE_STRING_EMPTY,
@@ -1019,25 +1032,24 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 		$card_token = wc_clean( wp_unslash( $post_data['cardtoken'] ) );
 		}
 		$setting = $this->get_uc_settings();
-		$decoded_card_token = ! empty( $card_token ) ? json_decode( base64_decode( explode( '.', $card_token )[VISA_ACCEPTANCE_ONE] ), true ) : null;// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+		$decoded_card_token = ! empty( $card_token ) ? json_decode( base64_decode( explode( VISA_ACCEPTANCE_FULL_STOP, $card_token )[VISA_ACCEPTANCE_VAL_ONE] ), true ) : null;// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 		if ( isset( $decoded_card_token['metadata']['consumerPreference']['saveCard'] ) && true === $decoded_card_token['metadata']['consumerPreference']['saveCard'] && VISA_ACCEPTANCE_YES === $setting['tokenization'] ){
 		$is_save_card = VISA_ACCEPTANCE_YES;
 		}
 		// Calling Payer Auth Setup API.
 		$api_response = $uc_payment_gateway->payer_auth_enrollment( $order_id, $card_token, $saved_token, $is_save_card, $reference_id, $sca_case, $flex_cvv_token );
 		if ( VISA_ACCEPTANCE_PENDING_AUTHENTICATION === $api_response['status'] ) {
-		$return_response['status']      = $api_response['status'];
-		$return_response['stepUpUrl']   = $api_response['stepUpUrl'];
-		$return_response['accessToken'] = $api_response['accessToken'];
-		$return_response['pareq']       = $api_response['pareq'];
+			$return_response['status']      = $api_response['status'];
+			$return_response['stepUpUrl']   = $api_response['stepUpUrl'];
+			$return_response['accessToken'] = $api_response['accessToken'];
+			$return_response['pareq']       = $api_response['pareq'];
 		} else {
-		$return_response = $api_response;
-		if ( isset( $return_response['error'] ) ) {
-			wc_clear_notices();
-			wc_add_notice( $return_response['error'], VISA_ACCEPTANCE_STRING_ERROR );
+			$return_response = $api_response;
+			if ( isset( $return_response[VISA_ACCEPTANCE_ERROR] ) ) {
+				wc_clear_notices();
+				wc_add_notice( $return_response[VISA_ACCEPTANCE_ERROR], VISA_ACCEPTANCE_ERROR );
+			}
 		}
-		}
-
 		wp_send_json( $return_response );
 	}
 
@@ -1045,7 +1057,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	 * Payer Auth AJAX Validation Callback.
 	*/
 	public function call_validation_action() {
-		$nonce = isset( $_POST['nounce'] ) ? sanitize_text_field( wp_unslash( $_POST['nounce'] ) ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.
+		$nonce = isset( $_POST['nounce'] ) ? sanitize_text_field( wp_unslash( $_POST['nounce'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY; //phpcs:ignore WordPress.Security.NonceVerification.
 		wp_verify_nonce( $nonce, 'wc_call_uc_payer_auth_validation_action' ); //phpcs:ignore WordPress.Security.NonceVerification.
 		$post_data          = $_POST;
 		$is_save_card     = ( ! empty( $post_data['tokenCheckbox'] ) ) ? wc_clean( wp_unslash( $post_data['tokenCheckbox'] ) ) : null;
@@ -1058,9 +1070,9 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 		$sca_case           = ( ! empty( $post_data['scaCase'] ) ) ? wc_clean( wp_unslash( $post_data['scaCase'] ) ) : null;
 		$flex_cvv_token     = ( ! empty( $post_data['flexCvvToken'] ) ) ? sanitize_text_field( wp_unslash( $post_data['flexCvvToken'] ) ) : null;
 		// If no Flex CVV token from AJAX, try to retrieve from order meta.
-				if ( empty( $flex_cvv_token ) && ! empty( $order_id ) ) {
-					$flex_cvv_token = get_post_meta( $order_id, VISA_ACCEPTANCE_WC_UC_ID . '_flex_cvv_token', true );
-				}
+		if ( empty( $flex_cvv_token ) && ! empty( $order_id ) ) {
+			$flex_cvv_token = get_post_meta( $order_id, VISA_ACCEPTANCE_WC_UC_ID . '_flex_cvv_token', true );
+		}
 		$uc_payment_gateway = new Visa_Acceptance_Payment_Gateway_Unified_Checkout();
 		// Calling Payer Auth Setup API.
 		if ( ! ( ! empty( $saved_token ) && $saved_token instanceof WC_Payment_Token ) && $this->gateway->is_subscriptions_activated && ( wcs_order_contains_subscription( $order_id ) || wcs_order_contains_renewal( $order_id ) ) ) {
@@ -1070,7 +1082,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 		$card_token = wc_clean( wp_unslash( $post_data['cardtoken'] ) );
 		}
 		$setting = $this->get_uc_settings();
-		$decoded_card_token = ! empty( $card_token ) ? json_decode( base64_decode( explode( '.', $card_token )[VISA_ACCEPTANCE_ONE] ), true ) : null;// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+		$decoded_card_token = ! empty( $card_token ) ? json_decode( base64_decode( explode( VISA_ACCEPTANCE_FULL_STOP, $card_token )[VISA_ACCEPTANCE_VAL_ONE] ), true ) : null;// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 		if ( isset( $decoded_card_token['metadata']['consumerPreference']['saveCard'] ) && true === $decoded_card_token['metadata']['consumerPreference']['saveCard'] && VISA_ACCEPTANCE_YES === $setting['tokenization'] ){
 		$is_save_card = VISA_ACCEPTANCE_YES;
 		}
@@ -1079,9 +1091,9 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 				if ( ! empty( $order_id ) ) {
 					delete_post_meta( $order_id, VISA_ACCEPTANCE_WC_UC_ID . '_flex_cvv_token' );
 				}
-		if ( isset( $return_response['error'] ) ) {
+		if ( isset( $return_response[VISA_ACCEPTANCE_ERROR] ) ) {
 			wc_clear_notices();
-			wc_add_notice( $return_response['error'], VISA_ACCEPTANCE_STRING_ERROR );
+			wc_add_notice( $return_response[VISA_ACCEPTANCE_ERROR], VISA_ACCEPTANCE_ERROR );
 			// Store error with product ID for guest users on product page.
 			if ( ! is_user_logged_in() && ! empty( sanitize_text_field( wp_unslash($_SERVER['HTTP_REFERER'] ) ) ) ) {
                 $referer = wp_parse_url( sanitize_text_field( wp_unslash( $_SERVER['HTTP_REFERER'] )) );
@@ -1093,7 +1105,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 							WC()->session->set_customer_session_cookie( true );
 						}
 						WC()->session->set( 'uc_error_notice', array(
-							'message' => $return_response['error'],
+							'message' => $return_response[VISA_ACCEPTANCE_ERROR],
 							'product_id' => $product_id
 						) );
 					}
@@ -1143,7 +1155,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	 * Error Handler for Payer Authentication Blocks.
 	 */
 	public function call_error_handler() {
-		$nonce = isset( $_POST['nounce'] ) ? sanitize_text_field( wp_unslash( $_POST['nounce'] ) ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.
+		$nonce = isset( $_POST['nounce'] ) ? sanitize_text_field( wp_unslash( $_POST['nounce'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY; //phpcs:ignore WordPress.Security.NonceVerification.
 		wp_verify_nonce( $nonce, 'wc_call_uc_payer_auth_error_handler' ); //phpcs:ignore WordPress.Security.NonceVerification.
 		wc_clear_notices();
 		wp_send_json_success();
@@ -1159,7 +1171,6 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	 */
 	public function get_meta_data_token( $blocks_token_id ) {
 		$customer_data     = $this->get_order_for_add_payment_method();
-		$payment_method    = new Visa_Acceptance_Payment_Methods( $this );
 		$blocks_meta_token = null;
 		$core_tokens       = \WC_Payment_Tokens::get_customer_tokens( $customer_data['customer_id'], $this->gateway->get_id() );
 		if ( is_array( $core_tokens ) && ! empty( $core_tokens ) ) {
@@ -1196,16 +1207,35 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 			$transient_token = sanitize_text_field( wp_unslash( $post_data['transientToken'] ) );
 		}
 		if ( $transient_token ) {
-			$result         = $payment_method->create_token( $transient_token );
+			$is_echeck = false;
+			$token_parts = explode( VISA_ACCEPTANCE_FULL_STOP, $transient_token );
+			if ( count( $token_parts ) >= 2 ) {
+				$payload_b64 = $token_parts[1];
+				$repl = array( '-' => '+', '_' => '/' );
+				$payload_b64 = strtr( $payload_b64, $repl );
+				$pad = strlen( $payload_b64 ) % VISA_ACCEPTANCE_VAL_FOUR;
+				if ( $pad ) {
+					$payload_b64 .= str_repeat( '=', VISA_ACCEPTANCE_VAL_FOUR - $pad );
+				}
+				$json = base64_decode( $payload_b64 ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+				if ( $json ) {
+					$decoded_token = json_decode( $json, true );
+					if ( isset( $decoded_token['metadata']['paymentType'] ) && VISA_ACCEPTANCE_CHECK === $decoded_token['metadata']['paymentType'] ) {
+						$is_echeck = true;
+					}
+				}
+			}
+			
+			$result = $payment_method->create_token( $transient_token, null, $is_echeck );
 			if ( $result['status'] ) {
 				wc_add_notice( $result['message'] );
 				$redirect_url = wc_get_account_endpoint_url( VISA_ACCEPTANCE_PAYMENT_METHODS );
 			} else {
-				wc_add_notice( $result['message'], VISA_ACCEPTANCE_STRING_ERROR );
+				wc_add_notice( $result['message'], VISA_ACCEPTANCE_ERROR );
 				$redirect_url = wc_get_endpoint_url( 'add-payment-method' );
 			}
 		} else {
-			wc_add_notice( __( 'Please enter card details', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_STRING_ERROR );
+			wc_add_notice( __( 'Please enter card details', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_ERROR );
 			$redirect_url = wc_get_endpoint_url( 'add-payment-method' );
 		}
 		wp_safe_redirect( $redirect_url );
@@ -1258,7 +1288,6 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 			$default_column = array( 'subscriptions' => __( 'Subscriptions', 'visa-acceptance-solutions' ) );
 			$columns        = $this->array_insert_after( $columns, 'default', $default_column );
 		}
-
 		return $columns;
 	}
 
@@ -1312,7 +1341,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	 * @param array $method payment method.
 	 */
 	public function uc_add_payment_method_default( $method ) {
-		if ( $method['is_default'] && $this->gateway->get_id() === $method['method']['gateway'] ) {
+		if ( $method[VISA_ACCEPTANCE_IS_DEFAULT] && $this->gateway->get_id() === $method['method']['gateway'] ) {
 			echo '<mark class="default">' . esc_html__( 'Default', 'visa-acceptance-solutions' ) . '</mark>';
 		}
 	}
@@ -1377,11 +1406,13 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 			exit();
 		}
 	}
+
 	/**
 	 * Add custom notice at Payment method page.
 	 *
 	 * @param string $icon Icon.
 	 * @param int    $id Id.
+	 * @return string The gateway icon (or empty string for this gateway).
 	 */
 	public function custom_gateway_icon( $icon, $id ) {
 		if ( $id === $this->wc_payment_gateway_id ) {
@@ -1396,7 +1427,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 					$notice_printed = true;
 				}
 			}
-			return '';
+			return VISA_ACCEPTANCE_STRING_EMPTY;
 		}
 		return $icon;
 	}
@@ -1421,14 +1452,14 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
                         return $check;
                     }
                     if ( function_exists( 'wc_add_notice' ) ) {
-                        wc_add_notice( esc_html__( 'Please set another card to default and try deleting the card again.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_STRING_ERROR );
+                        wc_add_notice( esc_html__( 'Please set another card to default and try deleting the card again.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_ERROR );
                     }
                     if ( function_exists( 'wc_get_account_endpoint_url' ) ) {
                         wp_safe_redirect( wc_get_account_endpoint_url( VISA_ACCEPTANCE_PAYMENT_METHODS ) );
                         exit();
                     }
                 } else {
-                    wc_add_notice( esc_html__( 'Card deletion failed. Please try again.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_STRING_ERROR );
+                    wc_add_notice( esc_html__( 'Card deletion failed. Please try again.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_ERROR );
                     wp_safe_redirect( wc_get_account_endpoint_url( VISA_ACCEPTANCE_PAYMENT_METHODS ) );
                     exit();
                 }
@@ -1442,7 +1473,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
                 return $check;
             }
             if ( function_exists( 'wc_add_notice' ) ) {
-                wc_add_notice( esc_html__( 'Card deletion failed. Please try again.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_STRING_ERROR );
+                wc_add_notice( esc_html__( 'Card deletion failed. Please try again.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_ERROR );
             }
             if ( function_exists( 'wc_get_account_endpoint_url' ) ) {
                 wp_safe_redirect( wc_get_account_endpoint_url( VISA_ACCEPTANCE_PAYMENT_METHODS ) );
@@ -1489,10 +1520,10 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 			$patch_customer_payment_instrument_request = new PatchCustomerPaymentInstrumentRequest($payload);
 			try {
 				$api_response = $payments_api->patchCustomersPaymentInstrument( $token_data['token_information']['id'], $token_data['token_information']['payment_instrument_id'],$patch_customer_payment_instrument_request  );
-				$this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, 'Set as default Payment Method' );
+				$this->gateway->add_logs_service_response( $api_response[VISA_ACCEPTANCE_VAL_ZERO],$api_response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, 'Set as default Payment Method' );
 				$return_array = array(
-					'http_code' => $api_response[1],
-					'body'      => $api_response[0],
+					'http_code' => $api_response[VISA_ACCEPTANCE_VAL_ONE],
+					'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 				);
 				return $return_array;
 			} catch ( \CyberSource\ApiException $e ) {
@@ -1521,7 +1552,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 				} else {
 					$this->set_token_default();
 					wc_clear_notices();
-					wc_add_notice( esc_html__( 'Failed to update as default payment method. Please try again.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_STRING_ERROR );
+					wc_add_notice( esc_html__( 'Failed to update as default payment method. Please try again.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_ERROR );
 					wp_safe_redirect( wc_get_account_endpoint_url( VISA_ACCEPTANCE_PAYMENT_METHODS ) );
 					exit();
 				}
@@ -1531,7 +1562,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 		} catch ( \Exception $e ) {
 			$log_header = 'Set as default Payment Method';
 			$this->gateway->add_logs_data( $e->getMessage(), false, $log_header );
-			wc_add_notice( esc_html__( 'Failed to update as default payment method. Please try again.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_STRING_ERROR );
+			wc_add_notice( esc_html__( 'Failed to update as default payment method. Please try again.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_ERROR );
 			wp_safe_redirect( wc_get_account_endpoint_url( VISA_ACCEPTANCE_PAYMENT_METHODS ) );
 			exit();
 		}
@@ -1550,6 +1581,9 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 			if ( $payment_token->get_is_default() ) {
 				WC()->session->set( "wc_{$this->wc_payment_gateway_id}_default_card_id", wc_clean( $payment_token->get_id() ) );
 			}
+			if ( $payment_token instanceof \WC_Payment_Token_eCheck ) {
+				$method['method']['brand'] = __( 'Account', 'visa-acceptance-solutions' );
+			}
 		}
 		return $method;
 	}
@@ -1558,9 +1592,9 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	 * AJAX handler to store browser data for 3DS device information.
 	 */
 	public function store_browser_data() {
-		check_ajax_referer( 'store_browser_data_action', 'nonce' );
+		check_ajax_referer( 'store_browser_data_action', VISA_ACCEPTANCE_NONCE );
 		
-		$gateway_id = isset( $_POST['gateway_id'] ) ? sanitize_text_field( wp_unslash( $_POST['gateway_id'] ) ) : '';
+		$gateway_id = isset( $_POST['gateway_id'] ) ? sanitize_text_field( wp_unslash( $_POST['gateway_id'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY;
 		
 		if ( empty( $gateway_id ) || ! isset( WC()->session ) ) {
 			wp_send_json_error();

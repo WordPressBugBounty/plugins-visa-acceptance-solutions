@@ -46,7 +46,6 @@ class Visa_Acceptance_Solutions {
 		require_once plugin_dir_path( __FILE__ ) . 'trait-visa-acceptance-payment-gateway-admin.php';
 		require_once plugin_dir_path( __FILE__ ) . 'trait-visa-acceptance-payment-gateway-includes.php';
 		require_once plugin_dir_path( __FILE__ ) . 'trait-visa-acceptance-payment-gateway-public.php';
-
 		/**
 		 * The payment method class that is used to define internationalization,
 		 * admin-specific hooks, and public-facing site hooks.

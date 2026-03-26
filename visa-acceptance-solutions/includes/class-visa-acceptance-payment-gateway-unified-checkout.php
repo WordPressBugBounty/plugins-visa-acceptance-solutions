@@ -16,9 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once plugin_dir_path( __DIR__ ) . 'includes/api/payments/payer_auth/class-visa-acceptance-setup.php';
 require_once plugin_dir_path( __DIR__ ) . 'includes/api/payments/payer_auth/class-visa-acceptance-enrollment.php';
 require_once plugin_dir_path( __DIR__ ) . 'includes/api/payments/payer_auth/class-visa-acceptance-validation.php';
-
 require_once plugin_dir_path( __DIR__ ) . 'includes/api/payments/class-visa-acceptance-payment-methods.php';
 require_once plugin_dir_path( __DIR__ ) . 'includes/api/payments/class-visa-acceptance-reporting.php';
+require_once plugin_dir_path( __FILE__ ) . 'class-visa-acceptance-settings-validator.php';
 
 /**
  *
@@ -104,7 +104,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 
 		// Get settings.
 		$this->enabled = $this->get_option( 'enabled' );
-		if ( 'yes' === $this->enabled ) {
+		if ( VISA_ACCEPTANCE_YES === $this->enabled ) {
 			$this->title = $this->get_option( 'title', VISA_ACCEPTANCE_PLUGIN_DISPLAY_NAME );
 		} else {
 		$plugin_url = plugin_dir_url( __DIR__ );
@@ -121,7 +121,6 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 		}
 
 		$this->description = $this->get_option( 'description' );
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		// Added.
 		add_action( 'init', array( $this, 'schedule_order_updates' ) );
 		add_action( 'wc_payment_gateway_update_orders', array( $this, 'handle_order_updates' ) );
@@ -241,12 +240,17 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 		$pending_orders = wc_get_orders(
 			array(
 				'status'      => VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PENDING,
-				'limit'       => 1,
+				'limit'       => VISA_ACCEPTANCE_VAL_ONE,
 				'payment_method' => $this->get_id(),
 				'meta_query'  => array(// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					'relation' => 'OR',
 					array(
 						'key'   => VISA_ACCEPTANCE_WC_UC_ID . VISA_ACCEPTANCE_UNDERSCORE_PAYMENT_STATUS,
 						'value' => VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED_PENDING_REVIEW,
+					),
+					array(
+						'key'   => VISA_ACCEPTANCE_WC_UC_ID . VISA_ACCEPTANCE_UNDERSCORE_PAYMENT_STATUS,
+						'value' => VISA_ACCEPTANCE_API_RESPONSE_ECHECK_DM_STATUS,
 					),
 				),
 			)
@@ -304,7 +308,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 	 * @throws Exception Exception to prevent order status change.
 	 */
 	public function prevent_order_status_change( $order_id, $status_from, $status_to, $that ) {
-			$order = wc_get_order( $order_id );
+		$order = wc_get_order( $order_id );
 		if ( in_array( $order->get_payment_method( VISA_ACCEPTANCE_EDIT ), array( VISA_ACCEPTANCE_UC_ID, VISA_ACCEPTANCE_SV_GATEWAY_ID ), true ) ) {
 			if ( ( $status_from !== $status_to ) && is_admin() ) {
 				if ( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_ON_HOLD === $status_from && ( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING === $status_to || VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_COMPLETED === $status_to ) ) {
@@ -319,261 +323,139 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 		}
 	}
 
-/**
-  * Process the admin options.
-  *
-  * Validates the title field and prevents saving if it does not meet the criteria.
-  *
-  * @return bool
-  */
- public function process_admin_options() {
+  /**
+   * Process the admin options.
+   *
+   * Validates the title field and prevents saving if it does not meet the criteria.
+   *
+   * @return bool
+   */
+  	public function process_admin_options() {
+		$validator = new Visa_Acceptance_Settings_Validator();
 		$post_data = $this->get_post_data();
-
-		$enable_mle = isset($post_data['woocommerce_' . $this->get_id() . '_enable_mle']) ? $post_data['woocommerce_' . $this->get_id() . '_enable_mle'] : 0;
-
-		$raw_environment = isset($post_data['woocommerce_' . $this->get_id() . '_environment']) ? $post_data['woocommerce_' . $this->get_id() . '_environment'] : '';
-
-		$raw_title = isset($post_data['woocommerce_' . $this->get_id() . '_title']) ? $post_data['woocommerce_' . $this->get_id() . '_title'] : '';
+		$field_prefix = 'woocommerce_' . $this->get_id() . '_';
 		
-		$trimmed_title = trim($raw_title);
+		$enable_mle = isset( $post_data[ $field_prefix . 'enable_mle' ] ) ? $post_data[ $field_prefix . 'enable_mle' ] : '0';
+		$environment = isset( $post_data[ $field_prefix . VISA_ACCEPTANCE_ENVIRONMENT ] ) ? sanitize_text_field( $post_data[ $field_prefix . VISA_ACCEPTANCE_ENVIRONMENT ] ) : VISA_ACCEPTANCE_STRING_EMPTY;
+		$sanitized_data = array();
+		$validation_errors = array();
 
-		$raw_test_merchant_id = isset($post_data['woocommerce_' . $this->get_id() . '_test_merchant_id']) ? $post_data['woocommerce_' . $this->get_id() . '_test_merchant_id'] : '';
+		$raw_title = isset( $post_data[ $field_prefix . 'title' ] ) ? $post_data[ $field_prefix . 'title' ] : VISA_ACCEPTANCE_STRING_EMPTY;
+		$trimmed_title = trim( $raw_title );
 
-		$raw_test_api_key = isset($post_data['woocommerce_' . $this->get_id() . '_test_api_key']) ? $post_data['woocommerce_' . $this->get_id() . '_test_api_key'] : '';
-
-		$raw_test_api_shared_secret = isset($post_data['woocommerce_' . $this->get_id() . '_test_api_shared_secret']) ? $post_data['woocommerce_' . $this->get_id() . '_test_api_shared_secret'] : '';
-
-		$raw_merchant_id = isset($post_data['woocommerce_' . $this->get_id() . '_merchant_id']) ? $post_data['woocommerce_' . $this->get_id() . '_merchant_id'] : '';
-
-		$raw_api_key = isset($post_data['woocommerce_' . $this->get_id() . '_api_key']) ? $post_data['woocommerce_' . $this->get_id() . '_api_key'] : '';
-
-		$raw_api_shared_secret = isset($post_data['woocommerce_' . $this->get_id() . '_api_shared_secret']) ? $post_data['woocommerce_' . $this->get_id() . '_api_shared_secret'] : '';
-
-		$raw_mle_certificate_path = isset($post_data['woocommerce_' . $this->get_id() . '_mle_certificate_path']) ? $post_data['woocommerce_' . $this->get_id() . '_mle_certificate_path'] : '';
-
-		$raw_mle_filename = isset($post_data['woocommerce_' . $this->get_id() . '_mle_filename']) ? $post_data['woocommerce_' . $this->get_id() . '_mle_filename'] : '';
-		
-		$raw_mle_key_password = isset($post_data['woocommerce_' . $this->get_id() . '_mle_key_password']) ? $post_data['woocommerce_' . $this->get_id() . '_mle_key_password'] : '';
-		$title_key = 'woocommerce_' . $this->get_id() . '_title';
-		$_POST[$title_key] = $trimmed_title;
-		static $error_added = false;
-
-		if ('' === $raw_title)  {
-			if (!$error_added) {
-				if ( method_exists('WC_Admin_Settings', 'add_error') ) {
-				WC_Admin_Settings::add_error( __( 'Title is required. Please fill out this field.', 'visa-acceptance-solutions' ) );
-				} else {
-				add_action('admin_notices', function() {
-				echo '<div class="notice notice-error"><p>' . esc_html__('Title is required. Please fill out this field.', 'visa-acceptance-solutions') . '</p></div>';
-				});
-				}
-				$error_added = true;
-			}
-			return false;
-		}
-
-		if (preg_match('/[^A-Za-z0-9 ]/', $trimmed_title)) {
-			if (!$error_added) {
-				if ( method_exists('WC_Admin_Settings', 'add_error') ) {
-				WC_Admin_Settings::add_error( __( 'Title is invalid. Please fill out this field.', 'visa-acceptance-solutions' ) );
-				} else {
-				add_action('admin_notices', function() {
-				echo '<div class="notice notice-error"><p>' . esc_html__('Title is invalid. Please fill out this field.', 'visa-acceptance-solutions') . '</p></div>';
-				});
-				}
-				$error_added = true;
-			}
-			return false;
-		}
-
-		if('test' === $raw_environment) {
-			$trimmed_raw_test_merchant_id = trim($raw_test_merchant_id);
-			$test_merchant_id = 'woocommerce_' . $this->get_id() . '_test_merchant_id';
-			$_POST[$test_merchant_id] = $trimmed_raw_test_merchant_id;
-			
-			if ('' === $raw_test_merchant_id) {
-				if (!$error_added) {
-					if ( method_exists('WC_Admin_Settings', 'add_error') ) {
-					WC_Admin_Settings::add_error( __( 'Merchant ID is required. Please fill out this field.', 'visa-acceptance-solutions' ) );
-					} else {
-					add_action('admin_notices', function() {
-					echo '<div class="notice notice-error"><p>' . esc_html__('Merchant ID is required. Please fill out this field.', 'visa-acceptance-solutions') . '</p></div>';
-					});
-					}
-					$error_added = true;
-				}
-				return false;
-			}
-
-			if ((preg_match('/[^[:alnum:]\-_]/', $trimmed_raw_test_merchant_id))) {
-				if (!$error_added) {
-					if ( method_exists('WC_Admin_Settings', 'add_error') ) {
-					WC_Admin_Settings::add_error( __( 'Merchant ID is invalid. Please fill out this field.', 'visa-acceptance-solutions' ) );
-					} else {
-					add_action('admin_notices', function() {
-					echo '<div class="notice notice-error"><p>' . esc_html__('Merchant ID is invalid. Please fill out this field.', 'visa-acceptance-solutions') . '</p></div>';
-					});
-					}
-					$error_added = true;
-				}
-				return false;
-			}
-
-			if ('' === $raw_test_api_key) {
-				if (!$error_added) {
-					if ( method_exists('WC_Admin_Settings', 'add_error') ) {
-					WC_Admin_Settings::add_error( __( 'API Key Detail is required. Please fill out this field.', 'visa-acceptance-solutions' ) );
-					} else {
-					add_action('admin_notices', function() {
-					echo '<div class="notice notice-error"><p>' . esc_html__('API Key Detail is required. Please fill out this field.', 'visa-acceptance-solutions') . '</p></div>';
-					});
-					}
-					$error_added = true;
-				}
-				return false;
-			}
-
-			if ('' === $raw_test_api_shared_secret) {
-				if (!$error_added) {
-					if ( method_exists('WC_Admin_Settings', 'add_error') ) {
-					WC_Admin_Settings::add_error( __( 'API Shared Secret Key is required. Please fill out this field.', 'visa-acceptance-solutions' ) );
-					} else {
-					add_action('admin_notices', function() {
-					echo '<div class="notice notice-error"><p>' . esc_html__('API Shared Secret Key is required. Please fill out this field.', 'visa-acceptance-solutions') . '</p></div>';
-					});
-					}
-					$error_added = true;
-				}
-				return false;
-			}
+		if ( empty( $trimmed_title ) ) {
+			$validation_errors[] = __( 'Title is required. Please fill out this field.', 'visa-acceptance-solutions' );
+		} elseif ( ! preg_match( '/^[A-Za-z0-9 ]+$/', $trimmed_title ) ) {
+			$validation_errors[] = __( 'Title contains invalid characters. Only letters, numbers, and spaces are allowed.', 'visa-acceptance-solutions' );
 		} else {
-			$trimmed_raw_merchant_id = trim($raw_merchant_id);
-			$merchant_id = 'woocommerce_' . $this->get_id() . '_merchant_id';
-			$_POST[$merchant_id] = $trimmed_raw_merchant_id;
-			if ('' === $raw_merchant_id) {
-			if (!$error_added) {
-				if ( method_exists('WC_Admin_Settings', 'add_error') ) {
-				WC_Admin_Settings::add_error( __( 'Merchant ID is required. Please fill out this field.', 'visa-acceptance-solutions' ) );
+			$sanitized_data[ $field_prefix . 'title' ] = sanitize_text_field( $trimmed_title );
+		}
+		if ( VISA_ACCEPTANCE_ENVIRONMENT_TEST === $environment ) {
+			$raw_test_merchant_id = isset( $post_data[ $field_prefix . 'test_merchant_id' ] ) ? $post_data[ $field_prefix . 'test_merchant_id' ] : VISA_ACCEPTANCE_STRING_EMPTY;
+			$trimmed_test_merchant_id = trim( $raw_test_merchant_id );
+
+			if ( empty( $trimmed_test_merchant_id ) ) {
+				$validation_errors[] = __( 'Test Merchant ID is required. Please fill out this field.', 'visa-acceptance-solutions' );
+			} elseif ( preg_match( '/[^[:alnum:]\-_]/', $trimmed_test_merchant_id ) ) {
+				$validation_errors[] = __( 'Test Merchant ID contains invalid characters. Only alphanumeric characters, hyphens, and underscores are allowed.', 'visa-acceptance-solutions' );
+			} else {
+				$sanitized_data[ $field_prefix . 'test_merchant_id' ] = sanitize_text_field( $trimmed_test_merchant_id );
+			}
+			$raw_test_api_key = isset( $post_data[ $field_prefix . 'test_api_key' ] ) ? $post_data[ $field_prefix . 'test_api_key' ] : VISA_ACCEPTANCE_STRING_EMPTY;
+
+			if ( empty( $raw_test_api_key ) ) {
+				$validation_errors[] = __( 'Test API Key is required. Please fill out this field.', 'visa-acceptance-solutions' );
+			} else {
+				$sanitized_data[ $field_prefix . 'test_api_key' ] = sanitize_text_field( $raw_test_api_key );
+			}
+			$raw_test_api_shared_secret = isset( $post_data[ $field_prefix . 'test_api_shared_secret' ] ) ? $post_data[ $field_prefix . 'test_api_shared_secret' ] : VISA_ACCEPTANCE_STRING_EMPTY;
+
+			if ( empty( $raw_test_api_shared_secret ) ) {
+				$validation_errors[] = __( 'Test API Shared Secret Key is required. Please fill out this field.', 'visa-acceptance-solutions' );
+			} else {
+				$sanitized_data[ $field_prefix . 'test_api_shared_secret' ] = sanitize_text_field( $raw_test_api_shared_secret );
+			}
+
+		} else {
+			$raw_merchant_id = isset( $post_data[ $field_prefix . 'merchant_id' ] ) ? $post_data[ $field_prefix . 'merchant_id' ] : VISA_ACCEPTANCE_STRING_EMPTY;
+			$trimmed_merchant_id = trim( $raw_merchant_id );
+
+			if ( empty( $trimmed_merchant_id ) ) {
+				$validation_errors[] = __( 'Merchant ID is required. Please fill out this field.', 'visa-acceptance-solutions' );
+			} elseif ( preg_match( '/[^[:alnum:]\-_]/', $trimmed_merchant_id ) ) {
+				$validation_errors[] = __( 'Merchant ID contains invalid characters. Only alphanumeric characters, hyphens, and underscores are allowed.', 'visa-acceptance-solutions' );
+			} else {
+				$sanitized_data[ $field_prefix . 'merchant_id' ] = sanitize_text_field( $trimmed_merchant_id );
+			}
+			$raw_api_key = isset( $post_data[ $field_prefix . 'api_key' ] ) ? $post_data[ $field_prefix . 'api_key' ] : VISA_ACCEPTANCE_STRING_EMPTY;
+
+			if ( empty( $raw_api_key ) ) {
+				$validation_errors[] = __( 'API Key is required. Please fill out this field.', 'visa-acceptance-solutions' );
+			} else {
+				$sanitized_data[ $field_prefix . 'api_key' ] = sanitize_text_field( $raw_api_key );
+			}
+			$raw_api_shared_secret = isset( $post_data[ $field_prefix . 'api_shared_secret' ] ) ? $post_data[ $field_prefix . 'api_shared_secret' ] : VISA_ACCEPTANCE_STRING_EMPTY;
+
+			if ( empty( $raw_api_shared_secret ) ) {
+				$validation_errors[] = __( 'API Shared Secret Key is required. Please fill out this field.', 'visa-acceptance-solutions' );
+			} else {
+				$sanitized_data[ $field_prefix . 'api_shared_secret' ] = sanitize_text_field( $raw_api_shared_secret );
+			}
+		}
+
+		if ( '1' === $enable_mle ) {
+			$raw_mle_certificate_path = isset( $post_data[ $field_prefix . 'mle_certificate_path' ] ) ? $post_data[ $field_prefix . 'mle_certificate_path' ] : VISA_ACCEPTANCE_STRING_EMPTY;
+			$trimmed_mle_certificate_path = trim( $raw_mle_certificate_path );
+
+			if ( empty( $trimmed_mle_certificate_path ) ) {
+				$validation_errors[] = __( 'Key Directory Path is required when MLE is enabled. Please fill out this field.', 'visa-acceptance-solutions' );
+			} else {
+				$path_validation = $validator->validate_file_path( $trimmed_mle_certificate_path );
+
+				if ( is_wp_error( $path_validation ) ) {
+					$validation_errors[] = $path_validation->get_error_message();
 				} else {
-				add_action('admin_notices', function() {
-				echo '<div class="notice notice-error"><p>' . esc_html__('Merchant ID is required. Please fill out this field.', 'visa-acceptance-solutions') . '</p></div>';
-				});
+					$sanitized_data[ $field_prefix . 'mle_certificate_path' ] = sanitize_text_field( $trimmed_mle_certificate_path );
 				}
-				$error_added = true;
+			}
+			$raw_mle_filename = isset( $post_data[ $field_prefix . 'mle_filename' ] ) ? $post_data[ $field_prefix . 'mle_filename' ] : VISA_ACCEPTANCE_STRING_EMPTY;
+			$trimmed_mle_filename = trim( $raw_mle_filename );
+
+			if ( empty( $trimmed_mle_filename ) ) {
+				$validation_errors[] = __( 'Key File Name is required when MLE is enabled. Please fill out this field.', 'visa-acceptance-solutions' );
+			} elseif ( preg_match( '/[^[:alnum:]\-_.]/', $trimmed_mle_filename ) ) {
+				$validation_errors[] = __( 'Key File Name contains invalid characters. Only alphanumeric characters, hyphens, underscores, and dots are allowed.', 'visa-acceptance-solutions' );
+			} else {
+				$filename_validation = $validator->validate_filename( $trimmed_mle_filename );
+
+				if ( is_wp_error( $filename_validation ) ) {
+					$validation_errors[] = $filename_validation->get_error_message();
+				} else {
+					$sanitized_data[ $field_prefix . 'mle_filename' ] = sanitize_text_field( $trimmed_mle_filename );
+				}
+			}
+			$raw_mle_key_password = isset( $post_data[ $field_prefix . 'mle_key_password' ] ) ? $post_data[ $field_prefix . 'mle_key_password' ] : VISA_ACCEPTANCE_STRING_EMPTY;
+
+			if ( empty( $raw_mle_key_password ) ) {
+				$validation_errors[] = __( 'Key Password is required when MLE is enabled. Please fill out this field.', 'visa-acceptance-solutions' );
+			} else {
+				$sanitized_data[ $field_prefix . 'mle_key_password' ] = $raw_mle_key_password;
+			}
+		}
+
+		if ( ! empty( $validation_errors ) ) {
+			$validation_errors = array_unique( $validation_errors );
+			foreach ( $validation_errors as $error ) {
+				WC_Admin_Settings::add_error( $error );
 			}
 			return false;
 		}
-
-		if (preg_match('/[^[:alnum:]\-_]/', $trimmed_raw_merchant_id)) {
-			if (!$error_added) {
-				if ( method_exists('WC_Admin_Settings', 'add_error') ) {
-				WC_Admin_Settings::add_error( __( 'Merchant ID is invalid. Please fill out this field.', 'visa-acceptance-solutions' ) );
-				} else {
-				add_action('admin_notices', function() {
-				echo '<div class="notice notice-error"><p>' . esc_html__('Merchant ID is invalid. Please fill out this field.', 'visa-acceptance-solutions') . '</p></div>';
-				});
-				}
-				$error_added = true;
-			}
-			return false;
+		foreach ( $sanitized_data as $key => $value ) {
+			$_POST[ $key ] = $value;
 		}
 
-		if ('' === $raw_api_key) {
-			if (!$error_added) {
-				if ( method_exists('WC_Admin_Settings', 'add_error') ) {
-				WC_Admin_Settings::add_error( __( 'API Key Detail is required. Please fill out this field.', 'visa-acceptance-solutions' ) );
-				} else {
-					add_action('admin_notices', function() {
-					echo '<div class="notice notice-error"><p>' . esc_html__('API Key Detail is required. Please fill out this field.', 'visa-acceptance-solutions') . '</p></div>';
-					});
-				}
-				$error_added = true;
-			}
-			return false;
-		}
-
-		if ('' === $raw_api_shared_secret) {
-			if (!$error_added) {
-				if ( method_exists('WC_Admin_Settings', 'add_error') ) {
-				WC_Admin_Settings::add_error( __( 'API Shared Secret Key is required. Please fill out this field.', 'visa-acceptance-solutions' ) );
-				} else {
-				add_action('admin_notices', function() {
-				echo '<div class="notice notice-error"><p>' . esc_html__('API Shared Secret Key is required. Please fill out this field.', 'visa-acceptance-solutions') . '</p></div>';
-				});
-				}
-				$error_added = true;
-			}
-			return false;
-			}
-		}
-		if ('1' === $enable_mle) {
-			$trimmed_raw_mle_certificate_path = trim($raw_mle_certificate_path);
-			$mle_certificate_path = 'woocommerce_' . $this->get_id() . '_raw_mle_certificate_path';
-			$_POST[$mle_certificate_path] = $trimmed_raw_mle_certificate_path;
-
-			$trimmed_raw_mle_filename = trim($raw_mle_filename);
-			$mle_filename = 'woocommerce_' . $this->get_id() . '_raw_mle_filename';
-			$_POST[$mle_filename] = $trimmed_raw_mle_filename;
-
-			if ('' === $trimmed_raw_mle_certificate_path) {
-			if (!$error_added) {
-				if ( method_exists('WC_Admin_Settings', 'add_error') ) {
-				WC_Admin_Settings::add_error( __( 'Key Directory Path is required. Please fill out this field.', 'visa-acceptance-solutions' ) );
-				} else {
-				add_action('admin_notices', function() {
-				echo '<div class="notice notice-error"><p>' . esc_html__('Key Directory Path is required. Please fill out this field.', 'visa-acceptance-solutions') . '</p></div>';
-				});
-				}
-				$error_added = true;
-			}
-			return false;
-			}
-
-		if ('' === $raw_mle_filename) {
-			if (!$error_added) {
-				if ( method_exists('WC_Admin_Settings', 'add_error') ) {
-				WC_Admin_Settings::add_error( __( 'Key File Name is required. Please fill out this field.', 'visa-acceptance-solutions' ) );
-				} else {
-				add_action('admin_notices', function() {
-				echo '<div class="notice notice-error"><p>' . esc_html__('Key File Name is requiredsss. Please fill out this field.', 'visa-acceptance-solutions') . '</p></div>';
-				});
-				}
-				$error_added = true;
-			}
-			return false;
-		}
-		if ((preg_match('/[^[:alnum:]\-_]/', $trimmed_raw_mle_filename))) {
-			if (!$error_added) {
-				if ( method_exists('WC_Admin_Settings', 'add_error') ) {
-				WC_Admin_Settings::add_error( __( 'Key File Name is invalid. Please fill out this field.', 'visa-acceptance-solutions' ) );
-				} else {
-				add_action('admin_notices', function() {
-				echo '<div class="notice notice-error"><p>' . esc_html__('Key File Name is invalid. Please fill out this field.', 'visa-acceptance-solutions') . '</p></div>';
-				});
-				}
-				$error_added = true;
-			}
-			return false;
-		}
-
-		if ('' === $raw_mle_key_password) {
-			if (!$error_added) {
-				if ( method_exists('WC_Admin_Settings', 'add_error') ) {
-				WC_Admin_Settings::add_error( __( 'Key Password is required. Please fill out this field.', 'visa-acceptance-solutions' ) );
-				} else {
-				add_action('admin_notices', function() {
-				echo '<div class="notice notice-error"><p>' . esc_html__('Key Password is required. Please fill out this field.', 'visa-acceptance-solutions') . '</p></div>';
-				});
-				}
-				$error_added = true;
-			}
-			return false;
-		}
-		}
-		
-
-  		return parent::process_admin_options();
- }
+		return parent::process_admin_options();
+	}
 
 	/**
 	 * Gets merchant id for particular gateway.
@@ -582,7 +464,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 	 */
 	public function get_merchant_id() {
 		$settings = $this->get_gateway_settings();
-		if ( isset( $settings['environment'] ) && VISA_ACCEPTANCE_ENVIRONMENT_PRODUCTION === $settings['environment'] ) {
+		if ( isset( $settings[VISA_ACCEPTANCE_ENVIRONMENT] ) && VISA_ACCEPTANCE_ENVIRONMENT_PRODUCTION === $settings[VISA_ACCEPTANCE_ENVIRONMENT] ) {
 			$merchant_id = isset( $settings['merchant_id'] ) ? $settings['merchant_id'] : null;
 		} else {
 			$merchant_id = isset( $settings['test_merchant_id'] ) ? $settings['test_merchant_id'] : null;
@@ -713,20 +595,18 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 	 * @return void
 	 */
 	private function define_admin_hooks() {
-
-		$this->plugin_admin = new Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin( $this->get_id(), $this->get_version(), $this );
-		$settings           = $this->get_gateway_settings();
-		if ( isset( $settings['enabled'] ) && VISA_ACCEPTANCE_YES === $settings['enabled'] ) {
-			$this->loader->add_action( 'admin_enqueue_scripts', $this->plugin_admin, 'enqueue_styles' );
-			$this->loader->add_action( 'admin_enqueue_scripts', $this->plugin_admin, 'enqueue_scripts' );
-			$this->loader->add_action( 'woocommerce_order_item_add_action_buttons', $this->plugin_admin, 'add_capture_button', VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY, VISA_ACCEPTANCE_VAL_ONE );
-			$this->loader->add_action( 'wp_ajax_wc_capture_action', $this->plugin_admin, 'ajax_process_capture' );
-			$this->loader->add_action( 'woocommerce_order_status_changed', $this, 'prevent_order_status_change', VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY, VISA_ACCEPTANCE_VAL_FOUR );
-
-			$this->loader->add_filter( 'woocommerce_bulk_action_ids', $this, 'wp_kama_woocommerce_bulk_action_ids_filter', VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY, VISA_ACCEPTANCE_VAL_THREE );
-
-		}
-	}
+        $this->plugin_admin = new Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin( $this->get_id(), $this->get_version(), $this );
+        $settings           = $this->get_gateway_settings();
+        $this->loader->add_action( 'woocommerce_update_options_payment_gateways_' . $this->id,  $this, 'process_admin_options'  );
+        if ( isset( $settings['enabled'] ) && VISA_ACCEPTANCE_YES === $settings['enabled'] ) {
+            $this->loader->add_action( 'admin_enqueue_scripts', $this->plugin_admin, 'enqueue_styles' );
+            $this->loader->add_action( 'admin_enqueue_scripts', $this->plugin_admin, 'enqueue_scripts' );
+            $this->loader->add_action( 'woocommerce_order_item_add_action_buttons', $this->plugin_admin, 'add_capture_button', VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY, VISA_ACCEPTANCE_VAL_ONE );
+            $this->loader->add_action( 'wp_ajax_wc_capture_action', $this->plugin_admin, 'ajax_process_capture' );
+            $this->loader->add_action( 'woocommerce_order_status_changed', $this, 'prevent_order_status_change', VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY, VISA_ACCEPTANCE_VAL_FOUR );
+            $this->loader->add_filter( 'woocommerce_bulk_action_ids', $this, 'wp_kama_woocommerce_bulk_action_ids_filter', VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY, VISA_ACCEPTANCE_VAL_THREE );
+        }
+    }
 
 	/**
 	 * Register all of the hooks related to the public-facing functionality
@@ -740,7 +620,6 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 		if ( VISA_ACCEPTANCE_NO === $this->enabled ) {
 			return;
 		}
-
 		$this->plugin_public = new Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public( $this->get_id(), $this->get_version(), $this );
 		$this->express_pay_plugin_public = new Visa_Acceptance_Payment_Gateway_Expresspay_Public( $this->get_id(), $this->get_version(), $this );
 		$settings            = $this->get_gateway_settings();
@@ -748,8 +627,21 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 			$this->loader->add_action( 'wp_enqueue_scripts', $this->plugin_public, 'enqueue_styles' );
 			$this->loader->add_action( 'wp_enqueue_scripts', $this->plugin_public, 'enqueue_scripts' );
 			$this->loader->add_action( 'wp_ajax_' . $this->get_id() . '_action', $this->plugin_public, $this->get_id() . '_action' );
-			$this->loader->add_filter( 'woocommerce_payment_methods_list_item', $this->plugin_public, 'wp_kama_woocommerce_saved_payment_methods_list_filter', 10, 2 );
-
+			$this->loader->add_filter( 'woocommerce_payment_methods_list_item', $this->plugin_public, 'wp_kama_woocommerce_saved_payment_methods_list_filter', VISA_ACCEPTANCE_VAL_TEN, VISA_ACCEPTANCE_VAL_TWO );
+			// Hide saved tokens from WooCommerce Blocks REST API when tokenization is disabled.
+            if ( ! isset( $settings['tokenization'] ) || VISA_ACCEPTANCE_YES !== $settings['tokenization'] ) {
+                $gateway_id = $this->get_id();
+                add_filter( 'woocommerce_get_customer_payment_tokens', function( $tokens, $customer_id, $gateway_filter ) use ( $gateway_id ) {
+                    if ( empty( $gateway_filter ) || $gateway_filter === $gateway_id ) {
+                        foreach ( $tokens as $key => $token ) {
+                            if ( $token->get_gateway_id() === $gateway_id ) {
+                                unset( $tokens[ $key ] );
+                            }
+                        }
+                    }
+                    return $tokens;
+                }, VISA_ACCEPTANCE_VAL_TEN, VISA_ACCEPTANCE_VAL_THREE );
+            }
 			// For Delete Card data.
 			$wc_version = defined( 'WC_VERSION' ) && WC_VERSION ? WC_VERSION : null;
 			if ( version_compare( $wc_version, VISA_ACCEPTANCE_WC_VERSION_EIGHT_ONE_ZERO, VISA_ACCEPTANCE_GREATER_THAN_OR_EQUAL_TO ) ) {
@@ -798,7 +690,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 			// For Express pay at normal checkout page.
 			$this->loader->add_action( 'woocommerce_checkout_before_customer_details', $this->express_pay_plugin_public, 'add_express_pay_at_normal_checkout' );
 			// For Express pay at Pay for orders page.
-			$this->loader->add_action('before_woocommerce_pay', $this->express_pay_plugin_public, 'add_express_pay_at_normal_checkout', 5);
+			$this->loader->add_action('before_woocommerce_pay', $this->express_pay_plugin_public, 'add_express_pay_at_normal_checkout', VISA_ACCEPTANCE_VAL_FIVE);
 		}
 	}
 
@@ -867,7 +759,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 	 */
 	public function get_environment() {
 		$settings = $this->get_gateway_settings();
-		return ! empty( $settings['environment'] ) ? $settings['environment'] : VISA_ACCEPTANCE_STRING_EMPTY;
+		return ! empty( $settings[VISA_ACCEPTANCE_ENVIRONMENT] ) ? $settings[VISA_ACCEPTANCE_ENVIRONMENT] : VISA_ACCEPTANCE_STRING_EMPTY;
 	}
 
 	/**
@@ -922,11 +814,11 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 	public function validate_order( $order_id, $order ) {
 		$response_data = array();
 		if ( ! $order ) {
-			$response_data[ VISA_ACCEPTANCE_STRING_ERROR ] = VISA_ACCEPTANCE_CALLBACK_INVALID_ID_ERROR;
+			$response_data[ VISA_ACCEPTANCE_ERROR ] = VISA_ACCEPTANCE_CALLBACK_INVALID_ID_ERROR;
 		} elseif ( ! current_user_can( VISA_ACCEPTANCE_EDIT_SHOP_ORDER, $order_id ) ) {
-			$response_data[ VISA_ACCEPTANCE_STRING_ERROR ] = VISA_ACCEPTANCE_CALLBACK_INVALID_PERMISSIONS_ERROR;
+			$response_data[ VISA_ACCEPTANCE_ERROR ] = VISA_ACCEPTANCE_CALLBACK_INVALID_PERMISSIONS_ERROR;
 		} elseif ( $order->get_payment_method( VISA_ACCEPTANCE_EDIT ) !== $this->id ) {
-			$response_data[ VISA_ACCEPTANCE_STRING_ERROR ] = VISA_ACCEPTANCE_CALLBACK_INVALID_PAYMENT_METHOD_ERROR;
+			$response_data[ VISA_ACCEPTANCE_ERROR ] = VISA_ACCEPTANCE_CALLBACK_INVALID_PAYMENT_METHOD_ERROR;
 		}
 		return $response_data;
 	}
@@ -944,7 +836,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 		$order         = wc_get_order( $order_id );
 		$response_data = array();
 		$response_data = $this->validate_order( $order_id, $order );
-		if ( ! $response_data[ VISA_ACCEPTANCE_STRING_ERROR ] ) {
+		if ( ! $response_data[ VISA_ACCEPTANCE_ERROR ] ) {
 			$response_data = $this->plugin_admin->process_refund( $order_id, $amount, $reason );
 		}
 		return $response_data;
@@ -973,11 +865,11 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 		$order         = wc_get_order( $order_id );
 		$response_data = array();
 		if ( ! $order ) {
-			$response_data['error'] = 'Invalid order ID';
+			$response_data[VISA_ACCEPTANCE_ERROR] = VISA_ACCEPTANCE_CALLBACK_INVALID_ID_ERROR;
 		} elseif ( ! current_user_can( VISA_ACCEPTANCE_EDIT_SHOP_ORDER, $order_id ) ) {
-			$response_data[ VISA_ACCEPTANCE_STRING_ERROR ] = VISA_ACCEPTANCE_CALLBACK_INVALID_PERMISSIONS_ERROR;
+			$response_data[ VISA_ACCEPTANCE_ERROR ] = VISA_ACCEPTANCE_CALLBACK_INVALID_PERMISSIONS_ERROR;
 		} elseif ( $order->get_payment_method( 'edit' ) !== $gateway_id ) {
-			$response_data['error'] = 'Invalid payment method';
+			$response_data[VISA_ACCEPTANCE_ERROR] = VISA_ACCEPTANCE_CALLBACK_INVALID_PAYMENT_METHOD_ERROR;
 		}
 		require_once plugin_dir_path( __DIR__ ) . 'includes/api/payments/class-visa-acceptance-capture.php';
 		if ( empty( $response_data ) ) {
@@ -1042,7 +934,6 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 			// Change log name to gateway title.
 			$context = array( 'source' => $this->get_title_dasherized( $this->method_title ) );
 			if ( $is_request ) {
-				//$data = $this->mask_response( $data );
 				$log  = $this->get_title() . VISA_ACCEPTANCE_SPACE . $log_header . VISA_ACCEPTANCE_RESPONSE . PHP_EOL . wp_json_encode($data) . PHP_EOL;
 
 			}

@@ -169,8 +169,8 @@ class ReportSubscriptionsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "createStandardOrClassicSubscription,createStandardOrClassicSubscriptionWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "createStandardOrClassicSubscription,createStandardOrClassicSubscriptionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -194,6 +194,10 @@ class ReportSubscriptionsApi
         }
 
         self::$logger->debug("Return Type : null");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "createStandardOrClassicSubscription,createStandardOrClassicSubscriptionWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -203,7 +207,8 @@ class ReportSubscriptionsApi
                 $httpBody,
                 $headerParams,
                 null,
-                '/reporting/v3/predefined-report-subscriptions'
+                '/reporting/v3/predefined-report-subscriptions',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -295,8 +300,8 @@ class ReportSubscriptionsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "createSubscription,createSubscriptionWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "createSubscription,createSubscriptionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -320,6 +325,10 @@ class ReportSubscriptionsApi
         }
 
         self::$logger->debug("Return Type : null");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "createSubscription,createSubscriptionWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -329,7 +338,8 @@ class ReportSubscriptionsApi
                 $httpBody,
                 $headerParams,
                 null,
-                '/reporting/v3/report-subscriptions'
+                '/reporting/v3/report-subscriptions',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -422,8 +432,8 @@ class ReportSubscriptionsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "deleteSubscription,deleteSubscriptionWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "deleteSubscription,deleteSubscriptionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -447,6 +457,10 @@ class ReportSubscriptionsApi
         }
 
         self::$logger->debug("Return Type : null");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "deleteSubscription,deleteSubscriptionWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -456,7 +470,8 @@ class ReportSubscriptionsApi
                 $httpBody,
                 $headerParams,
                 null,
-                '/reporting/v3/report-subscriptions/{reportName}'
+                '/reporting/v3/report-subscriptions/{reportName}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -538,8 +553,8 @@ class ReportSubscriptionsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getAllSubscriptions,getAllSubscriptionsWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getAllSubscriptions,getAllSubscriptionsWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -563,6 +578,10 @@ class ReportSubscriptionsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\ReportingV3ReportSubscriptionsGet200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getAllSubscriptions,getAllSubscriptionsWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -572,7 +591,8 @@ class ReportSubscriptionsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\ReportingV3ReportSubscriptionsGet200Response',
-                '/reporting/v3/report-subscriptions'
+                '/reporting/v3/report-subscriptions',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -669,8 +689,8 @@ class ReportSubscriptionsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getSubscription,getSubscriptionWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getSubscription,getSubscriptionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -694,6 +714,10 @@ class ReportSubscriptionsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\ReportingV3ReportSubscriptionsGet200ResponseSubscriptions");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getSubscription,getSubscriptionWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -703,7 +727,8 @@ class ReportSubscriptionsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\ReportingV3ReportSubscriptionsGet200ResponseSubscriptions',
-                '/reporting/v3/report-subscriptions/{reportName}'
+                '/reporting/v3/report-subscriptions/{reportName}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

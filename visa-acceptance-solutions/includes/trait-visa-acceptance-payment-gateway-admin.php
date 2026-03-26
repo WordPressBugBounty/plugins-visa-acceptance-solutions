@@ -105,7 +105,7 @@ trait Visa_Acceptance_Payment_Gateway_Admin_Trait {
 			$last_item = array_pop( $items );
 			array_push( $items, trim( "{$conjunction} {$last_item}" ) );
 			// only use a comma if needed and no separator was passe.
-			if ( count( $items ) < 3 ) {
+			if ( count( $items ) < VISA_ACCEPTANCE_VAL_THREE ) {
 				$separator = VISA_ACCEPTANCE_SPACE;
 			} elseif ( ! is_string( $separator ) || VISA_ACCEPTANCE_STRING_EMPTY === $separator ) {
 				$separator = ', ';
@@ -290,13 +290,13 @@ trait Visa_Acceptance_Payment_Gateway_Admin_Trait {
 		}
 
 		$response = array(
-			'error'                 => VISA_ACCEPTANCE_VAL_ZERO,
+			VISA_ACCEPTANCE_ERROR                 => VISA_ACCEPTANCE_VAL_ZERO,
 			'message'               => VISA_ACCEPTANCE_STRING_EMPTY,
 			VISA_ACCEPTANCE_SUCCESS => VISA_ACCEPTANCE_VAL_ZERO,
 		);
 		if ( ( VISA_ACCEPTANCE_UC_ID === $gateway_id || VISA_ACCEPTANCE_SV_GATEWAY_ID === $gateway_id ) && false !== $order ) {
 			$result_response    = $payment_gateway_uc->init_process_capture( $order_id, $gateway_id );
-			if ( ! $result_response[ VISA_ACCEPTANCE_STRING_ERROR ] && ( VISA_ACCEPTANCE_YES === $result_response[ VISA_ACCEPTANCE_SUCCESS ] ) ) {
+			if ( ! $result_response[ VISA_ACCEPTANCE_ERROR ] && ( VISA_ACCEPTANCE_YES === $result_response[ VISA_ACCEPTANCE_SUCCESS ] ) ) {
 				$response[ VISA_ACCEPTANCE_SUCCESS ] = VISA_ACCEPTANCE_VAL_ONE;
 				$response['message']                 = $result_response['alert_message'];
 			} else {
@@ -332,22 +332,40 @@ trait Visa_Acceptance_Payment_Gateway_Admin_Trait {
 	 * @return void
 	 */
 	public function update_order_notes( $order_note_message, $order, $payment_response_array, $update_status ) {
-		$title_value = method_exists( $this, 'get_title' ) ? $this->get_title() : $this->gateway->get_title();
-		$message     = sprintf(
-			$title_value . VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_HYPHEN . VISA_ACCEPTANCE_SPACE . $order_note_message,
-			$payment_response_array['transaction_id']
-		);
-		if ( $update_status ) {
-			// Prevent updating subscription to "processing" status (order-only status).
-			// For subscriptions, only use valid subscription statuses or just add a note.
-			if ( $order instanceof \WC_Subscription && VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING === $update_status ) {
-				// For subscriptions with "processing" status request, just add a note instead.
-				$order->add_order_note( $message );
-			} else {
-				$order->update_status( $update_status, $message );
-			}
-		} else {
-			$order->add_order_note( $message );
-		}
-	}
+        $title_value = method_exists( $this, 'get_title' ) ? $this->get_title() : $this->gateway->get_title();
+        $message     = sprintf(
+            $title_value . VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_HYPHEN . VISA_ACCEPTANCE_SPACE . $order_note_message,
+            $payment_response_array['transaction_id']
+        );
+        if ( ! $update_status ) {
+            $credit_fields = array();
+            if ( ! empty( $payment_response_array['credit_auth_code'] ) ) {
+                $credit_fields[] = 'Approval Code: ' . $payment_response_array['credit_auth_code'];
+            }
+            if ( isset( $payment_response_array['credit_auth_response'] ) && '' !== $payment_response_array['credit_auth_response'] ) {
+                $credit_fields[] = 'Response Code: ' . $payment_response_array['credit_auth_response'];
+            }
+            if ( ! empty( $payment_response_array['credit_auth_network_transaction_id'] ) ) {
+                $credit_fields[] = 'Network Transaction ID: ' . $payment_response_array['credit_auth_network_transaction_id'];
+            }
+            if ( ! empty( $credit_fields ) ) {
+                // Remove closing parenthesis and period from message and add credit fields, then close parenthesis.
+                $message = rtrim( $message, ').' );
+                $message .= "\n" . implode( "\n", $credit_fields ) . ')';
+            }
+        }
+       
+        if ( $update_status ) {
+            // Prevent updating subscription to "processing" status (order-only status).
+            // For subscriptions, only use valid subscription statuses or just add a note.
+            if ( $order instanceof \WC_Subscription && VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING === $update_status ) {
+                // For subscriptions with "processing" status request, just add a note instead.
+                $order->add_order_note( $message );
+            } else {
+                $order->update_status( $update_status, $message );
+            }
+        } else {
+            $order->add_order_note( $message );
+        }
+    } 
 }

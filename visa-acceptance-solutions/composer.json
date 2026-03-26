@@ -13,8 +13,9 @@
           }
     },
     "require": {
-        "composer-plugin-api": "^2.0",
-        "cybersource/rest-client-php": "0.0.63"
+      "composer-plugin-api": "^2.0",
+      "cybersource/rest-client-php": "0.0.71",
+      "monolog/monolog": "^2.0"
     },
     "require-dev": {
         "composer/installers": "^2.0"

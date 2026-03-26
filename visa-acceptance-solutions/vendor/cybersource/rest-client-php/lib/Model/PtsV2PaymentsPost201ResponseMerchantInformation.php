@@ -55,6 +55,7 @@ class PtsV2PaymentsPost201ResponseMerchantInformation implements ArrayAccess
     protected static $swaggerTypes = [
         'merchantName' => 'string',
         'merchantDescriptor' => '\CyberSource\Model\PtsV2PaymentsPost201ResponseMerchantInformationMerchantDescriptor',
+        'categoryCode' => 'string',
         'returnUrl' => 'string'
     ];
 
@@ -65,6 +66,7 @@ class PtsV2PaymentsPost201ResponseMerchantInformation implements ArrayAccess
     protected static $swaggerFormats = [
         'merchantName' => null,
         'merchantDescriptor' => null,
+        'categoryCode' => null,
         'returnUrl' => null
     ];
 
@@ -85,6 +87,7 @@ class PtsV2PaymentsPost201ResponseMerchantInformation implements ArrayAccess
     protected static $attributeMap = [
         'merchantName' => 'merchantName',
         'merchantDescriptor' => 'merchantDescriptor',
+        'categoryCode' => 'categoryCode',
         'returnUrl' => 'returnUrl'
     ];
 
@@ -96,6 +99,7 @@ class PtsV2PaymentsPost201ResponseMerchantInformation implements ArrayAccess
     protected static $setters = [
         'merchantName' => 'setMerchantName',
         'merchantDescriptor' => 'setMerchantDescriptor',
+        'categoryCode' => 'setCategoryCode',
         'returnUrl' => 'setReturnUrl'
     ];
 
@@ -107,6 +111,7 @@ class PtsV2PaymentsPost201ResponseMerchantInformation implements ArrayAccess
     protected static $getters = [
         'merchantName' => 'getMerchantName',
         'merchantDescriptor' => 'getMerchantDescriptor',
+        'categoryCode' => 'getCategoryCode',
         'returnUrl' => 'getReturnUrl'
     ];
 
@@ -143,6 +148,7 @@ class PtsV2PaymentsPost201ResponseMerchantInformation implements ArrayAccess
     {
         $this->container['merchantName'] = isset($data['merchantName']) ? $data['merchantName'] : null;
         $this->container['merchantDescriptor'] = isset($data['merchantDescriptor']) ? $data['merchantDescriptor'] : null;
+        $this->container['categoryCode'] = isset($data['categoryCode']) ? $data['categoryCode'] : null;
         $this->container['returnUrl'] = isset($data['returnUrl']) ? $data['returnUrl'] : null;
     }
 
@@ -209,6 +215,27 @@ class PtsV2PaymentsPost201ResponseMerchantInformation implements ArrayAccess
     public function setMerchantDescriptor($merchantDescriptor)
     {
         $this->container['merchantDescriptor'] = $merchantDescriptor;
+
+        return $this;
+    }
+
+    /**
+     * Gets categoryCode
+     * @return string
+     */
+    public function getCategoryCode()
+    {
+        return $this->container['categoryCode'];
+    }
+
+    /**
+     * Sets categoryCode
+     * @param string $categoryCode The value for this field is a four-digit number that the payment card industry uses to classify merchants into market segments. A payment card company assigned one or more of these values to your business when you started accepting the payment card company's cards. When you do not include this field in your request, Cybersource uses the value in your Cybersource account. Use this field only for clearing with your acquirer.
+     * @return $this
+     */
+    public function setCategoryCode($categoryCode)
+    {
+        $this->container['categoryCode'] = $categoryCode;
 
         return $this;
     }

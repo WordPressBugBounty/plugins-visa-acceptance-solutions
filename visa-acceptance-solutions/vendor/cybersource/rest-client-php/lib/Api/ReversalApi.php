@@ -178,8 +178,8 @@ class ReversalApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = true;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "authReversal,authReversalWithHttpInfo")) {
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "authReversal,authReversalWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -202,6 +202,10 @@ class ReversalApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\PtsV2PaymentsReversalsPost201Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "authReversal,authReversalWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -211,7 +215,8 @@ class ReversalApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\PtsV2PaymentsReversalsPost201Response',
-                '/pts/v2/payments/{id}/reversals'
+                '/pts/v2/payments/{id}/reversals',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -305,8 +310,8 @@ class ReversalApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = true;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "mitReversal,mitReversalWithHttpInfo")) {
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "mitReversal,mitReversalWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -329,6 +334,10 @@ class ReversalApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\PtsV2PaymentsReversalsPost201Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "mitReversal,mitReversalWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -338,7 +347,8 @@ class ReversalApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\PtsV2PaymentsReversalsPost201Response',
-                '/pts/v2/reversals'
+                '/pts/v2/reversals',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

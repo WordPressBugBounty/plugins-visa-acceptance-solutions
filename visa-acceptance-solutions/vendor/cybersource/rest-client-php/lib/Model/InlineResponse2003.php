@@ -53,9 +53,10 @@ class InlineResponse2003 implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'productId' => 'string',
-        'productName' => 'string',
-        'eventTypes' => '\CyberSource\Model\Notificationsubscriptionsv2productsorganizationIdEventTypes[]'
+        'id' => 'string',
+        'submitTimeUtc' => 'string',
+        'status' => 'string',
+        'embedded' => '\CyberSource\Model\InlineResponse2003Embedded'
     ];
 
     /**
@@ -63,9 +64,10 @@ class InlineResponse2003 implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'productId' => null,
-        'productName' => null,
-        'eventTypes' => null
+        'id' => null,
+        'submitTimeUtc' => null,
+        'status' => null,
+        'embedded' => null
     ];
 
     public static function swaggerTypes()
@@ -83,9 +85,10 @@ class InlineResponse2003 implements ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'productId' => 'productId',
-        'productName' => 'productName',
-        'eventTypes' => 'eventTypes'
+        'id' => 'id',
+        'submitTimeUtc' => 'submitTimeUtc',
+        'status' => 'status',
+        'embedded' => '_embedded'
     ];
 
 
@@ -94,9 +97,10 @@ class InlineResponse2003 implements ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'productId' => 'setProductId',
-        'productName' => 'setProductName',
-        'eventTypes' => 'setEventTypes'
+        'id' => 'setId',
+        'submitTimeUtc' => 'setSubmitTimeUtc',
+        'status' => 'setStatus',
+        'embedded' => 'setEmbedded'
     ];
 
 
@@ -105,9 +109,10 @@ class InlineResponse2003 implements ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'productId' => 'getProductId',
-        'productName' => 'getProductName',
-        'eventTypes' => 'getEventTypes'
+        'id' => 'getId',
+        'submitTimeUtc' => 'getSubmitTimeUtc',
+        'status' => 'getStatus',
+        'embedded' => 'getEmbedded'
     ];
 
     public static function attributeMap()
@@ -141,9 +146,10 @@ class InlineResponse2003 implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['productId'] = isset($data['productId']) ? $data['productId'] : null;
-        $this->container['productName'] = isset($data['productName']) ? $data['productName'] : null;
-        $this->container['eventTypes'] = isset($data['eventTypes']) ? $data['eventTypes'] : null;
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        $this->container['submitTimeUtc'] = isset($data['submitTimeUtc']) ? $data['submitTimeUtc'] : null;
+        $this->container['status'] = isset($data['status']) ? $data['status'] : null;
+        $this->container['embedded'] = isset($data['embedded']) ? $data['embedded'] : null;
     }
 
     /**
@@ -172,64 +178,85 @@ class InlineResponse2003 implements ArrayAccess
 
 
     /**
-     * Gets productId
+     * Gets id
      * @return string
      */
-    public function getProductId()
+    public function getId()
     {
-        return $this->container['productId'];
+        return $this->container['id'];
     }
 
     /**
-     * Sets productId
-     * @param string $productId Product ID.
+     * Sets id
+     * @param string $id UUID uniquely generated for this comments.
      * @return $this
      */
-    public function setProductId($productId)
+    public function setId($id)
     {
-        $this->container['productId'] = $productId;
+        $this->container['id'] = $id;
 
         return $this;
     }
 
     /**
-     * Gets productName
+     * Gets submitTimeUtc
      * @return string
      */
-    public function getProductName()
+    public function getSubmitTimeUtc()
     {
-        return $this->container['productName'];
+        return $this->container['submitTimeUtc'];
     }
 
     /**
-     * Sets productName
-     * @param string $productName Product Name.
+     * Sets submitTimeUtc
+     * @param string $submitTimeUtc Time of request in UTC. Format: `YYYY-MM-DDThh:mm:ssZ` **Example** `2016-08-11T22:47:57Z` equals August 11, 2016, at 22:47:57 (10:47:57 p.m.). The `T` separates the date and the time. The `Z` indicates UTC.  Returned by Cybersource for all services.
      * @return $this
      */
-    public function setProductName($productName)
+    public function setSubmitTimeUtc($submitTimeUtc)
     {
-        $this->container['productName'] = $productName;
+        $this->container['submitTimeUtc'] = $submitTimeUtc;
 
         return $this;
     }
 
     /**
-     * Gets eventTypes
-     * @return \CyberSource\Model\Notificationsubscriptionsv2productsorganizationIdEventTypes[]
+     * Gets status
+     * @return string
      */
-    public function getEventTypes()
+    public function getStatus()
     {
-        return $this->container['eventTypes'];
+        return $this->container['status'];
     }
 
     /**
-     * Sets eventTypes
-     * @param \CyberSource\Model\Notificationsubscriptionsv2productsorganizationIdEventTypes[] $eventTypes
+     * Sets status
+     * @param string $status The status of the submitted transaction. Possible values are: - `ACCEPTED` - `REJECTED`
      * @return $this
      */
-    public function setEventTypes($eventTypes)
+    public function setStatus($status)
     {
-        $this->container['eventTypes'] = $eventTypes;
+        $this->container['status'] = $status;
+
+        return $this;
+    }
+
+    /**
+     * Gets embedded
+     * @return \CyberSource\Model\InlineResponse2003Embedded
+     */
+    public function getEmbedded()
+    {
+        return $this->container['embedded'];
+    }
+
+    /**
+     * Sets embedded
+     * @param \CyberSource\Model\InlineResponse2003Embedded $embedded
+     * @return $this
+     */
+    public function setEmbedded($embedded)
+    {
+        $this->container['embedded'] = $embedded;
 
         return $this;
     }

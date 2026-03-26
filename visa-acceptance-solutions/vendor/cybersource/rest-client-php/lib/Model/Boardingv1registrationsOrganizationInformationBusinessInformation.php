@@ -54,6 +54,8 @@ class Boardingv1registrationsOrganizationInformationBusinessInformation implemen
       */
     protected static $swaggerTypes = [
         'name' => 'string',
+        'locale' => 'string',
+        'localizedNames' => '\CyberSource\Model\Boardingv1registrationsOrganizationInformationBusinessInformationLocalizedNames',
         'doingBusinessAs' => 'string',
         'description' => 'string',
         'startDate' => '\DateTime',
@@ -75,6 +77,8 @@ class Boardingv1registrationsOrganizationInformationBusinessInformation implemen
       */
     protected static $swaggerFormats = [
         'name' => null,
+        'locale' => null,
+        'localizedNames' => null,
         'doingBusinessAs' => null,
         'description' => null,
         'startDate' => 'date',
@@ -106,6 +110,8 @@ class Boardingv1registrationsOrganizationInformationBusinessInformation implemen
      */
     protected static $attributeMap = [
         'name' => 'name',
+        'locale' => 'locale',
+        'localizedNames' => 'localizedNames',
         'doingBusinessAs' => 'doingBusinessAs',
         'description' => 'description',
         'startDate' => 'startDate',
@@ -128,6 +134,8 @@ class Boardingv1registrationsOrganizationInformationBusinessInformation implemen
      */
     protected static $setters = [
         'name' => 'setName',
+        'locale' => 'setLocale',
+        'localizedNames' => 'setLocalizedNames',
         'doingBusinessAs' => 'setDoingBusinessAs',
         'description' => 'setDescription',
         'startDate' => 'setStartDate',
@@ -150,6 +158,8 @@ class Boardingv1registrationsOrganizationInformationBusinessInformation implemen
      */
     protected static $getters = [
         'name' => 'getName',
+        'locale' => 'getLocale',
+        'localizedNames' => 'getLocalizedNames',
         'doingBusinessAs' => 'getDoingBusinessAs',
         'description' => 'getDescription',
         'startDate' => 'getStartDate',
@@ -197,6 +207,8 @@ class Boardingv1registrationsOrganizationInformationBusinessInformation implemen
     public function __construct(array $data = null)
     {
         $this->container['name'] = isset($data['name']) ? $data['name'] : null;
+        $this->container['locale'] = isset($data['locale']) ? $data['locale'] : null;
+        $this->container['localizedNames'] = isset($data['localizedNames']) ? $data['localizedNames'] : null;
         $this->container['doingBusinessAs'] = isset($data['doingBusinessAs']) ? $data['doingBusinessAs'] : null;
         $this->container['description'] = isset($data['description']) ? $data['description'] : null;
         $this->container['startDate'] = isset($data['startDate']) ? $data['startDate'] : null;
@@ -260,6 +272,48 @@ class Boardingv1registrationsOrganizationInformationBusinessInformation implemen
     public function setName($name)
     {
         $this->container['name'] = $name;
+
+        return $this;
+    }
+
+    /**
+     * Gets locale
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->container['locale'];
+    }
+
+    /**
+     * Sets locale
+     * @param string $locale
+     * @return $this
+     */
+    public function setLocale($locale)
+    {
+        $this->container['locale'] = $locale;
+
+        return $this;
+    }
+
+    /**
+     * Gets localizedNames
+     * @return \CyberSource\Model\Boardingv1registrationsOrganizationInformationBusinessInformationLocalizedNames
+     */
+    public function getLocalizedNames()
+    {
+        return $this->container['localizedNames'];
+    }
+
+    /**
+     * Sets localizedNames
+     * @param \CyberSource\Model\Boardingv1registrationsOrganizationInformationBusinessInformationLocalizedNames $localizedNames
+     * @return $this
+     */
+    public function setLocalizedNames($localizedNames)
+    {
+        $this->container['localizedNames'] = $localizedNames;
 
         return $this;
     }

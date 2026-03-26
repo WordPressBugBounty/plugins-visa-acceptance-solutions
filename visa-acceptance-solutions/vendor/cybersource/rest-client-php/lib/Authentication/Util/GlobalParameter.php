@@ -73,6 +73,10 @@ class GlobalParameter
     const INVALID_PROXY_PORT = "Proxy URL is Invalid! Assigining default proxy port: ";
     const DEFAULT_PROXY_URL = "userproxy.visa.com";
     const DEFAULT_PROXY_PORT = 443;
+    const MLE_CACHE_IDENTIFIER_FOR_CONFIG_CERT = "_mleCertFromMerchantConfig";
+    const MLE_CACHE_IDENTIFIER_FOR_P12_CERT = "_mleCertFromP12";
+    const MLE_CACHE_IDENTIFIER_FOR_RESPONSE_PRIVATE_KEY = "_mleResponsePrivateKey";
+    const RESPONSE_MLE_P12_PFX_CACHE_IDENTIFIER = "_responseMleKidFromP12";
     
     const MERCHANT_SECRET_KEY_REQ = " MerchantSecretKey is Mandatory\n";
     const KEY_PASSWORD_EMPTY = "KeyPassword Empty/Null. Assigining merchantID value\n";
@@ -105,7 +109,8 @@ class GlobalParameter
     const KEYFILEFIELDDIR = "keysDirectory ";
     const DEFAULT_MLE_ALIAS_FOR_CERT = "CyberSource_SJC_US";
     const CERTIFICATE_EXPIRY_DATE_WARNING_DAYS = 90;
-    const MLE_AUTH_ERROR = "MLE is only supported in JWT auth type";
+    const REQUEST_MLE_AUTH_ERROR = "Request MLE is only supported in JWT auth type";
     const EMPTY_PRIVATE_OR_PUBLIC_KEY_ERROR = "Private key or public key is empty";
+    const PUBLIC_KEY_CACHE_IDENTIFIER = "FlexV2PublicKeys";
 }
 ?>

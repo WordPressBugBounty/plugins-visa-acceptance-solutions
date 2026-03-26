@@ -6,8 +6,8 @@ Tags: woocommerce, payments, visa
 Requires at least: 6.9
 Tested up to: 6.9
 Requires PHP: 8.2.0
-Stable tag: 2.1.1
-WC tested up to: 10.5.1
+Stable tag: 2.2.0
+WC tested up to: 10.6.1
 WC requires at least: 10.3.7
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -16,7 +16,7 @@ Accept payments securely with Visa Acceptance Solutions.
 
 == Description == 
 
-This plugin integrates **Visa Acceptance Solutions** into your **WooCommerce** store, offering multiple payment methods such as Card Payments, Apple Pay, Google Pay, Click to Pay, and Paze.
+This plugin integrates **Visa Acceptance Solutions** into your **WooCommerce** store, offering multiple payment methods such as Card Payments, Apple Pay, Google Pay, Click to Pay, Paze, and eCheck/ACH.
 Securely store customer payment details with our Token Management Services.
 Utilize Cybersource’s fraud prevention services to process transactions safely.
 Compatible with [WooCommerce Subscriptions](https://woocommerce.com/products/woocommerce-subscriptions)
@@ -62,8 +62,19 @@ Sign up [here](https://developer.visaacceptance.com/hello-world/sandbox.html).  
 
 == Changelog ==
 
-= 2.1.1 =
+= 2.2.0 =
+**Enhancements**
+* Updated Unified Checkout to v0.34 
+* Updated Cybersource Rest Client SDK to v0.0.71
+* Added support to eCheck payment method
+* Cardinal Commerce Data Centre Migration URL update
+* Display of additional response fields for refunds in back office to support Merchandise Return Authorization mandate
+
 **Bug Fixes**
+* Updated the UI positioning of Visa Acceptance Solutions payment method with respect to Terms & Conditions in Classic Checkout Layout
+
+= 2.1.1 =
+** Bug Fixes **
 * CRON job works only when Fraud Screening is enabled
 * UI fix for Express Pay button on product page
 * Added fallback to capture Device Data Collection (DDC) fields
@@ -102,7 +113,7 @@ Sign up [here](https://developer.visaacceptance.com/hello-world/sandbox.html).  
 **Initial release** supporting Card Payments, Tokenisation, Payer Authentication (3D Secure), and Fraud Screening tools.
 
 == Upgrade Notice ==
-Version 2.1.1 is now available.  Please refer to change log for details.
+Version 2.2.0 is now available.  Please refer to change log for details.
 
 == Admin Notice ==
-Version 2.1.1 is now available.  Please refer to change log for details.
+Version 2.2.0 is now available.  Please refer to change log for details.

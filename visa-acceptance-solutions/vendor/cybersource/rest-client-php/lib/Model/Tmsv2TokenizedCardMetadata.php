@@ -34,7 +34,6 @@ use \ArrayAccess;
  * Tmsv2TokenizedCardMetadata Class Doc Comment
  *
  * @category    Class
- * @description Metadata associated with the tokenized card.
  * @package     CyberSource
  * @author      Swagger Codegen team
  * @link        https://github.com/swagger-api/swagger-codegen

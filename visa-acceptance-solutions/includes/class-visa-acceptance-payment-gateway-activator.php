@@ -83,7 +83,7 @@ class Visa_Acceptance_Payment_Gateway_Activator {
 		} else {
 			$tokens['card_type'] = ( 'dinersclub' === strtolower( $tokens['card_type'] ) ) ? 'DinersClub' : ucfirst( strtolower( $tokens['card_type'] ) );
 		}
-		$token_identifier['id']                    = get_user_meta( $tokens['user_id'], 'wc_cybersource_customer_id_' . $tokens['environment'], true );
+		$token_identifier['id']                    = get_user_meta( $tokens['user_id'], 'wc_cybersource_customer_id_' . $tokens[VISA_ACCEPTANCE_ENVIRONMENT], true );
 		$token_identifier['payment_instrument_id'] = $tokens['token'];
 		$token_identifier['state']                 = $tokens['instrument_identifier']['state'];
 		$token_identifier['new']                   = $tokens['instrument_identifier']['new'];
@@ -96,7 +96,7 @@ class Visa_Acceptance_Payment_Gateway_Activator {
 		$data['exp_year']          = $tokens['expiry_year'];
 		$data['gateway_id']        = VISA_ACCEPTANCE_UC_ID;
 		$data['user_id']           = $tokens['user_id'];
-		$data['environment']       = $tokens['environment'];
+		$data[VISA_ACCEPTANCE_ENVIRONMENT]       = $tokens[VISA_ACCEPTANCE_ENVIRONMENT];
 		$data['default']           = false;
 		$data['sv_token_id']       = $tokens['id'];
 		return $data;

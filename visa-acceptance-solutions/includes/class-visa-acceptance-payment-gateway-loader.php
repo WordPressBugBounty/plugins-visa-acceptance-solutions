@@ -56,8 +56,8 @@ class Visa_Acceptance_Payment_Gateway_Loader {
 				'hook'          => 'plugin_action_links_' . $this->get_plugin_filename(),
 				'component'     => $this,
 				'callback'      => 'plugin_action_links',
-				'priority'      => 10,
-				'accepted_args' => 1,
+				'priority'      => VISA_ACCEPTANCE_VAL_TEN,
+				'accepted_args' => VISA_ACCEPTANCE_VAL_ONE,
 			),
 		);
 	}

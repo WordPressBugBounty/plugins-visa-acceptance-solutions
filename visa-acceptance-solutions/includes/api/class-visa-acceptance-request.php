@@ -75,14 +75,16 @@ abstract class Visa_Acceptance_Request {
 		 */
 	public function get_payment_response_array( $http_code, $response, $service ) {
 		$response_array = array(
-			'status'            => null,
-			'amount'            => null,
-			'currency'          => null,
-			'transaction_id'    => null,
-			'reason'            => null,
-			'message'           => null,
-			'cardholderMessage' => null,
-			'httpcode'          => null,
+			'status'             					=> null,
+			'amount'            					=> null,
+			'currency'          					=> null,
+			'credit_auth_response' 					=> null,
+			'credit_auth_network_transaction_id' 	=> null,
+			'transaction_id'    					=> null,
+			'reason'            					=> null,
+			'message'           					=> null,
+			'cardholderMessage' 					=> null,
+			'httpcode'          					=> null,
 		);
 		$json           = json_decode( $response );
 		//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
@@ -94,6 +96,22 @@ abstract class Visa_Acceptance_Request {
 		if ( ! ( empty( $json->id ) ) ) {
 			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			$response_array['transaction_id'] = $json->id;
+		}
+		// Refund response fields added for online refunds.
+		//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		if ( ! empty( $json->processorInformation ) ) {
+			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			if ( ! empty( $json->processorInformation->approvalCode ) ) {
+				$response_array['credit_auth_code'] = $json->processorInformation->approvalCode; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			}
+			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			if ( isset( $json->processorInformation->responseCode ) ) {
+				$response_array['credit_auth_response'] = $json->processorInformation->responseCode; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			}
+			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			if ( ! empty( $json->processorInformation->networkTransactionId ) ) {
+				$response_array['credit_auth_network_transaction_id'] = $json->processorInformation->networkTransactionId; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			}
 		}
 		//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		if ( ! ( empty( $json->errorInformation->reason ) ) ) {
@@ -114,9 +132,15 @@ abstract class Visa_Acceptance_Request {
 			$response_array['cardholderMessage'] = $json->consumerAuthenticationInformation->cardholderMessage;
 		}
 		if ( VISA_ACCEPTANCE_TWO_ZERO_ONE === (int) $http_code ) {
-			if ( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $service || VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED_RISK_DECLINED === $service || VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED_PENDING_REVIEW === $service ) {
-				//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-				$response_array['amount'] = isset( $json->orderInformation->amountDetails->authorizedAmount ) ? $json->orderInformation->amountDetails->authorizedAmount : null;
+			if ( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $service || VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED_RISK_DECLINED === $service || VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED_PENDING_REVIEW === $service || VISA_ACCEPTANCE_API_RESPONSE_ECHECK_STATUS === $service || VISA_ACCEPTANCE_API_RESPONSE_ECHECK_DM_STATUS === $service || VISA_ACCEPTANCE_API_RESPONSE_STATUS_TRANSMITTED === $service ) {
+				$is_echeck_service = ( VISA_ACCEPTANCE_API_RESPONSE_ECHECK_STATUS === $service || VISA_ACCEPTANCE_API_RESPONSE_ECHECK_DM_STATUS === $service || VISA_ACCEPTANCE_API_RESPONSE_STATUS_TRANSMITTED === $service );
+				if ( $is_echeck_service ) {
+					//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					$response_array['amount'] = isset( $json->orderInformation->amountDetails->totalAmount ) ? $json->orderInformation->amountDetails->totalAmount : null;
+				} else {
+					//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					$response_array['amount'] = isset( $json->orderInformation->amountDetails->authorizedAmount ) ? $json->orderInformation->amountDetails->authorizedAmount : null;
+				}
 				//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				$response_array['currency'] = isset( $json->orderInformation->amountDetails->currency ) ? $json->orderInformation->amountDetails->currency : null;
 			}
@@ -165,16 +189,25 @@ abstract class Visa_Acceptance_Request {
 	 * @return void
 	 */
 	public function add_capture_data( $order, $payment_response_array ) {
-		$total_captured = $order->get_total();
-		$this->update_order_meta( $order, VISA_ACCEPTANCE_CAPTURE_TOTAL, $total_captured );
-		$this->update_order_meta( $order, VISA_ACCEPTANCE_CHARGE_CAPTURED, VISA_ACCEPTANCE_YES );
-		$this->add_order_meta( $order, VISA_ACCEPTANCE_UNDERSCORE_PAYMENT_METHOD, $order->get_payment_method() );
-		// add capture transaction ID.
-		if ( $payment_response_array && $payment_response_array['transaction_id'] ) {
-			$this->update_order_meta( $order, VISA_ACCEPTANCE_CAPTURE_TRANSACTION_ID, $payment_response_array['transaction_id'] );
-			$order->set_transaction_id( $payment_response_array['transaction_id'] );
-		}
-	}
+        $total_captured = $order->get_total();
+        $this->update_order_meta( $order, VISA_ACCEPTANCE_CAPTURE_TOTAL, $total_captured );
+        $this->update_order_meta( $order, VISA_ACCEPTANCE_CHARGE_CAPTURED, VISA_ACCEPTANCE_YES );
+        $this->add_order_meta( $order, VISA_ACCEPTANCE_UNDERSCORE_PAYMENT_METHOD, $order->get_payment_method() );
+        // add capture transaction ID.
+        if ( $payment_response_array && $payment_response_array['transaction_id'] ) {
+            $this->update_order_meta( $order, VISA_ACCEPTANCE_CAPTURE_TRANSACTION_ID, $payment_response_array['transaction_id'] );
+            $order->set_transaction_id( $payment_response_array['transaction_id'] );
+            if ( ! empty( $payment_response_array['credit_auth_code'] ) ) {
+                $this->add_order_meta( $order, VISA_ACCEPTANCE_CREDIT_AUTH_CODE, $payment_response_array['credit_auth_code'] );
+            }
+            if ( isset( $payment_response_array['credit_auth_response'] ) && VISA_ACCEPTANCE_STRING_EMPTY !== $payment_response_array['credit_auth_response'] ) {
+                $this->add_order_meta( $order, VISA_ACCEPTANCE_CREDIT_AUTH_RESPONSE, $payment_response_array['credit_auth_response'] );
+            }
+            if ( ! empty( $payment_response_array['credit_auth_network_transaction_id'] ) ) {
+                $this->add_order_meta( $order, VISA_ACCEPTANCE_NETWORK_TRANSACTION_ID, $payment_response_array['credit_auth_network_transaction_id'] );
+            }
+        }
+    }
 
 	/**
 	 * Adds transaction data to the order.
@@ -185,20 +218,31 @@ abstract class Visa_Acceptance_Request {
 	 * @return void
 	 */
 	public function add_transaction_data( $order, $payment_response_array ) {
-		if ( $payment_response_array['transaction_id'] ) {
-			$this->update_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_ID, $payment_response_array['transaction_id'] );
-			$this->add_order_meta( $order, VISA_ACCEPTANCE_UNDERSCORE_PAYMENT_METHOD, $order->get_payment_method() );
-
-			$order->set_transaction_id( $payment_response_array['transaction_id'] );
-		}
-
-		// Adding Auth Amount.
-		if ( $payment_response_array['amount'] ) {
-			$this->update_order_meta( $order, VISA_ACCEPTANCE_AUTH_AMOUNT, $payment_response_array['amount'] );
-		}
-		// transaction date.
-		$this->update_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_DATE, current_time( 'mysql' ) );
-	}
+        if ( $payment_response_array['transaction_id'] ) {
+            $this->update_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_ID, $payment_response_array['transaction_id'] );
+            $this->add_order_meta( $order, VISA_ACCEPTANCE_UNDERSCORE_PAYMENT_METHOD, $order->get_payment_method() );
+ 
+            $order->set_transaction_id( $payment_response_array['transaction_id'] );
+            // Add credit authorization fields.
+            if ( ! empty( $payment_response_array['credit_auth_code'] ) ) {
+                $this->add_order_meta( $order, VISA_ACCEPTANCE_CREDIT_AUTH_CODE, $payment_response_array['credit_auth_code'] );
+            }
+            if ( isset( $payment_response_array['credit_auth_response'] ) && VISA_ACCEPTANCE_STRING_EMPTY !== $payment_response_array['credit_auth_response'] ) {
+                $this->add_order_meta( $order, VISA_ACCEPTANCE_CREDIT_AUTH_RESPONSE, $payment_response_array['credit_auth_response'] );
+            }
+            if ( ! empty( $payment_response_array['credit_auth_network_transaction_id'] ) ) {
+                $this->add_order_meta( $order, VISA_ACCEPTANCE_NETWORK_TRANSACTION_ID, $payment_response_array['credit_auth_network_transaction_id'] );
+            }
+        }
+ 
+        // Adding Auth Amount.
+        if ( $payment_response_array['amount'] ) {
+            $this->update_order_meta( $order, VISA_ACCEPTANCE_AUTH_AMOUNT, $payment_response_array['amount'] );
+        }
+        // transaction date.
+        $this->update_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_DATE, current_time( 'mysql' ) );
+    }
+ 
 
 	/**
 	 * Adds transaction data to the order after the transaction is reviewed.
@@ -220,9 +264,9 @@ abstract class Visa_Acceptance_Request {
 			$this->update_order_meta( $order, VISA_ACCEPTANCE_PAYMENT_ACCEPTANCE_SERVICE, $settings['transaction_type'] );
 
 		}
-		// Adding Auth Amount.
-		if ( $payment_response_array['amount'] ) {
-			$this->update_order_meta( $order, VISA_ACCEPTANCE_AUTH_AMOUNT, $payment_response_array['amount'] );
+		$amount = $payment_response_array['amount'] ? $payment_response_array['amount'] : $order->get_total();
+		if ( $amount ) {
+			$this->update_order_meta( $order, VISA_ACCEPTANCE_AUTH_AMOUNT, $amount );
 		}
 		// transaction date.
 		$this->update_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_DATE, current_time( 'mysql' ) );
@@ -403,9 +447,7 @@ abstract class Visa_Acceptance_Request {
 	 * @return array
 	 */
 	protected function get_items_information( $order ) {
-
 		$items = array();
-
 		if ( $order ) {
 
 			foreach ( $this->get_order_line_items( $order ) as $line_item ) {
@@ -426,13 +468,13 @@ abstract class Visa_Acceptance_Request {
 			}
 
 			foreach ( $order->get_shipping_methods() as $shipping_method ) {
-				if ( (float) $shipping_method->get_total() > 0 ) {
+				if ( (float) $shipping_method->get_total() > VISA_ACCEPTANCE_VAL_ZERO ) {
 					$items[] = array(
 						'productCode' => VISA_ACCEPTANCE_SHIPPING_AND_HANDELING,
 						'productName' => $shipping_method->get_name(),
 						'productSku'  => $shipping_method->get_method_id(),
 						'unitPrice'   => $shipping_method->get_total(),
-						'quantity'    => 1,
+						'quantity'    => VISA_ACCEPTANCE_VAL_ONE,
 						'taxAmount'   => $shipping_method->get_total_tax(),
 					);
 				}
@@ -443,7 +485,7 @@ abstract class Visa_Acceptance_Request {
 					'productName' => 'voucher',
 					'productSku'  => 'voucher',
 					'unitPrice'   => $order->get_discount_total(),
-					'quantity'    => 1,
+					'quantity'    => VISA_ACCEPTANCE_VAL_ONE,
 					'taxAmount'   => $order->get_discount_tax(),
 				);
 			}
@@ -453,7 +495,7 @@ abstract class Visa_Acceptance_Request {
 				$items[] = array(
 					'productName' => $fee->get_name(),
 					'unitPrice'   => $fee->get_total(),
-					'quantity'    => 1,
+					'quantity'    => VISA_ACCEPTANCE_VAL_ONE,
 					'taxAmount'   => $fee->get_total_tax(),
 				);
 			}
@@ -474,18 +516,6 @@ abstract class Visa_Acceptance_Request {
 
 	/**
 	 * Gets order line items (products) as an array of objects.
-	 *
-	 * Object properties:
-	 *
-	 * + id          - item ID
-	 * + name        - item name, usually product title, processed through htmlentities()
-	 * + description - formatted item meta (e.g. Size: Medium, Color: blue), processed through htmlentities()
-	 * + quantity    - item quantity
-	 * + item_total  - item total (line total divided by quantity, excluding tax & rounded)
-	 * + line_total  - line item total (excluding tax & rounded)
-	 * + meta        - formatted item meta array
-	 * + product     - item product or null if getting product from item failed
-	 * + item        - raw item array
 	 *
 	 * @param \WC_Order $order order.
 	 * @return \stdClass[] array of line item objects.
@@ -611,13 +641,13 @@ abstract class Visa_Acceptance_Request {
 				$items[] = $item;
 			}
 			foreach ( $order->get_shipping_methods() as $shipping_method ) {
-				if ( (float) $shipping_method->get_total() > 0 ) {
+				if ( (float) $shipping_method->get_total() > VISA_ACCEPTANCE_VAL_ZERO ) {
 					$items[] = array(
 						'productCode' => VISA_ACCEPTANCE_SHIPPING_AND_HANDELING,
 						'productName' => $shipping_method->get_name(),
 						'productSku'  => $shipping_method->get_method_id(),
 						'unitPrice'   => $shipping_method->get_total(),
-						'quantity'    => 1,
+						'quantity'    => VISA_ACCEPTANCE_VAL_ONE,
 						'taxAmount'   => $shipping_method->get_total_tax(),
 					);
 				}
@@ -628,7 +658,7 @@ abstract class Visa_Acceptance_Request {
 					'productName' => 'voucher',
 					'productSku'  => 'voucher',
 					'unitPrice'   => $order->get_discount_total(),
-					'quantity'    => 1,
+					'quantity'    => VISA_ACCEPTANCE_VAL_ONE,
 					'taxAmount'   => $order->get_discount_tax(),
 				);
 			}
@@ -638,7 +668,7 @@ abstract class Visa_Acceptance_Request {
 				$items[] = array(
 					'productName' => $fee->get_name(),
 					'unitPrice'   => $fee->get_total(),
-					'quantity'    => 1,
+					'quantity'    => VISA_ACCEPTANCE_VAL_ONE,
 					'taxAmount'   => $fee->get_total_tax(),
 				);
 			}
@@ -701,7 +731,7 @@ abstract class Visa_Acceptance_Request {
 
 			$length -= mb_strlen( $omission, VISA_ACCEPTANCE_UTF_8 );
 
-			return mb_substr( $text, 0, $length, VISA_ACCEPTANCE_UTF_8 ) . $omission;
+			return mb_substr( $text, VISA_ACCEPTANCE_VAL_ZERO, $length, VISA_ACCEPTANCE_UTF_8 ) . $omission;
 
 		} else {
 
@@ -714,7 +744,7 @@ abstract class Visa_Acceptance_Request {
 
 			$length -= strlen( $omission );
 
-			return substr( $text, 0, $length ) . $omission;
+			return substr( $text, VISA_ACCEPTANCE_VAL_ZERO, $length ) . $omission;
 		}
 	}
 
@@ -748,5 +778,14 @@ abstract class Visa_Acceptance_Request {
 		$wc_version = defined( 'WC_VERSION' ) && WC_VERSION ? WC_VERSION : null;
 
 		return $wc_version && version_compare( $wc_version, $version, VISA_ACCEPTANCE_GREATER_THAN_OR_EQUAL_TO );
+	}
+
+	/**
+	 * Returns the bankTransferOptions array required for eCheck processing information.
+	 *
+	 * @return array
+	 */
+	public function get_echeck_bank_transfer_options(): array {
+		return array( 'bankTransferOptions' => array( 'secCode' => VISA_ACCEPTANCE_ECHECK_SEC_CODE_WEB ) );
 	}
 }

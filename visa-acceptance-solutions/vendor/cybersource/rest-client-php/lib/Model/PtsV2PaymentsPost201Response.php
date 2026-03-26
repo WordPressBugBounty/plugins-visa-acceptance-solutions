@@ -75,6 +75,7 @@ class PtsV2PaymentsPost201Response implements ArrayAccess
         'riskInformation' => '\CyberSource\Model\PtsV2PaymentsPost201ResponseRiskInformation',
         'consumerAuthenticationInformation' => '\CyberSource\Model\PtsV2PaymentsPost201ResponseConsumerAuthenticationInformation',
         'merchantInformation' => '\CyberSource\Model\PtsV2PaymentsPost201ResponseMerchantInformation',
+        'clearingInformation' => '\CyberSource\Model\PtsV2PaymentsPost201ResponseClearingInformation',
         'embeddedActions' => '\CyberSource\Model\PtsV2PaymentsPost201ResponseEmbeddedActions',
         'watchlistScreeningInformation' => '\CyberSource\Model\PtsV2PaymentsPost201ResponseWatchlistScreeningInformation'
     ];
@@ -106,6 +107,7 @@ class PtsV2PaymentsPost201Response implements ArrayAccess
         'riskInformation' => null,
         'consumerAuthenticationInformation' => null,
         'merchantInformation' => null,
+        'clearingInformation' => null,
         'embeddedActions' => null,
         'watchlistScreeningInformation' => null
     ];
@@ -147,6 +149,7 @@ class PtsV2PaymentsPost201Response implements ArrayAccess
         'riskInformation' => 'riskInformation',
         'consumerAuthenticationInformation' => 'consumerAuthenticationInformation',
         'merchantInformation' => 'merchantInformation',
+        'clearingInformation' => 'clearingInformation',
         'embeddedActions' => 'embeddedActions',
         'watchlistScreeningInformation' => 'watchlistScreeningInformation'
     ];
@@ -179,6 +182,7 @@ class PtsV2PaymentsPost201Response implements ArrayAccess
         'riskInformation' => 'setRiskInformation',
         'consumerAuthenticationInformation' => 'setConsumerAuthenticationInformation',
         'merchantInformation' => 'setMerchantInformation',
+        'clearingInformation' => 'setClearingInformation',
         'embeddedActions' => 'setEmbeddedActions',
         'watchlistScreeningInformation' => 'setWatchlistScreeningInformation'
     ];
@@ -211,6 +215,7 @@ class PtsV2PaymentsPost201Response implements ArrayAccess
         'riskInformation' => 'getRiskInformation',
         'consumerAuthenticationInformation' => 'getConsumerAuthenticationInformation',
         'merchantInformation' => 'getMerchantInformation',
+        'clearingInformation' => 'getClearingInformation',
         'embeddedActions' => 'getEmbeddedActions',
         'watchlistScreeningInformation' => 'getWatchlistScreeningInformation'
     ];
@@ -268,6 +273,7 @@ class PtsV2PaymentsPost201Response implements ArrayAccess
         $this->container['riskInformation'] = isset($data['riskInformation']) ? $data['riskInformation'] : null;
         $this->container['consumerAuthenticationInformation'] = isset($data['consumerAuthenticationInformation']) ? $data['consumerAuthenticationInformation'] : null;
         $this->container['merchantInformation'] = isset($data['merchantInformation']) ? $data['merchantInformation'] : null;
+        $this->container['clearingInformation'] = isset($data['clearingInformation']) ? $data['clearingInformation'] : null;
         $this->container['embeddedActions'] = isset($data['embeddedActions']) ? $data['embeddedActions'] : null;
         $this->container['watchlistScreeningInformation'] = isset($data['watchlistScreeningInformation']) ? $data['watchlistScreeningInformation'] : null;
     }
@@ -755,6 +761,27 @@ class PtsV2PaymentsPost201Response implements ArrayAccess
     public function setMerchantInformation($merchantInformation)
     {
         $this->container['merchantInformation'] = $merchantInformation;
+
+        return $this;
+    }
+
+    /**
+     * Gets clearingInformation
+     * @return \CyberSource\Model\PtsV2PaymentsPost201ResponseClearingInformation
+     */
+    public function getClearingInformation()
+    {
+        return $this->container['clearingInformation'];
+    }
+
+    /**
+     * Sets clearingInformation
+     * @param \CyberSource\Model\PtsV2PaymentsPost201ResponseClearingInformation $clearingInformation
+     * @return $this
+     */
+    public function setClearingInformation($clearingInformation)
+    {
+        $this->container['clearingInformation'] = $clearingInformation;
 
         return $this;
     }

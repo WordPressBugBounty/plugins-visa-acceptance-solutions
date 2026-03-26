@@ -92,11 +92,13 @@ trait Visa_Acceptance_Payment_Gateway_Public_Trait {
 	 * Marks order status as failed if any error occured.
 	 *
 	 * @param string $message error message.
-	 *
 	 * @return void
 	 */
 	public function mark_order_failed( $message ) {
-		wc_add_notice( $message, VISA_ACCEPTANCE_STRING_ERROR );
+		wc_add_notice( $message, VISA_ACCEPTANCE_ERROR );
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+            wc_clear_notices();
+        }
 	}
 
 	/**
@@ -158,7 +160,7 @@ trait Visa_Acceptance_Payment_Gateway_Public_Trait {
 		switch ( $message_id ) {
 
 			// generic messages.
-			case VISA_ACCEPTANCE_STRING_ERROR:
+			case VISA_ACCEPTANCE_ERROR:
 				$message = esc_html__( 'An error occurred, please try again or try an alternate form of payment', 'visa-acceptance-solutions' );
 				break;
 			case 'decline':

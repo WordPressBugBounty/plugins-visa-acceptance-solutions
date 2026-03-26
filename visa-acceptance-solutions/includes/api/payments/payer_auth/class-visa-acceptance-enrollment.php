@@ -66,7 +66,7 @@ class Visa_Acceptance_Enrollment extends Visa_Acceptance_Request {
 	 */
 	public function do_enrollment( $order, $token, $saved_token, $is_save_card, $reference_id, $sca_case, $flex_cvv_token = null ) {
 		$response = array();
-		if ( $this->gateway->get_id() === $order->data['payment_method'] || 'admin' === $order->created_via ) {
+		if ( $this->gateway->get_id() === $order->data['payment_method'] || VISA_ACCEPTANCE_ADMIN === $order->created_via ) {
 			$response = $this->handleEnrollmentResponse( $order, $token, $saved_token, $is_save_card, $reference_id, $sca_case, $flex_cvv_token );
 		}
 		return $response;
@@ -89,7 +89,7 @@ class Visa_Acceptance_Enrollment extends Visa_Acceptance_Request {
 		$settings                                        = $this->gateway->get_config_settings();
 		$response_array                                  = array();
 		$return_response[ VISA_ACCEPTANCE_SUCCESS ]      = null;
-		$return_response[ VISA_ACCEPTANCE_STRING_ERROR ] = null;
+		$return_response[ VISA_ACCEPTANCE_ERROR ] = null;
 		// Check if this is a CUP or JAYWAN card on a zero-amount order.
 		$original_order_total = $order->get_total();
 		$is_zero_amount_order = ( VISA_ACCEPTANCE_ZERO_AMOUNT === $original_order_total );
@@ -116,7 +116,7 @@ class Visa_Acceptance_Enrollment extends Visa_Acceptance_Request {
 			if ( VISA_ACCEPTANCE_STRING_CUSTOMER_AUTHENTICATION_REQUIRED === $payment_response_array['reason'] ) {
 				$this->mark_order_failed( $payment_response_array['reason'] );
 				$this->update_failed_order( $order, $payment_response_array );
-				$response_array[ VISA_ACCEPTANCE_STRING_ERROR ] = VISA_ACCEPTANCE_SERVER_ERROR;
+				$response_array[ VISA_ACCEPTANCE_ERROR ] = VISA_ACCEPTANCE_SERVER_ERROR;
 				$checkout_url                                   = wc_get_checkout_url();
 				$response_array['redirect']                     = $checkout_url;
 				$this->delete_order_meta( $order, VISA_ACCEPTANCE_SAVED_CARD_NORMAL . $order->get_id() );
@@ -217,7 +217,7 @@ class Visa_Acceptance_Enrollment extends Visa_Acceptance_Request {
 				// Checkout Page URL.
 				$checkout_url               = wc_get_checkout_url();
 				$response_array['redirect'] = $checkout_url;
-				$response_array['error']    = $message;
+				$response_array[VISA_ACCEPTANCE_ERROR]    = $message;
 			}
 			return $response_array;
 		} else {
@@ -247,7 +247,7 @@ class Visa_Acceptance_Enrollment extends Visa_Acceptance_Request {
 		// Creating Return URL.
 		$plugin_file    = plugin_basename( __FILE__ );
 		$parts          = explode( VISA_ACCEPTANCE_SLASH, $plugin_file );
-		$plugin_slug    = $parts[0];
+		$plugin_slug    = $parts[VISA_ACCEPTANCE_VAL_ZERO];
 		$rest_base_url  = get_rest_url();
 		$return_url     = $rest_base_url . $plugin_slug . '/v1/' . VISA_ACCEPTANCE_PAYER_AUTH_RESPONSE_SLUG;
 		$api_client 	= $request->get_api_client();
@@ -296,7 +296,7 @@ class Visa_Acceptance_Enrollment extends Visa_Acceptance_Request {
 				return VISA_ACCEPTANCE_ONE_DOLLAR_AMOUNT;
 			}
 			return $total;
-			}, 10, 2 );
+			}, VISA_ACCEPTANCE_VAL_TEN, VISA_ACCEPTANCE_VAL_TWO );
 		}
 
 		// Prepare the request payload using CyberSource SDK models.
@@ -304,7 +304,7 @@ class Visa_Acceptance_Enrollment extends Visa_Acceptance_Request {
 
 		// For CUP/JAYWAN cards on free trial, force authorization-only (no capture) for reversal.
 		if ( $unsupported_zero_amount_card ) {
-			$processing_information_data['capture'] = false;
+			$processing_information_data[VISA_ACCEPTANCE_CAPTURE] = false;
 		}
 		$processing_information = new \CyberSource\Model\Ptsv2paymentsProcessingInformation( $processing_information_data );
 		$consumer_authentication_information_data = $payer_auth_request->get_enroll_consumer_authentication_info( $reference_id, $return_url, $sca_case, $is_save_card, $settings );
@@ -346,10 +346,10 @@ class Visa_Acceptance_Enrollment extends Visa_Acceptance_Request {
 			$this->gateway->add_logs_data( $payload, true, $log_header );
 			try {
 				$api_response = $payments_api->createPayment( $payload );
-				$this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
+				$this->gateway->add_logs_service_response( $api_response[VISA_ACCEPTANCE_VAL_ZERO],$api_response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
 				$return_array = array(
-					'http_code' => $api_response[1],
-					'body'      => $api_response[0],
+					'http_code' => $api_response[VISA_ACCEPTANCE_VAL_ONE],
+					'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 				);
 				return $return_array;
 			} catch ( \CyberSource\ApiException $e ) {

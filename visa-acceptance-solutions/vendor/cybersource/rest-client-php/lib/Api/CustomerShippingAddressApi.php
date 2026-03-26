@@ -185,8 +185,8 @@ class CustomerShippingAddressApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "deleteCustomerShippingAddress,deleteCustomerShippingAddressWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "deleteCustomerShippingAddress,deleteCustomerShippingAddressWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -209,6 +209,10 @@ class CustomerShippingAddressApi
         }
 
         self::$logger->debug("Return Type : null");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "deleteCustomerShippingAddress,deleteCustomerShippingAddressWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -218,7 +222,8 @@ class CustomerShippingAddressApi
                 $httpBody,
                 $headerParams,
                 null,
-                '/tms/v2/customers/{customerId}/shipping-addresses/{shippingAddressId}'
+                '/tms/v2/customers/{customerId}/shipping-addresses/{shippingAddressId}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -350,8 +355,8 @@ class CustomerShippingAddressApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getCustomerShippingAddress,getCustomerShippingAddressWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getCustomerShippingAddress,getCustomerShippingAddressWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -374,6 +379,10 @@ class CustomerShippingAddressApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\PostCustomerShippingAddressRequest");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getCustomerShippingAddress,getCustomerShippingAddressWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -383,7 +392,8 @@ class CustomerShippingAddressApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\PostCustomerShippingAddressRequest',
-                '/tms/v2/customers/{customerId}/shipping-addresses/{shippingAddressId}'
+                '/tms/v2/customers/{customerId}/shipping-addresses/{shippingAddressId}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -512,8 +522,8 @@ class CustomerShippingAddressApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getCustomerShippingAddressesList,getCustomerShippingAddressesListWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getCustomerShippingAddressesList,getCustomerShippingAddressesListWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -538,6 +548,10 @@ class CustomerShippingAddressApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\ShippingAddressListForCustomer");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getCustomerShippingAddressesList,getCustomerShippingAddressesListWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -547,7 +561,8 @@ class CustomerShippingAddressApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\ShippingAddressListForCustomer',
-                '/tms/v2/customers/{customerId}/shipping-addresses'
+                '/tms/v2/customers/{customerId}/shipping-addresses',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -699,8 +714,8 @@ class CustomerShippingAddressApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "patchCustomersShippingAddress,patchCustomersShippingAddressWithHttpInfo")) {
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "patchCustomersShippingAddress,patchCustomersShippingAddressWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -723,6 +738,10 @@ class CustomerShippingAddressApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\PatchCustomerShippingAddressRequest");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "patchCustomersShippingAddress,patchCustomersShippingAddressWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -732,7 +751,8 @@ class CustomerShippingAddressApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\PatchCustomerShippingAddressRequest',
-                '/tms/v2/customers/{customerId}/shipping-addresses/{shippingAddressId}'
+                '/tms/v2/customers/{customerId}/shipping-addresses/{shippingAddressId}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -867,8 +887,8 @@ class CustomerShippingAddressApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "postCustomerShippingAddress,postCustomerShippingAddressWithHttpInfo")) {
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "postCustomerShippingAddress,postCustomerShippingAddressWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -891,6 +911,10 @@ class CustomerShippingAddressApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\PostCustomerShippingAddressRequest");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "postCustomerShippingAddress,postCustomerShippingAddressWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -900,7 +924,8 @@ class CustomerShippingAddressApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\PostCustomerShippingAddressRequest',
-                '/tms/v2/customers/{customerId}/shipping-addresses'
+                '/tms/v2/customers/{customerId}/shipping-addresses',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

@@ -73,7 +73,7 @@ class Visa_Acceptance_Blocks_Handler_Unified_Checkout extends AbstractPaymentMet
 		$last_four           = array();
 		$force_tokenization  = false;
 		$uc_settings         = get_option( VISA_ACCEPTANCE_WOOCOMMERCE_UNDERSCORE . $this->gateway->get_id() . VISA_ACCEPTANCE_UNDERSCORE_SETTINGS, array() );
-		$token_key 			 = isset( $uc_settings['test_api_key'] ) ? $uc_settings['test_api_key'] : '';
+		$token_key 			 = isset( $uc_settings['test_api_key'] ) ? $uc_settings['test_api_key'] : VISA_ACCEPTANCE_STRING_EMPTY;
 		$subscription_order = false;
 		
 		// Initialize Flex capture context variables.
@@ -84,7 +84,7 @@ class Visa_Acceptance_Blocks_Handler_Unified_Checkout extends AbstractPaymentMet
 		if ( isset( $uc_settings['enabled'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enabled'] && ( is_checkout() || is_admin() )) {
 			$saved_card_token_cvv = ( isset( $uc_settings['enable_token_csc'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enable_token_csc'] ) ? true : false;
 			$cart_total = WC()->cart ? WC()->cart->get_total( 'edit' ) : VISA_ACCEPTANCE_ZERO_AMOUNT;
-			$is_zero_initial_payment = ( VISA_ACCEPTANCE_ZERO_AMOUNT === $cart_total && VISA_ACCEPTANCE_YES === get_option( 'woocommerce_subscriptions_zero_initial_payment_requires_payment', 'no' ) ) ? true : false;
+			$is_zero_initial_payment = ( VISA_ACCEPTANCE_ZERO_AMOUNT === $cart_total && VISA_ACCEPTANCE_YES === get_option( 'woocommerce_subscriptions_zero_initial_payment_requires_payment', VISA_ACCEPTANCE_NO ) ) ? true : false;
 
 			$user_has_saved_cards = false;
 			if ( is_user_logged_in() ) {
@@ -98,12 +98,12 @@ class Visa_Acceptance_Blocks_Handler_Unified_Checkout extends AbstractPaymentMet
 				$capture_context_response = $flex_request->get_flex_microform_capture_context();
 				
 				// Extract the actual capture context string for Flex microforms.
-				if (isset($capture_context_response['http_code']) && 201 === (int) $capture_context_response['http_code']) {
+				if (isset($capture_context_response['http_code']) && VISA_ACCEPTANCE_TWO_ZERO_ONE === (int) $capture_context_response['http_code']) {
 					$flex_capture_context = !empty($capture_context_response['body']) ? $capture_context_response['body'] : null;
 				}
 				
 				// Load Flex library only when saved card CVV is enabled.
-				$url = 'test' !== $general_settings['environment'] ? VISA_ACCEPTANCE_FLEX_PROD_LIBRARY : VISA_ACCEPTANCE_FLEX_TEST_LIBRARY;
+				$url = 'test' !== $general_settings[VISA_ACCEPTANCE_ENVIRONMENT] ? VISA_ACCEPTANCE_FLEX_PROD_LIBRARY : VISA_ACCEPTANCE_FLEX_TEST_LIBRARY;
 				wp_enqueue_script( 'wc-credit-card-flex-microform', $url, array(), VISA_ACCEPTANCE_PLUGIN_VERSION, true );
 			}
 			$tokenization 		  = ( isset( $uc_settings['tokenization'] ) && VISA_ACCEPTANCE_YES === $uc_settings['tokenization'] ) ? true : false;
@@ -115,7 +115,8 @@ class Visa_Acceptance_Blocks_Handler_Unified_Checkout extends AbstractPaymentMet
 			foreach ( $core_tokens as $token ) {
 				$data = $token->get_data();
 				if ( $data['token'] ) {
-					$token_type[ $token->get_id() ] = $data['card_type'];
+					// If card_type is null or empty, it's likely an eCheck token.
+					$token_type[ $token->get_id() ] = ! empty( $data['card_type'] ) ? $data['card_type'] : VISA_ACCEPTANCE_TOKEN_TYPE_ECHECK;
 					$last_four[ $token->get_id() ]  = $data['last4'];
 				}
 			}
@@ -145,6 +146,7 @@ class Visa_Acceptance_Blocks_Handler_Unified_Checkout extends AbstractPaymentMet
 				'capture_context'                 => $capture_context_response,
 				'subscription_order'		  	  => $subscription_order,
 				'tokenization'                    => $tokenization,
+				'enable_echeck'                   => isset( $uc_settings['enable_echeck'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enable_echeck'],
 				'encrypt_const'                   => __( 'encrypt', 'visa-acceptance-solutions' ),
 				'form_load_error'                 => __( 'Unable to load the payment form. Please contact customer care for any assistance.', 'visa-acceptance-solutions' ),
 				'cvv_error'                       => __( 'Please enter valid Security Code.', 'visa-acceptance-solutions' ),

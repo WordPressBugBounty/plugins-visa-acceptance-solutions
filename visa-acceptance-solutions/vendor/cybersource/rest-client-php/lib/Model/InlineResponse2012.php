@@ -54,14 +54,8 @@ class InlineResponse2012 implements ArrayAccess
       */
     protected static $swaggerTypes = [
         'id' => 'string',
-        'submitTimeUtc' => '\DateTime',
-        'status' => 'string',
-        'registrationInformation' => '\CyberSource\Model\InlineResponse2012RegistrationInformation',
-        'integrationInformation' => '\CyberSource\Model\InlineResponse2012IntegrationInformation',
-        'organizationInformation' => '\CyberSource\Model\InlineResponse2012OrganizationInformation',
-        'productInformationSetups' => '\CyberSource\Model\InlineResponse2012ProductInformationSetups[]',
-        'message' => 'string',
-        'details' => 'map[string,object[]]'
+        'submitTimeUtc' => 'string',
+        'status' => 'string'
     ];
 
     /**
@@ -70,14 +64,8 @@ class InlineResponse2012 implements ArrayAccess
       */
     protected static $swaggerFormats = [
         'id' => null,
-        'submitTimeUtc' => 'date-time',
-        'status' => null,
-        'registrationInformation' => null,
-        'integrationInformation' => null,
-        'organizationInformation' => null,
-        'productInformationSetups' => null,
-        'message' => null,
-        'details' => null
+        'submitTimeUtc' => null,
+        'status' => null
     ];
 
     public static function swaggerTypes()
@@ -97,13 +85,7 @@ class InlineResponse2012 implements ArrayAccess
     protected static $attributeMap = [
         'id' => 'id',
         'submitTimeUtc' => 'submitTimeUtc',
-        'status' => 'status',
-        'registrationInformation' => 'registrationInformation',
-        'integrationInformation' => 'integrationInformation',
-        'organizationInformation' => 'organizationInformation',
-        'productInformationSetups' => 'productInformationSetups',
-        'message' => 'message',
-        'details' => 'details'
+        'status' => 'status'
     ];
 
 
@@ -114,13 +96,7 @@ class InlineResponse2012 implements ArrayAccess
     protected static $setters = [
         'id' => 'setId',
         'submitTimeUtc' => 'setSubmitTimeUtc',
-        'status' => 'setStatus',
-        'registrationInformation' => 'setRegistrationInformation',
-        'integrationInformation' => 'setIntegrationInformation',
-        'organizationInformation' => 'setOrganizationInformation',
-        'productInformationSetups' => 'setProductInformationSetups',
-        'message' => 'setMessage',
-        'details' => 'setDetails'
+        'status' => 'setStatus'
     ];
 
 
@@ -131,13 +107,7 @@ class InlineResponse2012 implements ArrayAccess
     protected static $getters = [
         'id' => 'getId',
         'submitTimeUtc' => 'getSubmitTimeUtc',
-        'status' => 'getStatus',
-        'registrationInformation' => 'getRegistrationInformation',
-        'integrationInformation' => 'getIntegrationInformation',
-        'organizationInformation' => 'getOrganizationInformation',
-        'productInformationSetups' => 'getProductInformationSetups',
-        'message' => 'getMessage',
-        'details' => 'getDetails'
+        'status' => 'getStatus'
     ];
 
     public static function attributeMap()
@@ -174,12 +144,6 @@ class InlineResponse2012 implements ArrayAccess
         $this->container['id'] = isset($data['id']) ? $data['id'] : null;
         $this->container['submitTimeUtc'] = isset($data['submitTimeUtc']) ? $data['submitTimeUtc'] : null;
         $this->container['status'] = isset($data['status']) ? $data['status'] : null;
-        $this->container['registrationInformation'] = isset($data['registrationInformation']) ? $data['registrationInformation'] : null;
-        $this->container['integrationInformation'] = isset($data['integrationInformation']) ? $data['integrationInformation'] : null;
-        $this->container['organizationInformation'] = isset($data['organizationInformation']) ? $data['organizationInformation'] : null;
-        $this->container['productInformationSetups'] = isset($data['productInformationSetups']) ? $data['productInformationSetups'] : null;
-        $this->container['message'] = isset($data['message']) ? $data['message'] : null;
-        $this->container['details'] = isset($data['details']) ? $data['details'] : null;
     }
 
     /**
@@ -218,7 +182,7 @@ class InlineResponse2012 implements ArrayAccess
 
     /**
      * Sets id
-     * @param string $id
+     * @param string $id UUID uniquely generated for this comments.
      * @return $this
      */
     public function setId($id)
@@ -230,7 +194,7 @@ class InlineResponse2012 implements ArrayAccess
 
     /**
      * Gets submitTimeUtc
-     * @return \DateTime
+     * @return string
      */
     public function getSubmitTimeUtc()
     {
@@ -239,7 +203,7 @@ class InlineResponse2012 implements ArrayAccess
 
     /**
      * Sets submitTimeUtc
-     * @param \DateTime $submitTimeUtc Time of request in UTC. `Format: YYYY-MM-DDThh:mm:ssZ`  Example 2016-08-11T22:47:57Z equals August 11, 2016, at 22:47:57 (10:47:57 p.m.). The T separates the date and the time. The Z indicates UTC.
+     * @param string $submitTimeUtc Time of request in UTC. Format: `YYYY-MM-DDThh:mm:ssZ` **Example** `2016-08-11T22:47:57Z` equals August 11, 2016, at 22:47:57 (10:47:57 p.m.). The `T` separates the date and the time. The `Z` indicates UTC.  Returned by Cybersource for all services.
      * @return $this
      */
     public function setSubmitTimeUtc($submitTimeUtc)
@@ -260,138 +224,12 @@ class InlineResponse2012 implements ArrayAccess
 
     /**
      * Sets status
-     * @param string $status The status of Registration request Possible Values:   - 'INITIALIZED'   - 'RECEIVED'   - 'PROCESSING'   - 'SUCCESS'   - 'FAILURE'   - 'PARTIAL'
+     * @param string $status Status of the comment creation. Possible values are: - `COMPLETED`
      * @return $this
      */
     public function setStatus($status)
     {
         $this->container['status'] = $status;
-
-        return $this;
-    }
-
-    /**
-     * Gets registrationInformation
-     * @return \CyberSource\Model\InlineResponse2012RegistrationInformation
-     */
-    public function getRegistrationInformation()
-    {
-        return $this->container['registrationInformation'];
-    }
-
-    /**
-     * Sets registrationInformation
-     * @param \CyberSource\Model\InlineResponse2012RegistrationInformation $registrationInformation
-     * @return $this
-     */
-    public function setRegistrationInformation($registrationInformation)
-    {
-        $this->container['registrationInformation'] = $registrationInformation;
-
-        return $this;
-    }
-
-    /**
-     * Gets integrationInformation
-     * @return \CyberSource\Model\InlineResponse2012IntegrationInformation
-     */
-    public function getIntegrationInformation()
-    {
-        return $this->container['integrationInformation'];
-    }
-
-    /**
-     * Sets integrationInformation
-     * @param \CyberSource\Model\InlineResponse2012IntegrationInformation $integrationInformation
-     * @return $this
-     */
-    public function setIntegrationInformation($integrationInformation)
-    {
-        $this->container['integrationInformation'] = $integrationInformation;
-
-        return $this;
-    }
-
-    /**
-     * Gets organizationInformation
-     * @return \CyberSource\Model\InlineResponse2012OrganizationInformation
-     */
-    public function getOrganizationInformation()
-    {
-        return $this->container['organizationInformation'];
-    }
-
-    /**
-     * Sets organizationInformation
-     * @param \CyberSource\Model\InlineResponse2012OrganizationInformation $organizationInformation
-     * @return $this
-     */
-    public function setOrganizationInformation($organizationInformation)
-    {
-        $this->container['organizationInformation'] = $organizationInformation;
-
-        return $this;
-    }
-
-    /**
-     * Gets productInformationSetups
-     * @return \CyberSource\Model\InlineResponse2012ProductInformationSetups[]
-     */
-    public function getProductInformationSetups()
-    {
-        return $this->container['productInformationSetups'];
-    }
-
-    /**
-     * Sets productInformationSetups
-     * @param \CyberSource\Model\InlineResponse2012ProductInformationSetups[] $productInformationSetups
-     * @return $this
-     */
-    public function setProductInformationSetups($productInformationSetups)
-    {
-        $this->container['productInformationSetups'] = $productInformationSetups;
-
-        return $this;
-    }
-
-    /**
-     * Gets message
-     * @return string
-     */
-    public function getMessage()
-    {
-        return $this->container['message'];
-    }
-
-    /**
-     * Sets message
-     * @param string $message
-     * @return $this
-     */
-    public function setMessage($message)
-    {
-        $this->container['message'] = $message;
-
-        return $this;
-    }
-
-    /**
-     * Gets details
-     * @return map[string,object[]]
-     */
-    public function getDetails()
-    {
-        return $this->container['details'];
-    }
-
-    /**
-     * Sets details
-     * @param map[string,object[]] $details
-     * @return $this
-     */
-    public function setDetails($details)
-    {
-        $this->container['details'] = $details;
 
         return $this;
     }

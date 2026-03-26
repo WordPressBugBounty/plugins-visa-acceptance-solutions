@@ -105,7 +105,7 @@ class TokenApi
      * @param string $tokenProvider The token provider. (required)
      * @param string $assetType The type of asset. (required)
      * @throws \CyberSource\ApiException on non-2xx response
-     * @return array of \CyberSource\Model\InlineResponse200, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \CyberSource\Model\InlineResponse2002, HTTP status code, HTTP response headers (array of strings)
      */
     public function getCardArtAsset($instrumentIdentifierId, $tokenProvider, $assetType)
     {
@@ -125,7 +125,7 @@ class TokenApi
      * @param string $tokenProvider The token provider. (required)
      * @param string $assetType The type of asset. (required)
      * @throws \CyberSource\ApiException on non-2xx response
-     * @return array of \CyberSource\Model\InlineResponse200, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \CyberSource\Model\InlineResponse2002, HTTP status code, HTTP response headers (array of strings)
      */
     public function getCardArtAssetWithHttpInfo($instrumentIdentifierId, $tokenProvider, $assetType)
     {
@@ -194,8 +194,8 @@ class TokenApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getCardArtAsset,getCardArtAssetWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getCardArtAsset,getCardArtAssetWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -217,7 +217,11 @@ class TokenApi
             self::$logger->debug("Body Parameter :\n" . $printHttpBody); 
         }
 
-        self::$logger->debug("Return Type : \CyberSource\Model\InlineResponse200");
+        self::$logger->debug("Return Type : \CyberSource\Model\InlineResponse2002");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getCardArtAsset,getCardArtAssetWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -226,17 +230,18 @@ class TokenApi
                 $queryParams,
                 $httpBody,
                 $headerParams,
-                '\CyberSource\Model\InlineResponse200',
-                '/tms/v2/tokens/{instrumentIdentifierId}/{tokenProvider}/assets/{assetType}'
+                '\CyberSource\Model\InlineResponse2002',
+                '/tms/v2/tokens/{instrumentIdentifierId}/{tokenProvider}/assets/{assetType}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
 
-            return [$this->apiClient->getSerializer()->deserialize($response, '\CyberSource\Model\InlineResponse200', $httpHeader), $statusCode, $httpHeader];
+            return [$this->apiClient->getSerializer()->deserialize($response, '\CyberSource\Model\InlineResponse2002', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse200', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse2002', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
             }
@@ -249,10 +254,10 @@ class TokenApi
     /**
      * Operation postTokenPaymentCredentials
      *
-     * Generate Payment Credentials for a TMS Token
+     * Generate Payment Credentials v2
      *
      * @param string $tokenId The Id of a token representing a Customer, Payment Instrument or Instrument Identifier. (required)
-     * @param \CyberSource\Model\PostPaymentCredentialsRequest $postPaymentCredentialsRequest  (required)
+     * @param \CyberSource\Model\PostPaymentCredentialsRequest1 $postPaymentCredentialsRequest  (required)
      * @param string $profileId The Id of a profile containing user specific TMS configuration. (optional)
      * @throws \CyberSource\ApiException on non-2xx response
      * @return array of string, HTTP status code, HTTP response headers (array of strings)
@@ -269,10 +274,10 @@ class TokenApi
     /**
      * Operation postTokenPaymentCredentialsWithHttpInfo
      *
-     * Generate Payment Credentials for a TMS Token
+     * Generate Payment Credentials v2
      *
      * @param string $tokenId The Id of a token representing a Customer, Payment Instrument or Instrument Identifier. (required)
-     * @param \CyberSource\Model\PostPaymentCredentialsRequest $postPaymentCredentialsRequest  (required)
+     * @param \CyberSource\Model\PostPaymentCredentialsRequest1 $postPaymentCredentialsRequest  (required)
      * @param string $profileId The Id of a profile containing user specific TMS configuration. (optional)
      * @throws \CyberSource\ApiException on non-2xx response
      * @return array of string, HTTP status code, HTTP response headers (array of strings)
@@ -322,7 +327,7 @@ class TokenApi
         }
         
         $sdkTracker = new \CyberSource\Utilities\Tracking\SdkTracker();
-        $modelClassLocation = explode('\\', '\CyberSource\Model\PostPaymentCredentialsRequest');
+        $modelClassLocation = explode('\\', '\CyberSource\Model\PostPaymentCredentialsRequest1');
 
         $_tempBody = $sdkTracker->insertDeveloperIdTracker($_tempBody, end($modelClassLocation), $this->apiClient->merchantConfig->getRunEnvironment(), $this->apiClient->merchantConfig->getDefaultDeveloperId());
 
@@ -334,8 +339,8 @@ class TokenApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "postTokenPaymentCredentials,postTokenPaymentCredentialsWithHttpInfo")) {
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "postTokenPaymentCredentials,postTokenPaymentCredentialsWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -358,6 +363,10 @@ class TokenApi
         }
 
         self::$logger->debug("Return Type : string");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "postTokenPaymentCredentials,postTokenPaymentCredentialsWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -367,7 +376,8 @@ class TokenApi
                 $httpBody,
                 $headerParams,
                 'string',
-                '/tms/v2/tokens/{tokenId}/payment-credentials'
+                '/tms/v2/tokens/{tokenId}/payment-credentials',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -396,6 +406,183 @@ class TokenApi
                     $e->setResponseObject($data);
                     break;
                 case 500:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse500', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 502:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse500', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+            }
+
+            self::$logger->error("ApiException : $e");
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation postTokenPaymentCredentialsV3
+     *
+     * Generate Payment Credentials Latest Version v3
+     *
+     * @param string $tokenId The Id of a token representing a Customer, Payment Instrument or Instrument Identifier. (required)
+     * @param \CyberSource\Model\PostPaymentCredentialsRequest $postPaymentCredentialsRequest  (required)
+     * @param string $profileId The Id of a profile containing user specific TMS configuration. (optional)
+     * @throws \CyberSource\ApiException on non-2xx response
+     * @return array of \CyberSource\Model\InlineResponse2011, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function postTokenPaymentCredentialsV3($tokenId, $postPaymentCredentialsRequest, $profileId = null)
+    {
+        self::$logger->info('CALL TO METHOD postTokenPaymentCredentialsV3 STARTED');
+        list($response, $statusCode, $httpHeader) = $this->postTokenPaymentCredentialsV3WithHttpInfo($tokenId, $postPaymentCredentialsRequest, $profileId);
+        self::$logger->info('CALL TO METHOD postTokenPaymentCredentialsV3 ENDED');
+        self::$logger->close();
+        return [$response, $statusCode, $httpHeader];
+    }
+
+    /**
+     * Operation postTokenPaymentCredentialsV3WithHttpInfo
+     *
+     * Generate Payment Credentials Latest Version v3
+     *
+     * @param string $tokenId The Id of a token representing a Customer, Payment Instrument or Instrument Identifier. (required)
+     * @param \CyberSource\Model\PostPaymentCredentialsRequest $postPaymentCredentialsRequest  (required)
+     * @param string $profileId The Id of a profile containing user specific TMS configuration. (optional)
+     * @throws \CyberSource\ApiException on non-2xx response
+     * @return array of \CyberSource\Model\InlineResponse2011, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function postTokenPaymentCredentialsV3WithHttpInfo($tokenId, $postPaymentCredentialsRequest, $profileId = null)
+    {
+        // verify the required parameter 'tokenId' is set
+        if ($tokenId === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter $tokenId when calling postTokenPaymentCredentialsV3");
+            throw new \InvalidArgumentException('Missing the required parameter $tokenId when calling postTokenPaymentCredentialsV3');
+        }
+        // verify the required parameter 'postPaymentCredentialsRequest' is set
+        if ($postPaymentCredentialsRequest === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter $postPaymentCredentialsRequest when calling postTokenPaymentCredentialsV3");
+            throw new \InvalidArgumentException('Missing the required parameter $postPaymentCredentialsRequest when calling postTokenPaymentCredentialsV3');
+        }
+        // parse inputs
+        $resourcePath = "/tms/v3/tokens/{tokenId}/payment-credentials";
+        $httpBody = '';
+        $queryParams = [];
+        $headerParams = [];
+        $formParams = [];
+        
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/jose;charset=utf-8']);
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json;charset=utf-8']);
+
+        // header params
+        if ($profileId !== null) {
+            $headerParams['profile-id'] = $this->apiClient->getSerializer()->toHeaderValue($profileId);
+        }
+        // path params
+        if ($tokenId !== null) {
+            $resourcePath = str_replace(
+                "{" . "tokenId" . "}",
+                $this->apiClient->getSerializer()->toPathValue($tokenId),
+                $resourcePath
+            );
+        }
+        // body params
+        $_tempBody = null;
+        if (isset($postPaymentCredentialsRequest)) {
+            $_tempBody = $postPaymentCredentialsRequest;
+        }
+        
+        $sdkTracker = new \CyberSource\Utilities\Tracking\SdkTracker();
+        $modelClassLocation = explode('\\', '\CyberSource\Model\PostPaymentCredentialsRequest');
+
+        $_tempBody = $sdkTracker->insertDeveloperIdTracker($_tempBody, end($modelClassLocation), $this->apiClient->merchantConfig->getRunEnvironment(), $this->apiClient->merchantConfig->getDefaultDeveloperId());
+
+        // for model (json/xml)
+        if (isset($_tempBody) and count($formParams) <= 0) {
+            $httpBody = $_tempBody; // $_tempBody is the method argument, if present
+        } elseif (count($formParams) > 0) {
+            $httpBody = MultipartHelper::build_data_files($boundary, $formParams); // for HTTP post (form)
+        }
+
+        //MLE check and mle encryption for req body
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "postTokenPaymentCredentialsV3,postTokenPaymentCredentialsV3WithHttpInfo")) {
+            try {
+                $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
+            } catch (Exception $e) {
+                self::$logger->error("Failed to encrypt request body:  $e");
+                throw new ApiException("Failed to encrypt request body : " . $e->getMessage());
+            }
+        }
+
+        
+        // Logging
+        self::$logger->debug("Resource : POST $resourcePath");
+        if (isset($httpBody) and count($formParams) <= 0) {
+            if ($this->apiClient->merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
+                $printHttpBody = \CyberSource\Utilities\Helpers\DataMasker::maskData($httpBody);
+            } else {
+                $printHttpBody = $httpBody;
+            }
+            
+            self::$logger->debug("Body Parameter :\n" . $printHttpBody); 
+        }
+
+        self::$logger->debug("Return Type : \CyberSource\Model\InlineResponse2011");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "postTokenPaymentCredentialsV3,postTokenPaymentCredentialsV3WithHttpInfo");
+        
+        // make the API Call
+        try {
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
+                $resourcePath,
+                'POST',
+                $queryParams,
+                $httpBody,
+                $headerParams,
+                '\CyberSource\Model\InlineResponse2011',
+                '/tms/v3/tokens/{tokenId}/payment-credentials',
+                $isResponseMLEForAPI
+            );
+            
+            self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
+
+            return [$this->apiClient->getSerializer()->deserialize($response, '\CyberSource\Model\InlineResponse2011', $httpHeader), $statusCode, $httpHeader];
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 201:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse2011', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 400:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse400', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 403:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse403', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 404:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse424', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 409:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse409', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 410:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse410', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 500:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse500', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 502:
                     $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\CyberSource\Model\InlineResponse500', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;

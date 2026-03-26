@@ -55,6 +55,7 @@ class PtsV2PaymentsPost201ResponseOrderInformationAmountDetails implements Array
     protected static $swaggerTypes = [
         'totalAmount' => 'string',
         'authorizedAmount' => 'string',
+        'cashbackAmount' => 'string',
         'currency' => 'string',
         'settlementAmount' => 'string',
         'settlementCurrency' => 'string',
@@ -74,6 +75,7 @@ class PtsV2PaymentsPost201ResponseOrderInformationAmountDetails implements Array
     protected static $swaggerFormats = [
         'totalAmount' => null,
         'authorizedAmount' => null,
+        'cashbackAmount' => null,
         'currency' => null,
         'settlementAmount' => null,
         'settlementCurrency' => null,
@@ -103,6 +105,7 @@ class PtsV2PaymentsPost201ResponseOrderInformationAmountDetails implements Array
     protected static $attributeMap = [
         'totalAmount' => 'totalAmount',
         'authorizedAmount' => 'authorizedAmount',
+        'cashbackAmount' => 'cashbackAmount',
         'currency' => 'currency',
         'settlementAmount' => 'settlementAmount',
         'settlementCurrency' => 'settlementCurrency',
@@ -123,6 +126,7 @@ class PtsV2PaymentsPost201ResponseOrderInformationAmountDetails implements Array
     protected static $setters = [
         'totalAmount' => 'setTotalAmount',
         'authorizedAmount' => 'setAuthorizedAmount',
+        'cashbackAmount' => 'setCashbackAmount',
         'currency' => 'setCurrency',
         'settlementAmount' => 'setSettlementAmount',
         'settlementCurrency' => 'setSettlementCurrency',
@@ -143,6 +147,7 @@ class PtsV2PaymentsPost201ResponseOrderInformationAmountDetails implements Array
     protected static $getters = [
         'totalAmount' => 'getTotalAmount',
         'authorizedAmount' => 'getAuthorizedAmount',
+        'cashbackAmount' => 'getCashbackAmount',
         'currency' => 'getCurrency',
         'settlementAmount' => 'getSettlementAmount',
         'settlementCurrency' => 'getSettlementCurrency',
@@ -188,6 +193,7 @@ class PtsV2PaymentsPost201ResponseOrderInformationAmountDetails implements Array
     {
         $this->container['totalAmount'] = isset($data['totalAmount']) ? $data['totalAmount'] : null;
         $this->container['authorizedAmount'] = isset($data['authorizedAmount']) ? $data['authorizedAmount'] : null;
+        $this->container['cashbackAmount'] = isset($data['cashbackAmount']) ? $data['cashbackAmount'] : null;
         $this->container['currency'] = isset($data['currency']) ? $data['currency'] : null;
         $this->container['settlementAmount'] = isset($data['settlementAmount']) ? $data['settlementAmount'] : null;
         $this->container['settlementCurrency'] = isset($data['settlementCurrency']) ? $data['settlementCurrency'] : null;
@@ -263,6 +269,27 @@ class PtsV2PaymentsPost201ResponseOrderInformationAmountDetails implements Array
     public function setAuthorizedAmount($authorizedAmount)
     {
         $this->container['authorizedAmount'] = $authorizedAmount;
+
+        return $this;
+    }
+
+    /**
+     * Gets cashbackAmount
+     * @return string
+     */
+    public function getCashbackAmount()
+    {
+        return $this->container['cashbackAmount'];
+    }
+
+    /**
+     * Sets cashbackAmount
+     * @param string $cashbackAmount This field contains the purchase cashback amount expressed in the acquirer transaction currency.  Use this field only for clearing with your acquirer.
+     * @return $this
+     */
+    public function setCashbackAmount($cashbackAmount)
+    {
+        $this->container['cashbackAmount'] = $cashbackAmount;
 
         return $this;
     }

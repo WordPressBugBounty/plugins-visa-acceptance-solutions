@@ -163,8 +163,8 @@ class PaymentLinksApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "createPaymentLink,createPaymentLinkWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "createPaymentLink,createPaymentLinkWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -187,6 +187,10 @@ class PaymentLinksApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\PblPaymentLinksPost201Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "createPaymentLink,createPaymentLinkWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -196,7 +200,8 @@ class PaymentLinksApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\PblPaymentLinksPost201Response',
-                '/ipl/v2/payment-links'
+                '/ipl/v2/payment-links',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -308,8 +313,8 @@ class PaymentLinksApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getAllPaymentLinks,getAllPaymentLinksWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getAllPaymentLinks,getAllPaymentLinksWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -335,6 +340,10 @@ class PaymentLinksApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\PblPaymentLinksAllGet200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getAllPaymentLinks,getAllPaymentLinksWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -344,7 +353,8 @@ class PaymentLinksApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\PblPaymentLinksAllGet200Response',
-                '/ipl/v2/payment-links'
+                '/ipl/v2/payment-links',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -443,8 +453,8 @@ class PaymentLinksApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getPaymentLink,getPaymentLinkWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getPaymentLink,getPaymentLinkWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -467,6 +477,10 @@ class PaymentLinksApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\PblPaymentLinksGet200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getPaymentLink,getPaymentLinkWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -476,7 +490,8 @@ class PaymentLinksApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\PblPaymentLinksGet200Response',
-                '/ipl/v2/payment-links/{id}'
+                '/ipl/v2/payment-links/{id}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -589,8 +604,8 @@ class PaymentLinksApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "updatePaymentLink,updatePaymentLinkWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "updatePaymentLink,updatePaymentLinkWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -613,6 +628,10 @@ class PaymentLinksApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\PblPaymentLinksPost201Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "updatePaymentLink,updatePaymentLinkWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -622,7 +641,8 @@ class PaymentLinksApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\PblPaymentLinksPost201Response',
-                '/ipl/v2/payment-links/{id}'
+                '/ipl/v2/payment-links/{id}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

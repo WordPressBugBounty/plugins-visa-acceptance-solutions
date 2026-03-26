@@ -53,8 +53,9 @@ class InlineResponse2006 implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'status' => 'string',
-        'devices' => '\CyberSource\Model\Dmsv3devicesdeassociateDevices[]'
+        'productId' => 'string',
+        'productName' => 'string',
+        'eventTypes' => '\CyberSource\Model\Notificationsubscriptionsv2productsorganizationIdEventTypes[]'
     ];
 
     /**
@@ -62,8 +63,9 @@ class InlineResponse2006 implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'status' => null,
-        'devices' => null
+        'productId' => null,
+        'productName' => null,
+        'eventTypes' => null
     ];
 
     public static function swaggerTypes()
@@ -81,8 +83,9 @@ class InlineResponse2006 implements ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'status' => 'status',
-        'devices' => 'devices'
+        'productId' => 'productId',
+        'productName' => 'productName',
+        'eventTypes' => 'eventTypes'
     ];
 
 
@@ -91,8 +94,9 @@ class InlineResponse2006 implements ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'status' => 'setStatus',
-        'devices' => 'setDevices'
+        'productId' => 'setProductId',
+        'productName' => 'setProductName',
+        'eventTypes' => 'setEventTypes'
     ];
 
 
@@ -101,8 +105,9 @@ class InlineResponse2006 implements ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'status' => 'getStatus',
-        'devices' => 'getDevices'
+        'productId' => 'getProductId',
+        'productName' => 'getProductName',
+        'eventTypes' => 'getEventTypes'
     ];
 
     public static function attributeMap()
@@ -136,8 +141,9 @@ class InlineResponse2006 implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['status'] = isset($data['status']) ? $data['status'] : null;
-        $this->container['devices'] = isset($data['devices']) ? $data['devices'] : null;
+        $this->container['productId'] = isset($data['productId']) ? $data['productId'] : null;
+        $this->container['productName'] = isset($data['productName']) ? $data['productName'] : null;
+        $this->container['eventTypes'] = isset($data['eventTypes']) ? $data['eventTypes'] : null;
     }
 
     /**
@@ -166,43 +172,64 @@ class InlineResponse2006 implements ArrayAccess
 
 
     /**
-     * Gets status
+     * Gets productId
      * @return string
      */
-    public function getStatus()
+    public function getProductId()
     {
-        return $this->container['status'];
+        return $this->container['productId'];
     }
 
     /**
-     * Sets status
-     * @param string $status Possible values: - OK
+     * Sets productId
+     * @param string $productId Product ID.
      * @return $this
      */
-    public function setStatus($status)
+    public function setProductId($productId)
     {
-        $this->container['status'] = $status;
+        $this->container['productId'] = $productId;
 
         return $this;
     }
 
     /**
-     * Gets devices
-     * @return \CyberSource\Model\Dmsv3devicesdeassociateDevices[]
+     * Gets productName
+     * @return string
      */
-    public function getDevices()
+    public function getProductName()
     {
-        return $this->container['devices'];
+        return $this->container['productName'];
     }
 
     /**
-     * Sets devices
-     * @param \CyberSource\Model\Dmsv3devicesdeassociateDevices[] $devices
+     * Sets productName
+     * @param string $productName Product Name.
      * @return $this
      */
-    public function setDevices($devices)
+    public function setProductName($productName)
     {
-        $this->container['devices'] = $devices;
+        $this->container['productName'] = $productName;
+
+        return $this;
+    }
+
+    /**
+     * Gets eventTypes
+     * @return \CyberSource\Model\Notificationsubscriptionsv2productsorganizationIdEventTypes[]
+     */
+    public function getEventTypes()
+    {
+        return $this->container['eventTypes'];
+    }
+
+    /**
+     * Sets eventTypes
+     * @param \CyberSource\Model\Notificationsubscriptionsv2productsorganizationIdEventTypes[] $eventTypes
+     * @return $this
+     */
+    public function setEventTypes($eventTypes)
+    {
+        $this->container['eventTypes'] = $eventTypes;
 
         return $this;
     }

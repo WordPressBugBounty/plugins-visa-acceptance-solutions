@@ -67,7 +67,7 @@ class Visa_Acceptance_Authorization_Request extends Visa_Acceptance_Request {
 			'customer'          => array(
 				'id' => $token_data['token_information']['id'],
 			),
-			'card'              => array(
+			VISA_ACCEPTANCE_CARD              => array(
 				'securityCode'           => $saved_card_cvv,
 				'typeSelectionIndicator' => VISA_ACCEPTANCE_VAL_ONE,
 			),

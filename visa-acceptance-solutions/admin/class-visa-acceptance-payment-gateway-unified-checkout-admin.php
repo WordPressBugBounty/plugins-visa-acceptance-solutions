@@ -84,7 +84,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 	 * Register the stylesheets for the admin area.
 	 */
 	public function enqueue_styles() {
-		wp_enqueue_style( $this->id, plugin_dir_url( __FILE__ ) . 'css/visa-acceptance-payment-gateway-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->id, plugin_dir_url( __FILE__ ) . 'css/visa-acceptance-payment-gateway-admin.css', array(), $this->version, VISA_ACCEPTANCE_STRING_ALL );
 	}
 
 	/**
@@ -96,7 +96,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 		if ( 'post.php' === $hook_suffix || 'woocommerce_page_wc-orders' === $hook_suffix ) {
 		// Sanitize and validate request data using proper WordPress functions.
 		$post_id = null;
-		$nonce   = isset( $_GET['nonce'] ) ? sanitize_text_field( wp_unslash( $_GET['nonce'] ) ) : '';
+		$nonce   = isset( $_GET[VISA_ACCEPTANCE_NONCE] ) ? sanitize_text_field( wp_unslash( $_GET[VISA_ACCEPTANCE_NONCE] ) ) : VISA_ACCEPTANCE_STRING_EMPTY;
 
 		// Verify nonce before using GET parameters.
 		if ( ( isset( $_GET['post'] ) && ! empty( $_GET['post'] ) ) || ( isset( $_GET['id'] ) && ! empty( $_GET['id'] ) ) ) {
@@ -164,7 +164,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 		<style type="text/css">.nowrap { white-space: nowrap; }</style>
 		<?php
 		ob_start();
-		if ( count( $this->get_environments() ) > 1 ) {
+		if ( count( $this->get_environments() ) > VISA_ACCEPTANCE_VAL_ONE ) {
 			?>
 			function titleHeaderLogo() {
                 $( '.woocommerce h2' ).addClass('wc-title-header');
@@ -508,7 +508,13 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
                     'enable_paze'  => __( 'Paze', 'visa-acceptance-solutions' ),
                 ),
             ),
- 
+			'enable_echeck' => array(
+				'title'       => __( 'Enable ACH/eCheck', 'visa-acceptance-solutions' ),
+				'type'        => 'checkbox',
+				'default'     => VISA_ACCEPTANCE_NO,
+				'label'       => __( 'Allow customers to pay using bank account (ACH/eCheck)', 'visa-acceptance-solutions' ),
+				'class'       => 'shared-settings-field',
+			),
 			'enable_threed_secure'    => array(
 				'title'       => __( 'Payer Authentication / 3D Secure', 'visa-acceptance-solutions' ),
 				'description' => __( 'Your merchant account must have this optional service enabled.', 'visa-acceptance-solutions' ),
@@ -540,8 +546,8 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 				'type'        => 'checkbox',
 				'default'     => VISA_ACCEPTANCE_NO,
 				'class'       => 'shared-settings-field',
-				'label'       => __( 'Enable Fraud Screening', 'visa-acceptance-solutions' ),
-			),
+				'label'       => __( 'Enable Fraud Screening.', 'visa-acceptance-solutions' ),
+			)
 		);
 
 			return $form_fields;
@@ -584,19 +590,23 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 	 * @param string $reason Reason for Refund.
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = VISA_ACCEPTANCE_STRING_EMPTY ) {
-		$order         = wc_get_order( $order_id );
-		$auth_reversal = new Visa_Acceptance_Auth_Reversal( $this->gateway );
-		$refund   	   = new Visa_Acceptance_Refund( $this->gateway );
-		$response      = $order;
-
-		if ( ! is_wp_error( $order ) ) {
-			// Trigger auth reversal if amount is not captured.
-			if ( ! $this->is_order_captured( $order ) ) {
-				$response      = $auth_reversal->process_void( $order, $amount, $reason );
+		$order = wc_get_order( $order_id );
+		
+		if ( is_wp_error( $order ) ) {
+			$response = new \WP_Error( 'vas_refund_failed', __( 'Refund failed.', 'visa-acceptance-solutions' ) );
+		} else {
+			$auth_reversal = new Visa_Acceptance_Auth_Reversal( $this->gateway );
+			$refund        = new Visa_Acceptance_Refund( $this->gateway );
+			$payment_type = $order->get_meta('_vas_payment_type', true);
+			$is_echeck    = ( strtoupper( $payment_type ) === VISA_ACCEPTANCE_CHECK );
+			if ( $is_echeck ) {
+				$response = $refund->do_refund( $order, $amount, $reason );
+			} elseif ( ! $this->is_order_captured( $order ) ) {
+				$response = $auth_reversal->process_void( $order, $amount, $reason );
 			} else {
 				$response = $refund->do_refund( $order, $amount, $reason );
 			}
-		}
+		}	
 		return $response;
 	}
 }

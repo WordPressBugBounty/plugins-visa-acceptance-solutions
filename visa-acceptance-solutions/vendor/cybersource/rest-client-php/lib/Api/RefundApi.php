@@ -178,8 +178,8 @@ class RefundApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = true;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "refundCapture,refundCaptureWithHttpInfo")) {
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "refundCapture,refundCaptureWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -202,6 +202,10 @@ class RefundApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\PtsV2PaymentsRefundPost201Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "refundCapture,refundCaptureWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -211,7 +215,8 @@ class RefundApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\PtsV2PaymentsRefundPost201Response',
-                '/pts/v2/captures/{id}/refunds'
+                '/pts/v2/captures/{id}/refunds',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -320,8 +325,8 @@ class RefundApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = true;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "refundPayment,refundPaymentWithHttpInfo")) {
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "refundPayment,refundPaymentWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -344,6 +349,10 @@ class RefundApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\PtsV2PaymentsRefundPost201Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "refundPayment,refundPaymentWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -353,7 +362,8 @@ class RefundApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\PtsV2PaymentsRefundPost201Response',
-                '/pts/v2/payments/{id}/refunds'
+                '/pts/v2/payments/{id}/refunds',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

@@ -56,7 +56,9 @@ class Ptsv2paymentsProcessorInformation implements ArrayAccess
     protected static $swaggerTypes = [
         'preApprovalToken' => 'string',
         'authorizationOptions' => '\CyberSource\Model\Ptsv2paymentsProcessorInformationAuthorizationOptions',
-        'reversal' => '\CyberSource\Model\Ptsv2paymentsProcessorInformationReversal'
+        'reversal' => '\CyberSource\Model\Ptsv2paymentsProcessorInformationReversal',
+        'network' => '\CyberSource\Model\Ptsv2paymentsProcessorInformationReversalNetwork',
+        'responseSourceCode' => 'string'
     ];
 
     /**
@@ -66,7 +68,9 @@ class Ptsv2paymentsProcessorInformation implements ArrayAccess
     protected static $swaggerFormats = [
         'preApprovalToken' => null,
         'authorizationOptions' => null,
-        'reversal' => null
+        'reversal' => null,
+        'network' => null,
+        'responseSourceCode' => null
     ];
 
     public static function swaggerTypes()
@@ -86,7 +90,9 @@ class Ptsv2paymentsProcessorInformation implements ArrayAccess
     protected static $attributeMap = [
         'preApprovalToken' => 'preApprovalToken',
         'authorizationOptions' => 'authorizationOptions',
-        'reversal' => 'reversal'
+        'reversal' => 'reversal',
+        'network' => 'network',
+        'responseSourceCode' => 'responseSourceCode'
     ];
 
 
@@ -97,7 +103,9 @@ class Ptsv2paymentsProcessorInformation implements ArrayAccess
     protected static $setters = [
         'preApprovalToken' => 'setPreApprovalToken',
         'authorizationOptions' => 'setAuthorizationOptions',
-        'reversal' => 'setReversal'
+        'reversal' => 'setReversal',
+        'network' => 'setNetwork',
+        'responseSourceCode' => 'setResponseSourceCode'
     ];
 
 
@@ -108,7 +116,9 @@ class Ptsv2paymentsProcessorInformation implements ArrayAccess
     protected static $getters = [
         'preApprovalToken' => 'getPreApprovalToken',
         'authorizationOptions' => 'getAuthorizationOptions',
-        'reversal' => 'getReversal'
+        'reversal' => 'getReversal',
+        'network' => 'getNetwork',
+        'responseSourceCode' => 'getResponseSourceCode'
     ];
 
     public static function attributeMap()
@@ -145,6 +155,8 @@ class Ptsv2paymentsProcessorInformation implements ArrayAccess
         $this->container['preApprovalToken'] = isset($data['preApprovalToken']) ? $data['preApprovalToken'] : null;
         $this->container['authorizationOptions'] = isset($data['authorizationOptions']) ? $data['authorizationOptions'] : null;
         $this->container['reversal'] = isset($data['reversal']) ? $data['reversal'] : null;
+        $this->container['network'] = isset($data['network']) ? $data['network'] : null;
+        $this->container['responseSourceCode'] = isset($data['responseSourceCode']) ? $data['responseSourceCode'] : null;
     }
 
     /**
@@ -231,6 +243,48 @@ class Ptsv2paymentsProcessorInformation implements ArrayAccess
     public function setReversal($reversal)
     {
         $this->container['reversal'] = $reversal;
+
+        return $this;
+    }
+
+    /**
+     * Gets network
+     * @return \CyberSource\Model\Ptsv2paymentsProcessorInformationReversalNetwork
+     */
+    public function getNetwork()
+    {
+        return $this->container['network'];
+    }
+
+    /**
+     * Sets network
+     * @param \CyberSource\Model\Ptsv2paymentsProcessorInformationReversalNetwork $network
+     * @return $this
+     */
+    public function setNetwork($network)
+    {
+        $this->container['network'] = $network;
+
+        return $this;
+    }
+
+    /**
+     * Gets responseSourceCode
+     * @return string
+     */
+    public function getResponseSourceCode()
+    {
+        return $this->container['responseSourceCode'];
+    }
+
+    /**
+     * Sets responseSourceCode
+     * @param string $responseSourceCode Field contains the response source code that identifies the source.
+     * @return $this
+     */
+    public function setResponseSourceCode($responseSourceCode)
+    {
+        $this->container['responseSourceCode'] = $responseSourceCode;
 
         return $this;
     }

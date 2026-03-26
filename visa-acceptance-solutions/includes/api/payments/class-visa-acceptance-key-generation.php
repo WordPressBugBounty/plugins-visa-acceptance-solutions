@@ -54,11 +54,12 @@ class Visa_Acceptance_Key_Generation extends Visa_Acceptance_Request {
 	 * @param int   $product_id The product ID (optional).
 	 * @param int   $quantity The product quantity (optional).
 	 * @param array $grouped_items Array of grouped product items with product IDs and quantities (optional).
+	 * @param float $switch_amount Custom amount to use (optional, for subscription switches).
 	 * @return array
 	 */
-	public function get_unified_checkout_capture_context($is_ep = false, $product_id = null, $quantity = null, $grouped_items = array() ) {
+	public function get_unified_checkout_capture_context($is_ep = false, $product_id = null, $quantity = null, $grouped_items = array(), $switch_amount = null ) {
 		$response                         	= array();
-		$log_header							= 'Credit Card'. VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_UC_CAPTURE_CONTEXT ;
+		$log_header							= VISA_ACCEPTANCE_CREDIT_CARD. VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_UC_CAPTURE_CONTEXT ;
 		$do_service_call                  	= true;
 		$key_generation_request           	= new Visa_Acceptance_Key_Generation_Request( $this->gateway );
 		$payment_gateway_unified_checkout 	= new Visa_Acceptance_Payment_Gateway_Unified_Checkout();
@@ -70,7 +71,7 @@ class Visa_Acceptance_Key_Generation extends Visa_Acceptance_Request {
 		if ( is_add_payment_method_page() || ( $subscription_active && WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment ) ) {
 			  if ( $is_ep && ($subscription_active && WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment )) {
                 $request = $key_generation_request->get_digital_zero_uc_request();
-				$log_header = 'Express Pay'. VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_UC_CAPTURE_CONTEXT ;
+				$log_header = VISA_ACCEPTANCE_EXPRESS_PAY. VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_UC_CAPTURE_CONTEXT ;
 			} else {
 				$request = $key_generation_request->get_zero_uc_request();
 			}
@@ -79,8 +80,8 @@ class Visa_Acceptance_Key_Generation extends Visa_Acceptance_Request {
 				$request 	= $key_generation_request->get_uc_request();
 			}
 			else {
-				$request = $key_generation_request->get_digital_uc_request($product_id, $quantity, $grouped_items );
-				$log_header = 'Express Pay'. VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_UC_CAPTURE_CONTEXT ;
+				$request = $key_generation_request->get_digital_uc_request($product_id, $quantity, $grouped_items, $switch_amount );
+				$log_header = VISA_ACCEPTANCE_EXPRESS_PAY. VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_UC_CAPTURE_CONTEXT ;
 			}
 			if ( ( VISA_ACCEPTANCE_ZERO_AMOUNT === (string) $request['orderInformation']['amountDetails']['totalAmount'] ) && WC_Subscriptions_Cart::cart_contains_subscription() && ! is_product() ) {
 				$request = $is_ep ? $key_generation_request->get_digital_zero_uc_request() : $key_generation_request->get_zero_uc_request();
@@ -100,10 +101,10 @@ class Visa_Acceptance_Key_Generation extends Visa_Acceptance_Request {
 			if ( ! empty( $capture_request ) ) {
 				$this->gateway->add_logs_data( $capture_request, true, $log_header );
 				$response = $capture_context_api->generateUnifiedCheckoutCaptureContext( $capture_request );
-				$this->gateway->add_logs_service_response( $response[0],$response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
+				$this->gateway->add_logs_service_response( $response[VISA_ACCEPTANCE_VAL_ZERO],$response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
 				$return_array = array(
-					'http_code' => $response[1],
-					'body'      => $response[0],
+					'http_code' => $response[VISA_ACCEPTANCE_VAL_ONE],
+					'body'      => $response[VISA_ACCEPTANCE_VAL_ZERO],
 				);
 				return $return_array;
 			}
@@ -147,7 +148,7 @@ class Visa_Acceptance_Key_Generation extends Visa_Acceptance_Request {
 				'clientVersion' => 'v2',
 				'targetOrigins' => array($target_origin),
 				'allowedCardNetworks' => $allowed_card_networks,
-				'allowedPaymentTypes' => array('CARD')
+				'allowedPaymentTypes' => array(VISA_ACCEPTANCE_PAYMENT_TYPE_CARD)
 			);
 			
 			$capture_request = new GenerateCaptureContextRequest($request_data);
@@ -159,20 +160,20 @@ class Visa_Acceptance_Key_Generation extends Visa_Acceptance_Request {
 				$response = $microform_api->generateCaptureContext($capture_request);
 				
 				// Extract correlation ID safely from headers.
-				$correlation_id = 'N/A';
-				if (isset($response[2]) && is_array($response[2]) && isset($response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID])) {
-					$correlation_id = $response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID];
+				$correlation_id = VISA_ACCEPTANCE_NOT_APPLICABLE;
+				if (isset($response[VISA_ACCEPTANCE_VAL_TWO]) && is_array($response[VISA_ACCEPTANCE_VAL_TWO]) && isset($response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID])) {
+					$correlation_id = $response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID];
 					if (is_array($correlation_id)) {
-						$correlation_id = $correlation_id[0] ?? 'N/A';
+						$correlation_id = $correlation_id[VISA_ACCEPTANCE_VAL_ZERO] ?? VISA_ACCEPTANCE_NOT_APPLICABLE;
 					}
 				}
 				
-				$this->gateway->add_logs_service_response($response[0], $correlation_id, true, $log_header
+				$this->gateway->add_logs_service_response($response[VISA_ACCEPTANCE_VAL_ZERO], $correlation_id, true, $log_header
 				);
 				
 				$return_array = array(
-					'http_code' => $response[1],
-					'body' => $response[0]
+					'http_code' => $response[VISA_ACCEPTANCE_VAL_ONE],
+					'body' => $response[VISA_ACCEPTANCE_VAL_ZERO]
 				);
 				
 				return $return_array;

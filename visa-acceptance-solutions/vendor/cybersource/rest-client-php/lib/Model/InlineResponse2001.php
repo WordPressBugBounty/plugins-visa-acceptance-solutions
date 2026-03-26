@@ -53,10 +53,8 @@ class InlineResponse2001 implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'id' => 'string',
-        'submitTimeUtc' => 'string',
-        'status' => 'string',
-        'embedded' => '\CyberSource\Model\InlineResponse2001Embedded'
+        'links' => '\CyberSource\Model\InlineResponse2001Links',
+        'tokenizedCard' => '\CyberSource\Model\Tmsv2TokenizedCard'
     ];
 
     /**
@@ -64,10 +62,8 @@ class InlineResponse2001 implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'id' => null,
-        'submitTimeUtc' => null,
-        'status' => null,
-        'embedded' => null
+        'links' => null,
+        'tokenizedCard' => null
     ];
 
     public static function swaggerTypes()
@@ -85,10 +81,8 @@ class InlineResponse2001 implements ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'id' => 'id',
-        'submitTimeUtc' => 'submitTimeUtc',
-        'status' => 'status',
-        'embedded' => '_embedded'
+        'links' => '_links',
+        'tokenizedCard' => 'tokenizedCard'
     ];
 
 
@@ -97,10 +91,8 @@ class InlineResponse2001 implements ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'id' => 'setId',
-        'submitTimeUtc' => 'setSubmitTimeUtc',
-        'status' => 'setStatus',
-        'embedded' => 'setEmbedded'
+        'links' => 'setLinks',
+        'tokenizedCard' => 'setTokenizedCard'
     ];
 
 
@@ -109,10 +101,8 @@ class InlineResponse2001 implements ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'id' => 'getId',
-        'submitTimeUtc' => 'getSubmitTimeUtc',
-        'status' => 'getStatus',
-        'embedded' => 'getEmbedded'
+        'links' => 'getLinks',
+        'tokenizedCard' => 'getTokenizedCard'
     ];
 
     public static function attributeMap()
@@ -146,10 +136,8 @@ class InlineResponse2001 implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
-        $this->container['submitTimeUtc'] = isset($data['submitTimeUtc']) ? $data['submitTimeUtc'] : null;
-        $this->container['status'] = isset($data['status']) ? $data['status'] : null;
-        $this->container['embedded'] = isset($data['embedded']) ? $data['embedded'] : null;
+        $this->container['links'] = isset($data['links']) ? $data['links'] : null;
+        $this->container['tokenizedCard'] = isset($data['tokenizedCard']) ? $data['tokenizedCard'] : null;
     }
 
     /**
@@ -178,85 +166,43 @@ class InlineResponse2001 implements ArrayAccess
 
 
     /**
-     * Gets id
-     * @return string
+     * Gets links
+     * @return \CyberSource\Model\InlineResponse2001Links
      */
-    public function getId()
+    public function getLinks()
     {
-        return $this->container['id'];
+        return $this->container['links'];
     }
 
     /**
-     * Sets id
-     * @param string $id UUID uniquely generated for this comments.
+     * Sets links
+     * @param \CyberSource\Model\InlineResponse2001Links $links
      * @return $this
      */
-    public function setId($id)
+    public function setLinks($links)
     {
-        $this->container['id'] = $id;
+        $this->container['links'] = $links;
 
         return $this;
     }
 
     /**
-     * Gets submitTimeUtc
-     * @return string
+     * Gets tokenizedCard
+     * @return \CyberSource\Model\Tmsv2TokenizedCard
      */
-    public function getSubmitTimeUtc()
+    public function getTokenizedCard()
     {
-        return $this->container['submitTimeUtc'];
+        return $this->container['tokenizedCard'];
     }
 
     /**
-     * Sets submitTimeUtc
-     * @param string $submitTimeUtc Time of request in UTC. Format: `YYYY-MM-DDThh:mm:ssZ` **Example** `2016-08-11T22:47:57Z` equals August 11, 2016, at 22:47:57 (10:47:57 p.m.). The `T` separates the date and the time. The `Z` indicates UTC.  Returned by Cybersource for all services.
+     * Sets tokenizedCard
+     * @param \CyberSource\Model\Tmsv2TokenizedCard $tokenizedCard
      * @return $this
      */
-    public function setSubmitTimeUtc($submitTimeUtc)
+    public function setTokenizedCard($tokenizedCard)
     {
-        $this->container['submitTimeUtc'] = $submitTimeUtc;
-
-        return $this;
-    }
-
-    /**
-     * Gets status
-     * @return string
-     */
-    public function getStatus()
-    {
-        return $this->container['status'];
-    }
-
-    /**
-     * Sets status
-     * @param string $status The status of the submitted transaction. Possible values are: - `ACCEPTED` - `REJECTED`
-     * @return $this
-     */
-    public function setStatus($status)
-    {
-        $this->container['status'] = $status;
-
-        return $this;
-    }
-
-    /**
-     * Gets embedded
-     * @return \CyberSource\Model\InlineResponse2001Embedded
-     */
-    public function getEmbedded()
-    {
-        return $this->container['embedded'];
-    }
-
-    /**
-     * Sets embedded
-     * @param \CyberSource\Model\InlineResponse2001Embedded $embedded
-     * @return $this
-     */
-    public function setEmbedded($embedded)
-    {
-        $this->container['embedded'] = $embedded;
+        $this->container['tokenizedCard'] = $tokenizedCard;
 
         return $this;
     }

@@ -53,7 +53,9 @@ class Ptsv2paymentsOrderInformationAmountDetails implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
+        'refundBalance' => 'string',
         'giftWrapAmount' => 'string',
+        'invoiceAmount' => 'string',
         'totalAmount' => 'string',
         'subTotalAmount' => 'string',
         'currency' => 'string',
@@ -90,7 +92,9 @@ class Ptsv2paymentsOrderInformationAmountDetails implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
+        'refundBalance' => null,
         'giftWrapAmount' => null,
+        'invoiceAmount' => null,
         'totalAmount' => null,
         'subTotalAmount' => null,
         'currency' => null,
@@ -137,7 +141,9 @@ class Ptsv2paymentsOrderInformationAmountDetails implements ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
+        'refundBalance' => 'refundBalance',
         'giftWrapAmount' => 'giftWrapAmount',
+        'invoiceAmount' => 'invoiceAmount',
         'totalAmount' => 'totalAmount',
         'subTotalAmount' => 'subTotalAmount',
         'currency' => 'currency',
@@ -175,7 +181,9 @@ class Ptsv2paymentsOrderInformationAmountDetails implements ArrayAccess
      * @var string[]
      */
     protected static $setters = [
+        'refundBalance' => 'setRefundBalance',
         'giftWrapAmount' => 'setGiftWrapAmount',
+        'invoiceAmount' => 'setInvoiceAmount',
         'totalAmount' => 'setTotalAmount',
         'subTotalAmount' => 'setSubTotalAmount',
         'currency' => 'setCurrency',
@@ -213,7 +221,9 @@ class Ptsv2paymentsOrderInformationAmountDetails implements ArrayAccess
      * @var string[]
      */
     protected static $getters = [
+        'refundBalance' => 'getRefundBalance',
         'giftWrapAmount' => 'getGiftWrapAmount',
+        'invoiceAmount' => 'getInvoiceAmount',
         'totalAmount' => 'getTotalAmount',
         'subTotalAmount' => 'getSubTotalAmount',
         'currency' => 'getCurrency',
@@ -276,7 +286,9 @@ class Ptsv2paymentsOrderInformationAmountDetails implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
+        $this->container['refundBalance'] = isset($data['refundBalance']) ? $data['refundBalance'] : null;
         $this->container['giftWrapAmount'] = isset($data['giftWrapAmount']) ? $data['giftWrapAmount'] : null;
+        $this->container['invoiceAmount'] = isset($data['invoiceAmount']) ? $data['invoiceAmount'] : null;
         $this->container['totalAmount'] = isset($data['totalAmount']) ? $data['totalAmount'] : null;
         $this->container['subTotalAmount'] = isset($data['subTotalAmount']) ? $data['subTotalAmount'] : null;
         $this->container['currency'] = isset($data['currency']) ? $data['currency'] : null;
@@ -334,6 +346,27 @@ class Ptsv2paymentsOrderInformationAmountDetails implements ArrayAccess
 
 
     /**
+     * Gets refundBalance
+     * @return string
+     */
+    public function getRefundBalance()
+    {
+        return $this->container['refundBalance'];
+    }
+
+    /**
+     * Sets refundBalance
+     * @param string $refundBalance The remaining amount which can be refunded.
+     * @return $this
+     */
+    public function setRefundBalance($refundBalance)
+    {
+        $this->container['refundBalance'] = $refundBalance;
+
+        return $this;
+    }
+
+    /**
      * Gets giftWrapAmount
      * @return string
      */
@@ -350,6 +383,27 @@ class Ptsv2paymentsOrderInformationAmountDetails implements ArrayAccess
     public function setGiftWrapAmount($giftWrapAmount)
     {
         $this->container['giftWrapAmount'] = $giftWrapAmount;
+
+        return $this;
+    }
+
+    /**
+     * Gets invoiceAmount
+     * @return string
+     */
+    public function getInvoiceAmount()
+    {
+        return $this->container['invoiceAmount'];
+    }
+
+    /**
+     * Sets invoiceAmount
+     * @param string $invoiceAmount Invoice amount.  The invoice amount issued by the Merchant to the Cardholder, which includes VAT (excluding items such as TIPS or CASHBACK). For transactions that do not have applicable Benefit Laws, the field may be entered as zeros.  This field is only applicable for Uruguay market.  Example: 100.00  Uruguay  The value for this field corresponds to the following data in the TC 33 capture file:  - Record: CP01 TCR9 - Position: 7-18 - Field: Invoice Amount
+     * @return $this
+     */
+    public function setInvoiceAmount($invoiceAmount)
+    {
+        $this->container['invoiceAmount'] = $invoiceAmount;
 
         return $this;
     }

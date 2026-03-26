@@ -49,12 +49,12 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 		add_action( 'woocommerce_scheduled_subscription_payment_' . $this->id, array( $this, 'scheduled_subscription_payment' ), VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY, VISA_ACCEPTANCE_VAL_TWO );
 		add_filter( 'woocommerce_my_subscriptions_payment_method', array( $this, 'render_payment_method_for_subscriptions' ), VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY, VISA_ACCEPTANCE_VAL_TWO );
 		add_filter( 'woocommerce_account_payment_methods_column_subscriptions', array( $this, 'add_payment_method_subscriptions' ) );
-		add_filter( 'woocommerce_subscription_payment_meta', array( $this, 'admin_add_payment_meta' ), 9, VISA_ACCEPTANCE_VAL_TWO );
+		add_filter( 'woocommerce_subscription_payment_meta', array( $this, 'admin_add_payment_meta' ), VISA_ACCEPTANCE_VAL_NINE, VISA_ACCEPTANCE_VAL_TWO );
 		add_filter( 'woocommerce_payment_gateways_renewal_support_status_html', array( $this, 'subscriptions_maybe_edit_renewal_support_status' ), VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY, VISA_ACCEPTANCE_VAL_TWO );
 		add_filter( 'woocommerce_subscriptions_process_payment_for_change_method_via_pay_shortcode', array( $this, 'remove_order_meta_from_change_payment' ), VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY, VISA_ACCEPTANCE_VAL_TWO );
 		add_action( 'woocommerce_update_options_checkout_' . $this->get_id(), array( $this, 'visa_acceptance_solutions_subscription_notice' ) );
-		add_action( 'woocommerce_subscription_validate_payment_meta_' . $this->get_id(), array( $this, 'admin_validate_payment_meta' ), 9 );
-		add_filter( 'woocommerce_order_needs_payment', array( $this, 'dm_review_early_renewal_needs_payment' ), 10, 2 );
+		add_action( 'woocommerce_subscription_validate_payment_meta_' . $this->get_id(), array( $this, 'admin_validate_payment_meta' ), VISA_ACCEPTANCE_VAL_NINE );
+		add_filter( 'woocommerce_order_needs_payment', array( $this, 'dm_review_early_renewal_needs_payment' ), VISA_ACCEPTANCE_VAL_TEN, VISA_ACCEPTANCE_VAL_TWO );
 	}
 
 	/**
@@ -88,7 +88,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 				$message,
 				array(
 					'id'                 => 'message',
-					'additional_classes' => array( 'error' ),
+					'additional_classes' => array( VISA_ACCEPTANCE_ERROR ),
 					'dismissible'        => true,
 				)
 			);
@@ -119,7 +119,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 			}
 			foreach ( $sv_subscriptions as $sv_subsription_id ) {
 				$sv_subsription_id = (array) $sv_subsription_id;
-				$sv_subscription   = wcs_get_subscription( $sv_subsription_id[0] );
+				$sv_subscription   = wcs_get_subscription( $sv_subsription_id[VISA_ACCEPTANCE_VAL_ZERO] );
 				if ( VISA_ACCEPTANCE_SV_GATEWAY_ID === $sv_subscription->get_payment_method( VISA_ACCEPTANCE_EDIT ) ) {
 					$sv_payment_token         = $this->get_order_meta( $sv_subscription, 'payment_token' );
 					$sv_customer_id           = $this->get_order_meta( $sv_subscription, 'customer_id' );
@@ -133,18 +133,18 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 					foreach ( $tokens as $token ) {
 						$payment_method = new Visa_Acceptance_Payment_Methods( $this );
 						$token_data     = $payment_method->build_token_data( $token );
-						if ( $token_data['token'] === $sv_payment_token && get_user_meta( $token_data['user_id'], 'wc_cybersource_customer_id_' . $token_data['environment'], true ) === $sv_customer_id ) {
+						if ( $token_data['token'] === $sv_payment_token && get_user_meta( $token_data['user_id'], 'wc_cybersource_customer_id_' . $token_data[VISA_ACCEPTANCE_ENVIRONMENT], true ) === $sv_customer_id ) {
 							$instrument_identifier_id = $token_data['instrument_identifier']['id'];
 							break;
 						}
 					}
 					if ( ! empty( $instrument_identifier_id ) ) {
 						$sv_subscription->set_payment_method( VISA_ACCEPTANCE_UC_ID );
-						$this->add_subscription_token_meta_for_migration( $sv_subscription, 'subscription_token', $instrument_identifier_id );
+						$this->add_subscription_token_meta_for_migration( $sv_subscription, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN, $instrument_identifier_id );
 						$sv_subscription->save();
-						$wc_payment_gateway_activator->add_logs_data( 'Success: Subscription Order ' . $sv_subsription_id[0] . ' migrated.' );
+						$wc_payment_gateway_activator->add_logs_data( 'Success: Subscription Order ' . $sv_subsription_id[VISA_ACCEPTANCE_VAL_ZERO] . ' migrated.' );
 					} else {
-						$wc_payment_gateway_activator->add_logs_data( 'Failed: Subscription Order ' . $sv_subsription_id[0] . ' migration failed.' );
+						$wc_payment_gateway_activator->add_logs_data( 'Failed: Subscription Order ' . $sv_subsription_id[VISA_ACCEPTANCE_VAL_ZERO] . ' migration failed.' );
 					}
 				}
 			}
@@ -181,10 +181,10 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 * @return array $result
 	 */
 	public function scheduled_subscription_payment( $amount_to_charge, $order ) {
-        $result = array( 'success' => false );
+        $result = array( VISA_ACCEPTANCE_SUCCESS => false );
         if ( $order->get_payment_method( 'edit' ) === $this->get_id() ) {
             try {
-                $token           = $this->get_order_meta( $order, 'subscription_token' );
+                $token           = $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN );
                 $current_user_id = $order->get_user_id();
                 $is_early_renewal = false;
                 $accepted_via_modal = false;
@@ -226,7 +226,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
                     
                     // For early renewal orders in DM review, add a flag.
                     if ( $is_dm_review && $is_early_renewal && $accepted_via_modal ) {
-                        $order->update_meta_data( '_visa_dm_review_early_renewal', 'yes' );
+                        $order->update_meta_data( '_visa_dm_review_early_renewal', VISA_ACCEPTANCE_YES );
                         $order->save();
                     
                         // Add success message for DM review orders.
@@ -245,12 +245,12 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
  
                     // For early renewal orders in DM review, add a flag.
                     if ( $is_dm_reject && $is_early_renewal && $accepted_via_modal ) {
-                        $order->update_meta_data( '_visa_dm_reject_early_renewal', 'no' );
+                        $order->update_meta_data( '_visa_dm_reject_early_renewal', VISA_ACCEPTANCE_NO );
                         $order->save();
                     
                         // Add success message for DM review orders.
                         if ( function_exists( 'wc_add_notice' ) ) {
-                        wc_add_notice( __( 'Unable to complete your order. Please check your details and try again.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_STRING_ERROR );
+                        wc_add_notice( __( 'Unable to complete your order. Please check your details and try again.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_ERROR );
                         }
                     }
                 }
@@ -302,13 +302,20 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 		// bail for other payment methods.
 		if ( $subscription->get_payment_method( 'edit' ) === $this->get_id() && ! is_add_payment_method_page() ) {
 
-			$token = $this->get_order_meta( $subscription, 'subscription_token' );
+			$token = $this->get_order_meta( $subscription, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN );
 			$token = $this->get_wc_token( $token, get_current_user_id() );
 			if ( $token instanceof \WC_Payment_Token ) {
 				$payment_method = new Visa_Acceptance_Payment_Methods( $this );
 				$token_data     = $payment_method->build_token_data( $token );
-				/* translators: %1$s - payment method name, %2$s - last four digits of the card. */
-				$payment_method_to_display = sprintf( __( '%1$s card ending with %2$s', 'visa-acceptance-solutions' ), $payment_method_to_display, $token_data['last_four'] );
+				$last4          = isset( $token_data['last4'] ) ? $token_data['last4'] : ( isset( $token_data['last_four'] ) ? $token_data['last_four'] : VISA_ACCEPTANCE_STRING_EMPTY );
+				$is_echeck      = ! empty( $token_data['is_echeck'] );
+				if ( $is_echeck ) {
+					/* translators: %1$s - payment method name, %2$s - last four digits of the account. */
+					$payment_method_to_display = sprintf( __( '%1$s eCheck ending with %2$s', 'visa-acceptance-solutions' ), $payment_method_to_display, $last4 );
+				} else {
+					/* translators: %1$s - payment method name, %2$s - last four digits of the card. */
+					$payment_method_to_display = sprintf( __( '%1$s card ending with %2$s', 'visa-acceptance-solutions' ), $payment_method_to_display, $last4 );
+				}
 			}
 		}
 
@@ -334,7 +341,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 			if ( ! empty( $subscription_ids ) ) {
 				$html = implode( ', ', $subscription_ids );
 			} else {
-				$html = wp_kses_post( 'N/A', 'visa-acceptance-solutions' );
+				$html = wp_kses_post( VISA_ACCEPTANCE_NOT_APPLICABLE, 'visa-acceptance-solutions' );
 			}
 			echo wp_kses_post( $html );
 		}
@@ -352,7 +359,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 		$subscriptions = wcs_get_users_subscriptions( get_current_user_id() );
 		foreach ( $subscriptions as $key => $subscription ) {
 			$payment_method  = $subscription->get_payment_method( 'edit' );
-			$stored_token_id = $this->get_order_meta( $subscription, 'subscription_token' );
+			$stored_token_id = $this->get_order_meta( $subscription, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN );
 			if ( $stored_token_id !== (string) $token['token'] || $payment_method !== $this->get_id() ) {
 				unset( $subscriptions[ $key ] );
 			}
@@ -371,6 +378,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 * @return array $payload
 	 */
 	public function saved_token_subscriptions_payload( $order, $payload, $merchant_initiated ) {
+		$contain_token = $this->has_subscription_token ( $order );
 		if ( wcs_order_contains_subscription( $order ) || wcs_order_contains_renewal( $order ) ) {
 			if ( wcs_order_contains_renewal( $order ) && $merchant_initiated ) {
 				$payload['authorizationOptions']['initiator']['type'] = 'merchant';
@@ -378,11 +386,12 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 					array_push( $payload['actionList'], VISA_ACCEPTANCE_DECISION_SKIP );
 				}
 			}
-			if ( ! empty( $this->get_order_meta( $order, 'subscription_token' ) ) && wcs_order_contains_renewal( $order ) && ! is_checkout() ) {
-				$payload['commerceIndicator'] = VISA_ACCEPTANCE_RECURRING;
-			} else {
-				$payload['recurringOptions']['firstRecurringPayment'] = true;
-			}
+			// Set commerceIndicator to recurring only when a subscription token exists AND the order is a renewal.
+			if ( ( ! empty( $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ) ) || $contain_token ) && wcs_order_contains_renewal( $order ) ) { 
+			$payload['commerceIndicator'] = VISA_ACCEPTANCE_RECURRING;
+		} elseif ( wcs_order_contains_subscription( $order ) || wcs_order_contains_renewal( $order ) ) {
+			$payload['recurringOptions']['firstRecurringPayment'] = true;
+		}
 		}
 
 		return $payload;
@@ -398,7 +407,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 */
 	public function customer_subscription_payload( $order, $payload ) {
 		$contain_token = $this->has_subscription_token ( $order );
-		if ( ( ! empty( $this->get_order_meta( $order, 'subscription_token' ) ) || $contain_token ) && wcs_order_contains_renewal( $order ) ) { 
+		if ( ( ! empty( $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ) ) || $contain_token ) && wcs_order_contains_renewal( $order ) ) { 
 			$payload['commerceIndicator'] = VISA_ACCEPTANCE_RECURRING;
 		} elseif ( wcs_order_contains_subscription( $order ) || wcs_order_contains_renewal( $order ) ) {
 			$payload['recurringOptions']['firstRecurringPayment'] = true;
@@ -414,10 +423,10 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 */
 	private function has_subscription_token ( $order ) {
 		$token = false;
-		if ( empty( $this->get_order_meta( $order, 'subscription_token' ) ) && function_exists( 'wcs_get_subscriptions_for_renewal_order' ) && wcs_order_contains_early_renewal( $order ) ) {
+		if ( empty( $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ) ) && function_exists( 'wcs_get_subscriptions_for_renewal_order' ) && wcs_order_contains_early_renewal( $order ) ) {
 			$subscriptions = wcs_get_subscriptions_for_renewal_order( $order );
 			foreach ( $subscriptions as $subscription ) {
-				$subscription_token = $this->get_order_meta( $subscription, 'subscription_token' );
+				$subscription_token = $this->get_order_meta( $subscription, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN );
 				if ( $subscription_token ) {
 					$token = true;
 				}
@@ -437,8 +446,8 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	public function admin_add_payment_meta( $meta, $subscription ) {
 		$meta[ $this->get_id() ] = array(
 			'post_meta' => array(
-				VISA_ACCEPTANCE_WC_UC_ID . 'subscription_token' => array(
-					'value' => $this->get_order_meta( $subscription, 'subscription_token' ),
+				VISA_ACCEPTANCE_WC_UC_ID . VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN => array(
+					'value' => $this->get_order_meta( $subscription, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ),
 					'label' => __( 'Payment Token', 'visa-acceptance-solutions' ),
 
 				),
@@ -463,14 +472,14 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 
 		foreach ( $subscriptions as $subscription ) {
 			$updated = false;
-			if ( ! empty( $this->get_order_meta( $order, 'subscription_token' ) ) ) {
-				if ( ! empty( $this->get_order_meta( $subscription, 'subscription_token' ) ) ) {
-					$subscription->update_meta_data( VISA_ACCEPTANCE_WC_UC_ID . 'subscription_token', $this->get_order_meta( $order, 'subscription_token' ) );
+			if ( ! empty( $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ) ) ) {
+				if ( ! empty( $this->get_order_meta( $subscription, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ) ) ) {
+					$subscription->update_meta_data( VISA_ACCEPTANCE_WC_UC_ID . VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN, $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ) );
 				} elseif ( VISA_ACCEPTANCE_ZERO_AMOUNT === $order->get_total() ) {
 						$order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING, VISA_ACCEPTANCE_STRING_EMPTY );
-						$subscription->add_meta_data( VISA_ACCEPTANCE_WC_UC_ID . 'subscription_token', $this->get_order_meta( $order, 'subscription_token' ) );
+						$subscription->add_meta_data( VISA_ACCEPTANCE_WC_UC_ID . VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN, $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ) );
 				} else {
-					$subscription->add_meta_data( VISA_ACCEPTANCE_WC_UC_ID . 'subscription_token', $this->get_order_meta( $order, 'subscription_token' ) );
+					$subscription->add_meta_data( VISA_ACCEPTANCE_WC_UC_ID . VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN, $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ) );
 				}
 				$updated = true;
 			}
@@ -487,11 +496,11 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 * @param string $instrument_identifier instrument identifier.
 	 */
 	public function update_order_subscription_token( $order, $instrument_identifier ) {
-		if ( ! empty( $this->get_order_meta( $order, 'subscription_token' ) ) ) {
-			$this->update_order_meta( $order, 'subscription_token', $instrument_identifier );
+		if ( ! empty( $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ) ) ) {
+			$this->update_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN, $instrument_identifier );
 		} else {
 			$authorization_saved_card = new Visa_Acceptance_Authorization_Saved_Card( $this );
-			$authorization_saved_card->add_order_meta( $order, 'subscription_token', $instrument_identifier );
+			$authorization_saved_card->add_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN, $instrument_identifier );
 		}
 	}
 
@@ -522,7 +531,13 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 					}
 				} elseif ( ! empty( $transient_token ) ) {
 					$payment_method = new Visa_Acceptance_Payment_Methods( $this );
-					$result         = $payment_method->create_token( $transient_token, $order );
+					// Detect if this is an eCheck token.
+					$is_echeck = false;
+					$decoded_transient_token = json_decode( base64_decode( explode( VISA_ACCEPTANCE_FULL_STOP, $transient_token )[VISA_ACCEPTANCE_VAL_ONE] ), true );// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+					if ( isset( $decoded_transient_token['metadata']['paymentType'] ) && VISA_ACCEPTANCE_CHECK === $decoded_transient_token['metadata']['paymentType'] ) {
+						$is_echeck = true;
+					}
+					$result         = $payment_method->create_token( $transient_token, $order, $is_echeck );
 					if ( isset( $result['status'] ) && $result['status'] && isset( $result['token'] ) ) {
 						$payment_method_updated = true;
 						$instrument_identifier  = $result['token'];
@@ -582,7 +597,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 		// if the payment method has been changed to another gateway, additionally remove the old payment token and customer ID meta.
 		if ( $new_payment_method !== $gateway_id && $old_payment_method === $gateway_id ) {
 
-			$subscription->delete_meta_data( VISA_ACCEPTANCE_WC_UC_ID . 'subscription_token' );
+			$subscription->delete_meta_data( VISA_ACCEPTANCE_WC_UC_ID . VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN );
 			$subscription->save_meta_data();
 		}
 
@@ -596,12 +611,12 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 * @throws \Exception If the subscription token is missing.
 	 */
 	public function admin_validate_payment_meta( $meta ) {
-		if ( empty( $meta['post_meta'][ VISA_ACCEPTANCE_WC_UC_ID . 'subscription_token' ]['value'] ) ) {
+		if ( empty( $meta['post_meta'][ VISA_ACCEPTANCE_WC_UC_ID . VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ]['value'] ) ) {
 			/* translators: %s - label of the required field. */
 			throw new \Exception(
 				sprintf(
 					esc_html__( '%s is required.', 'visa-acceptance-solutions' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-					esc_html( $meta['post_meta'][ VISA_ACCEPTANCE_WC_UC_ID . 'subscription_token' ]['label'] )
+					esc_html( $meta['post_meta'][ VISA_ACCEPTANCE_WC_UC_ID . VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ]['label'] )
 				)
 			);
 		}

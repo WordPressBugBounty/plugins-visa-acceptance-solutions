@@ -143,19 +143,23 @@ trait Visa_Acceptance_Payment_Gateway_Includes_Trait {
 	/**
 	 * Checks whether the token already exists.
 	 *
-	 * @param array $payment_response payment response array.
+	 * @param array         $payment_response payment response array.
+	 * @param WC_Order|null $order order object.
+	 * @param bool          $is_echeck whether this is an echeck payment.
 	 *
 	 * @return array
 	 */
-	public function save_payment_method( $payment_response ) {
+	public function save_payment_method( $payment_response, $order = null, $is_echeck = false ) {
 		$settings        = $this->gateway->get_config_settings();
 		$payment_methods = new Visa_Acceptance_Payment_Methods( $this->gateway );
 		$customer_data   = $payment_methods->get_order_for_add_payment_method();
-		$core_token      = $payment_methods->check_token_exist( $payment_response, $customer_data );
+		$core_token      = $payment_methods->check_token_exist( $payment_response, $customer_data, $is_echeck );
 		if ( $core_token ) {
-			$return_result = $payment_methods->update_token( $core_token, $payment_response, $settings, $customer_data );
+			$return_result = $is_echeck
+				? array( 'message' => null, 'status' => true, 'token' => $core_token->get_token() )
+				: $payment_methods->update_token( $core_token, $payment_response, $settings, $customer_data );
 		} else {
-			$return_result = $payment_methods->gettokenResponseArray( $payment_response, $customer_data );
+			$return_result = $payment_methods->get_token_Response_Array( $payment_response, $customer_data, $is_echeck );
 		}
 		return $return_result;
 	}

@@ -159,12 +159,35 @@ function populateCheckoutFromTransientToken(transientToken, isExpressPay) {
                 resolve();
             },
             error: function(error) {
-                console.log('Error fetching addresses from transient token:', error);
                 resolve(); // Resolve anyway to allow order submission
             }
         });
     });
 }
+
+// Hide "(expires /)" text from eCheck token labels in blocks checkout.
+(function removeEcheckExpiryLabel() {
+    if (!ucBlocksSettings.token_type) return;
+    var eCheckIds = Object.keys(ucBlocksSettings.token_type).filter(function(id) {
+        return ucBlocksSettings.token_type[id] === 'eCheck';
+    });
+    if (!eCheckIds.length) return;
+    function stripEcheckExpiry() {
+        document.querySelectorAll('.wc-block-components-payment-methods__token').forEach(function(el) {
+            var radio = el.querySelector('input[type="radio"]');
+            if (!radio) return;
+            var tokenId = radio.value;
+            if (eCheckIds.indexOf(tokenId) === -1) return;
+            var label = el.querySelector('label');
+            if (label && label.textContent.includes('(expires')) {
+                label.textContent = label.textContent.replace(/\s*\(expires[^)]*\)/g, '').trim();
+            }
+        });
+    }
+    var observer = new MutationObserver(stripEcheckExpiry);
+    observer.observe(document.body, { childList: true, subtree: true });
+    stripEcheckExpiry();
+})();
 
 var ucblockssavedcomponent = (props) => {
     // Check if tokenization is enabled, then show saved card CVV field else hide.
@@ -272,59 +295,14 @@ var ucblockssavedcomponent = (props) => {
         cvvRef.current = '';
     }, [token])
 
-    React.useEffect(() => {
-
-        async function deriveAESKeyFromString(tknString) {
-            var encoder = new TextEncoder();
-            var valIdData = encoder.encode(tknString);
-        
-            // Hash the valId using SHA-256 and use the full 32 bytes for AES-256.
-            var hashBuffer = await crypto.subtle.digest('SHA-256', valIdData);
-        
-            return new Uint8Array(hashBuffer).slice(0, 32); // Extract first 32 bytes for AES-256.
-        }
-        
-        async function encryptData(data, tknString) {
-            var extId = crypto.getRandomValues(new Uint8Array(12));//iv:extId
-            var encoder = new TextEncoder();
-            var encodedData = encoder.encode(data);
-        
-            try {
-                var valId = await deriveAESKeyFromString(tknString);//key:valId
-        
-                var cryptoKey = await crypto.subtle.importKey(
-                    'raw',
-                    valId,
-                    { name: 'AES-GCM' },
-                    false,
-                    [ucBlocksSettings.encrypt_const]
-                );
-        
-                var encryptedBuffer = await crypto.subtle.encrypt(
-                    { name: 'AES-GCM', iv: extId },
-                    cryptoKey,
-                    encodedData
-                );
-        
-                var encryptedArray = new Uint8Array(encryptedBuffer);
-                var refIdLength = 16;
-                var ciphertext = encryptedArray.slice(0, encryptedArray.length - refIdLength);
-                var refId = encryptedArray.slice(encryptedArray.length - refIdLength);//tag:refId
-        
-                return {
-                    encrypted: btoa(String.fromCharCode(...ciphertext)),
-                    extId: btoa(String.fromCharCode(...extId)),
-                    refId: btoa(String.fromCharCode(...refId)),
-                };
-            } catch (error) {
-                return null;
-            }
-        }
-        
+    React.useEffect(() => {        
         var unsubscribe = onPaymentSetup(async () => {
             
             if (token) {
-                if (ucBlocksSettings.saved_card_cvv) {
+                // Check if token is eCheck - skip CVV validation for eCheck.
+                var isEcheck = ucBlocksSettings.token_type && ucBlocksSettings.token_type[token] === 'eCheck';
+                
+                if (ucBlocksSettings.saved_card_cvv && !isEcheck) {
                     if (flexInstance) {
                         // Validate that Flex instance has the createToken method.
                         if (typeof flexInstance.createToken !== 'function') {
@@ -407,30 +385,24 @@ var ucblockssavedcomponent = (props) => {
                                 messageContext: emitResponse.noticeContexts.PAYMENTS,
                             };
                         }
-                    }
-                    var wc_credit_card_getorderid = 'order_token';
-                    var payer_auth_enabled = ucBlocksSettings.payer_auth_enabled;
-                    var tknString = ucBlocksSettings.token_key;
-            
-                    // Encrypt CVV using the derived AES-256 key.
-                    var encryptedCVV = await encryptData(cvvValue, tknString);
-
-                    if (!encryptedCVV) {
+                    } else {
+                        setValidationError("Security code field not loaded. Please refresh and try again.");
                         return {
                             type: emitResponse.responseTypes.ERROR,
-                            message: __("Security code validation failed. Please try again."),
+                            message: __("Security code field not loaded. Please refresh and try again."),
                             messageContext: emitResponse.noticeContexts.PAYMENTS,
                         };
                     }
+                } else if (isEcheck) {
+                    // eCheck tokens don't require CVV.
+                    var wc_credit_card_getorderid = 'order_token';
+                    var payer_auth_enabled = ucBlocksSettings.payer_auth_enabled;
                     return {
                         type: emitResponse.responseTypes.SUCCESS,
                         meta: {
                             paymentMethodData: {
                                 token,
                                 wc_credit_card_getorderid,
-                                wc_cc_security_code_blocks: encryptedCVV.encrypted,
-                                ext_Id: encryptedCVV.extId,
-                                ref_Id: encryptedCVV.refId,
                                 payer_auth_enabled,
                             },
                         },
@@ -500,7 +472,11 @@ var ucblockssavedcomponent = (props) => {
         setFlexError(null);
         setValidationError(null);
     }, [token]);
-    var savedCardCvv = ucBlocksSettings.saved_card_cvv ? React.createElement("div", { className: "saved-card-container" },
+    
+    // Check if the current token is an eCheck - don't show CVV for eCheck tokens.
+    var isEcheck = ucBlocksSettings.token_type && ucBlocksSettings.token_type[token] === 'eCheck';
+    
+    var savedCardCvv = (ucBlocksSettings.saved_card_cvv && !isEcheck) ? React.createElement("div", { className: "saved-card-container" },
         React.createElement("div", { className: "saved-card-flex-container" },
             React.createElement("label", { 
                 htmlFor: "flex-cvv-field",
@@ -554,6 +530,13 @@ var ucblockssavedcomponent = (props) => {
     // Initialize Flex microform for saved card CVV.
     React.useEffect(() => {      
         if (typeof Flex !== 'undefined' && token && ucBlocksSettings.saved_card_cvv) {
+            // Check if this token is an eCheck - skip Flex initialization for eCheck.
+            var tokenType = ucBlocksSettings.token_type && ucBlocksSettings.token_type[token];
+            var isEcheckToken = tokenType === 'eCheck';
+            if (isEcheckToken) {
+                return;
+            }
+            
             var flexCaptureContext = ucBlocksSettings.flex_capture_context;
             
             if (flexCaptureContext && typeof flexCaptureContext === 'string') {

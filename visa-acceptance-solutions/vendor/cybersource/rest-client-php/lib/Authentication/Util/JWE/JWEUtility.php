@@ -7,6 +7,7 @@ namespace CyberSource\Authentication\Util\JWE;
 use CyberSource\Authentication\Core\MerchantConfiguration;
 use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\Encryption\Algorithm\ContentEncryption\A256GCM;
+use Jose\Component\Encryption\Algorithm\KeyEncryption\RSAOAEP;
 use Jose\Component\Encryption\Algorithm\KeyEncryption\RSAOAEP256;
 use Jose\Component\Encryption\Compression\CompressionMethodManager;
 use Jose\Component\Encryption\Compression\Deflate;
@@ -53,12 +54,13 @@ class JWEUtility {
             new CompactSerializer(),
         ]);
 
-        // The key encryption algorithm manager with the A256KW algorithm.
+        // The key encryption algorithm manager with RSA-OAEP and RSA-OAEP-256 algorithms.
         $keyEncryptionAlgorithmManager = new AlgorithmManager([
+            new RSAOAEP(),
             new RSAOAEP256()
         ]);
 
-        // The content encryption algorithm manager with the A256CBC-HS256 algorithm.
+        // The content encryption algorithm manager with the A256GCM algorithm.
         $contentEncryptionAlgorithmManager = new AlgorithmManager([
             new A256GCM(),
         ]);
@@ -84,8 +86,9 @@ class JWEUtility {
 
     public static function decryptJWEUsingPrivateKey(string $privateKey, string $encodedResponse) {
         $jwk = JWKFactory::createFromKey($privateKey);
-        // The key encryption algorithm manager with the A256KW algorithm.
+        // The key encryption algorithm manager with RSA-OAEP and RSA-OAEP-256 algorithms.
         $keyEncryptionAlgorithmManager = new AlgorithmManager([
+            new RSAOAEP(),
             new RSAOAEP256()
         ]);
 

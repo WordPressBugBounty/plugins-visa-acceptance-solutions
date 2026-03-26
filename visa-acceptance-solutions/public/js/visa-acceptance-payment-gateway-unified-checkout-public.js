@@ -5,6 +5,7 @@
     var isEventTriggered = false;
     var add_payment_method_token;
     var disableLoader = false;
+    var isExpressPaySubmission = false;
 
     // Flex microform variables for saved card CVV.
     var flexInstances = {};
@@ -48,6 +49,19 @@
         jQuery('.woocommerce-checkout-payment').show();
     });
 
+    jQuery(document.body).on('checkout_error', function() {
+        var isNewCard = (
+            jQuery("input[name$='payment_method'][value$='" + visa_acceptance_ajaxUCObj['visa_acceptance_solutions_uc_id'] + "']").is(':checked') &&
+            (
+                jQuery('#wc-' + visa_acceptance_ajaxUCObj['visa_acceptance_solutions_uc_id_hyphen'] + '-use-new-payment-method').is(':checked') ||
+                jQuery('#wc-' + visa_acceptance_ajaxUCObj['visa_acceptance_solutions_uc_id_hyphen'] + '-use-new-payment-method').length === 0
+            )
+        );
+        if (isNewCard) {
+            location.reload();
+        }
+    });
+
     setInterval(checkDisableLoader, 1000);
 
     function checkDisableLoader() {
@@ -82,6 +96,11 @@
 
     // Named function for form submission handling.
     async function handleFormSubmission(e) {
+        // Express pay bypasses all form validation (terms, CVV, etc.).
+        if (isExpressPaySubmission) {
+            isExpressPaySubmission = false;
+            return true;
+        }
         if ($("input[name$='payment_method'][value$='" + visa_acceptance_ajaxUCObj['visa_acceptance_solutions_uc_id'] +"']").is(':checked')) {
             var valueForTkn = jQuery('input[name=wc-' + visa_acceptance_ajaxUCObj['visa_acceptance_solutions_uc_id_hyphen'] + '-payment-token]:checked').val();
             
@@ -90,7 +109,11 @@
                 document.getElementById("errorMessage").value = "no";
                 return true; // Allow form submission.
             }
-            if (!visa_acceptance_ajaxUCObj['saved_card_cvv']) {
+            
+            // Check if token is eCheck - skip CVV validation for eCheck.
+            var isEcheck = visa_acceptance_ajaxUCObj['token_type'] && visa_acceptance_ajaxUCObj['token_type'][valueForTkn] === 'eCheck';
+            
+            if (!visa_acceptance_ajaxUCObj['saved_card_cvv'] || isEcheck) {
                 document.getElementById("errorMessage").value = "no";
                 return true;
             }
@@ -125,6 +148,7 @@
                             window.flexSubmissionInProgress = true;
                             var form = jQuery('form.checkout');
                             form.off('submit', handleFormSubmission);
+                            form.removeClass('processing');
                             form.submit();
                         }
                         return false;
@@ -449,7 +473,16 @@
                             jQuery('form#order_review').submit();
                         } 
                         else {
+                            // Auto-accept terms & conditions for express pay so that
+                            // WooCommerce's terms checkbox validation does not block
+                            // the express pay flow (registered/admin users included).
+                            var $termsCheckbox = jQuery('input[name="terms"]');
+                            if ($termsCheckbox.length && !$termsCheckbox.is(':checked')) {
+                                $termsCheckbox.prop('checked', true);
+                            }
+                            isExpressPaySubmission = true;
                             setTimeout(() => {
+                                jQuery('form.checkout').removeClass('processing');
                                 jQuery('form.checkout').submit();
                             }, 200);
                             hideExpressPayLoader();
@@ -567,8 +600,21 @@
                 };
             }
         }
-        tknval = jQuery('input[name=wc-' + visa_acceptance_ajaxUCObj['visa_acceptance_solutions_uc_id_hyphen'] +'-payment-token]:checked').val();
-        if (tknval && visa_acceptance_ajaxUCObj['saved_card_cvv']) {
+        var tknval = jQuery('input[name=wc-' + visa_acceptance_ajaxUCObj['visa_acceptance_solutions_uc_id_hyphen'] +'-payment-token]:checked').val();
+        
+        // Hide CVV containers for ALL eCheck tokens on page load.
+        if (visa_acceptance_ajaxUCObj['token_type']) {
+            jQuery.each(visa_acceptance_ajaxUCObj['token_type'], function(tokenId, tokenType) {
+                if (tokenType === 'eCheck') {
+                    jQuery('#token-' + tokenId).hide();
+                }
+            });
+        }
+        
+        // Check if currently selected token is eCheck - don't initialize CVV for eCheck tokens.
+        var isEcheck = visa_acceptance_ajaxUCObj['token_type'] && visa_acceptance_ajaxUCObj['token_type'][tknval] === 'eCheck';
+        
+        if (tknval && visa_acceptance_ajaxUCObj['saved_card_cvv'] && !isEcheck) {
             setTimeout(() => {
                 initFlexForToken(tknval);
             }, 100);
@@ -614,7 +660,9 @@
             jQuery('[id^="token-"]').hide();
             
             // Initialize Flex for the newly selected token (it will show the div if successful).
-            if (tknval && visa_acceptance_ajaxUCObj['saved_card_cvv']) {
+            // Check if token is eCheck - don't initialize CVV for eCheck tokens.
+            var isEcheckToken = visa_acceptance_ajaxUCObj['token_type'] && visa_acceptance_ajaxUCObj['token_type'][tknval] === 'eCheck';
+            if (tknval && visa_acceptance_ajaxUCObj['saved_card_cvv'] && !isEcheckToken) {
                 setTimeout(() => {
                     initFlexForToken(tknval);
                 }, 100);
@@ -682,6 +730,7 @@
                                     add_payment_method_token = tt;
                                     jQuery("form#add_payment_method").submit();
                                 } else {
+                                    $('form.checkout').removeClass('processing');
                                     $('form.checkout').submit();
                                 }
                             });
@@ -751,6 +800,7 @@
                                     add_payment_method_token = tt;
                                     jQuery("form#add_payment_method").submit();
                                 } else {
+                                    $('form.checkout').removeClass('processing');
                                     $('form.checkout').submit();
                                 }
                             });
@@ -797,7 +847,6 @@
 
     $('body').on('payment_method_selected', handlePaymentSelection);
     // Whenever there is an error it will call the function.
-    $('body').on('checkout_error', handlePaymentSelection);
     $('body').on('updated_checkout', handlePaymentSelection);
     $('body').on('init_add_payment_method', function(event) {
         handlePaymentSelection(event);
@@ -838,8 +887,11 @@
 
             }
             
+            // Check if token is eCheck - skip CVV validation for eCheck.
+            var isEcheckPayOrder = visa_acceptance_ajaxUCObj['token_type'] && visa_acceptance_ajaxUCObj['token_type'][valTkn] === 'eCheck';
+            
             // Check if using saved card with CVV required.
-            if (valTkn && visa_acceptance_ajaxUCObj['saved_card_cvv']) {
+            if (valTkn && visa_acceptance_ajaxUCObj['saved_card_cvv'] && !isEcheckPayOrder) {
                 // Check if Flex is being used for this token
                 if (flexInstances[valTkn]) {
                     if (!flexFieldsValid[valTkn]) {
@@ -916,6 +968,71 @@
                 }
             }
         }
+    });
+
+    
+    // Function to move Visa Acceptance payment method after terms and conditions
+    function movePaymentMethodAfterTerms() {
+        var $termsWrapper = $('.woocommerce-terms-and-conditions-wrapper');
+        var $visaPaymentMethod = $('.payment_box.payment_method_visa_acceptance_solutions_unified_checkout');
+        var $paymentMethods = $('.wc_payment_methods.payment_methods.methods');
+        
+        // Check if both elements exist
+        if ($termsWrapper.length && $visaPaymentMethod.length) {
+            // Check if it's not already moved
+            if (!$visaPaymentMethod.hasClass('moved-after-terms') && $paymentMethods.length) {
+                // Add a class to track that it's been moved
+                $visaPaymentMethod.addClass('moved-after-terms');
+                
+                // Move the actual payment method element after terms and conditions
+                $visaPaymentMethod.detach().insertAfter($termsWrapper);
+                var $form = $('form.checkout');
+                $visaPaymentMethod.find(
+                    '#transientToken, #errorMessage, #jwt, #jwt_updated, #ep_jwt, #ep_jwt_updated, #payer_auth_enabled, #flex_cvv_token_data'
+                ).each(function() {
+                    $form.append($(this).detach());
+                });
+                
+                // Setup radio button synchronization
+                setupPaymentMethodRadioSync();
+            }
+        }
+    }
+    
+    // Function to ensure only one payment method radio is selected at a time
+    function setupPaymentMethodRadioSync() {
+        // Handle clicks on the moved Visa Acceptance radio button
+        $(document).on('change', '.payment_box.payment_method_visa_acceptance_solutions_unified_checkout.moved-after-terms > input[type="radio"][name="payment_method"]', function() {
+            if ($(this).is(':checked')) {
+                // Uncheck all other payment method radios in the original list
+                $('.wc_payment_methods.payment_methods.methods input[type="radio"][name="payment_method"]').prop('checked', false);
+                
+                // Show the payment box
+                $('.payment_box.payment_method_visa_acceptance_solutions_unified_checkout.moved-after-terms .payment_box').slideDown();
+                
+                // Trigger WooCommerce payment method selected event
+                $(document.body).trigger('payment_method_selected');
+            }
+        });
+        
+        // Handle clicks on other payment method radios in the main payment methods list
+        $(document).on('change', '.wc_payment_methods.payment_methods.methods input[type="radio"][name="payment_method"]', function() {
+            if ($(this).is(':checked')) {
+                // Uncheck the moved Visa Acceptance main radio button
+                $('.payment_box.payment_method_visa_acceptance_solutions_unified_checkout.moved-after-terms > input[type="radio"][name="payment_method"]').prop('checked', false);
+                
+                // Uncheck all nested token selection radios (saved cards and "use new card")
+                $('.payment_box.payment_method_visa_acceptance_solutions_unified_checkout.moved-after-terms input[type="radio"]').not('[name="payment_method"]').prop('checked', false);
+                
+                // Hide the payment box
+                $('.payment_box.payment_method_visa_acceptance_solutions_unified_checkout.moved-after-terms .payment_box').slideUp();
+            }
+        });
+    }
+    
+    // Run after WooCommerce updates checkout
+    $(document.body).on('updated_checkout', function() {
+        movePaymentMethodAfterTerms();
     });
 
  })(jQuery);

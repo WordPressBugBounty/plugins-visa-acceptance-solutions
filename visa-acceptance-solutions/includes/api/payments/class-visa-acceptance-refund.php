@@ -60,13 +60,18 @@ class Visa_Acceptance_Refund extends Visa_Acceptance_Request {
 	 * @return string|boolean
 	 */
 	public function do_refund( $order, $amount, $reason ) {
-		$transaction_id 	   = $this->get_order_meta( $order, VISA_ACCEPTANCE_CAPTURE_TRANSACTION_ID );
-		$response       	   = false;
-		$refund_response_obj   = new Visa_Acceptance_Refund_Response( $this->gateway );
+		$payment_type = $order->get_meta('_vas_payment_type', true);
+		if ( empty( $payment_type ) ) {
+			$payment_type = VISA_ACCEPTANCE_PAYMENT_TYPE_CARD;
+		}
+		$is_echeck = ( strtoupper( $payment_type ) === VISA_ACCEPTANCE_CHECK );
+		$transaction_id = $this->get_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_ID ) ? $this->get_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_ID ) : $order->get_transaction_id();
+		$response = false;
+		$refund_response_obj = new Visa_Acceptance_Refund_Response( $this->gateway );
 		try {
 			if ( VISA_ACCEPTANCE_VAL_ZERO !== $order->get_total() && $order->get_total() >= $amount ) { // phpcs:ignore WordPress.Security.NonceVerification
 				if ( $transaction_id ) {
-					$refund_response       = $this->get_refund_response( $order, $amount, $transaction_id );
+					$refund_response       = $this->get_refund_response( $order, $amount, $transaction_id, $is_echeck );
 					$http_code             = $refund_response['http_code'];
 					$refund_body = $refund_response['body'];
 					if(VISA_ACCEPTANCE_FOUR_ZERO_ONE === $http_code) {
@@ -78,6 +83,16 @@ class Visa_Acceptance_Refund extends Visa_Acceptance_Request {
 						VISA_ACCEPTANCE_REFUND
 					);
 					$status                = $refund_response_array['status'];
+					
+					// If amount is not in response, use the requested refund amount.
+					if ( empty( $refund_response_array['amount'] ) ) {
+						$refund_response_array['amount'] = $amount;
+					}
+					// If currency is not in response, use order currency.
+					if ( empty( $refund_response_array['currency'] ) ) {
+						$refund_response_array['currency'] = $order->get_currency();
+					}
+					
 					if ( $refund_response_obj->is_transaction_approved( $refund_response, $status ) ) {
 						$this->add_refund_data( $order, $refund_response_array );
 						$this->add_refund_order_note( $order, $reason, $refund_response_array );
@@ -96,8 +111,9 @@ class Visa_Acceptance_Refund extends Visa_Acceptance_Request {
 				$order->add_order_note( $response->get_error_message() );
 			}
 			return $response;
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
 			$this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to get refund transaction', true );
+			return new \WP_Error( 'vas_refund_failed', $this->gateway->get_title() . ' ' . __( 'Refund Failed:', 'visa-acceptance-solutions' ) );
 		}
 	}
 
@@ -121,18 +137,28 @@ class Visa_Acceptance_Refund extends Visa_Acceptance_Request {
 	 * @param array     $refund_response_array refund transaction response.
 	 */
 	protected function add_refund_data( \WC_Order $order, $refund_response_array ) {
-		try {
-			// indicate the order was refunded along with the refund amount.
-			$this->add_order_meta( $order, VISA_ACCEPTANCE_REFUND_AMOUNT, $refund_response_array['amount'] );
-
-			// add refund transaction ID.
-			if ( $refund_response_array && $refund_response_array['transaction_id'] ) {
-				$this->add_order_meta( $order, VISA_ACCEPTANCE_REFUND_TRANSACTION_ID, $refund_response_array['transaction_id'] );
-			}
-		} catch ( \Exception $e ) {
-			$this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to add data to order meta', true );
-		}
-	}
+        try {
+            // indicate the order was refunded along with the refund amount.
+            $this->add_order_meta( $order, VISA_ACCEPTANCE_REFUND_AMOUNT, $refund_response_array['amount'] );
+ 
+            // add refund transaction ID.
+            if ( $refund_response_array && $refund_response_array['transaction_id'] ) {
+                $this->add_order_meta( $order, VISA_ACCEPTANCE_REFUND_TRANSACTION_ID, $refund_response_array['transaction_id'] );
+                if ( ! empty( $refund_response_array['credit_auth_code'] ) ) {
+                $this->add_order_meta( $order, VISA_ACCEPTANCE_CREDIT_AUTH_CODE, $refund_response_array['credit_auth_code'] );
+                }
+                if ( isset( $refund_response_array['credit_auth_response'] ) && VISA_ACCEPTANCE_STRING_EMPTY !== $refund_response_array['credit_auth_response'] ) {
+                    $this->add_order_meta( $order, VISA_ACCEPTANCE_CREDIT_AUTH_RESPONSE, $refund_response_array['credit_auth_response'] );
+                }
+                if ( ! empty( $refund_response_array['credit_auth_network_transaction_id'] ) ) {
+                    $this->add_order_meta( $order, VISA_ACCEPTANCE_NETWORK_TRANSACTION_ID, $refund_response_array['credit_auth_network_transaction_id'] );
+                }
+            }
+        } catch ( \Exception $e ) {
+            $this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to add data to order meta', true );
+        }
+    }
+ 
 
 	/**
 	 * Handles order notes for refund
@@ -142,36 +168,48 @@ class Visa_Acceptance_Refund extends Visa_Acceptance_Request {
 	 * @param array     $refund_response_array response for refund transaction.
 	 */
 	protected function add_refund_order_note( \WC_Order $order, $reason, $refund_response_array ) {
-		$message = sprintf(
-		/* translators: %1$s - payment gateway title , %2$s - a monetary amount */
-			esc_html__( 'Refund amount of %1$s approved.', 'visa-acceptance-solutions' ),
-			wc_price(
-				$refund_response_array['amount'],
-				array(
-					'currency' => $order->get_currency(),
-				)
-			)
-		);
-
-		if ( ! empty( $reason ) ) {
-			/* translators: %1$s - reason tag */
-			$reason_message = sprintf(
-				VISA_ACCEPTANCE_REFUND_MESSAGE,
-				$reason,
-			);
-			$message        = $message . $reason_message;
-		}
-
-		// adds the transaction id (if any) to the order note.
-		if ( $refund_response_array['transaction_id'] ) {
-			$message .= VISA_ACCEPTANCE_SPACE . sprintf(
-				/* translators: %s - transaction id */
-				esc_html__( '(Transaction ID %s)', 'visa-acceptance-solutions' ),
-				$refund_response_array['transaction_id']
-			);
-		}
-		$order->add_order_note( $message );
-	}
+        $message = $this->gateway->get_title() . VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_HYPHEN . VISA_ACCEPTANCE_SPACE . sprintf(
+        /* translators: %1$s - a monetary amount */
+            esc_html__( 'Refund of %1$s Approved:', 'visa-acceptance-solutions' ),
+            wc_price(
+                $refund_response_array['amount'],
+                array(
+                    'currency' => $order->get_currency(),
+                )
+            )
+        );
+        // adds the transaction id (if any) to the order note.
+        if ( $refund_response_array['transaction_id'] ) {
+            $message .= VISA_ACCEPTANCE_SPACE . sprintf(
+                /* translators: %s - transaction id */
+                esc_html__( '(Transaction ID %s)', 'visa-acceptance-solutions' ),
+                $refund_response_array['transaction_id']
+            );
+        }
+        $credit_fields = array();
+        if ( ! empty( $refund_response_array['credit_auth_code'] ) ) {
+            $credit_fields[] = 'Approval Code: ' . $refund_response_array['credit_auth_code'];
+        }
+        if ( isset( $refund_response_array['credit_auth_response'] ) && '' !== $refund_response_array['credit_auth_response'] ) {
+            $credit_fields[] = 'Response Code: ' . $refund_response_array['credit_auth_response'];
+        }
+        if ( ! empty( $refund_response_array['credit_auth_network_transaction_id'] ) ) {
+            $credit_fields[] = 'Network Transaction ID: ' . $refund_response_array['credit_auth_network_transaction_id'];
+        }
+        if ( ! empty( $credit_fields ) ) {
+            $message = rtrim( $message, ')' );
+            $message .= "\n" . implode( "\n", $credit_fields ) . ')';
+        }
+        if ( ! empty( $reason ) ) {
+            /* translators: %1$s - reason tag */
+            $reason_message = sprintf(
+                VISA_ACCEPTANCE_REFUND_MESSAGE,
+                $reason,
+            );
+            $message .= "\n" . $reason_message;
+        }
+        $order->add_order_note( $message );
+    }
 
 	/**
 	 * Updates order notes if refund fails
@@ -181,22 +219,12 @@ class Visa_Acceptance_Refund extends Visa_Acceptance_Request {
 	 */
 	protected function get_refund_failed_wp_error( $error_code, $error_message ) {
 		try {
-			if ( $error_code ) {
-				$message = sprintf(
-					/* translators: %1$s - payment gateway title , %2$s - error message*/
-					esc_html__( '%1$s Refund Failed. %2$s', 'visa-acceptance-solutions' ),
-					$this->gateway->get_title(),
-					$error_message
-				);
-			}
-			else {
 			$message = sprintf(
-					/* translators: %1$s - payment gateway title , %2$s - error message*/
-					esc_html__( '%1$s Refund Failed. %2$s', 'visa-acceptance-solutions' ),
-					$this->gateway->get_title(),
-					$error_message
-				);	
-			}
+				/* translators: %1$s - payment gateway title , %2$s - error message*/
+				esc_html__( '%1$s Refund Failed. %2$s', 'visa-acceptance-solutions' ),
+				$this->gateway->get_title(),
+				$error_message
+			);
 			return new \WP_Error( VISA_ACCEPTANCE_WC_UNDERSCORE . $this->gateway->get_id() . '_refund_failed', $message );
 		} catch ( \Exception $e ) {
 			$this->gateway->add_logs_data( array( $e->getMessage() ), false, ' Unable to get updates order notes if refund fails', true );
@@ -206,13 +234,15 @@ class Visa_Acceptance_Refund extends Visa_Acceptance_Request {
 	/**
 	 * Generate refund request payload for a payment gateway
 	 *
-	 * @param object $order order object.
-	 * @param string $amount refund amount.
-	 * @param string $transaction_id transaction id.
+	 * @param object|null $order order object, or null for tokenization verification refunds.
+	 * @param string      $amount refund amount.
+	 * @param string      $transaction_id transaction id.
+	 * @param boolean     $is_echeck whether this is an eCheck refund.
+	 * @param string|null $code client reference code, used when $order is null.
 	 *
 	 * @return array
 	 */
-	public function get_refund_response( $order, $amount, $transaction_id ) {
+	public function get_refund_response( $order, $amount, $transaction_id, $is_echeck = false, $code = null ) {
 		$request     = new Visa_Acceptance_Payment_Adapter( $this->gateway );
 		$api_client  = $request->get_api_client();
 		$refund_api  = new \CyberSource\Api\RefundApi( $api_client );
@@ -225,28 +255,39 @@ class Visa_Acceptance_Refund extends Visa_Acceptance_Request {
 			)
 		);
 
+		if(null === $code) {
+			$code = $order->get_id();
+		}
 		$client_reference_information = new \CyberSource\Model\Ptsv2paymentsidrefundsClientReferenceInformation(
 			array(
-				'code' 					=> $order->get_id(),
-				'partner'            	=> $client_reference_information_partner,
-				'applicationName'    	=> VISA_ACCEPTANCE_PLUGIN_APPLICATION_NAME . VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_PLUGIN_API_TYPE,
-				'applicationVersion' 	=> VISA_ACCEPTANCE_PLUGIN_VERSION,
+				'code'               => $code,
+				'partner'            => $client_reference_information_partner,
+				'applicationName'    => VISA_ACCEPTANCE_PLUGIN_APPLICATION_NAME . VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_PLUGIN_API_TYPE,
+				'applicationVersion' => VISA_ACCEPTANCE_PLUGIN_VERSION,
 			)
 		);
 		$request_obj->setClientReferenceInformation( $client_reference_information );
-
-		$processing_information = new \CyberSource\Model\Ptsv2paymentsidrefundsProcessingInformation(
-			array(
-				'paymentSolution' => $request->get_payment_solution( $order ),
+		$payment_type = new \CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformationPaymentType(
+			array( 'name' => $is_echeck ? VISA_ACCEPTANCE_CHECK : VISA_ACCEPTANCE_PAYMENT_TYPE_CARD )
+		);
+		$request_obj->setPaymentInformation(
+			new \CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformation(
+				array( 'paymentType' => $payment_type )
 			)
 		);
-		$request_obj->setProcessingInformation( $processing_information );
-
+		$request_obj->setProcessingInformation(
+			new \CyberSource\Model\Ptsv2paymentsidrefundsProcessingInformation(
+			$is_echeck
+				? $this->get_echeck_bank_transfer_options()
+				: array( 'paymentSolution' => $request->get_payment_solution( $order ) )
+			)
+		);
+	
 		$order_information = new \CyberSource\Model\Ptsv2paymentsidrefundsOrderInformation(
 			array(
 				'amountDetails' => array(
 					'totalAmount' => $amount,
-					'currency'    => $order->get_currency(),
+					'currency'    => $is_echeck ? get_woocommerce_currency() : $order->get_currency(),
 				),
 			)
 		);
@@ -254,17 +295,18 @@ class Visa_Acceptance_Refund extends Visa_Acceptance_Request {
 
 		$this->gateway->add_logs_data( $request_obj, true, VISA_ACCEPTANCE_REFUND );
 		try {
-			if ( VISA_ACCEPTANCE_UC_ID === $order->get_payment_method( VISA_ACCEPTANCE_EDIT ) ) {
+			if ( ! $order || VISA_ACCEPTANCE_UC_ID === $order->get_payment_method( VISA_ACCEPTANCE_EDIT ) ) {
 				$api_response = $refund_api->refundPayment( $request_obj, $transaction_id );
 			}
-			$this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, VISA_ACCEPTANCE_REFUND );
+			$this->gateway->add_logs_service_response( $api_response[VISA_ACCEPTANCE_VAL_ZERO],$api_response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, VISA_ACCEPTANCE_REFUND );
 			$return_array = array(
-				'http_code' => $api_response[1],
-				'body'      => $api_response[0],
+				'http_code' => $api_response[VISA_ACCEPTANCE_VAL_ONE],
+				'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 			);
 			return $return_array;
-		} catch ( \CyberSource\ApiException $e ) {
-			$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, VISA_ACCEPTANCE_REFUND );
+		} catch ( \Throwable $e ) {
+			$this->gateway->add_logs_data( array( $e->getMessage() ), false, 'REFUND_ERROR', true );
+			throw $e;
 		}
 	}
 }

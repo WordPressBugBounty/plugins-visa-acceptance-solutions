@@ -21,9 +21,56 @@
 	border-radius: 10px;
 }
 
-#wc-google-pay-button-container{
-	height: 40px;
-	width: 160px;
+#wc-express-checkout-normal {
+	width: 50%;
+	margin:0 auto;
+}
+
+#wc-express-checkout-section-divider {
+	text-align:center; 
+	margin:20px 0; 
+	position:relative;
+}
+
+#wc-express-checkout-section-divider span {
+	background:#fff; 
+	padding:0 10px; 
+	position:relative; 
+	z-index:2;
+}
+
+#express-checkout-heading {
+	position:relative; 
+	margin-bottom:15px;
+}
+
+#express-checkout-heading h5 {
+	margin-bottom:15px;
+}
+
+#express-checkout-heading span {
+	background:#fff; padding:0 10px; position:relative; z-index:2;
+}
+
+#express-checkout-heading hr, #wc-express-checkout-section-divider hr {
+	margin:-12px 0 0 0; 
+	border:0; 
+	border-top:1px solid #ddd;
+}
+
+
+#wc-express-checkout-section-divider {
+	text-align:center; 
+	margin:20px 0; 
+	position:relative;
+}
+
+#wc-express-checkout-section {
+	border:0.5px solid #ddd; 
+	border-radius:10px; 
+	padding:20px; 
+	margin-bottom:25px; 
+	text-align:center;
 }
 
 #wc-credit-card-account-number-div iframe, #wc-credit-card-csc-div iframe{
@@ -89,18 +136,6 @@ table.woocommerce-MyAccount-paymentMethods .woocommerce-PaymentMethod--default m
 
 #wc-credit-card-number-error, #wc-visa-acceptance-solutions-csc-error, #wc-cc-expiry-date-error{
 	float: left;
-}
-
-.wc-vco-hidden-place-order-button {
-	display: none !important;
-}
-
-.wc-apay-hidden-place-order-button {
-	display: none !important;
-}
-
-.wc-gpay-hidden-place-order-button {
-	display: none !important;
 }
 
 .wc-credit-card-saved-card, .wc-unified-checkout-saved-card{
@@ -171,13 +206,6 @@ table.woocommerce-MyAccount-paymentMethods .woocommerce-PaymentMethod--default m
 	display: none;
 }
 
-apple-pay-button {
-	--apple-pay-button-width: 140px;
-	--apple-pay-button-height: 30px;
-	--apple-pay-button-border-radius: 5px;
-	--apple-pay-button-padding: 5px 0px;
-}
-
 .payment-display-none{
 	display: none;
 }
@@ -235,11 +263,6 @@ apple-pay-button {
 	max-width: 100%;
 }
 
-#buttonPaymentListContainer{
-	margin-top: 8px;
-	margin-bottom: 1px;
-}
-
 /* Extra small devices (phones, 600px and down) */
 
 @media only screen and (max-width: 600px)
@@ -275,103 +298,43 @@ apple-pay-button {
     display: block;
 }
 
-/* Responsive UI for express pay section */
 
-/* Target any parent container that might be using flex */
-form.cart:has(#wc-express-checkout-product),
-.cart:has(#wc-express-checkout-product),
-div:has(> #wc-express-checkout-product) {
-	flex-wrap: wrap !important;
+.wc-unified-checkout-saved-cards-options label {
+    display: inline !important;
 }
 
-.wc-block-components-express-payment, .wc-block-components-express-payment-continue-rule, #wc-express-checkout-product-page-subscription-tokenization-notice-div{
-	width: 50%;
-}
-.wc-block-components-express-payment-continue-rule{
-	margin: 30px auto 20px auto !important;
-	width: 50%;
-}
-@media (min-width:782px) {
-	.wc-block-components-express-payment, .wc-block-components-express-payment-continue-rule {
-		width: 60% !important;
-	}
+/* Visa Acceptance payment method moved after terms */
+.payment_box.payment_method_visa_acceptance_solutions_unified_checkout.moved-after-terms {
+    margin-top: 1.5em !important;
+    margin-bottom: 1.5em !important;
+    list-style: none !important;
+    list-style-type: none !important;
 }
 
-#wc-express-checkout-product {
-	width: 100% !important;
-	margin-top: 1em !important;
-	display: block;
-	position: relative !important;
+/* Remove marker/bullet */
+.payment_box.payment_method_visa_acceptance_solutions_unified_checkout.moved-after-terms::marker,
+.payment_box.payment_method_visa_acceptance_solutions_unified_checkout.moved-after-terms::before {
+    display: none !important;
+    content: none !important;
 }
 
-#wc-express-checkout-normal {
-	width: 50%;
-}
-@media (max-width: 600px) {
-	#wc-express-checkout-product, #wc-express-checkout-normal, .wc-block-components-express-payment, .wc-block-components-express-payment-continue-rule, #wc-express-checkout-product-page-subscription-tokenization-notice-div {
-		width: 100% !important;
-	}
-}
-@media (min-width:601px) and (max-width:781px) {
-	#wc-express-checkout-product, #wc-express-checkout-normal {
-		width: 50% !important;
-	}
-}
-@media (min-width:782px) and (max-width:1000px) {
-	#wc-express-checkout-product, #wc-express-checkout-product-page-subscription-tokenization-notice-div {
-		width: 100% !important;
-	}
-}
-@media (min-width:1001px) and (max-width:1250px) {
-	#wc-express-checkout-product {
-		width: 80% !important;
-	}
+/* Ensure label appears beside radio button */
+.payment_box.payment_method_visa_acceptance_solutions_unified_checkout.moved-after-terms label {
+ display: inline-block !important;
+ vertical-align: top !important;
+ margin: 0 !important;
+ line-height: 1.4 !important;
 }
 
-#wc-express-checkout-normal{
-	margin:0 auto;
+/* Radio button styling */
+.payment_box.payment_method_visa_acceptance_solutions_unified_checkout.moved-after-terms input[type="radio"] {
+ margin-right: 0.5em !important;
+ vertical-align: top !important;
+ display: inline-block !important;
 }
 
-#express-checkout-heading {
-	position:relative; 
-	margin-bottom:15px;
-}
-
-#express-checkout-heading h5 {
-	margin-bottom:15px;
-}
-
-#wc-express-checkout-section-divider {
-	text-align:center; 
-	margin:20px 0; 
-	position:relative;
-}
-
-#wc-express-checkout-section-divider span {
-	background:#fff; 
-	padding:0 10px; 
-	position:relative; 
-	z-index:2;
-}
-
-#express-checkout-heading span {
-	background:#fff; padding:0 10px; position:relative; z-index:2;
-}
-
-#express-checkout-heading hr, #wc-express-checkout-section-divider hr {
-	margin:-12px 0 0 0; 
-	border:0; 
-	border-top:1px solid #ddd;
-}
-
-#wc-express-checkout-section {
-	border:0.5px solid #ddd; 
-	border-radius:10px; 
-	padding:20px; 
-	margin-bottom:25px; 
-	text-align:center;
-}
-
-#wc-express-checkout-product-page-subscription-tokenization-notice-div{
-	width: 50%;
-}
+/* Payment box styling */
+.payment_box.payment_method_visa_acceptance_solutions_unified_checkout.moved-after-terms .payment_box {
+    margin: 1em 0 !important;
+    padding: 1em !important;
+}   	

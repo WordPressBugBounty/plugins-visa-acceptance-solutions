@@ -53,13 +53,19 @@ class InlineResponse2008 implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'links' => '\CyberSource\Model\InlineResponse2008Links[]',
-        'object' => 'string',
-        'offset' => 'int',
-        'limit' => 'int',
-        'count' => 'int',
-        'total' => 'int',
-        'embedded' => '\CyberSource\Model\InlineResponse2008Embedded'
+        'webhookId' => 'string',
+        'organizationId' => 'string',
+        'products' => '\CyberSource\Model\Notificationsubscriptionsv2webhooksProducts[]',
+        'webhookUrl' => 'string',
+        'healthCheckUrl' => 'string',
+        'status' => 'string',
+        'name' => 'string',
+        'description' => 'string',
+        'retryPolicy' => '\CyberSource\Model\Notificationsubscriptionsv2webhooksRetryPolicy',
+        'securityPolicy' => '\CyberSource\Model\Notificationsubscriptionsv2webhooksSecurityPolicy',
+        'createdOn' => 'string',
+        'updatedOn' => 'string',
+        'notificationScope' => 'string'
     ];
 
     /**
@@ -67,13 +73,19 @@ class InlineResponse2008 implements ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'links' => null,
-        'object' => null,
-        'offset' => null,
-        'limit' => null,
-        'count' => null,
-        'total' => null,
-        'embedded' => null
+        'webhookId' => null,
+        'organizationId' => null,
+        'products' => null,
+        'webhookUrl' => null,
+        'healthCheckUrl' => null,
+        'status' => null,
+        'name' => null,
+        'description' => null,
+        'retryPolicy' => null,
+        'securityPolicy' => null,
+        'createdOn' => null,
+        'updatedOn' => null,
+        'notificationScope' => null
     ];
 
     public static function swaggerTypes()
@@ -91,13 +103,19 @@ class InlineResponse2008 implements ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'links' => '_links',
-        'object' => 'object',
-        'offset' => 'offset',
-        'limit' => 'limit',
-        'count' => 'count',
-        'total' => 'total',
-        'embedded' => '_embedded'
+        'webhookId' => 'webhookId',
+        'organizationId' => 'organizationId',
+        'products' => 'products',
+        'webhookUrl' => 'webhookUrl',
+        'healthCheckUrl' => 'healthCheckUrl',
+        'status' => 'status',
+        'name' => 'name',
+        'description' => 'description',
+        'retryPolicy' => 'retryPolicy',
+        'securityPolicy' => 'securityPolicy',
+        'createdOn' => 'createdOn',
+        'updatedOn' => 'updatedOn',
+        'notificationScope' => 'notificationScope'
     ];
 
 
@@ -106,13 +124,19 @@ class InlineResponse2008 implements ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'links' => 'setLinks',
-        'object' => 'setObject',
-        'offset' => 'setOffset',
-        'limit' => 'setLimit',
-        'count' => 'setCount',
-        'total' => 'setTotal',
-        'embedded' => 'setEmbedded'
+        'webhookId' => 'setWebhookId',
+        'organizationId' => 'setOrganizationId',
+        'products' => 'setProducts',
+        'webhookUrl' => 'setWebhookUrl',
+        'healthCheckUrl' => 'setHealthCheckUrl',
+        'status' => 'setStatus',
+        'name' => 'setName',
+        'description' => 'setDescription',
+        'retryPolicy' => 'setRetryPolicy',
+        'securityPolicy' => 'setSecurityPolicy',
+        'createdOn' => 'setCreatedOn',
+        'updatedOn' => 'setUpdatedOn',
+        'notificationScope' => 'setNotificationScope'
     ];
 
 
@@ -121,13 +145,19 @@ class InlineResponse2008 implements ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'links' => 'getLinks',
-        'object' => 'getObject',
-        'offset' => 'getOffset',
-        'limit' => 'getLimit',
-        'count' => 'getCount',
-        'total' => 'getTotal',
-        'embedded' => 'getEmbedded'
+        'webhookId' => 'getWebhookId',
+        'organizationId' => 'getOrganizationId',
+        'products' => 'getProducts',
+        'webhookUrl' => 'getWebhookUrl',
+        'healthCheckUrl' => 'getHealthCheckUrl',
+        'status' => 'getStatus',
+        'name' => 'getName',
+        'description' => 'getDescription',
+        'retryPolicy' => 'getRetryPolicy',
+        'securityPolicy' => 'getSecurityPolicy',
+        'createdOn' => 'getCreatedOn',
+        'updatedOn' => 'getUpdatedOn',
+        'notificationScope' => 'getNotificationScope'
     ];
 
     public static function attributeMap()
@@ -161,13 +191,19 @@ class InlineResponse2008 implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['links'] = isset($data['links']) ? $data['links'] : null;
-        $this->container['object'] = isset($data['object']) ? $data['object'] : null;
-        $this->container['offset'] = isset($data['offset']) ? $data['offset'] : null;
-        $this->container['limit'] = isset($data['limit']) ? $data['limit'] : null;
-        $this->container['count'] = isset($data['count']) ? $data['count'] : null;
-        $this->container['total'] = isset($data['total']) ? $data['total'] : null;
-        $this->container['embedded'] = isset($data['embedded']) ? $data['embedded'] : null;
+        $this->container['webhookId'] = isset($data['webhookId']) ? $data['webhookId'] : null;
+        $this->container['organizationId'] = isset($data['organizationId']) ? $data['organizationId'] : null;
+        $this->container['products'] = isset($data['products']) ? $data['products'] : null;
+        $this->container['webhookUrl'] = isset($data['webhookUrl']) ? $data['webhookUrl'] : null;
+        $this->container['healthCheckUrl'] = isset($data['healthCheckUrl']) ? $data['healthCheckUrl'] : null;
+        $this->container['status'] = isset($data['status']) ? $data['status'] : 'INACTIVE';
+        $this->container['name'] = isset($data['name']) ? $data['name'] : null;
+        $this->container['description'] = isset($data['description']) ? $data['description'] : null;
+        $this->container['retryPolicy'] = isset($data['retryPolicy']) ? $data['retryPolicy'] : null;
+        $this->container['securityPolicy'] = isset($data['securityPolicy']) ? $data['securityPolicy'] : null;
+        $this->container['createdOn'] = isset($data['createdOn']) ? $data['createdOn'] : null;
+        $this->container['updatedOn'] = isset($data['updatedOn']) ? $data['updatedOn'] : null;
+        $this->container['notificationScope'] = isset($data['notificationScope']) ? $data['notificationScope'] : 'DESCENDANTS';
     }
 
     /**
@@ -196,148 +232,274 @@ class InlineResponse2008 implements ArrayAccess
 
 
     /**
-     * Gets links
-     * @return \CyberSource\Model\InlineResponse2008Links[]
-     */
-    public function getLinks()
-    {
-        return $this->container['links'];
-    }
-
-    /**
-     * Sets links
-     * @param \CyberSource\Model\InlineResponse2008Links[] $links
-     * @return $this
-     */
-    public function setLinks($links)
-    {
-        $this->container['links'] = $links;
-
-        return $this;
-    }
-
-    /**
-     * Gets object
+     * Gets webhookId
      * @return string
      */
-    public function getObject()
+    public function getWebhookId()
     {
-        return $this->container['object'];
+        return $this->container['webhookId'];
     }
 
     /**
-     * Sets object
-     * @param string $object
+     * Sets webhookId
+     * @param string $webhookId Webhook Id. This is generated by the server.
      * @return $this
      */
-    public function setObject($object)
+    public function setWebhookId($webhookId)
     {
-        $this->container['object'] = $object;
+        $this->container['webhookId'] = $webhookId;
 
         return $this;
     }
 
     /**
-     * Gets offset
-     * @return int
+     * Gets organizationId
+     * @return string
      */
-    public function getOffset()
+    public function getOrganizationId()
     {
-        return $this->container['offset'];
+        return $this->container['organizationId'];
     }
 
     /**
-     * Sets offset
-     * @param int $offset
+     * Sets organizationId
+     * @param string $organizationId Organization ID.
      * @return $this
      */
-    public function setOffset($offset)
+    public function setOrganizationId($organizationId)
     {
-        $this->container['offset'] = $offset;
+        $this->container['organizationId'] = $organizationId;
 
         return $this;
     }
 
     /**
-     * Gets limit
-     * @return int
+     * Gets products
+     * @return \CyberSource\Model\Notificationsubscriptionsv2webhooksProducts[]
      */
-    public function getLimit()
+    public function getProducts()
     {
-        return $this->container['limit'];
+        return $this->container['products'];
     }
 
     /**
-     * Sets limit
-     * @param int $limit
+     * Sets products
+     * @param \CyberSource\Model\Notificationsubscriptionsv2webhooksProducts[] $products
      * @return $this
      */
-    public function setLimit($limit)
+    public function setProducts($products)
     {
-        $this->container['limit'] = $limit;
+        $this->container['products'] = $products;
 
         return $this;
     }
 
     /**
-     * Gets count
-     * @return int
+     * Gets webhookUrl
+     * @return string
      */
-    public function getCount()
+    public function getWebhookUrl()
     {
-        return $this->container['count'];
+        return $this->container['webhookUrl'];
     }
 
     /**
-     * Sets count
-     * @param int $count
+     * Sets webhookUrl
+     * @param string $webhookUrl The client's endpoint (URL) to receive webhooks.
      * @return $this
      */
-    public function setCount($count)
+    public function setWebhookUrl($webhookUrl)
     {
-        $this->container['count'] = $count;
+        $this->container['webhookUrl'] = $webhookUrl;
 
         return $this;
     }
 
     /**
-     * Gets total
-     * @return int
+     * Gets healthCheckUrl
+     * @return string
      */
-    public function getTotal()
+    public function getHealthCheckUrl()
     {
-        return $this->container['total'];
+        return $this->container['healthCheckUrl'];
     }
 
     /**
-     * Sets total
-     * @param int $total
+     * Sets healthCheckUrl
+     * @param string $healthCheckUrl The client's health check endpoint (URL).
      * @return $this
      */
-    public function setTotal($total)
+    public function setHealthCheckUrl($healthCheckUrl)
     {
-        $this->container['total'] = $total;
+        $this->container['healthCheckUrl'] = $healthCheckUrl;
 
         return $this;
     }
 
     /**
-     * Gets embedded
-     * @return \CyberSource\Model\InlineResponse2008Embedded
+     * Gets status
+     * @return string
      */
-    public function getEmbedded()
+    public function getStatus()
     {
-        return $this->container['embedded'];
+        return $this->container['status'];
     }
 
     /**
-     * Sets embedded
-     * @param \CyberSource\Model\InlineResponse2008Embedded $embedded
+     * Sets status
+     * @param string $status Webhook status.
      * @return $this
      */
-    public function setEmbedded($embedded)
+    public function setStatus($status)
     {
-        $this->container['embedded'] = $embedded;
+        $this->container['status'] = $status;
+
+        return $this;
+    }
+
+    /**
+     * Gets name
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->container['name'];
+    }
+
+    /**
+     * Sets name
+     * @param string $name Client friendly webhook name.
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->container['name'] = $name;
+
+        return $this;
+    }
+
+    /**
+     * Gets description
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->container['description'];
+    }
+
+    /**
+     * Sets description
+     * @param string $description Client friendly webhook description.
+     * @return $this
+     */
+    public function setDescription($description)
+    {
+        $this->container['description'] = $description;
+
+        return $this;
+    }
+
+    /**
+     * Gets retryPolicy
+     * @return \CyberSource\Model\Notificationsubscriptionsv2webhooksRetryPolicy
+     */
+    public function getRetryPolicy()
+    {
+        return $this->container['retryPolicy'];
+    }
+
+    /**
+     * Sets retryPolicy
+     * @param \CyberSource\Model\Notificationsubscriptionsv2webhooksRetryPolicy $retryPolicy
+     * @return $this
+     */
+    public function setRetryPolicy($retryPolicy)
+    {
+        $this->container['retryPolicy'] = $retryPolicy;
+
+        return $this;
+    }
+
+    /**
+     * Gets securityPolicy
+     * @return \CyberSource\Model\Notificationsubscriptionsv2webhooksSecurityPolicy
+     */
+    public function getSecurityPolicy()
+    {
+        return $this->container['securityPolicy'];
+    }
+
+    /**
+     * Sets securityPolicy
+     * @param \CyberSource\Model\Notificationsubscriptionsv2webhooksSecurityPolicy $securityPolicy
+     * @return $this
+     */
+    public function setSecurityPolicy($securityPolicy)
+    {
+        $this->container['securityPolicy'] = $securityPolicy;
+
+        return $this;
+    }
+
+    /**
+     * Gets createdOn
+     * @return string
+     */
+    public function getCreatedOn()
+    {
+        return $this->container['createdOn'];
+    }
+
+    /**
+     * Sets createdOn
+     * @param string $createdOn Date on which webhook was created/registered.
+     * @return $this
+     */
+    public function setCreatedOn($createdOn)
+    {
+        $this->container['createdOn'] = $createdOn;
+
+        return $this;
+    }
+
+    /**
+     * Gets updatedOn
+     * @return string
+     */
+    public function getUpdatedOn()
+    {
+        return $this->container['updatedOn'];
+    }
+
+    /**
+     * Sets updatedOn
+     * @param string $updatedOn Date on which webhook was most recently updated.
+     * @return $this
+     */
+    public function setUpdatedOn($updatedOn)
+    {
+        $this->container['updatedOn'] = $updatedOn;
+
+        return $this;
+    }
+
+    /**
+     * Gets notificationScope
+     * @return string
+     */
+    public function getNotificationScope()
+    {
+        return $this->container['notificationScope'];
+    }
+
+    /**
+     * Sets notificationScope
+     * @param string $notificationScope The webhook scope. 1. SELF The Webhook is used to deliver webhooks for only this Organization (or Merchant). 2. DESCENDANTS The Webhook is used to deliver webhooks for this Organization and its children. This field is optional.    Possible values: - SELF - DESCENDANTS
+     * @return $this
+     */
+    public function setNotificationScope($notificationScope)
+    {
+        $this->container['notificationScope'] = $notificationScope;
 
         return $this;
     }

@@ -95,18 +95,25 @@ class Visa_Acceptance_Reporting extends Visa_Acceptance_Request {
 					if ( ! empty( $order ) && $order instanceof \WC_Order ) {
 						$payment_gateway_id         = $order->get_payment_method( VISA_ACCEPTANCE_EDIT );
 						$payment_acceptance_service = $this->get_order_meta( $order, VISA_ACCEPTANCE_PAYMENT_ACCEPTANCE_SERVICE );
+						$payment_status = $this->get_order_meta( $order, VISA_ACCEPTANCE_UNDERSCORE_PAYMENT_STATUS );
 
-						if ( ( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PENDING === $order->get_status() ) && ( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED_PENDING_REVIEW === $this->get_order_meta( $order, VISA_ACCEPTANCE_UNDERSCORE_PAYMENT_STATUS ) ) ) {
+						if ( ( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PENDING === $order->get_status() ) && 
+						     ( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED_PENDING_REVIEW === $payment_status || 
+						       VISA_ACCEPTANCE_API_RESPONSE_ECHECK_DM_STATUS === $payment_status ) ) {
 							if ( VISA_ACCEPTANCE_ACCEPT === $conversion_detail['newDecision'] ) {
 								$message  = sprintf(
 									__( 'Order Accepted in', 'visa-acceptance-solutions' ) . VISA_ACCEPTANCE_SPACE . $this->gateway->get_title() . VISA_ACCEPTANCE_SPACE . __( 'Case Management System.', 'visa-acceptance-solutions' )// phpcs:ignore WordPress.Security.NonceVerification
 								);
 								$settings = $this->gateway->get_config_settings();
+								$is_echeck = ( VISA_ACCEPTANCE_CHECK === $order->get_meta( '_vas_payment_type' ) );
+								
 								if ( $this->check_order_is_settled( $conversion_detail ) ) {
 									$this->update_captured_order_status( $order, $conversion_detail, $payment_gateway_id );
 									$order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING, $message );
-								} elseif ( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $payment_acceptance_service || $request->check_virtual_order_enabled( $settings, $order ) ) {
-									$this->update_captured_order_status( $order, $conversion_detail, $payment_gateway_id );
+								} elseif ( $is_echeck || VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $payment_acceptance_service || $request->check_virtual_order_enabled( $settings, $order ) ) {
+									if ( $is_echeck ) {
+										$this->update_captured_order_status( $order, $conversion_detail, $payment_gateway_id );
+									}
 									$order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING, $message );
 								} elseif ( VISA_ACCEPTANCE_STRING_EMPTY !== $payment_acceptance_service ) {
 									$order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_ON_HOLD, $message );
@@ -160,12 +167,12 @@ class Visa_Acceptance_Reporting extends Visa_Acceptance_Request {
             $api_response = $conversion_api->getConversionDetail( $start_datetime, $end_datetime, $organization_id );
  
             $response_array = array(
-                'http_code' => $api_response[1],
-                'body'      => $api_response[0]
+                'http_code' => $api_response[VISA_ACCEPTANCE_VAL_ONE],
+                'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO]
             );
            
             // Log the response.
-            $this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
+            $this->gateway->add_logs_service_response( $api_response[VISA_ACCEPTANCE_VAL_ZERO],$api_response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
             
             return $response_array;
            
@@ -327,7 +334,7 @@ class Visa_Acceptance_Reporting extends Visa_Acceptance_Request {
 							return $note['requestId'];
 						}
 						$substring_after_is = strstr( $note['comments'], VISA_ACCEPTANCE_IS );
-						return trim( substr( $substring_after_is, 2 ) );
+						return trim( substr( $substring_after_is, VISA_ACCEPTANCE_VAL_TWO ) );
 					}
 				}
 			}

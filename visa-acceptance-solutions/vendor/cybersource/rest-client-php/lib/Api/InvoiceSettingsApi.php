@@ -101,13 +101,14 @@ class InvoiceSettingsApi
      *
      * Get Invoice Settings
      *
+     * @param string $productType Allows you to choose which product type settings you want to update. (optional)
      * @throws \CyberSource\ApiException on non-2xx response
      * @return array of \CyberSource\Model\InvoicingV2InvoiceSettingsGet200Response, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getInvoiceSettings()
+    public function getInvoiceSettings($productType = null)
     {
         self::$logger->info('CALL TO METHOD getInvoiceSettings STARTED');
-        list($response, $statusCode, $httpHeader) = $this->getInvoiceSettingsWithHttpInfo();
+        list($response, $statusCode, $httpHeader) = $this->getInvoiceSettingsWithHttpInfo($productType);
         self::$logger->info('CALL TO METHOD getInvoiceSettings ENDED');
         self::$logger->close();
         return [$response, $statusCode, $httpHeader];
@@ -118,10 +119,11 @@ class InvoiceSettingsApi
      *
      * Get Invoice Settings
      *
+     * @param string $productType Allows you to choose which product type settings you want to update. (optional)
      * @throws \CyberSource\ApiException on non-2xx response
      * @return array of \CyberSource\Model\InvoicingV2InvoiceSettingsGet200Response, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getInvoiceSettingsWithHttpInfo()
+    public function getInvoiceSettingsWithHttpInfo($productType = null)
     {
         // parse inputs
         $resourcePath = "/invoicing/v2/invoiceSettings";
@@ -137,6 +139,10 @@ class InvoiceSettingsApi
         
         $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json;charset=utf-8']);
 
+        // query params
+        if ($productType !== null) {
+            $queryParams['productType'] = $this->apiClient->getSerializer()->toQueryValue($productType);
+        }
         if ('GET' == 'POST') {
             $_tempBody = '{}';
         }
@@ -149,8 +155,8 @@ class InvoiceSettingsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getInvoiceSettings,getInvoiceSettingsWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getInvoiceSettings,getInvoiceSettingsWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -162,6 +168,7 @@ class InvoiceSettingsApi
         
         // Logging
         self::$logger->debug("Resource : GET $resourcePath");
+        self::$logger->debug("Query Parameters :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($queryParams));
         if (isset($httpBody) and count($formParams) <= 0) {
             if ($this->apiClient->merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
                 $printHttpBody = \CyberSource\Utilities\Helpers\DataMasker::maskData($httpBody);
@@ -173,6 +180,10 @@ class InvoiceSettingsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\InvoicingV2InvoiceSettingsGet200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getInvoiceSettings,getInvoiceSettingsWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -182,7 +193,8 @@ class InvoiceSettingsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\InvoicingV2InvoiceSettingsGet200Response',
-                '/invoicing/v2/invoiceSettings'
+                '/invoicing/v2/invoiceSettings',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -215,13 +227,14 @@ class InvoiceSettingsApi
      * Update Invoice Settings
      *
      * @param \CyberSource\Model\InvoiceSettingsRequest $invoiceSettingsRequest  (required)
+     * @param string $productType Allows you to choose which product type settings you want to update. (optional)
      * @throws \CyberSource\ApiException on non-2xx response
      * @return array of \CyberSource\Model\InvoicingV2InvoiceSettingsGet200Response, HTTP status code, HTTP response headers (array of strings)
      */
-    public function updateInvoiceSettings($invoiceSettingsRequest)
+    public function updateInvoiceSettings($invoiceSettingsRequest, $productType = null)
     {
         self::$logger->info('CALL TO METHOD updateInvoiceSettings STARTED');
-        list($response, $statusCode, $httpHeader) = $this->updateInvoiceSettingsWithHttpInfo($invoiceSettingsRequest);
+        list($response, $statusCode, $httpHeader) = $this->updateInvoiceSettingsWithHttpInfo($invoiceSettingsRequest, $productType);
         self::$logger->info('CALL TO METHOD updateInvoiceSettings ENDED');
         self::$logger->close();
         return [$response, $statusCode, $httpHeader];
@@ -233,10 +246,11 @@ class InvoiceSettingsApi
      * Update Invoice Settings
      *
      * @param \CyberSource\Model\InvoiceSettingsRequest $invoiceSettingsRequest  (required)
+     * @param string $productType Allows you to choose which product type settings you want to update. (optional)
      * @throws \CyberSource\ApiException on non-2xx response
      * @return array of \CyberSource\Model\InvoicingV2InvoiceSettingsGet200Response, HTTP status code, HTTP response headers (array of strings)
      */
-    public function updateInvoiceSettingsWithHttpInfo($invoiceSettingsRequest)
+    public function updateInvoiceSettingsWithHttpInfo($invoiceSettingsRequest, $productType = null)
     {
         // verify the required parameter 'invoiceSettingsRequest' is set
         if ($invoiceSettingsRequest === null) {
@@ -257,6 +271,10 @@ class InvoiceSettingsApi
         
         $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json;charset=utf-8']);
 
+        // query params
+        if ($productType !== null) {
+            $queryParams['productType'] = $this->apiClient->getSerializer()->toQueryValue($productType);
+        }
         // body params
         $_tempBody = null;
         if (isset($invoiceSettingsRequest)) {
@@ -276,8 +294,8 @@ class InvoiceSettingsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "updateInvoiceSettings,updateInvoiceSettingsWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "updateInvoiceSettings,updateInvoiceSettingsWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -289,6 +307,7 @@ class InvoiceSettingsApi
         
         // Logging
         self::$logger->debug("Resource : PUT $resourcePath");
+        self::$logger->debug("Query Parameters :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($queryParams));
         if (isset($httpBody) and count($formParams) <= 0) {
             if ($this->apiClient->merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
                 $printHttpBody = \CyberSource\Utilities\Helpers\DataMasker::maskData($httpBody);
@@ -300,6 +319,10 @@ class InvoiceSettingsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\InvoicingV2InvoiceSettingsGet200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "updateInvoiceSettings,updateInvoiceSettingsWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -309,7 +332,8 @@ class InvoiceSettingsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\InvoicingV2InvoiceSettingsGet200Response',
-                '/invoicing/v2/invoiceSettings'
+                '/invoicing/v2/invoiceSettings',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

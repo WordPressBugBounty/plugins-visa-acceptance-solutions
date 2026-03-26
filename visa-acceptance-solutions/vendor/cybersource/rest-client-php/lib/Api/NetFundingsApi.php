@@ -183,8 +183,8 @@ class NetFundingsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getNetFundingDetails,getNetFundingDetailsWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getNetFundingDetails,getNetFundingDetailsWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -211,6 +211,10 @@ class NetFundingsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\ReportingV3NetFundingsGet200Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getNetFundingDetails,getNetFundingDetailsWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -220,7 +224,8 @@ class NetFundingsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\ReportingV3NetFundingsGet200Response',
-                '/reporting/v3/net-fundings'
+                '/reporting/v3/net-fundings',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

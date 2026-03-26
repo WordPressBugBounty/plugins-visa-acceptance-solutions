@@ -26,10 +26,12 @@ use Symfony\Component\DependencyInjection\Exception\LogicException;
  */
 abstract class Extension implements ExtensionInterface, ConfigurationExtensionInterface
 {
-    private $processedConfigs = [];
+    private array $processedConfigs = [];
 
     /**
-     * {@inheritdoc}
+     * @return string|false
+     *
+     * @deprecated since Symfony 7.4, to be removed in Symfony 8.0 together with XML support.
      */
     public function getXsdValidationBasePath()
     {
@@ -37,7 +39,9 @@ abstract class Extension implements ExtensionInterface, ConfigurationExtensionIn
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
+     *
+     * @deprecated since Symfony 7.4, to be removed in Symfony 8.0 together with XML support.
      */
     public function getNamespace()
     {
@@ -60,11 +64,9 @@ abstract class Extension implements ExtensionInterface, ConfigurationExtensionIn
      *
      * This can be overridden in a sub-class to specify the alias manually.
      *
-     * @return string
-     *
      * @throws BadMethodCallException When the extension name does not follow conventions
      */
-    public function getAlias()
+    public function getAlias(): string
     {
         $className = static::class;
         if (!str_ends_with($className, 'Extension')) {
@@ -76,7 +78,7 @@ abstract class Extension implements ExtensionInterface, ConfigurationExtensionIn
     }
 
     /**
-     * {@inheritdoc}
+     * @return ConfigurationInterface|null
      */
     public function getConfiguration(array $config, ContainerBuilder $container)
     {
@@ -94,7 +96,7 @@ abstract class Extension implements ExtensionInterface, ConfigurationExtensionIn
         }
 
         if (!$class->implementsInterface(ConfigurationInterface::class)) {
-            throw new LogicException(sprintf('The extension configuration class "%s" must implement "%s".', $class->getName(), ConfigurationInterface::class));
+            throw new LogicException(\sprintf('The extension configuration class "%s" must implement "%s".', $class->getName(), ConfigurationInterface::class));
         }
 
         if (!($constructor = $class->getConstructor()) || !$constructor->getNumberOfRequiredParameters()) {
@@ -124,11 +126,9 @@ abstract class Extension implements ExtensionInterface, ConfigurationExtensionIn
     }
 
     /**
-     * @return bool
-     *
      * @throws InvalidArgumentException When the config is not enableable
      */
-    protected function isConfigEnabled(ContainerBuilder $container, array $config)
+    protected function isConfigEnabled(ContainerBuilder $container, array $config): bool
     {
         if (!\array_key_exists('enabled', $config)) {
             throw new InvalidArgumentException("The config array has no 'enabled' key.");

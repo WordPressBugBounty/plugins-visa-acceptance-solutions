@@ -83,7 +83,7 @@ class Visa_Acceptance_Capture extends Visa_Acceptance_Request {
 				if ( $capture_response_obj->is_transaction_approved( $capture_response, $status ) ) {
 					$message = sprintf(
 						/* translators: %1$s - payment gateway title , %2$s - transaction amount. Definitions: Capture, as in capture funds from a credit card. */
-						__( '%1$s Capture of %2$s Approved', 'visa-acceptance-solutions' ),
+						__( '%1$s - Capture of %2$s Approved:', 'visa-acceptance-solutions' ),
 						$this->gateway->get_title(),
 						wc_price(
 							$order->get_total(),
@@ -188,14 +188,14 @@ class Visa_Acceptance_Capture extends Visa_Acceptance_Request {
 				$api_response = $capture_api->capturePayment( $request_obj, $transaction_id );
 			}
 
-			$this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, ucfirst( VISA_ACCEPTANCE_CAPTURE ) );
+			$this->gateway->add_logs_service_response( $api_response[VISA_ACCEPTANCE_VAL_ZERO],$api_response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, ucfirst( VISA_ACCEPTANCE_CAPTURE ) );
 
 			$return_array = array(
-				'http_code' => $api_response[1],
-				'body'      => $api_response[0],
+				'http_code' => $api_response[VISA_ACCEPTANCE_VAL_ONE],
+				'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 			);
 			return $return_array;
-		} catch ( \CyberSource\ApiException $e ) {
+		} catch ( \Throwable $e ) {
 			$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, ucfirst( VISA_ACCEPTANCE_CAPTURE ) );
 		}
 	}

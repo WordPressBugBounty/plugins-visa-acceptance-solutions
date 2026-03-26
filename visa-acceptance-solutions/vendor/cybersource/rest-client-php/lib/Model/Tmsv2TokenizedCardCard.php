@@ -34,7 +34,6 @@ use \ArrayAccess;
  * Tmsv2TokenizedCardCard Class Doc Comment
  *
  * @category    Class
- * @description Card object used to create a network token
  * @package     CyberSource
  * @author      Swagger Codegen team
  * @link        https://github.com/swagger-api/swagger-codegen
@@ -58,7 +57,12 @@ class Tmsv2TokenizedCardCard implements ArrayAccess
         'expirationMonth' => 'string',
         'expirationYear' => 'string',
         'type' => 'string',
-        'suffix' => 'string'
+        'suffix' => 'string',
+        'issueDate' => '\DateTime',
+        'activationDate' => '\DateTime',
+        'expirationPrinted' => 'bool',
+        'securityCodePrinted' => 'bool',
+        'termsAndConditions' => '\CyberSource\Model\Tmsv2TokenizedCardCardTermsAndConditions'
     ];
 
     /**
@@ -70,7 +74,12 @@ class Tmsv2TokenizedCardCard implements ArrayAccess
         'expirationMonth' => null,
         'expirationYear' => null,
         'type' => null,
-        'suffix' => null
+        'suffix' => null,
+        'issueDate' => 'date',
+        'activationDate' => 'date',
+        'expirationPrinted' => null,
+        'securityCodePrinted' => null,
+        'termsAndConditions' => null
     ];
 
     public static function swaggerTypes()
@@ -92,7 +101,12 @@ class Tmsv2TokenizedCardCard implements ArrayAccess
         'expirationMonth' => 'expirationMonth',
         'expirationYear' => 'expirationYear',
         'type' => 'type',
-        'suffix' => 'suffix'
+        'suffix' => 'suffix',
+        'issueDate' => 'issueDate',
+        'activationDate' => 'activationDate',
+        'expirationPrinted' => 'expirationPrinted',
+        'securityCodePrinted' => 'securityCodePrinted',
+        'termsAndConditions' => 'termsAndConditions'
     ];
 
 
@@ -105,7 +119,12 @@ class Tmsv2TokenizedCardCard implements ArrayAccess
         'expirationMonth' => 'setExpirationMonth',
         'expirationYear' => 'setExpirationYear',
         'type' => 'setType',
-        'suffix' => 'setSuffix'
+        'suffix' => 'setSuffix',
+        'issueDate' => 'setIssueDate',
+        'activationDate' => 'setActivationDate',
+        'expirationPrinted' => 'setExpirationPrinted',
+        'securityCodePrinted' => 'setSecurityCodePrinted',
+        'termsAndConditions' => 'setTermsAndConditions'
     ];
 
 
@@ -118,7 +137,12 @@ class Tmsv2TokenizedCardCard implements ArrayAccess
         'expirationMonth' => 'getExpirationMonth',
         'expirationYear' => 'getExpirationYear',
         'type' => 'getType',
-        'suffix' => 'getSuffix'
+        'suffix' => 'getSuffix',
+        'issueDate' => 'getIssueDate',
+        'activationDate' => 'getActivationDate',
+        'expirationPrinted' => 'getExpirationPrinted',
+        'securityCodePrinted' => 'getSecurityCodePrinted',
+        'termsAndConditions' => 'getTermsAndConditions'
     ];
 
     public static function attributeMap()
@@ -157,6 +181,11 @@ class Tmsv2TokenizedCardCard implements ArrayAccess
         $this->container['expirationYear'] = isset($data['expirationYear']) ? $data['expirationYear'] : null;
         $this->container['type'] = isset($data['type']) ? $data['type'] : null;
         $this->container['suffix'] = isset($data['suffix']) ? $data['suffix'] : null;
+        $this->container['issueDate'] = isset($data['issueDate']) ? $data['issueDate'] : null;
+        $this->container['activationDate'] = isset($data['activationDate']) ? $data['activationDate'] : null;
+        $this->container['expirationPrinted'] = isset($data['expirationPrinted']) ? $data['expirationPrinted'] : null;
+        $this->container['securityCodePrinted'] = isset($data['securityCodePrinted']) ? $data['securityCodePrinted'] : null;
+        $this->container['termsAndConditions'] = isset($data['termsAndConditions']) ? $data['termsAndConditions'] : null;
     }
 
     /**
@@ -195,7 +224,7 @@ class Tmsv2TokenizedCardCard implements ArrayAccess
 
     /**
      * Sets number
-     * @param string $number The customer's payment card number, also known as the Primary Account Number (PAN).
+     * @param string $number The latest customer's payment card number associated to the network token.
      * @return $this
      */
     public function setNumber($number)
@@ -285,6 +314,111 @@ class Tmsv2TokenizedCardCard implements ArrayAccess
     public function setSuffix($suffix)
     {
         $this->container['suffix'] = $suffix;
+
+        return $this;
+    }
+
+    /**
+     * Gets issueDate
+     * @return \DateTime
+     */
+    public function getIssueDate()
+    {
+        return $this->container['issueDate'];
+    }
+
+    /**
+     * Sets issueDate
+     * @param \DateTime $issueDate Card issuance date. XML date format: YYYY-MM-DD.
+     * @return $this
+     */
+    public function setIssueDate($issueDate)
+    {
+        $this->container['issueDate'] = $issueDate;
+
+        return $this;
+    }
+
+    /**
+     * Gets activationDate
+     * @return \DateTime
+     */
+    public function getActivationDate()
+    {
+        return $this->container['activationDate'];
+    }
+
+    /**
+     * Sets activationDate
+     * @param \DateTime $activationDate Card activation date. XML date format: YYYY-MM-DD
+     * @return $this
+     */
+    public function setActivationDate($activationDate)
+    {
+        $this->container['activationDate'] = $activationDate;
+
+        return $this;
+    }
+
+    /**
+     * Gets expirationPrinted
+     * @return bool
+     */
+    public function getExpirationPrinted()
+    {
+        return $this->container['expirationPrinted'];
+    }
+
+    /**
+     * Sets expirationPrinted
+     * @param bool $expirationPrinted Indicates if the expiration date is printed on the card.
+     * @return $this
+     */
+    public function setExpirationPrinted($expirationPrinted)
+    {
+        $this->container['expirationPrinted'] = $expirationPrinted;
+
+        return $this;
+    }
+
+    /**
+     * Gets securityCodePrinted
+     * @return bool
+     */
+    public function getSecurityCodePrinted()
+    {
+        return $this->container['securityCodePrinted'];
+    }
+
+    /**
+     * Sets securityCodePrinted
+     * @param bool $securityCodePrinted Indicates if the Card Verification Number is printed on the card.
+     * @return $this
+     */
+    public function setSecurityCodePrinted($securityCodePrinted)
+    {
+        $this->container['securityCodePrinted'] = $securityCodePrinted;
+
+        return $this;
+    }
+
+    /**
+     * Gets termsAndConditions
+     * @return \CyberSource\Model\Tmsv2TokenizedCardCardTermsAndConditions
+     */
+    public function getTermsAndConditions()
+    {
+        return $this->container['termsAndConditions'];
+    }
+
+    /**
+     * Sets termsAndConditions
+     * @param \CyberSource\Model\Tmsv2TokenizedCardCardTermsAndConditions $termsAndConditions
+     * @return $this
+     */
+    public function setTermsAndConditions($termsAndConditions)
+    {
+        $this->container['termsAndConditions'] = $termsAndConditions;
 
         return $this;
     }

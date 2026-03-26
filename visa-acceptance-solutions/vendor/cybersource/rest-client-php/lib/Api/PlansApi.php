@@ -164,8 +164,8 @@ class PlansApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "activatePlan,activatePlanWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "activatePlan,activatePlanWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -188,6 +188,10 @@ class PlansApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\ActivateDeactivatePlanResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "activatePlan,activatePlanWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -197,7 +201,8 @@ class PlansApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\ActivateDeactivatePlanResponse',
-                '/rbs/v1/plans/{id}/activate'
+                '/rbs/v1/plans/{id}/activate',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -295,8 +300,8 @@ class PlansApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "createPlan,createPlanWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "createPlan,createPlanWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -319,6 +324,10 @@ class PlansApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\CreatePlanResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "createPlan,createPlanWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -328,7 +337,8 @@ class PlansApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\CreatePlanResponse',
-                '/rbs/v1/plans'
+                '/rbs/v1/plans',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -423,8 +433,8 @@ class PlansApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "deactivatePlan,deactivatePlanWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "deactivatePlan,deactivatePlanWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -447,6 +457,10 @@ class PlansApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\ActivateDeactivatePlanResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "deactivatePlan,deactivatePlanWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -456,7 +470,8 @@ class PlansApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\ActivateDeactivatePlanResponse',
-                '/rbs/v1/plans/{id}/deactivate'
+                '/rbs/v1/plans/{id}/deactivate',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -555,8 +570,8 @@ class PlansApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "deletePlan,deletePlanWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "deletePlan,deletePlanWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -579,6 +594,10 @@ class PlansApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\DeletePlanResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "deletePlan,deletePlanWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -588,7 +607,8 @@ class PlansApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\DeletePlanResponse',
-                '/rbs/v1/plans/{id}'
+                '/rbs/v1/plans/{id}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -687,8 +707,8 @@ class PlansApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getPlan,getPlanWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getPlan,getPlanWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -711,6 +731,10 @@ class PlansApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\GetPlanResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getPlan,getPlanWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -720,7 +744,8 @@ class PlansApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\GetPlanResponse',
-                '/rbs/v1/plans/{id}'
+                '/rbs/v1/plans/{id}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -804,8 +829,8 @@ class PlansApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getPlanCode,getPlanCodeWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getPlanCode,getPlanCodeWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -828,6 +853,10 @@ class PlansApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\GetPlanCodeResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getPlanCode,getPlanCodeWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -837,7 +866,8 @@ class PlansApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\GetPlanCodeResponse',
-                '/rbs/v1/plans/code'
+                '/rbs/v1/plans/code',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -947,8 +977,8 @@ class PlansApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "getPlans,getPlansWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getPlans,getPlansWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -976,6 +1006,10 @@ class PlansApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\GetAllPlansResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getPlans,getPlansWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -985,7 +1019,8 @@ class PlansApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\GetAllPlansResponse',
-                '/rbs/v1/plans'
+                '/rbs/v1/plans',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
@@ -1094,8 +1129,8 @@ class PlansApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = false;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "updatePlan,updatePlanWithHttpInfo")) {
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "updatePlan,updatePlanWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -1118,6 +1153,10 @@ class PlansApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\UpdatePlanResponse");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "updatePlan,updatePlanWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -1127,7 +1166,8 @@ class PlansApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\UpdatePlanResponse',
-                '/rbs/v1/plans/{id}'
+                '/rbs/v1/plans/{id}',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

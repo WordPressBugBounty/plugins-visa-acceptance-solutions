@@ -24,12 +24,12 @@ trait BindTrait
      * injected in the matching parameters (of the constructor, of methods
      * called and of controller actions).
      *
-     * @param string $nameOrFqcn A parameter name with its "$" prefix, or an FQCN
+     * @param string $nameOrFqcn A parameter name with its "$" prefix, or a FQCN
      * @param mixed  $valueOrRef The value or reference to bind
      *
      * @return $this
      */
-    final public function bind(string $nameOrFqcn, $valueOrRef): self
+    final public function bind(string $nameOrFqcn, mixed $valueOrRef): static
     {
         $valueOrRef = static::processValue($valueOrRef, true);
         $bindings = $this->definition->getBindings();

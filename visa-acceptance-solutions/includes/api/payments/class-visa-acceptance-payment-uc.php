@@ -21,6 +21,7 @@ require_once __DIR__ . '/../request/payments/class-visa-acceptance-authorization
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-payment-adapter.php';
 require_once __DIR__ . '/../response/payments/class-visa-acceptance-authorization-response.php';
 require_once __DIR__ . '/class-visa-acceptance-auth-reversal.php';
+require_once __DIR__ . '/class-visa-acceptance-refund.php';
 require_once __DIR__ . '/../../class-visa-acceptance-payment-gateway-subscriptions.php';
 require_once plugin_dir_path( __DIR__ ) . '/../../public/class-visa-acceptance-payment-gateway-unified-checkout-public.php';
 require_once plugin_dir_path( __DIR__ ) . '/../../public/class-visa-acceptance-payment-gateway-expresspay-public.php';
@@ -53,6 +54,27 @@ class Visa_Acceptance_Payment_UC extends Visa_Acceptance_Request {
 	}
 
 	/**
+	 * Returns true if the transient token JWT indicates an eCheck payment type.
+	 *
+	 * @param string $transient_token The transient token JWT to check.
+	 * @return bool True if the token represents an eCheck payment, false otherwise.
+	 */
+	public function is_echeck_from_transient_token( string $transient_token ): bool {
+		$is_echeck = false;
+        $parts = explode( VISA_ACCEPTANCE_FULL_STOP, $transient_token );
+        if ( isset( $parts[VISA_ACCEPTANCE_VAL_ONE] ) ) {
+            $json = base64_decode( $parts[VISA_ACCEPTANCE_VAL_ONE] ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding JWT payload.
+            $obj = json_decode( $json, true );
+            if ( is_array( $obj ) ) {
+                $name = $obj['content']['paymentInformation']['paymentType']['name']['value'] ?? $obj['content']['paymentInformation']['paymentType']['name'] ?? $obj['metadata']['paymentType'] ?? null;
+                $is_echeck = is_string( $name ) && VISA_ACCEPTANCE_CHECK === strtoupper( $name );
+            }
+        }
+
+		return $is_echeck;
+	}
+
+	/**
 	 * Retrieve payment details including address from transient token
 	 *
 	 * @param string $transient_token Transient Token.
@@ -69,13 +91,13 @@ class Visa_Acceptance_Payment_UC extends Visa_Acceptance_Request {
 
 			// Return the response body which contains orderInformation with billTo and shipTo.
 			return array(
-				'http_code' => $api_response[1],
-				'body'      => $api_response[0],
+				'http_code' => $api_response[VISA_ACCEPTANCE_VAL_ONE],
+				'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 			);
 
 		} catch ( \CyberSource\ApiException $e ) {
 			$this->gateway->add_logs_header_response( 
-				wp_json_encode( array( 'error' => $e->getMessage() ) ), 
+				wp_json_encode( array( VISA_ACCEPTANCE_ERROR => $e->getMessage() ) ), 
 				false, 
 				'Get Payment Details Error' 
 			);
@@ -197,103 +219,155 @@ class Visa_Acceptance_Payment_UC extends Visa_Acceptance_Request {
 	 * @return array
 	 */
 	public function do_uc_transaction( $order, $transient_token, $is_save_card ) {
-        $settings                                   = $this->gateway->get_gateway_settings();
-        $payment_response                           = $this->get_uc_payment_response( $order, $transient_token, $is_save_card );
-        $auth_response                              = new Visa_Acceptance_Authorization_Response( $this->gateway );
-        $request                                    = new Visa_Acceptance_Payment_Adapter( $this->gateway );
-        $subscriptions                              = new Visa_Acceptance_Payment_Gateway_Subscriptions();
-		$payment_methods                            = new Visa_Acceptance_Payment_Methods($this->gateway);
-        $return_response[ VISA_ACCEPTANCE_SUCCESS ] = null;
-        $return_response[ VISA_ACCEPTANCE_STRING_ERROR ] = null;
+		$settings        = $this->gateway->get_gateway_settings();
+		$is_echeck       = $this->is_echeck_from_transient_token( $transient_token );
+		$payment_methods = new Visa_Acceptance_Payment_Methods( $this->gateway );
+		$auth_response   = new Visa_Acceptance_Authorization_Response( $this->gateway );
+		$request         = new Visa_Acceptance_Payment_Adapter( $this->gateway );
+		$subscriptions   = new Visa_Acceptance_Payment_Gateway_Subscriptions();
+		$refund          = new Visa_Acceptance_Refund( $this->gateway );
+
+		$return_response[ VISA_ACCEPTANCE_SUCCESS ] = null;
+		$return_response[ VISA_ACCEPTANCE_ERROR ]   = null;
 
 		// Check if this is a CUP or JAYWAN card for free trial (zero amount order).
-		$is_zero_amount_order = (VISA_ACCEPTANCE_ZERO_AMOUNT === $order->get_total());
-		$unsupported_zero_amount_card = $is_zero_amount_order && $payment_methods->unsupported_zero_amount_card($transient_token);
+		$is_zero_amount_order         = ( VISA_ACCEPTANCE_ZERO_AMOUNT === $order->get_total() );
+		$unsupported_zero_amount_card = $is_zero_amount_order && $payment_methods->unsupported_zero_amount_card( $transient_token );
+		$is_zero_amount_echeck        = $is_zero_amount_order && $is_echeck;
+
+		$payment_response = $this->get_uc_payment_response( $order, $transient_token, $is_save_card );
 
 		// Handle case where payment response is not valid.
-        if ( ! is_array( $payment_response ) || empty( $payment_response ) ) {
-            $order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_FAILED, VISA_ACCEPTANCE_STRING_EMPTY );
-            $return_response[ VISA_ACCEPTANCE_SUCCESS ] = false;
-            $return_response[ VISA_ACCEPTANCE_STRING_ERROR ] = VISA_ACCEPTANCE_TIMEOUT_ERROR;
-            return $return_response;
-        }
-		$http_code = $payment_response['http_code'];
+		if ( ! is_array( $payment_response ) || empty( $payment_response ) ) {
+			$order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_FAILED, VISA_ACCEPTANCE_STRING_EMPTY );
+			$return_response[ VISA_ACCEPTANCE_SUCCESS ] = false;
+			$return_response[ VISA_ACCEPTANCE_ERROR ]   = VISA_ACCEPTANCE_TIMEOUT_ERROR;
+			return $return_response;
+		}
+
+		$http_code    = $payment_response['http_code'];
 		// Ensure body is JSON string for get_payment_response_array.
 		$payment_body = is_array( $payment_response['body'] ) ? wp_json_encode( $payment_response['body'] ) : $payment_response['body'];
-		$payment_response_array = $this->get_payment_response_array( $http_code, $payment_body, VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED );
-		$status                 = $payment_response_array['status'];
-        try {
-            if ( is_array( $payment_response )) {
-                if ( $auth_response->is_transaction_approved( $payment_response, $payment_response_array['status'] ) ) {
-                if ( $auth_response->is_transaction_status_approved( $payment_response_array['status'] ) ) {
-                    if ( ( VISA_ACCEPTANCE_YES === $is_save_card ) && ( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $payment_response_array['status'] ) ) {
-                        $response = $this->save_payment_method( $payment_response );
-                        if ( $this->gateway->is_subscriptions_activated && ( wcs_order_contains_subscription( $order ) || wcs_order_contains_renewal( $order ) || wcs_is_subscription( $order ) ) && $response['status'] && isset( $response['token'] ) ) {
-                            $subscriptions->update_order_subscription_token( $order, $response['token'] );
-                        }
-                    }
-                    $is_charge_transaction = VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $status && ( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $settings['transaction_type'] || $request->check_virtual_order_enabled( $settings, $order ) );
-                    $transaction_type      = $is_charge_transaction ? VISA_ACCEPTANCE_CHARGE_APPROVED : VISA_ACCEPTANCE_AUTH_APPROVED;
-                    $this->update_order_notes( $transaction_type, $order, $payment_response_array, null );
-                    if ( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $status ) {
-                        if ( $is_charge_transaction ) {
-                            $this->add_capture_data( $order, $payment_response_array );
-                            $this->update_order_notes( VISA_ACCEPTANCE_CHARGE_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING );
- 
-                        } else {
-                            $this->add_transaction_data( $order, $payment_response_array );
-                            if ( $order->get_total() === VISA_ACCEPTANCE_PLACEHOLDER_AMOUNT ) {
-                                $this->update_order_notes( VISA_ACCEPTANCE_CHARGE_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING );
-                            }
-                            else {
-                                $this->update_order_notes( VISA_ACCEPTANCE_AUTHORIZE_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_ON_HOLD );
-                            }
-                        }
-                    } else {
-                        // AUTHORIZED_PENDING_REVIEW - DM review.
-						// Store whether this was a charge or auth transaction for later status update.
-						$this->update_order_meta( $order, '_dm_review_is_charge', $is_charge_transaction ? VISA_ACCEPTANCE_YES : VISA_ACCEPTANCE_NO );
 
-						$this->update_order_notes( VISA_ACCEPTANCE_REVIEW_MESSAGE, $order, $payment_response_array, null );
-						$this->add_review_transaction_data( $order, $payment_response_array );
-						$this->update_order_notes( VISA_ACCEPTANCE_REVIEW_TRANSACTION, $order, $payment_response_array, null );
- 
-                    }
+		$payment_response_array = $this->get_payment_response_array(
+			$http_code,
+			$payment_body,
+			$is_echeck ? VISA_ACCEPTANCE_API_RESPONSE_ECHECK_STATUS : VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED
+		);
+		$status          = $payment_response_array['status'];
+		$is_echeck_valid = $is_echeck && in_array( $status, array( VISA_ACCEPTANCE_API_RESPONSE_ECHECK_STATUS, VISA_ACCEPTANCE_API_RESPONSE_STATUS_TRANSMITTED ), true );
+		$is_dm_review    = (
+			VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED_PENDING_REVIEW === $status ||
+			VISA_ACCEPTANCE_API_RESPONSE_ECHECK_DM_STATUS === $status
+		);
 
-					// Execute automatic authorization reversal for CUP/JAYWAN cards on free trial orders.
-					// Check if this was a $1.00 authorization for a zero-amount order (free trial).
-					if ($unsupported_zero_amount_card && VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $status) {
-						// Get client reference code from response.
-						if (is_object($payment_response['body']) && method_exists($payment_response['body'], 'getClientReferenceInformation')) {
-							$client_reference_info = $payment_response['body']->getClientReferenceInformation();
-							$code = $client_reference_info ? $client_reference_info->getCode() : wp_generate_password(5, false, false);
-						} else {
-							$code = isset($payment_response_array['client_reference_code']) ? $payment_response_array['client_reference_code'] : wp_generate_password(5, false, false);
-						}
+		// Helper: save subscription token when applicable.
+		$maybe_save_subscription_token = function ( $token_value ) use ( $subscriptions, $order ) {
+			if ( $this->gateway->is_subscriptions_activated
+				&& ( wcs_order_contains_subscription( $order ) || wcs_order_contains_renewal( $order ) || wcs_is_subscription( $order ) )
+			) {
+				$subscriptions->update_order_subscription_token( $order, $token_value );
+			}
+		};
 
-						// Process the authorization reversal.
-					$reversal_response = $payment_methods->process_card_auth_reversal($payment_response, $code, $order);
+		try {
+			if ( ! $auth_response->is_transaction_approved( $payment_response, $status ) ) {
+				$return_response = $request->get_error_message( $payment_response_array, $order );
+			} elseif ( $is_dm_review ) {
+				$order->update_meta_data( '_vas_payment_type', $is_echeck ? VISA_ACCEPTANCE_CHECK : VISA_ACCEPTANCE_PAYMENT_TYPE_CARD );
+				$order->save();
+
+				// Save payment method if requested (for both card and eCheck DM review).
+				if ( VISA_ACCEPTANCE_YES === $is_save_card ) {
+					$response = $this->save_payment_method( $payment_response, $order, $is_echeck );
+					if ( $response['status'] && isset( $response['token'] ) ) {
+						$maybe_save_subscription_token( $response['token'] );
 					}
-                    $return_response[ VISA_ACCEPTANCE_SUCCESS ] = true;
-                } else {
-                    $this->add_transaction_data( $order, $payment_response_array );
-                    $this->update_order_notes( VISA_ACCEPTANCE_AUTH_REJECT, $order, $payment_response_array, null );
-                    $this->update_order_notes( VISA_ACCEPTANCE_REJECT_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_CANCELLED );
-                    if ( ! $request->auth_reversal_exists( $order, $payment_response_array ) ) {
-                        $request->do_auth_reversal( $order, $payment_response_array );
-                    }
-                    $return_response[ VISA_ACCEPTANCE_SUCCESS ] = false;
-                }
-            } else {
-                $return_response = $request->get_error_message( $payment_response_array, $order );
-            }
-            return $return_response;
-            }
-            
-        } catch ( \Exception $e ) {
-            $this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to handles UC payment transaction', true );
-        }
-    }
+				}
+
+				// Store whether this was a charge or auth transaction for later status update.
+				$is_charge_transaction = $is_echeck || ( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $status && ( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $settings['transaction_type'] || $request->check_virtual_order_enabled( $settings, $order ) ) );
+				$this->update_order_meta( $order, '_dm_review_is_charge', $is_charge_transaction ? VISA_ACCEPTANCE_YES : VISA_ACCEPTANCE_NO );
+				$this->update_order_notes( VISA_ACCEPTANCE_REVIEW_MESSAGE, $order, $payment_response_array, null );
+				$this->add_review_transaction_data( $order, $payment_response_array );
+				$this->update_order_notes( VISA_ACCEPTANCE_REVIEW_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PENDING );
+				$return_response[ VISA_ACCEPTANCE_SUCCESS ] = true;
+
+			} elseif ( $is_echeck_valid || $auth_response->is_transaction_status_approved( $status ) ) {
+				// Save payment method for cards (AUTHORIZED) or eCheck (PENDING/TRANSMITTED).
+				$should_save_token = VISA_ACCEPTANCE_YES === $is_save_card && (
+					VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $status ||
+					( $is_echeck && in_array( $status, array( VISA_ACCEPTANCE_API_RESPONSE_ECHECK_STATUS, VISA_ACCEPTANCE_API_RESPONSE_STATUS_TRANSMITTED ), true ) )
+				);
+				if ( $should_save_token ) {
+					$response = $this->save_payment_method( $payment_response, $order, $is_echeck );
+					if ( $response['status'] && isset( $response['token'] ) ) {
+						$maybe_save_subscription_token( $response['token'] );
+					}
+				}
+
+				$is_charge_transaction = $is_echeck || ( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $status && ( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $settings['transaction_type'] || $request->check_virtual_order_enabled( $settings, $order ) ) );
+				$transaction_type      = $is_charge_transaction ? VISA_ACCEPTANCE_CHARGE_APPROVED : VISA_ACCEPTANCE_AUTH_APPROVED;
+				$this->update_order_notes( $transaction_type, $order, $payment_response_array, null );
+
+				if ( $is_echeck_valid ) {
+					$order->update_meta_data( '_vas_payment_type', VISA_ACCEPTANCE_CHECK );
+					$order->save();
+					$this->add_capture_data( $order, $payment_response_array );
+					$this->update_order_notes( VISA_ACCEPTANCE_CHARGE_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING );
+				} elseif ( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $status ) {
+					$order->update_meta_data( '_vas_payment_type', VISA_ACCEPTANCE_PAYMENT_TYPE_CARD );
+					$order->save();
+
+					if ( $is_charge_transaction ) {
+						$this->add_capture_data( $order, $payment_response_array );
+						$this->update_order_notes( VISA_ACCEPTANCE_CHARGE_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING );
+					} else {
+						$this->add_transaction_data( $order, $payment_response_array );
+						if ( $order->get_total() === VISA_ACCEPTANCE_PLACEHOLDER_AMOUNT ) {
+							$this->update_order_notes( VISA_ACCEPTANCE_CHARGE_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING );
+						} else {
+							$this->update_order_notes( VISA_ACCEPTANCE_AUTHORIZE_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_ON_HOLD );
+						}
+					}
+				}
+
+				// Execute automatic authorization reversal for CUP/JAYWAN cards on free trial orders.
+				if ( $unsupported_zero_amount_card && VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $status ) {
+					$code = ( is_object( $payment_response['body'] ) && method_exists( $payment_response['body'], 'getClientReferenceInformation' ) && $payment_response['body']->getClientReferenceInformation() )
+						? $payment_response['body']->getClientReferenceInformation()->getCode()
+						: ( $payment_response_array['client_reference_code'] ?? wp_generate_password( VISA_ACCEPTANCE_VAL_FIVE, false, false ) );
+					$payment_methods->process_card_auth_reversal( $payment_response, $code, $order );
+				}
+
+				// Execute automatic refund for zero-amount eCheck orders.
+				if ( $is_zero_amount_echeck && $is_echeck_valid ) {
+					$txn_id = ( is_object( $payment_response['body'] ) && method_exists( $payment_response['body'], 'getId' ) ) ? $payment_response['body']->getId() : null;
+					if ( $txn_id ) {
+						$ref_code = ( is_object( $payment_response['body'] ) && method_exists( $payment_response['body'], 'getClientReferenceInformation' ) && $payment_response['body']->getClientReferenceInformation() )
+							? $payment_response['body']->getClientReferenceInformation()->getCode()
+							: null;
+						$refund->get_refund_response( null, VISA_ACCEPTANCE_PLACEHOLDER_AMOUNT, $txn_id, true, $ref_code );
+					}
+				}
+
+				$return_response[ VISA_ACCEPTANCE_SUCCESS ] = true;
+
+			} else {
+				$this->add_transaction_data( $order, $payment_response_array );
+				$this->update_order_notes( VISA_ACCEPTANCE_AUTH_REJECT, $order, $payment_response_array, null );
+				$this->update_order_notes( VISA_ACCEPTANCE_REJECT_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_CANCELLED );
+				if ( ! $is_echeck && ! $request->auth_reversal_exists( $order, $payment_response_array ) ) {
+					$request->do_auth_reversal( $order, $payment_response_array );
+				}
+				$return_response[ VISA_ACCEPTANCE_SUCCESS ] = false;
+			}
+
+			return $return_response;
+		} catch ( \Exception $e ) {
+			$this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to handles UC payment transaction', true );
+		}
+	}
 
 	/**
 	 * Generate payment response payload for Unified Checkout transaction
@@ -306,26 +380,27 @@ class Visa_Acceptance_Payment_UC extends Visa_Acceptance_Request {
 	 */
 	public function get_uc_payment_response( $order, $transient_token, $is_save_card ) {
 		$gateway_settings = $this->gateway->get_gateway_settings();
-		$log_header       = ( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $gateway_settings['transaction_type'] ) ? ucfirst( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE ) : VISA_ACCEPTANCE_AUTHORIZATION;
+		$is_echeck_payment = $this->is_echeck_from_transient_token( $transient_token );
+
+		$log_header = ( $is_echeck_payment || VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $gateway_settings['transaction_type'] )
+			? ucfirst( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE )
+			: VISA_ACCEPTANCE_AUTHORIZATION;
+		
 		$request          = new Visa_Acceptance_Payment_Adapter( $this->gateway );
-		$api_client       = $request->get_api_client(true);
+		$api_client       = $request->get_api_client();
 		$payments_api     = new PaymentsApi( $api_client );
 		$payment_methods  = new Visa_Acceptance_Payment_Methods($this->gateway);
 
-		// Check if order total is zero (free trial) and card is CUP or JAYWAN.
-		$original_order_total = $order->get_total();
-		$is_zero_amount_order = (VISA_ACCEPTANCE_ZERO_AMOUNT === $original_order_total);
-		$unsupported_zero_amount_card = $is_zero_amount_order && $payment_methods->unsupported_zero_amount_card($transient_token);
+		// For zero-amount (free trial) orders, temporarily override get_total() while building the API payload:
+		// CUP/JAYWAN cards → $1.00 auth (reversed after); eCheck → $0.01 charge (refunded after).
+		$is_zero_amount_order         = ( VISA_ACCEPTANCE_ZERO_AMOUNT === $order->get_total() );
+		$unsupported_zero_amount_card = $is_zero_amount_order && $payment_methods->unsupported_zero_amount_card( $transient_token );
 
-		if ($unsupported_zero_amount_card) {
-			// CUP (062) and JAYWAN (081) cards require minimum $1.00 authorization for tokenization.
-			// Temporarily override order total to $1.00 for CUP/JAYWAN tokenization.
-			add_filter('woocommerce_order_get_total', function ($total, $filter_order) use ($order) {
-				if ($filter_order->get_id() === $order->get_id()) {
-					return VISA_ACCEPTANCE_ONE_DOLLAR_AMOUNT;
-				}
-				return $total;
-			}, 10, 2);
+		if ( $is_zero_amount_order && ( $unsupported_zero_amount_card || $is_echeck_payment ) ) {
+			$override_amount = $unsupported_zero_amount_card ? VISA_ACCEPTANCE_ONE_DOLLAR_AMOUNT : VISA_ACCEPTANCE_PLACEHOLDER_AMOUNT;
+			add_filter( 'woocommerce_order_get_total', function ( $total, $filter_order ) use ( $order, $override_amount ) {
+				return $filter_order->get_id() === $order->get_id() ? $override_amount : $total;
+			}, VISA_ACCEPTANCE_VAL_TEN, VISA_ACCEPTANCE_VAL_TWO );
 		}
 
 		// Build the payload using CyberSource SDK models.
@@ -333,25 +408,30 @@ class Visa_Acceptance_Payment_UC extends Visa_Acceptance_Request {
 
 		// For CUP/JAYWAN cards on free trial, force authorization-only (no capture) so we can reverse it.
 		if ($unsupported_zero_amount_card) {
-			$processing_information_data['capture'] = false;
+			$processing_information_data[VISA_ACCEPTANCE_CAPTURE] = false;
 		}
-
+		if ( $is_echeck_payment ) {
+			$processing_information_data += $this->get_echeck_bank_transfer_options();
+		}		
 		$processing_information      = new \CyberSource\Model\Ptsv2paymentsProcessingInformation($processing_information_data);
 
-		$payment_request 			 = new \CyberSource\Model\CreatePaymentRequest(
-			array(
-				'clientReferenceInformation' => $request->client_reference_information( $order ),
-				'processingInformation'      => $processing_information,
-				'tokenInformation'           => $request->get_cybersource_token_information( $transient_token ),
-				'orderInformation'           => $request->get_payment_order_information( $order ),
-				'deviceInformation'          => $request->get_device_information(),
-				'buyerInformation'           => $request->get_payment_buyer_information( $order ),
-			)
+		$payment_request_data = array(
+			'clientReferenceInformation' => $request->client_reference_information( $order ),
+			'processingInformation'      => $processing_information,
+			'tokenInformation'           => $request->get_cybersource_token_information( $transient_token ),
+			'orderInformation'           => $request->get_payment_order_information( $order ),
+			'deviceInformation'          => $request->get_device_information(),
+			'buyerInformation'           => $request->get_payment_buyer_information( $order ),
 		);
+		if ( $is_echeck_payment ) {
+			$payment_request_data['paymentInformation'] = $request->get_echeck_payment_information( $order );
+		}
+
+		$payment_request = new \CyberSource\Model\CreatePaymentRequest( $payment_request_data );
 		
 		// Remove the temporary filter after building the request.
-		if ($unsupported_zero_amount_card) {
-			remove_all_filters('woocommerce_order_get_total');
+		if ( $is_zero_amount_order && ( $unsupported_zero_amount_card || $is_echeck_payment ) ) {
+			remove_all_filters( 'woocommerce_order_get_total' );
 		}
 
 		if ( VISA_ACCEPTANCE_YES === $is_save_card ) {
@@ -361,13 +441,13 @@ class Visa_Acceptance_Payment_UC extends Visa_Acceptance_Request {
 			$this->gateway->add_logs_data( $payment_request, true, $log_header );
 			try {
 				$api_response = $payments_api->createPayment( $payment_request );
-				$this->gateway->add_logs_service_response( $api_response[0], $api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
+				$this->gateway->add_logs_service_response( $api_response[VISA_ACCEPTANCE_VAL_ZERO], $api_response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
 				$return_array = array(
-					'http_code' => $api_response[1],
-					'body'      => $api_response[0],
+					'http_code' => $api_response[VISA_ACCEPTANCE_VAL_ONE],
+					'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 				);
 				return $return_array;
-			} catch ( \CyberSource\ApiException $e ) {
+			} catch ( \Throwable $e ) {
 				$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, $log_header );
 			}
 		}

@@ -229,8 +229,8 @@ class PushFundsApi
         }
 
         //MLE check and mle encryption for req body
-        $isMLESupportedByCybsForApi = true;
-        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $isMLESupportedByCybsForApi, "createPushFundsTransfer,createPushFundsTransferWithHttpInfo")) {
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "createPushFundsTransfer,createPushFundsTransferWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
             } catch (Exception $e) {
@@ -253,6 +253,10 @@ class PushFundsApi
         }
 
         self::$logger->debug("Return Type : \CyberSource\Model\PushFunds201Response");
+        
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "createPushFundsTransfer,createPushFundsTransferWithHttpInfo");
+        
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi(
@@ -262,7 +266,8 @@ class PushFundsApi
                 $httpBody,
                 $headerParams,
                 '\CyberSource\Model\PushFunds201Response',
-                '/pts/v1/push-funds-transfer'
+                '/pts/v1/push-funds-transfer',
+                $isResponseMLEForAPI
             );
             
             self::$logger->debug("Response Headers :\n" . \CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));

@@ -110,13 +110,13 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 		$status                                     = $json->status;
 		$payment_response_array                     = $this->get_payment_response_array( $http_code, $validation_response['body'], $status );
 		$return_response[ VISA_ACCEPTANCE_SUCCESS ] = null;
-		$return_response[ VISA_ACCEPTANCE_STRING_ERROR ] = null;
+		$return_response[ VISA_ACCEPTANCE_ERROR ] = null;
 
 		if ( VISA_ACCEPTANCE_YES === $settings['enable_saved_sca'] && VISA_ACCEPTANCE_YES === $is_save_card ) {
 			if ( VISA_ACCEPTANCE_STRING_CUSTOMER_AUTHENTICATION_REQUIRED === $payment_response_array['reason'] ) {
 				$this->mark_order_failed( $payment_response_array['reason'] );
 				$this->update_failed_order( $order, $payment_response_array );
-				$response_array[ VISA_ACCEPTANCE_STRING_ERROR ] = VISA_ACCEPTANCE_SERVER_ERROR;
+				$response_array[ VISA_ACCEPTANCE_ERROR ] = VISA_ACCEPTANCE_SERVER_ERROR;
 				$checkout_url                                   = wc_get_checkout_url();
 				$response_array['redirect']                     = $checkout_url;
 				$this->delete_order_meta( $order, VISA_ACCEPTANCE_SAVED_CARD_NORMAL . $order->get_id() );
@@ -206,7 +206,7 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 				// Checkout Page URL.
 				$checkout_url                                   = wc_get_checkout_url();
 				$response_array['redirect']                     = $checkout_url;
-				$response_array[ VISA_ACCEPTANCE_STRING_ERROR ] = $message;
+				$response_array[ VISA_ACCEPTANCE_ERROR ] 		= $message;
 			}
 
 					return $response_array;
@@ -276,12 +276,12 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 			return VISA_ACCEPTANCE_ONE_DOLLAR_AMOUNT;
 			}
 			return $total;
-		}, 10, 2 );
+		}, VISA_ACCEPTANCE_VAL_TEN, VISA_ACCEPTANCE_VAL_TWO );
 		}
 		$processing_information_data = $request->get_processing_info( $order, $settings, $is_save_card, 'validate', $is_stored_card );
 		// For CUP/JAYWAN cards on free trial, force authorization-only (no capture) for reversal.
 		if ( $unsupported_zero_amount_card && $is_zero_amount_order ) {
-			$processing_information_data['capture'] = false;
+			$processing_information_data[VISA_ACCEPTANCE_CAPTURE] = false;
 		}
 		$processing_information      = new \CyberSource\Model\Ptsv2paymentsProcessingInformation( $processing_information_data );
 
@@ -339,10 +339,10 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 			$this->gateway->add_logs_data( $payload, true, $log_header );
 			try {
 				$api_response = $payments_api->createPayment( $payload );
-				$this->gateway->add_logs_service_response( $api_response[0],$api_response[2][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
+				$this->gateway->add_logs_service_response( $api_response[VISA_ACCEPTANCE_VAL_ZERO],$api_response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
 				$return_array = array(
-				'http_code' => $api_response[1],
-				'body'      => $api_response[0],
+				'http_code' => $api_response[VISA_ACCEPTANCE_VAL_ONE],
+				'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 				);
 				return $return_array;
 			} catch ( \CyberSource\ApiException $e ) {
