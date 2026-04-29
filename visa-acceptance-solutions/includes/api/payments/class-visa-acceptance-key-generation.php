@@ -20,10 +20,10 @@ require_once __DIR__ . '/../class-visa-acceptance-request.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-key-generation-request.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-payment-adapter.php';
 
-use CyberSource\Api\UnifiedCheckoutCaptureContextApi;
-use CyberSource\Api\MicroformIntegrationApi;
-use CyberSource\Model\GenerateUnifiedCheckoutCaptureContextRequest;
-use CyberSource\Model\GenerateCaptureContextRequest;
+use Pymt_Vas\Dependencies\CyberSource\Api\UnifiedCheckoutCaptureContextApi;
+use Pymt_Vas\Dependencies\CyberSource\Api\MicroformIntegrationApi;
+use Pymt_Vas\Dependencies\CyberSource\Model\GenerateUnifiedCheckoutCaptureContextRequest;
+use Pymt_Vas\Dependencies\CyberSource\Model\GenerateCaptureContextRequest;
 
 /**
  * Visa Acceptance Key Generation Request Class.
@@ -83,7 +83,16 @@ class Visa_Acceptance_Key_Generation extends Visa_Acceptance_Request {
 				$request = $key_generation_request->get_digital_uc_request($product_id, $quantity, $grouped_items, $switch_amount );
 				$log_header = VISA_ACCEPTANCE_EXPRESS_PAY. VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_UC_CAPTURE_CONTEXT ;
 			}
-			if ( ( VISA_ACCEPTANCE_ZERO_AMOUNT === (string) $request['orderInformation']['amountDetails']['totalAmount'] ) && WC_Subscriptions_Cart::cart_contains_subscription() && ! is_product() ) {
+			$is_cart_switch = false;
+			if ( isset( WC()->cart ) ) {
+				foreach ( WC()->cart->cart_contents as $cart_item ) {
+					if ( ! empty( $cart_item['subscription_switch'] ) ) {
+						$is_cart_switch = true;
+						break;
+					}
+				}
+			}
+			if ( ( VISA_ACCEPTANCE_ZERO_AMOUNT === (string) $request['orderInformation']['amountDetails']['totalAmount'] ) && WC_Subscriptions_Cart::cart_contains_subscription() && ! is_product() && ! $is_cart_switch ) {
 				$request = $is_ep ? $key_generation_request->get_digital_zero_uc_request() : $key_generation_request->get_zero_uc_request();
 			} elseif ( VISA_ACCEPTANCE_ZERO_AMOUNT >= (string) $request['orderInformation']['amountDetails']['totalAmount'] ) {
 				// For express pay on product page with zero amount, use digital zero request (placeholder).
@@ -108,7 +117,7 @@ class Visa_Acceptance_Key_Generation extends Visa_Acceptance_Request {
 				);
 				return $return_array;
 			}
-			} catch ( \CyberSource\ApiException $e ) {
+			} catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
 				$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, $log_header );
 			}	
 		}
@@ -178,7 +187,7 @@ class Visa_Acceptance_Key_Generation extends Visa_Acceptance_Request {
 				
 				return $return_array;
 			}
-		} catch (\CyberSource\ApiException $e) {
+		} catch (\Pymt_Vas\Dependencies\CyberSource\ApiException $e) {
 			$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, $log_header );
 		}
 	}

@@ -145,7 +145,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 		// Initialize CyberSource API Client using visa acceptance adapter class.
 		$request                = new Visa_Acceptance_Payment_Adapter( $this->gateway );
 		$api_client             = $request->get_api_client(true);
-		$payment_instrument_api = new \CyberSource\Api\CustomerPaymentInstrumentApi( $api_client );
+		$payment_instrument_api = new \Pymt_Vas\Dependencies\CyberSource\Api\CustomerPaymentInstrumentApi( $api_client );
 
 		try {
 			// Call the SDK method to delete the payment instrument.
@@ -155,7 +155,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 				'body'      => wp_json_encode( array( 'message' => 'Payment instrument deleted successfully.' ) ),
 			);
 			return $return_array;
-		} catch ( \CyberSource\ApiException $e ) {
+		} catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
 			$return_array = array(
 				'http_code' => $e->getCode(),
 				'body'      => $e->getResponseBody(),
@@ -471,6 +471,9 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
                 $core_tokens = \WC_Payment_Tokens::get_customer_tokens( $customer_data['customer_id'], $this->gateway->get_id() );
                 if ( is_array( $core_tokens ) && ! empty( $core_tokens ) ) {
                     foreach ( $core_tokens as $core_token ) {
+						if ( ! $core_token instanceof \WC_Payment_Token ) {
+                            continue;
+                        }
                         if ( $is_echeck && VISA_ACCEPTANCE_TOKEN_TYPE_ECHECK !== $core_token->get_type() ) {
                             continue;
                         }
@@ -812,7 +815,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 		try {
 			$request                = new Visa_Acceptance_Payment_Adapter( $this->gateway );
 			$api_client             = $request->get_api_client(true);
-			$payment_instrument_api = new \CyberSource\Api\CustomerPaymentInstrumentApi( $api_client );
+			$payment_instrument_api = new \Pymt_Vas\Dependencies\CyberSource\Api\CustomerPaymentInstrumentApi( $api_client );
 			$card_details_response  = $payment_instrument_api->getCustomerPaymentInstrument( $tokens['id'], $tokens['payment_instrument_id'] );
 			return $card_details_response;
 		} catch ( \Exception $e ) {
@@ -836,7 +839,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
         // Initialize CyberSource API Client.
         $request      = new Visa_Acceptance_Payment_Adapter( $this->gateway );
         $api_client   = $request->get_api_client();
-        $payments_api = new \CyberSource\Api\PaymentsApi( $api_client );
+        $payments_api = new \Pymt_Vas\Dependencies\CyberSource\Api\PaymentsApi( $api_client );
         $decoded_transient_token = ! empty( $transient_token ) ? json_decode( base64_decode( explode( VISA_ACCEPTANCE_FULL_STOP, $transient_token )[VISA_ACCEPTANCE_VAL_ONE] ), true ) : null; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
  
        if ( $is_echeck ) {
@@ -850,7 +853,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
         }
 		
 		// Build the payload.
-		$client_reference_information = new \CyberSource\Model\Ptsv2paymentsClientReferenceInformation(
+		$client_reference_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsClientReferenceInformation(
 			array(
 				'code'               => strtoupper( wp_generate_password( VISA_ACCEPTANCE_VAL_FIVE, false, false ) ),
 				'partner'            => $request->client_reference_information_partner(),
@@ -858,9 +861,9 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 				'applicationVersion' => VISA_ACCEPTANCE_PLUGIN_VERSION,
 			)
 		);
-		$order_information = new \CyberSource\Model\Ptsv2paymentsOrderInformation(
+		$order_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformation(
 			array(
-				'billTo'        => new \CyberSource\Model\Ptsv2paymentsOrderInformationBillTo(
+				'billTo'        => new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationBillTo(
 					array(
 						'firstName'          => $customer->get_billing_first_name(),
 						'lastName'           => $customer->get_billing_last_name(),
@@ -873,7 +876,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 						'phoneNumber'        => $customer->get_billing_phone(),
 					)
 				),
-				'amountDetails' => new \CyberSource\Model\Ptsv2paymentsOrderInformationAmountDetails(
+				'amountDetails' => new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationAmountDetails(
 					array(
 						'totalAmount' => $total_amount,
 						'currency'    => get_woocommerce_currency(),
@@ -882,7 +885,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 			)
 		);
 
-		$authorization_options = new \CyberSource\Model\Ptsv2paymentsProcessingInformationAuthorizationOptions(
+		$authorization_options = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationAuthorizationOptions(
 			array(
 				'credentialStoredOnFile' => true,
 				'type'                   => 'customer',
@@ -903,7 +906,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 			$processing_info_array += $this->get_echeck_bank_transfer_options();
 		}
 
-		$processing_information = new \CyberSource\Model\Ptsv2paymentsProcessingInformation( $processing_info_array );
+		$processing_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformation( $processing_info_array );
 
 		$payload_array = array(
 			'clientReferenceInformation' => $client_reference_information,
@@ -913,8 +916,8 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 			'processingInformation'      => $processing_information,
 		);
 		if ( $order ) {
-			$payload_array['buyerInformation'] = new \CyberSource\Model\Ptsv2paymentsBuyerInformation(
-				array( 'merchantCustomerId' => $order->get_user_id() )
+			$payload_array['buyerInformation'] = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsBuyerInformation(
+				array( 'merchantCustomerId' => strval($order->get_user_id() ) )
 			);
 		}
 
@@ -922,7 +925,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 			$payload_array['paymentInformation'] = $request->get_echeck_payment_information( null );
 		}
 		
-		$payload = new \CyberSource\Model\CreatePaymentRequest( $payload_array );
+		$payload = new \Pymt_Vas\Dependencies\CyberSource\Model\CreatePaymentRequest( $payload_array );
 		$payload = $request->get_action_token_type( $payload );
 
 		if ( ! empty( $payload ) ) {
@@ -937,7 +940,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 					'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 				);
 				return $return_array;
-			} catch ( \CyberSource\ApiException $e ) {
+			} catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
 				$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, $log_header );
 			}
 		}

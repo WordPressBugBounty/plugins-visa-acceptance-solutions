@@ -81,6 +81,36 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 
 
 	/**
+	 * Displays an admin notice when the gateway is running in test/sandbox mode.
+	 *
+	 * @return void
+	 */
+	public function sandbox_admin_notice() {
+		// Only show on the payment gateway configuration page.
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Reading URL parameters for conditional notice display only.
+		$page    = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY;
+		$tab     = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY;
+		$section = isset( $_GET['section'] ) ? sanitize_text_field( wp_unslash( $_GET['section'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY;
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+		if ( 'wc-settings' !== $page || 'checkout' !== $tab || $this->id !== $section ) {
+			return;
+		}
+
+		$settings    = $this->gateway->get_gateway_settings();
+		$enabled     = isset( $settings['enabled'] ) ? $settings['enabled'] : VISA_ACCEPTANCE_NO;
+		$environment = isset( $settings[ VISA_ACCEPTANCE_ENVIRONMENT ] ) ? $settings[ VISA_ACCEPTANCE_ENVIRONMENT ] : VISA_ACCEPTANCE_STRING_EMPTY;
+
+		if ( VISA_ACCEPTANCE_YES === $enabled && VISA_ACCEPTANCE_ENVIRONMENT_TEST === $environment ) {
+			$message = sprintf(
+				/* translators: %s: plugin name */
+				__( '<strong>%s</strong> is currently in Test environment. No real transactions will be processed.', 'visa-acceptance-solutions' ),
+				__( 'Visa Acceptance Solutions', 'visa-acceptance-solutions' )
+			);
+			echo '<div class="notice notice-warning"><p>' . wp_kses_post( $message ) . '</p></div>';
+		}
+	}
+
+	/**
 	 * Register the stylesheets for the admin area.
 	 */
 	public function enqueue_styles() {
@@ -144,7 +174,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 				'capture_message'                 => __( 'Are you sure you wish to process this capture? The action cannot be reversed.', 'visa-acceptance-solutions' ),
 				'capture_action'                  => VISA_ACCEPTANCE_WC_CAPTURE_ACTION,
 				'capture_nonce'                   => wp_create_nonce( VISA_ACCEPTANCE_WC_CAPTURE_ACTION ),
-				'capture_error'                   => __( 'Something went wrong, and the capture could no be completed. Please try again.', 'visa-acceptance-solutions' ),
+				'capture_error'                   => __( 'Something went wrong, and the capture could not be completed. Please try again.', 'visa-acceptance-solutions' ),
 				'refund_button_visibility'        => $this->validate_refund_amount( $order ) ? VISA_ACCEPTANCE_YES : VISA_ACCEPTANCE_NO,
 				'total_amount'                    => (float) $order->get_total(),
 				'order_status'                    => $order->get_status(),

@@ -113,6 +113,9 @@ class Visa_Acceptance_Blocks_Handler_Unified_Checkout extends AbstractPaymentMet
 			$customer_data        = $payment_method->get_order_for_add_payment_method();
 			$core_tokens          = \WC_Payment_Tokens::get_customer_tokens( $customer_data['customer_id'], $this->gateway->get_id() );
 			foreach ( $core_tokens as $token ) {
+				if ( ! $token instanceof \WC_Payment_Token ) {
+                    continue;
+                }
 				$data = $token->get_data();
 				if ( $data['token'] ) {
 					// If card_type is null or empty, it's likely an eCheck token.
@@ -175,24 +178,28 @@ class Visa_Acceptance_Blocks_Handler_Unified_Checkout extends AbstractPaymentMet
 			$version      = is_array( $asset ) && isset( $asset['version'] ) ? $asset['version'] : $version;
 			$dependencies = is_array( $asset ) && isset( $asset['dependencies'] ) ? $asset['dependencies'] : $dependencies;
 		}
-		wp_enqueue_style( 'wc-unified-checkout-cart-checkout-block', $this->gateway->get_plugin_url() . '/../public/css/visa-acceptance-payment-gateway-blocks.css', array(), $version );
+		// Only enqueue block styles on cart/checkout pages or in the admin (block editor).
+		if ( is_checkout() || is_cart() || is_admin() ) {
+			wp_enqueue_style( 'wc-unified-checkout-cart-checkout-block', $this->gateway->get_plugin_url() . '/../public/css/visa-acceptance-payment-gateway-blocks.css', array(), $version );
 
-		// Adding Images for Available Card Logos Logic.
-		wp_enqueue_style( 'wc-credit-card-cart-checkout-block-visa', $this->gateway->get_plugin_url() . '/../public/img/card-visa.png', array(), $version );
-		wp_enqueue_style( 'wc-credit-card-cart-checkout-block-mastercard', $this->gateway->get_plugin_url() . '/../public/img/card-mastercard.png', array(), $version );
-		wp_enqueue_style( 'wc-credit-card-cart-checkout-block-amex', $this->gateway->get_plugin_url() . '/../public/img/card-amex.png', array(), $version );
-		wp_enqueue_style( 'wc-credit-card-cart-checkout-block-discover', $this->gateway->get_plugin_url() . '/../public/img/card-discover.png', array(), $version );
-		wp_enqueue_style( 'wc-credit-card-cart-checkout-block-dinerclub', $this->gateway->get_plugin_url() . '/../public/img/card-dinersclub.png', array(), $version );
-		wp_enqueue_style( 'wc-credit-card-cart-checkout-block-jcb', $this->gateway->get_plugin_url() . '/../public/img/card-jcb.png', array(), $version );
-		wp_enqueue_style( 'wc-credit-card-cart-checkout-block-maestro', $this->gateway->get_plugin_url() . '/../public/img/card-maestro.png', array(), $version );
+			// Adding Images for Available Card Logos Logic.
+			wp_enqueue_style( 'wc-credit-card-cart-checkout-block-visa', $this->gateway->get_plugin_url() . '/../public/img/card-visa.png', array(), $version );
+			wp_enqueue_style( 'wc-credit-card-cart-checkout-block-mastercard', $this->gateway->get_plugin_url() . '/../public/img/card-mastercard.png', array(), $version );
+			wp_enqueue_style( 'wc-credit-card-cart-checkout-block-amex', $this->gateway->get_plugin_url() . '/../public/img/card-amex.png', array(), $version );
+			wp_enqueue_style( 'wc-credit-card-cart-checkout-block-discover', $this->gateway->get_plugin_url() . '/../public/img/card-discover.png', array(), $version );
+			wp_enqueue_style( 'wc-credit-card-cart-checkout-block-dinerclub', $this->gateway->get_plugin_url() . '/../public/img/card-dinersclub.png', array(), $version );
+			wp_enqueue_style( 'wc-credit-card-cart-checkout-block-jcb', $this->gateway->get_plugin_url() . '/../public/img/card-jcb.png', array(), $version );
+			wp_enqueue_style( 'wc-credit-card-cart-checkout-block-maestro', $this->gateway->get_plugin_url() . '/../public/img/card-maestro.png', array(), $version );
+		}
 
 		wp_register_script(
 			'wc-payment-method-unified-checkout',
 			$this->gateway->get_plugin_url() . '/../includes/build/index-unified-checkout.js',
-			array( 'jquery' ),
+			array( 'jquery', 'wp-i18n' ),
 			$version,
 			true
 		);
+		wp_set_script_translations( 'wc-payment-method-unified-checkout', 'visa-acceptance-solutions' );
 		return array( 'wc-payment-method-unified-checkout' );
 	}
 

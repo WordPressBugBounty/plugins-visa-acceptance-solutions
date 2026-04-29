@@ -598,6 +598,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
         $this->plugin_admin = new Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin( $this->get_id(), $this->get_version(), $this );
         $settings           = $this->get_gateway_settings();
         $this->loader->add_action( 'woocommerce_update_options_payment_gateways_' . $this->id,  $this, 'process_admin_options'  );
+        $this->loader->add_action( 'admin_notices', $this->plugin_admin, 'sandbox_admin_notice' );
         if ( isset( $settings['enabled'] ) && VISA_ACCEPTANCE_YES === $settings['enabled'] ) {
             $this->loader->add_action( 'admin_enqueue_scripts', $this->plugin_admin, 'enqueue_styles' );
             $this->loader->add_action( 'admin_enqueue_scripts', $this->plugin_admin, 'enqueue_scripts' );
@@ -634,7 +635,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
                 add_filter( 'woocommerce_get_customer_payment_tokens', function( $tokens, $customer_id, $gateway_filter ) use ( $gateway_id ) {
                     if ( empty( $gateway_filter ) || $gateway_filter === $gateway_id ) {
                         foreach ( $tokens as $key => $token ) {
-                            if ( $token->get_gateway_id() === $gateway_id ) {
+							if ( $token instanceof \WC_Payment_Token && $token->get_gateway_id() === $gateway_id ) {
                                 unset( $tokens[ $key ] );
                             }
                         }
@@ -833,13 +834,18 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 	 * @return array
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = VISA_ACCEPTANCE_STRING_EMPTY ) {
-		$order         = wc_get_order( $order_id );
-		$response_data = array();
-		$response_data = $this->validate_order( $order_id, $order );
-		if ( ! $response_data[ VISA_ACCEPTANCE_ERROR ] ) {
-			$response_data = $this->plugin_admin->process_refund( $order_id, $amount, $reason );
+		$order  = wc_get_order( $order_id );
+		$result = null;
+		if ( ! $order ) {
+			$result = new \WP_Error( 'vas_invalid_order', __( 'Invalid order ID.', 'visa-acceptance-solutions' ) );
+		} elseif ( ! current_user_can( VISA_ACCEPTANCE_EDIT_SHOP_ORDER, $order_id ) ) {
+			$result = new \WP_Error( 'vas_invalid_permissions', __( 'You do not have permission to refund this order.', 'visa-acceptance-solutions' ) );
+		} elseif ( $order->get_payment_method( VISA_ACCEPTANCE_EDIT ) !== $this->id ) {
+			$result = new \WP_Error( 'vas_invalid_payment_method', __( 'This order was not paid via Visa Acceptance Solutions.', 'visa-acceptance-solutions' ) );
+		} else {
+			$result = $this->plugin_admin->process_refund( $order_id, $amount, $reason );
 		}
-		return $response_data;
+		return $result;
 	}
 
 	/**

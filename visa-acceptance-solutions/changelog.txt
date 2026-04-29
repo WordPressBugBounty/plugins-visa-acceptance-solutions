@@ -1,8 +1,14 @@
 *** Visa Acceptance Solutions Changelog ***
 
+2026-04-23 - version 2.2.1
+* Feature - Updated Cybersource Rest Client SDK to v0.0.72
+* Bug Fix - WordPress validation issue fixed
+* Bug Fix - Added validation for Express Pay with respect to currencies
+* Bug Fix - Monolog dependency issue addressed
+
 2026-03-24 - version 2.2.0
 * Feature - Updated Unified Checkout to v0.34 
-* Feature - updated Cybersource Rest Client SDK to v0.0.71
+* Feature - Updated Cybersource Rest Client SDK to v0.0.71
 * Feature - Added support to eCheck payment method
 * Feature - Cardinal Commerce Data Centre Migration URL update
 * Feature - Display of additional response fields for refunds in back office to support Merchandise Return Authorization mandate

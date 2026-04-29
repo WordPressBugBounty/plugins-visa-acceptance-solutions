@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Visa Acceptance Solutions
  * Description: Accept payments in WooCommerce with Visa Acceptance Solutions.
- * Version: 2.2.0
+ * Version: 2.2.1
  * Author: Visa Acceptance Solutions
  * Author URI: https://visaacceptance.com
  * Developer: Visa Acceptance Solutions
@@ -10,7 +10,7 @@
  * Requires at least: 6.9
  * Tested up to: 6.9
  * Requires PHP: 8.2.0
- * WC tested up to: 10.6.1
+ * WC tested up to: 10.7.0
  * WC requires at least: 10.3.7
  * Text Domain: visa-acceptance-solutions
  * Domain Path: /languages
@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'VISA_ACCEPTANCE_PLUGIN_VERSION', '2.2.0' );
+define( 'VISA_ACCEPTANCE_PLUGIN_VERSION', '2.2.1' );
 
 /**
  * Fallback Plugin version.
@@ -518,6 +518,11 @@ define( 'VISA_ACCEPTANCE_STRING_CUSTOMER_AUTHENTICATION_REQUIRED', 'CUSTOMER_AUT
  *
  */
 define( 'VISA_ACCEPTANCE_ERROR', 'error' );
+/**
+ * string value constant.
+ *
+ */
+define( 'VISA_ACCEPTANCE_WARNING', 'warning' );
 
 /**
  * string value constant.
@@ -1545,9 +1550,10 @@ function visa_acceptance_solutions_deactivate() {
  */
 function visa_acceptance_extension_initialize() {
 	require_once 'includes/class-visa-acceptance-solutions.php';
-	if ( file_exists (__DIR__ . '/vendor/autoload.php')){
-		require __DIR__ . '/vendor/autoload.php';
-	}
+	if ( file_exists (__DIR__ . '/vendor-prefixed/autoload.php'))
+        {
+        require __DIR__ . '/vendor-prefixed/autoload.php';
+    }
 	if ( class_exists( VISA_ACCEPTANCE_WOOCOMMERCE_CONSTANT ) ) {
 	    $GLOBALS['visa_acceptance_' . VISA_ACCEPTANCE_SOLUTION_TEXT] = Visa_Acceptance_Solutions::instance();
 	} else
@@ -1572,6 +1578,11 @@ function visa_acceptance_hpos_compatibility() {
     if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
         \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
             'custom_order_tables',
+            __FILE__,
+            true
+        );
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+            'cart_checkout_blocks',
             __FILE__,
             true
         );

@@ -69,7 +69,7 @@ class Visa_Acceptance_Authorization_Request extends Visa_Acceptance_Request {
 			),
 			VISA_ACCEPTANCE_CARD              => array(
 				'securityCode'           => $saved_card_cvv,
-				'typeSelectionIndicator' => VISA_ACCEPTANCE_VAL_ONE,
+				'typeSelectionIndicator' => '1',
 			),
 		);
 		return $payment_information;

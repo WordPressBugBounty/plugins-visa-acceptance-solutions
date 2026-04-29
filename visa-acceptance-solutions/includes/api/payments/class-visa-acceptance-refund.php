@@ -239,16 +239,17 @@ class Visa_Acceptance_Refund extends Visa_Acceptance_Request {
 	 * @param string      $transaction_id transaction id.
 	 * @param boolean     $is_echeck whether this is an eCheck refund.
 	 * @param string|null $code client reference code, used when $order is null.
-	 *
+	 * @throws \Throwable If the API call fails.
+	 * 
 	 * @return array
 	 */
 	public function get_refund_response( $order, $amount, $transaction_id, $is_echeck = false, $code = null ) {
 		$request     = new Visa_Acceptance_Payment_Adapter( $this->gateway );
 		$api_client  = $request->get_api_client();
-		$refund_api  = new \CyberSource\Api\RefundApi( $api_client );
-		$request_obj = new \CyberSource\Model\RefundPaymentRequest();
+		$refund_api  = new \Pymt_Vas\Dependencies\CyberSource\Api\RefundApi( $api_client );
+		$request_obj = new \Pymt_Vas\Dependencies\CyberSource\Model\RefundPaymentRequest();
 
-		$client_reference_information_partner = new \CyberSource\Model\Ptsv2paymentsClientReferenceInformationPartner(
+		$client_reference_information_partner = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsClientReferenceInformationPartner(
 			array(
 				'developerId' => VISA_ACCEPTANCE_DEVELOPER_ID,
 				'solutionId'  => VISA_ACCEPTANCE_SOLUTION_ID,
@@ -256,9 +257,11 @@ class Visa_Acceptance_Refund extends Visa_Acceptance_Request {
 		);
 
 		if(null === $code) {
-			$code = $order->get_id();
+			$code = strval( $order->get_id() );
+		} else {
+			$code = strval( $code );
 		}
-		$client_reference_information = new \CyberSource\Model\Ptsv2paymentsidrefundsClientReferenceInformation(
+		$client_reference_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsClientReferenceInformation(
 			array(
 				'code'               => $code,
 				'partner'            => $client_reference_information_partner,
@@ -267,23 +270,30 @@ class Visa_Acceptance_Refund extends Visa_Acceptance_Request {
 			)
 		);
 		$request_obj->setClientReferenceInformation( $client_reference_information );
-		$payment_type = new \CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformationPaymentType(
+		$payment_type = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformationPaymentType(
 			array( 'name' => $is_echeck ? VISA_ACCEPTANCE_CHECK : VISA_ACCEPTANCE_PAYMENT_TYPE_CARD )
 		);
 		$request_obj->setPaymentInformation(
-			new \CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformation(
+			new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformation(
 				array( 'paymentType' => $payment_type )
 			)
 		);
 		$request_obj->setProcessingInformation(
-			new \CyberSource\Model\Ptsv2paymentsidrefundsProcessingInformation(
+			new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsProcessingInformation(
 			$is_echeck
 				? $this->get_echeck_bank_transfer_options()
-				: array( 'paymentSolution' => $request->get_payment_solution( $order ) )
+				: ( function() use ( $request, $order ) {
+					$payment_solution_data = $request->get_payment_solution( $order );
+					$processing_array = array( 'commerceIndicator' => $payment_solution_data['commerceIndicator'] );
+					if ( ! empty( $payment_solution_data['paymentSolution'] ) ) {
+						$processing_array['paymentSolution'] = $payment_solution_data['paymentSolution'];
+					}
+					return $processing_array;
+				} )()
 			)
 		);
 	
-		$order_information = new \CyberSource\Model\Ptsv2paymentsidrefundsOrderInformation(
+		$order_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsOrderInformation(
 			array(
 				'amountDetails' => array(
 					'totalAmount' => $amount,

@@ -378,14 +378,14 @@
                                                 
                                                 microform.createToken(options, (err, flexjwtToken) => {
                                                     if (err) {
-                                                        console.error('Microform createToken error:', err);
+                                                        console.error('An error occurred while generating the Microform token:', err);
                                                         reject(err);
                                                     } else {
                                                         resolve({ token: flexjwtToken });
                                                     }
                                                 });
                                             } catch (error) {
-                                                console.error('Error in microform createToken:', error);
+                                                console.error('An unexpected error occurred during Microform token creation:', error);
                                                 reject(error);
                                             }
                                         });

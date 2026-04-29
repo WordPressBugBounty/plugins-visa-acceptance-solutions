@@ -84,10 +84,12 @@ class Visa_Acceptance_Express_Pay_Unified_Checkout extends AbstractPaymentMethod
 		$subscription_order = false;
 		$uc_settings         = get_option( VISA_ACCEPTANCE_WOOCOMMERCE_UNDERSCORE . $this->gateway->get_id() . VISA_ACCEPTANCE_UNDERSCORE_SETTINGS, array() );
 		$payment_gateway_unified_checkout = new Visa_Acceptance_Payment_Gateway_Unified_Checkout();
+		$available_gateways = WC()->payment_gateways()->get_available_payment_gateways();
+		$is_gateway_available = isset( $available_gateways[ $this->gateway->id ] );
 		$enable_gpay = ( isset( $uc_settings['enabled_payment_methods'] ) && is_array( $uc_settings['enabled_payment_methods'] ) && in_array( 'enable_gpay', $uc_settings['enabled_payment_methods'], true ) ) ? true : false;
 		$enable_apay = ( isset( $uc_settings['enabled_payment_methods'] ) && is_array( $uc_settings['enabled_payment_methods'] ) && in_array( 'enable_apay', $uc_settings['enabled_payment_methods'], true ) ) ? true : false;
 		$enable_paze = ( isset( $uc_settings['enabled_payment_methods'] ) && is_array( $uc_settings['enabled_payment_methods'] ) && in_array( 'enable_paze', $uc_settings['enabled_payment_methods'], true ) ) ? true : false;
-		if ( isset( $uc_settings['enabled'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enabled'] && ( is_checkout() || is_admin() ) ) {
+		if ( $is_gateway_available && isset( $uc_settings['enabled'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enabled'] && ( is_checkout() || is_admin() ) ) {
 			$enable_tokenization  = ( isset( $uc_settings['tokenization'] ) && VISA_ACCEPTANCE_YES === $general_settings['tokenization'] && is_user_logged_in() ) ? true : false;
 			$payer_auth_enabled   = ( isset( $uc_settings['enable_threed_secure'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enable_threed_secure'] ) ? $uc_settings['enable_threed_secure'] : VISA_ACCEPTANCE_STRING_EMPTY;
 

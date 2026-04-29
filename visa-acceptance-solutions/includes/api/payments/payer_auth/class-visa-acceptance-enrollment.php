@@ -31,8 +31,8 @@ require_once __DIR__ . '/../../request/payments/class-visa-acceptance-payer-auth
 require_once __DIR__ . '/../../request/payments/class-visa-acceptance-payment-adapter.php';
 require_once __DIR__ . '/../../../class-visa-acceptance-payment-gateway-subscriptions.php';
 
-use CyberSource\Api\PaymentsApi;
-use CyberSource\Model\CreatePaymentRequest;
+use Pymt_Vas\Dependencies\CyberSource\Api\PaymentsApi;
+use Pymt_Vas\Dependencies\CyberSource\Model\CreatePaymentRequest;
 
 /**
  * Visa Acceptance Enrollment Class
@@ -306,9 +306,9 @@ class Visa_Acceptance_Enrollment extends Visa_Acceptance_Request {
 		if ( $unsupported_zero_amount_card ) {
 			$processing_information_data[VISA_ACCEPTANCE_CAPTURE] = false;
 		}
-		$processing_information = new \CyberSource\Model\Ptsv2paymentsProcessingInformation( $processing_information_data );
+		$processing_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformation( $processing_information_data );
 		$consumer_authentication_information_data = $payer_auth_request->get_enroll_consumer_authentication_info( $reference_id, $return_url, $sca_case, $is_save_card, $settings );
-		$consumer_authentication_information = new \CyberSource\Model\Ptsv2paymentsConsumerAuthenticationInformation( $consumer_authentication_information_data );
+		$consumer_authentication_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsConsumerAuthenticationInformation( $consumer_authentication_information_data );
 
 		$enrollment_request = array(
 			'clientReferenceInformation'        => $request->client_reference_information( $order ),
@@ -352,7 +352,7 @@ class Visa_Acceptance_Enrollment extends Visa_Acceptance_Request {
 					'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 				);
 				return $return_array;
-			} catch ( \CyberSource\ApiException $e ) {
+			} catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
 				$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, $log_header );
 			}
 		}	

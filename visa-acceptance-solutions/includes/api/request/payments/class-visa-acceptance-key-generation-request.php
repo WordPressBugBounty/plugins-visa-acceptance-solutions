@@ -27,9 +27,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 require_once __DIR__ . '/../../class-visa-acceptance-request.php';
 
-use CyberSource\Model\Upv1capturecontextsCaptureMandate;
-use CyberSource\Model\Upv1capturecontextsOrderInformation;
-use CyberSource\Model\Upv1capturecontextsDataOrderInformationBillTo;
+use Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsCaptureMandate;
+use Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsOrderInformation;
+use Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationBillTo;
 
 /**
  * Visa Acceptance Credit Card API Key Generation Request Class.
@@ -613,7 +613,7 @@ class Visa_Acceptance_Key_Generation_Request extends Visa_Acceptance_Request {
             }
         }
  
-		$transient_token_response_options = new \CyberSource\Model\Microformv2sessionsTransientTokenResponseOptions(
+		$transient_token_response_options = new \Pymt_Vas\Dependencies\CyberSource\Model\Microformv2sessionsTransientTokenResponseOptions(
 			array(
 				'includeCardPrefix' => false,
 			)

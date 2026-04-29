@@ -46,6 +46,9 @@ class Visa_Acceptance_Payment_Gateway_Activator {
 		$data_store   = WC_Data_Store::load( 'payment-token' );
 		$users_tokens = WC_Payment_Tokens::get_customer_tokens( $user_id, VISA_ACCEPTANCE_UC_ID );
 		foreach ( $users_tokens as $token ) {
+			if ( ! $token instanceof \WC_Payment_Token ) {
+                continue;
+            }
 			if ( $token_id === $token->get_id() ) {
 				$data_store->set_default_status( $token_id, true );
 			} else {
@@ -63,6 +66,9 @@ class Visa_Acceptance_Payment_Gateway_Activator {
 	public function tokens_based_user_id( $visa_core_tokens ) {
 		$tokens_based_user_id = array();
 		foreach ( $visa_core_tokens as $token ) {
+			if ( ! $token instanceof \WC_Payment_Token ) {
+                 continue;
+            }
 			$token_data = $this->build_token_data( $token );
 			$tokens_based_user_id[ $token->get_user_id() ][ $token_data['token_information']['payment_instrument_id'] ] = $token;
 		}
@@ -203,6 +209,9 @@ class Visa_Acceptance_Payment_Gateway_Activator {
 			$visa_acceptance_solutions_core_tokens = \WC_Payment_Tokens::get_tokens( array( 'gateway_id' => VISA_ACCEPTANCE_UC_ID ) );
 			$tokens_based_user_id                  = $this->tokens_based_user_id( $visa_acceptance_solutions_core_tokens );
 			foreach ( $sv_core_tokens as $token ) {
+				if ( ! $token instanceof \WC_Payment_Token ) {
+                    continue;
+                }
 				$return_result                   = false;
 				$token_data                      = $this->build_token_data( $token );
 				$data                            = $this->get_data_to_save_migrated( $token_data );

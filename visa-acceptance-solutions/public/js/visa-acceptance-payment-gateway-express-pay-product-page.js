@@ -130,7 +130,7 @@
                                 captureContext = response.capture_context_ep_jwt;
                             } else if (!captureContext) {
                                 // No capture context available at all
-                                console.error('No capture context available');
+                                console.error('No capture context is available.');
                                 hideExpressPayLoader();
                                 return;
                             }
@@ -154,12 +154,12 @@
                                 }, 500);
                             }
                         } else {
-                            console.error('Failed to update capture context for variation', response);
+                            console.error('Failed to update the capture context for the selected variation:', response);
                             hideExpressPayLoader();
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('AJAX error updating variation:', error);
+                        console.error('An error occurred while updating the variation via AJAX:', error);
                         hideExpressPayLoader();
                     }
                 });
@@ -269,12 +269,12 @@
                                     }, 500);
                                 }
                             } else {
-                                console.error('Failed to update capture context for grouped products', response);
+                                console.error('Failed to update the capture context for grouped products:', response)
                                 hideExpressPayLoader();
                             }
                         },
                         error: function(xhr, status, error) {
-                            console.error('AJAX error updating grouped product quantities:', error);
+                            console.error('An error occurred while updating grouped product quantities via AJAX:', error);
                             hideExpressPayLoader();
                         }
                     });
@@ -347,12 +347,12 @@
                                 }, 500);
                             }
                         } else {
-                            console.error('Failed to update capture context', response);
+                            console.error('Failed to update the capture context:', response);
                             hideExpressPayLoader();
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('AJAX error updating quantity:', error);
+                        console.error('An error occurred while updating the quantity via AJAX:', error);
                         hideExpressPayLoader();
                     }
                 });
@@ -420,15 +420,37 @@
                             type: 'POST',
                             data: orderData,
                             success: function(response) {
-                                // On successfull payment redirect to order confirmation page.
                                 if (response.success && response.data.redirect_url) {
-                                    window.location.href = response.data.redirect_url; // Go to Order confirmation page.
+                                    window.location.href = response.data.redirect_url;
                                     hideExpressPayLoader();
+                                } else if (!response.success && response.data && response.data.message) {
+                                    hideExpressPayLoader();
+                                    $('.woocommerce-notices-wrapper .visa-express-pay-error').remove(); 
+                                    var noticesWrapper = document.querySelector('.woocommerce-notices-wrapper');
+                                    var errorDiv = document.createElement('div');
+                                    errorDiv.className = 'visa-express-pay-error';
+                                    errorDiv.setAttribute('role', 'alert');
+                                    errorDiv.style.cssText = 'background-color:#fff0f0;border:1px solid #cc0000;border-left:4px solid #cc0000;padding:12px 16px;margin:0 0 16px;';
+                                    errorDiv.textContent = response.data.message;
+                                    if (noticesWrapper) {
+                                        noticesWrapper.textContent = '';
+                                        noticesWrapper.appendChild(errorDiv);
+                                        noticesWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    } else {
+                                        var formCart = document.querySelector('form.cart');
+                                        if (formCart) {
+                                            var wrapperDiv = document.createElement('div');
+                                            wrapperDiv.className = 'woocommerce-notices-wrapper';
+                                            wrapperDiv.appendChild(errorDiv);
+                                            formCart.parentNode.insertBefore(wrapperDiv, formCart);
+                                            wrapperDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                        }
+                                    }
                                 } else {
                                     window.location.reload();
                                     $('#expressPaymentListContainer_product').hide();
                                     hideExpressPayLoader();
-                                };
+                                }
                             }
                         });
                     } catch (error) {

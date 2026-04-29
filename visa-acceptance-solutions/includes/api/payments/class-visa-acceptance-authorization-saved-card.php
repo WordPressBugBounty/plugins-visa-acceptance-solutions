@@ -24,7 +24,7 @@ require_once __DIR__ . '/../request/payments/class-visa-acceptance-payment-adapt
 require_once __DIR__ . '/class-visa-acceptance-auth-reversal.php';
 require_once __DIR__ . '/../../class-visa-acceptance-payment-gateway-subscriptions.php';
 
-use CyberSource\Api\PaymentsApi;
+use Pymt_Vas\Dependencies\CyberSource\Api\PaymentsApi;
 
 /**
  * Visa Acceptance Authorization Saved Card Class
@@ -249,15 +249,20 @@ class Visa_Acceptance_Authorization_Saved_Card extends Visa_Acceptance_Request {
 			$processing_information += $this->get_echeck_bank_transfer_options();
 		}
 
-		$processing_information = new \CyberSource\Model\Ptsv2paymentsProcessingInformation( $processing_information );
+		$processing_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformation( $processing_information );
 		$payload_data = array(
 			'clientReferenceInformation' => $request->client_reference_information( $order ),
 			'processingInformation'      => $processing_information,
 			'paymentInformation'         => $request->get_cybersource_payment_information( $token_data, $saved_card_cvv, $flex_cvv_token ),
-			'deviceInformation'          => $request->get_device_information(),
 			'orderInformation'           => $request->get_payment_order_information( $order ),
 			'buyerInformation'           => $request->get_payment_buyer_information( $order ),
 		);
+
+		// Only include deviceInformation when it has actual content.
+		$device_information = $request->get_device_information();
+		if ( ! empty( $device_information ) ) {
+			$payload_data['deviceInformation'] = $device_information;
+		}
 
 		// Remove the temporary total override filter now that the payload is built.
 		if ($is_zero_amount_order && ($is_echeck || $unsupported_zero_amount_card)) {
@@ -269,7 +274,7 @@ class Visa_Acceptance_Authorization_Saved_Card extends Visa_Acceptance_Request {
 			$payload_data['tokenInformation'] = $request->get_cybersource_token_information( $flex_cvv_token );
 			
 		}
-		$payload = new \CyberSource\Model\CreatePaymentRequest( $payload_data );
+		$payload = new \Pymt_Vas\Dependencies\CyberSource\Model\CreatePaymentRequest( $payload_data );
 		if ( ! empty( $payload ) ) {
 			$this->gateway->add_logs_data( $payload, true, $log_header );
 		try {

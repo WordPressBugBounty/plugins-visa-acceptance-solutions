@@ -19,8 +19,8 @@ require_once plugin_dir_path( __DIR__ ) . 'includes/api/payments/class-visa-acce
 require_once plugin_dir_path( __DIR__ ) . 'includes/api/payments/class-visa-acceptance-payment-methods.php';
 require_once plugin_dir_path( __DIR__ ) . 'includes/class-visa-acceptance-payment-gateway-subscriptions.php';
 
-use CyberSource\Api\CustomerPaymentInstrumentApi;
-use CyberSource\Model\PatchCustomerPaymentInstrumentRequest;
+use Pymt_Vas\Dependencies\CyberSource\Api\CustomerPaymentInstrumentApi;
+use Pymt_Vas\Dependencies\CyberSource\Model\PatchCustomerPaymentInstrumentRequest;
 
 /**
  * Visa Acceptance Payment Gateway Unified Checkout Public Class
@@ -212,11 +212,17 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
             if ( $subscription_active ) {
         	 	$is_subscription_tokenization_enabled = $this->gateway->is_subscriptions_activated;
             	$subscription_order = WC_Subscriptions_Cart::cart_contains_subscription() || wcs_cart_contains_renewal() || WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment;
+				if ( WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment ) {
+                    $payer_auth_enable = VISA_ACCEPTANCE_NO;
+                }
             }
 			$tokenization 	   = isset( $uc_settings['tokenization'] ) ? $uc_settings['tokenization'] : VISA_ACCEPTANCE_STRING_EMPTY;
 			$client_library    = VISA_ACCEPTANCE_STRING_EMPTY;
 			$token_key         = $uc_settings['test_api_key'];
 			foreach ( $core_tokens as $token ) {
+				if ( ! $token instanceof \WC_Payment_Token ) {
+					continue;
+				}
                 if( VISA_ACCEPTANCE_NO === $tokenization ) {
                     echo '<style>#wc-unified-checkout-saved-cards-options{display:none !important;}</style>';
                     echo '<style>#wc-unified-checkout-saved-card{display:none !important;}</style>';
@@ -417,6 +423,9 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 			$core_tokens    = \WC_Payment_Tokens::get_customer_tokens( $customer_data['customer_id'], $this->gateway->get_id() );
 			if ( ! empty( $core_tokens ) ) {
 				foreach ( $core_tokens as $token ) {
+					if ( ! $token instanceof \WC_Payment_Token ) {
+                    	continue;
+                	}
 					$environment_saved = $token->get_meta( VISA_ACCEPTANCE_ENVIRONMENT );
 					if ( $environment_saved === $settings[VISA_ACCEPTANCE_ENVIRONMENT] ) {
 						$token_data    = $token->get_data();
@@ -1175,6 +1184,9 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 		$core_tokens       = \WC_Payment_Tokens::get_customer_tokens( $customer_data['customer_id'], $this->gateway->get_id() );
 		if ( is_array( $core_tokens ) && ! empty( $core_tokens ) ) {
 			foreach ( $core_tokens as $core_token ) {
+				if ( ! $core_token instanceof \WC_Payment_Token ) {
+                    continue;
+                }
 				if ( ( $core_token->get_id() === (int) $blocks_token_id ) && ( $this->gateway->get_environment() === $core_token->get_meta( VISA_ACCEPTANCE_ENVIRONMENT ) ) ) {
 						$blocks_meta_token = $core_token;
 				}
@@ -1189,10 +1201,11 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	 * @return array
 	 */
 	public function get_order_for_add_payment_method() {
-		$user       = get_userdata( get_current_user_id() );
-		$properties = array(
+		$user        = get_userdata( get_current_user_id() );
+		$customer_id = ( $user && isset( $user->ID ) ) ? $user->ID : VISA_ACCEPTANCE_STRING_EMPTY;
+		$properties  = array(
 			'currency'    => get_woocommerce_currency(), // default to base store currency.
-			'customer_id' => isset( $user->ID ) ? $user->ID : VISA_ACCEPTANCE_STRING_EMPTY,
+			'customer_id' => $customer_id,
 		);
 		return $properties;
 	} // phpcs:ignore WordPress.Security.NonceVerification
@@ -1491,6 +1504,9 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 		$core_tokens               = \WC_Payment_Tokens::get_customer_tokens( $customer_data['customer_id'], $this->gateway->get_id() );
 		$default_payment_method_id = WC()->session->get( "wc_{$this->wc_payment_gateway_id}_default_card_id", VISA_ACCEPTANCE_STRING_EMPTY );
 		foreach ( $core_tokens as $token ) {
+			if ( ! $token instanceof \WC_Payment_Token ) {
+                continue;
+            }
 			if ( (int) $default_payment_method_id === $token->get_id() ) {
 				$data_store->set_default_status( $token->get_id(), true );
 			} else {
@@ -1526,7 +1542,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 					'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 				);
 				return $return_array;
-			} catch ( \CyberSource\ApiException $e ) {
+			} catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
 				$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, 'Set as default Payment Method' );
 			}
 		}
@@ -1576,7 +1592,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 	 * @return Customer
 	 */
 	public function wp_kama_woocommerce_saved_payment_methods_list_filter( $method, $payment_token ) {
-		if ( $payment_token->get_gateway_id() === $this->gateway->get_id() ) {
+		if ( $payment_token instanceof \WC_Payment_Token && $payment_token->get_gateway_id() === $this->gateway->get_id() ) {
 			$method['token'] = $payment_token->get_token();
 			if ( $payment_token->get_is_default() ) {
 				WC()->session->set( "wc_{$this->wc_payment_gateway_id}_default_card_id", wc_clean( $payment_token->get_id() ) );

@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/../class-visa-acceptance-request.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-payment-adapter.php';
 
-use CyberSource\Api\ConversionDetailsApi;
+use Pymt_Vas\Dependencies\CyberSource\Api\ConversionDetailsApi;
 
 /**
  * Visa Acceptance Reporting Class
@@ -176,7 +176,7 @@ class Visa_Acceptance_Reporting extends Visa_Acceptance_Request {
             
             return $response_array;
            
-        } catch ( \CyberSource\ApiException $e ) {
+        } catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
             $error_message = 'SDK API Error: ' . $e->getMessage();
             if ( $e->getResponseBody() ) {
                 $error_message .= ' | Response: ' . $e->getResponseBody();

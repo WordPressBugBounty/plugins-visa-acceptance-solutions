@@ -162,19 +162,22 @@ class Visa_Acceptance_Capture extends Visa_Acceptance_Request {
 	public function execute_capture( $order, $transaction_id ) {
 		$request     = new Visa_Acceptance_Payment_Adapter( $this->gateway );
 		$api_client  = $request->get_api_client();
-		$capture_api = new \CyberSource\Api\CaptureApi( $api_client );
+		$capture_api = new \Pymt_Vas\Dependencies\CyberSource\Api\CaptureApi( $api_client );
 		
-		$request_obj = new \CyberSource\Model\CapturePaymentRequest();
+		$request_obj = new \Pymt_Vas\Dependencies\CyberSource\Model\CapturePaymentRequest();
 		$request_obj->setClientReferenceInformation( $request->client_reference_information( $order ) );
 
-		$processing_information = new \CyberSource\Model\Ptsv2paymentsidcapturesProcessingInformation(
-			array(
-				'paymentSolution' => $request->get_payment_solution( $order ),
-			)
+		$payment_solution_data  = $request->get_payment_solution( $order );
+		$capture_processing_array = array(
+			'commerceIndicator' => $payment_solution_data['commerceIndicator'],
 		);
+		if ( ! empty( $payment_solution_data['paymentSolution'] ) ) {
+			$capture_processing_array['paymentSolution'] = $payment_solution_data['paymentSolution'];
+		}
+		$processing_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesProcessingInformation( $capture_processing_array );
 		$request_obj->setProcessingInformation( $processing_information );
 
-		$order_information = new \CyberSource\Model\Ptsv2paymentsidcapturesOrderInformation(
+		$order_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesOrderInformation(
 			array(
 				'amountDetails' => $request->order_information_amount_details( $order ),
 				'lineItems'     => $request->get_line_items_information( $order ),

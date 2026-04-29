@@ -279,6 +279,10 @@ trait Visa_Acceptance_Payment_Gateway_Admin_Trait {
 	 */
 	public function ajax_process_capture() {
 		check_ajax_referer( VISA_ACCEPTANCE_WC_CAPTURE_ACTION, VISA_ACCEPTANCE_NONCE );
+		if ( ! current_user_can( 'edit_shop_orders' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown -- edit_shop_orders is a valid WooCommerce capability.
+			wp_send_json_error( array( 'message' => __( 'You do not have permission to capture payments.', 'visa-acceptance-solutions' ) ) );
+			return;
+		}
 		$payment_gateway_uc = new Visa_Acceptance_Payment_Gateway_Unified_Checkout();
 		$post_data = $_POST;
 		if ( isset( $post_data['order_id'] ) ) {

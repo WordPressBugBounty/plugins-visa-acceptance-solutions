@@ -1,0 +1,134 @@
+/* Express Pay Product Page Styles */
+
+/* Payment button containers */
+#wc-google-pay-button-container{
+	height: 40px;
+	width: 160px;
+}
+
+#buttonPaymentListContainer{
+	margin-top: 8px;
+	margin-bottom: 1px;
+}
+
+/* Hidden place order buttons for express pay methods */
+.wc-vco-hidden-place-order-button {
+	display: none !important;
+}
+
+.wc-apay-hidden-place-order-button {
+	display: none !important;
+}
+
+.wc-gpay-hidden-place-order-button {
+	display: none !important;
+}
+
+/* Apple Pay button styling */
+apple-pay-button {
+	--apple-pay-button-width: 140px;
+	--apple-pay-button-height: 30px;
+	--apple-pay-button-border-radius: 5px;
+	--apple-pay-button-padding: 5px 0px;
+}
+
+/* Responsive UI for express pay section */
+
+/* Target any parent container that might be using flex */
+form.cart:has(#wc-express-checkout-product),
+.cart:has(#wc-express-checkout-product),
+div:has(> #wc-express-checkout-product) {
+	flex-wrap: wrap !important;
+}
+
+.wc-block-components-express-payment, .wc-block-components-express-payment-continue-rule, #wc-express-checkout-product-page-subscription-tokenization-notice-div{
+	width: 50%;
+}
+.wc-block-components-express-payment-continue-rule{
+	margin: 30px auto 20px auto !important;
+	width: 50%;
+}
+@media (min-width:782px) {
+	.wc-block-components-express-payment, .wc-block-components-express-payment-continue-rule {
+		width: 60% !important;
+	}
+}
+
+#wc-express-checkout-product {
+	width: 100% !important;
+	margin-top: 1em !important;
+	display: block;
+	position: relative !important;
+}
+
+#wc-express-checkout-normal {
+	width: 50%;
+}
+@media (max-width: 600px) {
+	#wc-express-checkout-product, #wc-express-checkout-normal, .wc-block-components-express-payment, .wc-block-components-express-payment-continue-rule, #wc-express-checkout-product-page-subscription-tokenization-notice-div {
+		width: 100% !important;
+	}
+}
+@media (min-width:601px) and (max-width:781px) {
+	#wc-express-checkout-product, #wc-express-checkout-normal {
+		width: 50% !important;
+	}
+}
+@media (min-width:782px) and (max-width:1000px) {
+	#wc-express-checkout-product, #wc-express-checkout-product-page-subscription-tokenization-notice-div {
+		width: 100% !important;
+	}
+}
+@media (min-width:1001px) and (max-width:1250px) {
+	#wc-express-checkout-product {
+		width: 80% !important;
+	}
+}
+
+#wc-express-checkout-normal{
+	margin:0 auto;
+}
+
+#express-checkout-heading {
+	position:relative; 
+	margin-bottom:15px;
+}
+
+#express-checkout-heading h5 {
+	margin-bottom:15px;
+}
+
+#wc-express-checkout-section-divider {
+	text-align:center; 
+	margin:20px 0; 
+	position:relative;
+}
+
+#wc-express-checkout-section-divider span {
+	background:#fff; 
+	padding:0 10px; 
+	position:relative; 
+	z-index:2;
+}
+
+#express-checkout-heading span {
+	background:#fff; padding:0 10px; position:relative; z-index:2;
+}
+
+#express-checkout-heading hr, #wc-express-checkout-section-divider hr {
+	margin:-12px 0 0 0; 
+	border:0; 
+	border-top:1px solid #ddd;
+}
+
+#wc-express-checkout-section {
+	border:0.5px solid #ddd; 
+	border-radius:10px; 
+	padding:20px; 
+	margin-bottom:25px; 
+	text-align:center;
+}
+
+#wc-express-checkout-product-page-subscription-tokenization-notice-div{
+	width: 50%;
+}

@@ -4,28 +4,43 @@
     "type": "composer-plugin",
     "config": {
         "platform": {
-          "php": "8.2"
+            "php": "8.2"
         },
-          "allow-plugins": {
-              "dealerdirect/phpcodesniffer-composer-installer": true,
-              "cybersource/rest-client-php": true,
-              "composer/installers": true
-          }
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "composer/installers": true
+        }
     },
     "require": {
-      "composer-plugin-api": "^2.0",
-      "cybersource/rest-client-php": "0.0.71",
-      "monolog/monolog": "^2.0"
+        "composer-plugin-api": "^2.0",
+        "cybersource/rest-client-php": "0.0.72",
+        "monolog/monolog": "^2.0"
     },
     "require-dev": {
-        "composer/installers": "^2.0"
+        "composer/installers": "^2.0",
+        "coenjacobs/mozart": "^1.2"
     },
     "autoload": {
         "psr-4": {
-        "WC_Vas_Gateway\\": "includes/"
+            "WC_Vas_Gateway\\": "includes/"
         }
     },
+    "scripts": {
+        "mozart-compose": "mozart compose"
+    },
     "extra": {
-        "installer-disable": true
+        "installer-disable": true,
+        "mozart": {
+            "dep_namespace": "Pymt_Vas\\Dependencies\\",
+            "dep_directory": "/vendor-prefixed/",
+            "classmap_directory": true,
+            "classmap_prefix": "Pymt_Vas_",
+            "constant_prefix": "Pymt_Vas_",
+            "functions_prefix": "pymt_vas_",
+            "generate_autoloader": true,
+            "delete_vendor_directories": false,
+            "updateCallSites": true,
+            "case_sensitive": true
+        }
     }
 }

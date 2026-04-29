@@ -6,8 +6,8 @@ Tags: woocommerce, payments, visa
 Requires at least: 6.9
 Tested up to: 6.9
 Requires PHP: 8.2.0
-Stable tag: 2.2.0
-WC tested up to: 10.6.1
+Stable tag: 2.2.1
+WC tested up to: 10.7.0
 WC requires at least: 10.3.7
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -62,6 +62,15 @@ Sign up [here](https://developer.visaacceptance.com/hello-world/sandbox.html).  
 
 == Changelog ==
 
+= 2.2.1 =
+**Enhancements**
+* Updated Cybersource Rest Client SDK to v0.0.72
+
+**Bug Fixes**
+* WordPress validation issue fixed
+* Added validation for Express Pay with respect to currencies
+* Monolog dependency issue addressed
+
 = 2.2.0 =
 **Enhancements**
 * Updated Unified Checkout to v0.34 
@@ -113,7 +122,7 @@ Sign up [here](https://developer.visaacceptance.com/hello-world/sandbox.html).  
 **Initial release** supporting Card Payments, Tokenisation, Payer Authentication (3D Secure), and Fraud Screening tools.
 
 == Upgrade Notice ==
-Version 2.2.0 is now available.  Please refer to change log for details.
+Version 2.2.1 is now available.  Please refer to change log for details.
 
 == Admin Notice ==
-Version 2.2.0 is now available.  Please refer to change log for details.
+Version 2.2.1 is now available.  Please refer to change log for details.

@@ -85,6 +85,10 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 	 * Function to Add Express Pay section at the top of checkout page.
 	 */
 	public function add_express_pay_at_normal_checkout() {
+		$available_gateways = WC()->payment_gateways()->get_available_payment_gateways();
+		if ( ! isset( $available_gateways[ $this->gateway->id ] ) ) {
+			return;
+		}
         $plugin_public = new  Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public($this->wc_payment_gateway_id,$this->gateway,$this->version);
 		$settings      = $plugin_public->get_uc_settings();
 		$enable_gpay = ( isset( $settings['enabled_payment_methods'] ) && is_array( $settings['enabled_payment_methods'] ) && in_array( 'enable_gpay', $settings['enabled_payment_methods'], true ) ) ? true : false;
@@ -143,6 +147,20 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 				echo '<style>#wc-express-checkout-section{display:none !important;}</style>';
 				echo '<style>#wc-express-checkout-section-divider{display:none !important;}</style>';
 			}
+			// Hide express pay for subscription switches with a $0 total (e.g. prorate setting = Never).
+			$is_switch_cart = false;
+			if ( $subscription_active && isset( WC()->cart ) ) {
+				foreach ( WC()->cart->cart_contents as $cart_item ) {
+					if ( ! empty( $cart_item['subscription_switch'] ) ) {
+						$is_switch_cart = true;
+						break;
+					}
+				}
+			}
+			if ( $is_switch_cart && VISA_ACCEPTANCE_ZERO_AMOUNT === WC()->cart->get_total( 'edit' ) ) {
+				echo '<style>#wc-express-checkout-section{display:none !important;}</style>';
+				echo '<style>#wc-express-checkout-section-divider{display:none !important;}</style>';
+			}
 		}
 	}
 
@@ -152,6 +170,10 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 	 * @return void
 	 */
 	public function add_express_pay_at_product_page() {
+		$available_gateways = WC()->payment_gateways()->get_available_payment_gateways();
+		if ( ! isset( $available_gateways[ $this->gateway->id ] ) ) {
+			return;
+		}
         $plugin_public = new  Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public($this->wc_payment_gateway_id,$this->gateway,$this->version)  ;
 		$settings          = $plugin_public->get_uc_settings();
 		$flex_request      = new Visa_Acceptance_Key_Generation( $this->gateway );
@@ -344,7 +366,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			}
 			$force_refresh = isset( $post['force_refresh'] ) ? intval( $post['force_refresh'] ) : VISA_ACCEPTANCE_VAL_ZERO;
 			if ( ! $product_id ) {
-				wp_send_json_error( array( 'message' => 'Missing product ID' ), VISA_ACCEPTANCE_FOUR_ZERO_ZERO );
+				wp_send_json_error( array( 'message' => __( 'Missing product ID', 'visa-acceptance-solutions' ) ), VISA_ACCEPTANCE_FOUR_ZERO_ZERO );
 			}
 			$return_response = array(
 				VISA_ACCEPTANCE_SUCCESS         		 => true,
@@ -534,7 +556,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 		$transient_token = isset( $_POST['transientToken'] ) ? sanitize_text_field( wp_unslash( $_POST['transientToken'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY;
 
 		if ( empty( $transient_token ) ) {
-			wp_send_json_error( array( 'message' => 'Transient token is required.' ) );
+			wp_send_json_error( array( 'message' => __( 'Transient token is required.', 'visa-acceptance-solutions' ) ) );
 			return;
 		}
 
@@ -611,7 +633,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			$product_price = $product->get_price() * $quantity;
 
 			if ( ! $product ) {
-				wp_send_json_error( array( 'message' => 'Invalid product.' ) );
+				wp_send_json_error( array( 'message' => __( 'Invalid product.', 'visa-acceptance-solutions' ) ) );
 			}
 
 			if ( class_exists( 'WC_Subscriptions_Product' ) && WC_Subscriptions_Product::is_subscription( $product ) && $subscription_active ) {
@@ -816,16 +838,13 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 						$billing_email = $order->get_billing_email();
 					if ( ! empty( $billing_email ) ) {
 						if ( email_exists( $billing_email ) ) {
-								// Use existing account.
-							$user = get_user_by( 'email', $billing_email );
-							if ( $user ) {
-									$customer_id = $user->ID;
-								}
-							} else {
-								// Create new customer account.
-								$customer_id = wc_create_new_customer( $billing_email, VISA_ACCEPTANCE_STRING_EMPTY, wp_generate_password() );
-							}
-
+							/* translators: %s: email address */
+							wp_send_json_error( array( 'message' => sprintf( __( 'An account is already registered with %s. Please log in or use a different email address.', 'visa-acceptance-solutions' ), $billing_email ) ) );
+                            return;
+						} else {
+							// Create new customer account.
+							$customer_id = wc_create_new_customer( $billing_email, VISA_ACCEPTANCE_STRING_EMPTY, wp_generate_password() );
+						}
 							// Log the user in automatically.
 							if ($customer_id && ! is_wp_error($customer_id)) {
 								wp_set_current_user($customer_id);
@@ -842,45 +861,10 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 							$order->set_customer_id( $customer_id );
 							$order->save();
 						} else {
-							wp_send_json_error( array( 'message' => 'Billing email is required for subscription orders.' ) );
+							wp_send_json_error( array( 'message' => __( 'Billing email is required for subscription orders.', 'visa-acceptance-solutions' ) ) );
 							return;
 						}
 					}
-					if ( VISA_ACCEPTANCE_VAL_ZERO === $customer_id ) {
-						$billing_email = $order->get_billing_email();
-						if ( ! empty( $billing_email ) ) {
-							if ( email_exists( $billing_email ) ) {
-								// Use existing account.
-								$user = get_user_by( 'email', $billing_email );
-								if ( $user ) {
-									$customer_id = $user->ID;
-								}
-							} else {
-								// Create new customer account.
-								$customer_id = wc_create_new_customer($billing_email, VISA_ACCEPTANCE_STRING_EMPTY, wp_generate_password());
-							}
-
-							// Log the user in automatically.
-							if ($customer_id && ! is_wp_error($customer_id)) {
-								wp_set_current_user($customer_id);
-								wp_set_auth_cookie($customer_id, true);
-
-								// Update WooCommerce session and customer data.
-								if ( WC()->session ) {
-									WC()->session->set_customer_session_cookie( true );
-								}
-								WC()->customer->set_id( $customer_id );
-							}
-
-							// Update order with customer ID.
-							$order->set_customer_id( $customer_id );
-							$order->save();
-						} else {
-							wp_send_json_error( array( 'message' => 'Billing email is required for subscription orders.' ) );
-							return;
-						}
-					}
-
 					// Get subscription details from product.
 					$interval = WC_Subscriptions_Product::get_interval( $product );
 					$period   = WC_Subscriptions_Product::get_period( $product );
@@ -904,7 +888,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 					) );
 
 					if ( is_wp_error( $subscription ) ) {
-						wp_send_json_error( array( 'message' => 'Failed to create subscription order.' ) );
+						wp_send_json_error( array( 'message' => __( 'Failed to create subscription order.', 'visa-acceptance-solutions' ) ) );
 					}
 
 					// Link subscription back to parent order.
@@ -993,10 +977,10 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 				$result = $gateway_id->process_payment( $order_id );
 				wp_send_json_success(['redirect_url' => $result['redirect']]);
 			} else {
-				wp_send_json_error(array('message' => 'Payment gateway not found.'));
+				wp_send_json_error(array('message' => __( 'Payment gateway not found.', 'visa-acceptance-solutions' )));
 			}
 		} else {
-			wp_send_json_error(array('message' => 'Product ID is required.'));
+			wp_send_json_error(array('message' => __( 'Product ID is required.', 'visa-acceptance-solutions' )));
 		}
 	}
 
@@ -1066,12 +1050,12 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			$data = $this->parse_switch_post_data();
 
 			if (! function_exists('wcs_get_subscription') || ! class_exists('WC_Subscriptions_Switcher')) {
-				wp_send_json_error(array('message' => 'WooCommerce Subscriptions not active.'));
+				wp_send_json_error(array('message' => __( 'WooCommerce Subscriptions not active.', 'visa-acceptance-solutions' )));
 			}
 
 			$subscription = wcs_get_subscription($data['switch_subscription_id']);
 			if (! $subscription) {
-				wp_send_json_error(array('message' => 'Invalid subscription.'));
+				wp_send_json_error(array('message' => __( 'Invalid subscription.', 'visa-acceptance-solutions' )));
 			}
 
 			// Resolve the target product (handles grouped products transparently).
@@ -1086,7 +1070,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			$quantity       = $resolved_product[VISA_ACCEPTANCE_VAL_TWO];
 
 			if (! $new_product) {
-				wp_send_json_error(array('message' => 'Invalid product.'));
+				wp_send_json_error(array('message' => __( 'Invalid product.', 'visa-acceptance-solutions' )));
 			}
 			$addresses = $this->get_addresses_from_transient_token($data['transient_token']);
 			$billing   = $addresses['billing'];
@@ -1122,7 +1106,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 
 			if (! $cart_item_key) {
 				WC()->cart->empty_cart();
-				wp_send_json_error(array('message' => 'Failed to add product to cart.'));
+				wp_send_json_error(array('message' => __( 'Failed to add product to cart.', 'visa-acceptance-solutions' )));
 			}
 
 			// Calculate totals — WCS applies switch pricing here.
@@ -1136,13 +1120,14 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 
 			if (is_wp_error($order_id)) {
 				WC()->cart->empty_cart();
-				wp_send_json_error(array('message' => 'Failed to create order: ' . $order_id->get_error_message()));
+				/* translators: %s: error message */
+				wp_send_json_error(array('message' => sprintf( __( 'Failed to create order: %s', 'visa-acceptance-solutions' ), $order_id->get_error_message() )));
 			}
 
 			$order = wc_get_order($order_id);
 			if (! $order) {
 				WC()->cart->empty_cart();
-				wp_send_json_error(array('message' => 'Failed to retrieve order.'));
+				wp_send_json_error(array('message' => __( 'Failed to retrieve order.', 'visa-acceptance-solutions' )));
 			}
 
 			// Apply addresses, switch metadata, payment method and token — then save once.
@@ -1202,7 +1187,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 				));
 			} else {
 				wp_send_json_error(array(
-					'message' => isset($payment_result['messages']) ? $payment_result['messages'] : 'Payment failed.',
+					'message' => isset($payment_result['messages']) ? $payment_result['messages'] : __( 'Payment failed.', 'visa-acceptance-solutions' ),
 				));
 			}
 		} catch (\Exception $e) {
@@ -1423,7 +1408,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 	private function process_grouped_product_order($grouped_items, $customer_id, $billing, $shipping, $payment_method, $payer_auth_enabled, $transient_token, $token_id, $subscription_active) {
 		// Validate grouped items.
 		if (empty($grouped_items)) {
-			wp_send_json_error(array('message' => 'No products selected in grouped product.'));
+			wp_send_json_error(array('message' => __( 'No products selected in grouped product.', 'visa-acceptance-solutions' )));
 		}
 
 		$has_subscription = false;
@@ -1634,7 +1619,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			$result = $gateway_id->process_payment($order_id);
 			wp_send_json_success(['redirect_url' => $result['redirect']]);
 		} else {
-			wp_send_json_error(array('message' => 'Payment gateway not found.'));
+			wp_send_json_error(array('message' => __( 'Payment gateway not found.', 'visa-acceptance-solutions' )));
 		}
 	}
 

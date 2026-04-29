@@ -25,8 +25,8 @@ require_once __DIR__ . '/class-visa-acceptance-refund.php';
 require_once __DIR__ . '/../../class-visa-acceptance-payment-gateway-subscriptions.php';
 require_once plugin_dir_path( __DIR__ ) . '/../../public/class-visa-acceptance-payment-gateway-unified-checkout-public.php';
 require_once plugin_dir_path( __DIR__ ) . '/../../public/class-visa-acceptance-payment-gateway-expresspay-public.php';
-use CyberSource\Api\PaymentsApi;
-use CyberSource\Api\TransientTokenDataApi;
+use Pymt_Vas\Dependencies\CyberSource\Api\PaymentsApi;
+use Pymt_Vas\Dependencies\CyberSource\Api\TransientTokenDataV2Api;
 
 /**
  * Visa Acceptance Unified Checkout Authorization Class
@@ -84,7 +84,7 @@ class Visa_Acceptance_Payment_UC extends Visa_Acceptance_Request {
 		try {
 			$request    = new Visa_Acceptance_Payment_Adapter( $this->gateway );
 			$api_client = $request->get_api_client(true);
-			$transient_token_api = new TransientTokenDataApi( $api_client );
+			$transient_token_api = new TransientTokenDataV2Api( $api_client );
 
 			// Call the API to get transient token data.
 			$api_response = $transient_token_api->getTransactionForTransientToken( $transient_token );
@@ -95,7 +95,7 @@ class Visa_Acceptance_Payment_UC extends Visa_Acceptance_Request {
 				'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 			);
 
-		} catch ( \CyberSource\ApiException $e ) {
+		} catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
 			$this->gateway->add_logs_header_response( 
 				wp_json_encode( array( VISA_ACCEPTANCE_ERROR => $e->getMessage() ) ), 
 				false, 
@@ -413,21 +413,26 @@ class Visa_Acceptance_Payment_UC extends Visa_Acceptance_Request {
 		if ( $is_echeck_payment ) {
 			$processing_information_data += $this->get_echeck_bank_transfer_options();
 		}		
-		$processing_information      = new \CyberSource\Model\Ptsv2paymentsProcessingInformation($processing_information_data);
+		$processing_information      = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformation($processing_information_data);
 
 		$payment_request_data = array(
 			'clientReferenceInformation' => $request->client_reference_information( $order ),
 			'processingInformation'      => $processing_information,
 			'tokenInformation'           => $request->get_cybersource_token_information( $transient_token ),
 			'orderInformation'           => $request->get_payment_order_information( $order ),
-			'deviceInformation'          => $request->get_device_information(),
 			'buyerInformation'           => $request->get_payment_buyer_information( $order ),
 		);
+
+		// Only include deviceInformation when it has actual content.
+		$device_information = $request->get_device_information();
+		if ( ! empty( $device_information ) ) {
+			$payment_request_data['deviceInformation'] = $device_information;
+		}
 		if ( $is_echeck_payment ) {
 			$payment_request_data['paymentInformation'] = $request->get_echeck_payment_information( $order );
 		}
 
-		$payment_request = new \CyberSource\Model\CreatePaymentRequest( $payment_request_data );
+		$payment_request = new \Pymt_Vas\Dependencies\CyberSource\Model\CreatePaymentRequest( $payment_request_data );
 		
 		// Remove the temporary filter after building the request.
 		if ( $is_zero_amount_order && ( $unsupported_zero_amount_card || $is_echeck_payment ) ) {

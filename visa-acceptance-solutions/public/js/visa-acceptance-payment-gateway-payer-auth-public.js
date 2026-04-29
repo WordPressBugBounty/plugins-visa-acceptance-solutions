@@ -22,6 +22,12 @@ function reloadAfterError() {
         window.location.reload();
     }, 5000);
 }
+
+// Classic checkout: if we landed here after an SCA error redirect, auto-reload to clear the notice.
+if ( sessionStorage.getItem('vas_sca_error') === '1' ) {
+    sessionStorage.removeItem('vas_sca_error');
+    reloadAfterError();
+}
  
 
 (function($) {
@@ -365,12 +371,14 @@ function reloadAfterError() {
                                 window.history.replaceState(null, null, baseUrl);
                                 window.location.reload();
                             } else {
+                                sessionStorage.setItem('vas_sca_error', '1');
                                 window.location.href = data.checkoutRedirect;
                             }
                         } else {
                             if (window.history.replaceState){
                                 window.history.replaceState(null, null, window.location.href);
                             }
+                            reloadAfterError();
                         }
                     }
                 },
@@ -514,6 +522,7 @@ function reloadAfterError() {
                             if (window.history.replaceState){
                                 window.history.replaceState(null, null, window.location.href);
                             }
+                            reloadAfterError();
                         }
                         // Redirecting to checkout page
                     }
@@ -685,6 +694,7 @@ function reloadAfterError() {
                                     window.history.replaceState(null, null, baseUrl);
                                     window.location.reload();
                                 } else {
+                                    sessionStorage.setItem('vas_sca_error', '1');
                                     window.location.href = data.redirect;
                                 }
  
@@ -692,6 +702,7 @@ function reloadAfterError() {
                                 if (window.history.replaceState){
                                     window.history.replaceState(null, null, window.location.href);
                                 }
+                                reloadAfterError();
                             }
                         }
                     }
@@ -853,6 +864,7 @@ function reloadAfterError() {
                                     window.history.replaceState(null, null, baseUrl);
                                     window.location.reload();
                                 } else {
+                                    sessionStorage.setItem('vas_sca_error', '1');
                                     window.location.href = data.redirect;
                                 }
  
@@ -860,6 +872,7 @@ function reloadAfterError() {
                                 if (window.history.replaceState){
                                     window.history.replaceState(null, null, window.location.href);
                                 }
+                                reloadAfterError();
                             }
                         }
                     }
@@ -1065,12 +1078,14 @@ function validation(authid, orderid, pareq) {
                                 window.history.replaceState(null, null, baseUrl);
                                 window.location.reload();
                             } else {
+                                sessionStorage.setItem('vas_sca_error', '1');
                                 window.location.href = visa_acceptance_uc_payer_auth_param["product_name"];
                             }
                         } else {
                             if (window.history.replaceState){
                                 window.history.replaceState(null, null, window.location.href);
                             }
+                            reloadAfterError();
                         }
                     }
                 }
@@ -1173,12 +1188,14 @@ function validation_uc(authid, orderid, pareq, transientToken, sca_flag) {
                                 window.history.replaceState(null, null, baseUrl);
                                 window.location.reload();
                             } else {
+                                sessionStorage.setItem('vas_sca_error', '1');
                                 window.location.href = data.redirect;
                             }
                         } else {
                             if (window.history.replaceState){
                                 window.history.replaceState(null, null, window.location.href);
                             }
+                            reloadAfterError();
                         }
                     }
                 }

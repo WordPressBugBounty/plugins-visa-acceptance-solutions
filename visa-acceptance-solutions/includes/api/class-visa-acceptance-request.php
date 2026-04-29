@@ -315,7 +315,7 @@ abstract class Visa_Acceptance_Request {
 				$order->delete_meta_data( VISA_ACCEPTANCE_WC_UC_ID . $key );
 				$order->save_meta_data();
 			} else {
-				delete_post_meta_by_key( VISA_ACCEPTANCE_WC_UC_ID . $key );
+				delete_post_meta( $order->get_id(), VISA_ACCEPTANCE_WC_UC_ID . $key );
 			}
 		}
 		return $order instanceof \WC_Order;
@@ -347,7 +347,7 @@ abstract class Visa_Acceptance_Request {
 			$bill_to['administrativeArea'] = $state;
 		}
 
-		return new \CyberSource\Model\Ptsv2paymentsOrderInformationBillTo( $bill_to );
+		return new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationBillTo( $bill_to );
 	}
 
 	/**
@@ -399,7 +399,7 @@ abstract class Visa_Acceptance_Request {
 			$ship_to['administrativeArea'] = $state;
 		}
 
-		return new \CyberSource\Model\Ptsv2paymentsOrderInformationShipTo( $ship_to );
+		return new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationShipTo( $ship_to );
 	}
 
 	/**
@@ -605,7 +605,7 @@ abstract class Visa_Acceptance_Request {
 	 * @return array
 	 */
 	public function order_information_amount_details( $order ) {
-		$order_information_amount_details = new \CyberSource\Model\Ptsv2paymentsOrderInformationAmountDetails(
+		$order_information_amount_details = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationAmountDetails(
 			array(
 				'totalAmount' => (string) $order->get_total(),
 				'currency'    => $order->get_currency(),
@@ -625,12 +625,12 @@ abstract class Visa_Acceptance_Request {
 		$items = array();
 		if ( $order ) {
 			foreach ( $this->get_order_line_items( $order ) as $line_item ) {
-				$item = new \CyberSource\Model\Ptsv2paymentsOrderInformationLineItems(
+				$item = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationLineItems(
 					array(
 						'productName' => $line_item->item->get_name(),
-						'unitPrice'   => $line_item->item_total,
+						'unitPrice'   => strval( $line_item->item_total ),
 						'quantity'    => $line_item->quantity,
-						'taxAmount'   => $line_item->item->get_total_tax(),
+						'taxAmount'   => strval( $line_item->item->get_total_tax() ),
 					)
 				);
 
@@ -646,9 +646,9 @@ abstract class Visa_Acceptance_Request {
 						'productCode' => VISA_ACCEPTANCE_SHIPPING_AND_HANDELING,
 						'productName' => $shipping_method->get_name(),
 						'productSku'  => $shipping_method->get_method_id(),
-						'unitPrice'   => $shipping_method->get_total(),
+						'unitPrice'   => strval( $shipping_method->get_total() ),
 						'quantity'    => VISA_ACCEPTANCE_VAL_ONE,
-						'taxAmount'   => $shipping_method->get_total_tax(),
+						'taxAmount'   => strval( $shipping_method->get_total_tax() ),
 					);
 				}
 			}
@@ -657,9 +657,9 @@ abstract class Visa_Acceptance_Request {
 					'productCode' => 'coupon',
 					'productName' => 'voucher',
 					'productSku'  => 'voucher',
-					'unitPrice'   => $order->get_discount_total(),
+					'unitPrice'   => strval( $order->get_discount_total() ),
 					'quantity'    => VISA_ACCEPTANCE_VAL_ONE,
-					'taxAmount'   => $order->get_discount_tax(),
+					'taxAmount'   => strval( $order->get_discount_tax() ),
 				);
 			}
 
@@ -667,9 +667,9 @@ abstract class Visa_Acceptance_Request {
 
 				$items[] = array(
 					'productName' => $fee->get_name(),
-					'unitPrice'   => $fee->get_total(),
+					'unitPrice'   => strval( $fee->get_total() ),
 					'quantity'    => VISA_ACCEPTANCE_VAL_ONE,
-					'taxAmount'   => $fee->get_total_tax(),
+					'taxAmount'   => strval( $fee->get_total_tax() ),
 				);
 			}
 		}

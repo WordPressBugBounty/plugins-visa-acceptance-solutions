@@ -130,6 +130,9 @@ trait Visa_Acceptance_Payment_Gateway_Includes_Trait {
 		$core_tokens    = \WC_Payment_Tokens::get_customer_tokens( $current_user_id, $this->gateway->get_id() );
 		if ( ! empty( $core_tokens ) ) {
 			foreach ( $core_tokens as $token ) {
+				if ( ! $token instanceof \WC_Payment_Token ) {
+                    continue;
+                }
 				$data = $token->get_data();
 				if ( ! strcmp( $token_id, $data['token'] ) ) {
 					$selected_token = $token;
@@ -173,26 +176,35 @@ trait Visa_Acceptance_Payment_Gateway_Includes_Trait {
 	 * @return void
 	 */
 	public function update_failed_order( $order, $payment_response_array ) {
-		if ( ! empty( $payment_response_array ) ) {
-				/* translators: %s - Transaction ID */
-			$failed_message = __( ' Authorization Failed: (Transaction ID %s)', 'visa-acceptance-solutions' );
-			$title_value    = method_exists( $this, 'get_title' ) ? $this->get_title() : $this->gateway->get_title();
-			$message        = sprintf(
-				$title_value . VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_HYPHEN . VISA_ACCEPTANCE_SPACE . $failed_message,
-				$payment_response_array['transaction_id']
-			);
-			$order->add_order_note( $message );
-			$failed_message = __( ' Transaction Failed (', 'visa-acceptance-solutions' );
-			$message        = $title_value . VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_HYPHEN . VISA_ACCEPTANCE_SPACE . $failed_message . $payment_response_array['message'] . ').';
-			$this->add_transaction_data( $order, $payment_response_array );
-		} else {
-			$failed_message = __( ' Authorization Failed', 'visa-acceptance-solutions' );
-			$title_value    = method_exists( $this, 'get_title' ) ? $this->get_title() : $this->gateway->get_title();
-			$message        = $title_value . VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_HYPHEN . VISA_ACCEPTANCE_SPACE . $failed_message;
-			$order->add_order_note( $message );
-		}
-		$order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_FAILED, $message );
-	}
+        $title_value = method_exists( $this, 'get_title' ) ? $this->get_title() : $this->gateway->get_title();
+       
+        if ( ! empty( $payment_response_array ) ) {
+            $auth_failed_message = sprintf(
+                /* translators: %1$s: gateway title, %2$s: transaction ID */
+                __( '%1$s - Authorization Failed: (Transaction ID %2$s)', 'visa-acceptance-solutions' ),
+                $title_value,
+                $payment_response_array['transaction_id']
+            );
+            $order->add_order_note( $auth_failed_message );
+           
+            $transaction_failed_message = sprintf(
+                /* translators: %1$s: gateway title, %2$s: error message */
+                __( '%1$s - Transaction Failed (%2$s).', 'visa-acceptance-solutions' ),
+                $title_value,
+                $payment_response_array['message']
+            );
+            $message = $transaction_failed_message;
+            $this->add_transaction_data( $order, $payment_response_array );
+        } else {
+            $message = sprintf(
+                /* translators: %s: gateway title */
+                __( '%s - Authorization Failed', 'visa-acceptance-solutions' ),
+                $title_value
+            );
+            $order->add_order_note( $message );
+        }
+        $order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_FAILED, $message );
+    }
 
 	/**
 	 * Creates a mock order for adding payment method.
@@ -201,11 +213,12 @@ trait Visa_Acceptance_Payment_Gateway_Includes_Trait {
 	 */
 	public function get_order_for_add_payment_method() {
 
-		$user = get_userdata( get_current_user_id() );
+		$user        = get_userdata( get_current_user_id() );
+		$customer_id = ( $user && isset( $user->ID ) ) ? $user->ID : VISA_ACCEPTANCE_STRING_EMPTY;
 
 		$properties = array(
 			'currency'    => get_woocommerce_currency(), // default to base store currency.
-			'customer_id' => isset( $user->ID ) ? $user->ID : VISA_ACCEPTANCE_STRING_EMPTY,
+			'customer_id' => $customer_id,
 		);
 		return $properties;
 	}

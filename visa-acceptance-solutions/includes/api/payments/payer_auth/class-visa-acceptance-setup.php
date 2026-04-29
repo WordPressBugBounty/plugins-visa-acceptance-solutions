@@ -28,8 +28,8 @@ require_once __DIR__ . '/../../class-visa-acceptance-request.php';
 require_once __DIR__ . '/../../request/payments/class-visa-acceptance-payment-adapter.php';
 require_once __DIR__ . '/../class-visa-acceptance-payment-methods.php';
 
-use CyberSource\Api\PayerAuthenticationApi;
-use CyberSource\Model\PayerAuthSetupRequest;
+use Pymt_Vas\Dependencies\CyberSource\Api\PayerAuthenticationApi;
+use Pymt_Vas\Dependencies\CyberSource\Model\PayerAuthSetupRequest;
 
 /**
  * Visa Acceptance Setup Class
@@ -138,12 +138,12 @@ class Visa_Acceptance_Setup extends Visa_Acceptance_Request {
 		$api_client   = $request->get_api_client();
 		$payments_api = new PayerAuthenticationApi( $api_client );
 
-		$customer_payment_information = new \CyberSource\Model\Riskv1authenticationsetupsPaymentInformationCustomer(
+		$customer_payment_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Riskv1authenticationsetupsPaymentInformationCustomer(
 			array(
 				'customerId' => $customer_token_id,
 			)
 		);
-		$payment_information = new \CyberSource\Model\Riskv1authenticationsetupsPaymentInformation(
+		$payment_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Riskv1authenticationsetupsPaymentInformation(
 			array(
 				'customer' => $customer_payment_information,
 			)
@@ -176,7 +176,7 @@ class Visa_Acceptance_Setup extends Visa_Acceptance_Request {
 					'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 				);
 				return $return_array;
-			} catch ( \CyberSource\ApiException $e ) {
+			} catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
 				$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, VISA_ACCEPTANCE_SETUP );
 			}
 		}

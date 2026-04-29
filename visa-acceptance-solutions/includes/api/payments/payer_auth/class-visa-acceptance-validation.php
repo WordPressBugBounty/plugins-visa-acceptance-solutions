@@ -30,8 +30,8 @@ require_once __DIR__ . '/../../request/payments/class-visa-acceptance-payment-ad
 require_once __DIR__ . '/../class-visa-acceptance-auth-reversal.php';
 require_once __DIR__ . '/../../../class-visa-acceptance-payment-gateway-subscriptions.php';
 
-use CyberSource\Api\PaymentsApi;
-use CyberSource\Model\CreatePaymentRequest;
+use Pymt_Vas\Dependencies\CyberSource\Api\PaymentsApi;
+use Pymt_Vas\Dependencies\CyberSource\Model\CreatePaymentRequest;
 
 /**
  * Visa Acceptance Validation Class
@@ -283,10 +283,10 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 		if ( $unsupported_zero_amount_card && $is_zero_amount_order ) {
 			$processing_information_data[VISA_ACCEPTANCE_CAPTURE] = false;
 		}
-		$processing_information      = new \CyberSource\Model\Ptsv2paymentsProcessingInformation( $processing_information_data );
+		$processing_information      = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformation( $processing_information_data );
 
 		if ( ! empty( $pareq ) && VISA_ACCEPTANCE_YES === $sca_case ) {
-				$consumer_authentication_information = new \CyberSource\Model\Ptsv2paymentsConsumerAuthenticationInformation(
+				$consumer_authentication_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsConsumerAuthenticationInformation(
 					array(
 						'authenticationTransactionId' => $validation_tid,
 						'signedPares'                 => $pareq,
@@ -294,7 +294,7 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 					)
 				);
 		} else {
-			$consumer_authentication_information = new \CyberSource\Model\Ptsv2paymentsConsumerAuthenticationInformation(
+			$consumer_authentication_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsConsumerAuthenticationInformation(
 				array(
 					'authenticationTransactionId' => $validation_tid,
 					'signedPares'                 => null,
@@ -345,7 +345,7 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 				'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
 				);
 				return $return_array;
-			} catch ( \CyberSource\ApiException $e ) {
+			} catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
 				$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, $log_header );
 			}
   		}

@@ -30,11 +30,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/../../payments/class-visa-acceptance-payment-methods.php';
 require_once __DIR__ . '/../../../class-visa-acceptance-payment-gateway-subscriptions.php';
 
-use CyberSource\Authentication\Core\MerchantConfiguration;
-use CyberSource\Configuration;
-use CyberSource\Logging\LogConfiguration;
-use CyberSource\ApiClient as CyberSourceClient;
-use CyberSource\Api\TransactionDetailsApi;
+use Pymt_Vas\Dependencies\CyberSource\Authentication\Core\MerchantConfiguration;
+use Pymt_Vas\Dependencies\CyberSource\Configuration;
+use Pymt_Vas\Dependencies\CyberSource\Logging\LogConfiguration;
+use Pymt_Vas\Dependencies\CyberSource\ApiClient as CyberSourceClient;
+use Pymt_Vas\Dependencies\CyberSource\Api\TransactionDetailsApi;
 
 /**
  * Visa Acceptance Payment Adapter Class
@@ -85,7 +85,7 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
             $merchant_configuration->setSecretKey( $settings['api_shared_secret'] );
         }
         if ( isset($settings['enable_mle']) && (VISA_ACCEPTANCE_YES === $settings['enable_mle'])) {
-            $merchant_configuration->setUseMLEGlobally( true );
+            $merchant_configuration->setEnableRequestMLEForOptionalApisGlobally( true );
             if($authentication_type) {
                 $merchant_configuration->setAuthenticationType( 'HTTP_SIGNATURE' );
             } else {
@@ -96,7 +96,7 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
             $merchant_configuration->setKeyFileName( $settings['mle_filename'] );
             $merchant_configuration->setKeyPassword( $settings['mle_key_password'] );
         } else {
-            $merchant_configuration->setUseMLEGlobally( false );
+            $merchant_configuration->setEnableRequestMLEForOptionalApisGlobally( false );
         }
         $merchant_configuration->setDefaultDeveloperId( VISA_ACCEPTANCE_DEVELOPER_ID );
         $merchant_configuration->setSolutionId( VISA_ACCEPTANCE_SOLUTION_ID );
@@ -162,21 +162,26 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	
 	 * @return array
 	 */
-	public function get_billing_information( $order) {
-		$order_billing           = $order->get_data();
-			$bill_to_information = array(
-				'firstName'          => $order_billing['billing']['first_name'],
-				'lastName'           => $order_billing['billing']['last_name'],
-				'address1'           => $order_billing['billing']['address_1'],
-				'address2'           => $order_billing['billing']['address_2'],
-				'postalCode'         => $order_billing['billing']['postcode'],
-				'locality'           => $order_billing['billing']['city'],
-				'administrativeArea' => $order_billing['billing']['state'],
-				'country'            => $order_billing['billing']['country'],
-				'phoneNumber'        => $order_billing['billing']['phone'],
-				'email'              => $order_billing['billing']['email'],
-			);
-			return $bill_to_information;
+	public function get_billing_information( $order ) {
+		$order_billing       = $order->get_data();
+		$bill_to_information = array(
+			'firstName'          => $order_billing['billing']['first_name'],
+			'lastName'           => $order_billing['billing']['last_name'],
+			'address1'           => $order_billing['billing']['address_1'],
+			'postalCode'         => $order_billing['billing']['postcode'],
+			'locality'           => $order_billing['billing']['city'],
+			'administrativeArea' => $order_billing['billing']['state'],
+			'country'            => $order_billing['billing']['country'],
+			'email'              => $order_billing['billing']['email'],
+		);
+		// Only include optional fields when non-empty; empty strings cause INVALID_DATA.
+		if ( ! empty( $order_billing['billing']['address_2'] ) ) {
+			$bill_to_information['address2'] = $order_billing['billing']['address_2'];
+		}
+		if ( ! empty( $order_billing['billing']['phone'] ) ) {
+			$bill_to_information['phoneNumber'] = $order_billing['billing']['phone'];
+		}
+		return $bill_to_information;
 	}
 
 	/**
@@ -186,19 +191,30 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * @return array
 	 */
 	public function get_shipping_information( $order ) {
-		$order_shipping      = $order->get_data();
+		$order_shipping = $order->get_data();
+
+		// If no shipping address is set (e.g. virtual products), return null so shipTo is omitted entirely.
+		if ( empty( $order_shipping['shipping']['address_1'] ) && empty( $order_shipping['shipping']['first_name'] ) ) {
+			return null;
+		}
+
 		$ship_to_information = array(
 			'firstName'          => $order_shipping['shipping']['first_name'],
 			'lastName'           => $order_shipping['shipping']['last_name'],
 			'address1'           => $order_shipping['shipping']['address_1'],
-			'address2'           => $order_shipping['shipping']['address_2'],
 			'postalCode'         => $order_shipping['shipping']['postcode'],
 			'locality'           => $order_shipping['shipping']['city'],
 			'administrativeArea' => $order_shipping['shipping']['state'],
 			'country'            => $order_shipping['shipping']['country'],
-			'phoneNumber'        => $order_shipping['shipping']['phone'],
 			'email'              => $order_shipping['billing']['email'],
 		);
+		// Only include optional fields when non-empty; empty strings cause INVALID_DATA.
+		if ( ! empty( $order_shipping['shipping']['address_2'] ) ) {
+			$ship_to_information['address2'] = $order_shipping['shipping']['address_2'];
+		}
+		if ( ! empty( $order_shipping['shipping']['phone'] ) ) {
+			$ship_to_information['phoneNumber'] = $order_shipping['shipping']['phone'];
+		}
 		return $ship_to_information;
 	}
 
@@ -227,13 +243,15 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 			// eCheck: identify payment type; no card section needed.
 			$payment_info_array['paymentType'] = array( 'name' => VISA_ACCEPTANCE_CHECK );
 		} else {
-			// Card: Flex JWT skips securityCode; traditional flow includes it.
-			$payment_info_array[VISA_ACCEPTANCE_CARD] = empty( $flex_cvv_token )
-				? array( 'securityCode' => $saved_card_cvv, 'typeSelectionIndicator' => VISA_ACCEPTANCE_VAL_ONE )
-				: array( 'typeSelectionIndicator' => VISA_ACCEPTANCE_VAL_ONE );
+			// Card: Flex JWT skips securityCode; traditional flow includes it only when non-null (omit for merchant-initiated renewals).
+			$card_array = array( 'typeSelectionIndicator' => '1' );
+			if ( empty( $flex_cvv_token ) && null !== $saved_card_cvv && '' !== $saved_card_cvv ) {
+				$card_array['securityCode'] = $saved_card_cvv;
+			}
+			$payment_info_array[VISA_ACCEPTANCE_CARD] = $card_array;
 		}
 		
-		$payment_information = new \CyberSource\Model\Ptsv2paymentsPaymentInformation( $payment_info_array );
+		$payment_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformation( $payment_info_array );
 		
 		return $payment_information;
 	}
@@ -245,7 +263,7 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * @return array
 	 */
 	public function get_cybersource_token_information( $trans_token ) {
-		$token_information = new \CyberSource\Model\Ptsv2paymentsTokenInformation(
+		$token_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsTokenInformation(
 			array(
 				'transientTokenJwt' => $trans_token,
 			)
@@ -260,10 +278,10 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * @return object Payment information object.
 	 */
 	public function get_echeck_payment_information( $order ) {
-		$payment_type = new \CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentType();
+		$payment_type = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentType();
 		$payment_type->setName( VISA_ACCEPTANCE_CHECK );
 
-		$payment_information = new \CyberSource\Model\Ptsv2paymentsPaymentInformation();
+		$payment_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformation();
 		$payment_information->setPaymentType( $payment_type );
 		
 		return $payment_information;
@@ -281,7 +299,7 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 		if ( $payer_auth_transaction && empty( $bill_to_information['address2'] ) ) {
 			unset( $bill_to_information['address2'] );
 		}
-		$bill_to = new \CyberSource\Model\Ptsv2paymentsOrderInformationBillTo( $bill_to_information );
+		$bill_to = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationBillTo( $bill_to_information );
 		return $bill_to;
 	}
 
@@ -294,10 +312,13 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 */
 	public function get_cybersource_shipping_information_v2( $order, $payer_auth_transaction = false ) {
 		$ship_to_information = $this->get_shipping_information( $order );
+		if ( null === $ship_to_information ) {
+			return null;
+		}
 		if ( $payer_auth_transaction && empty( $ship_to_information['address2'] ) ) {
 			unset( $ship_to_information['address2'] );
 		}
-		$ship_to = new \CyberSource\Model\Ptsv2paymentsOrderInformationShipTo( $ship_to_information );
+		$ship_to = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationShipTo( $ship_to_information );
 		return $ship_to;
 	}
 
@@ -307,7 +328,7 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * @return array
 	 */
 	public function client_reference_information_partner() {
-		$client_reference_information_partner = new \CyberSource\Model\Ptsv2paymentsClientReferenceInformationPartner(
+		$client_reference_information_partner = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsClientReferenceInformationPartner(
 			array(
 				'developerId' => VISA_ACCEPTANCE_DEVELOPER_ID,
 				'solutionId'  => VISA_ACCEPTANCE_SOLUTION_ID,
@@ -323,9 +344,9 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * @return array
 	 */
 	public function client_reference_information( $order ) {
-		$client_reference_information = new \CyberSource\Model\Ptsv2paymentsClientReferenceInformation(
+		$client_reference_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsClientReferenceInformation(
 			array(
-				'code'               => $order->get_id(),
+				'code'               => strval( $order->get_id() ),
 				'partner'            => $this->client_reference_information_partner(),
 				'applicationName'    => VISA_ACCEPTANCE_PLUGIN_APPLICATION_NAME . VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_PLUGIN_API_TYPE,
 				'applicationVersion' => VISA_ACCEPTANCE_PLUGIN_VERSION,
@@ -342,14 +363,17 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * @return array
 	 */
 	public function get_payment_order_information( $order, $payer_auth_transaction = false ) {
-		$order_information = new \CyberSource\Model\Ptsv2paymentsOrderInformation(
-			array(
-				'amountDetails' => $this->order_information_amount_details( $order ),
-				'billTo'        => $this->get_cybersource_billing_information_v2( $order, $payer_auth_transaction ),
-				'shipTo'        => $this->get_cybersource_shipping_information_v2( $order, $payer_auth_transaction ),
-				'lineItems'     => $this->get_line_items_information( $order ),
-			)
+		$order_info_array = array(
+			'amountDetails' => $this->order_information_amount_details( $order ),
+			'billTo'        => $this->get_cybersource_billing_information_v2( $order, $payer_auth_transaction ),
+			'lineItems'     => $this->get_line_items_information( $order ),
 		);
+		// Only include shipTo when a shipping address is actually present.
+		$ship_to = $this->get_cybersource_shipping_information_v2( $order, $payer_auth_transaction );
+		if ( ! empty( $ship_to ) ) {
+			$order_info_array['shipTo'] = $ship_to;
+		}
+		$order_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformation( $order_info_array );
 		return $order_information;
 	}
 
@@ -360,7 +384,7 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * @return array
 	 */
 	public function order_information_amount_details( $order ) {
-		$order_information_amount_details = new \CyberSource\Model\Ptsv2paymentsOrderInformationAmountDetails(
+		$order_information_amount_details = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationAmountDetails(
 			array(
 				'totalAmount' => (string) $order->get_total(),
 				'currency'    => $order->get_currency(),
@@ -441,7 +465,7 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	public function get_payment_buyer_information( $order ) {
 		$buyer_information = null;
 		if($order->get_user_id()) {
-			$buyer_information = new \CyberSource\Model\Ptsv2paymentsBuyerInformation(
+			$buyer_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsBuyerInformation(
 				array(
 					'merchantCustomerId' => strval( $order->get_user_id() ),
 				)
@@ -476,16 +500,13 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * @return mixed
 	 */
 	public function get_action_token_type( $action_token_type_payload ) {
-		$customer_id = $this->get_customer_id();
-		if ( ! empty( $customer_id ) ) {
-			$action_token_type_payload['paymentInformation']['customer']['id']      = $customer_id;
-			$action_token_type_payload['processingInformation']['actionTokenTypes'] = array( 'paymentInstrument', 'instrumentIdentifier' );
-			$action_token_type_payload['processingInformation']['actionTokenTypes'] = array( 'customer', 'paymentInstrument', 'instrumentIdentifier' );
-		} else {
-			$action_token_type_payload['processingInformation']['actionTokenTypes'] = array( 'customer', 'paymentInstrument', 'instrumentIdentifier' );
-		}
-		return $action_token_type_payload;
-	}
+        $customer_id = $this->get_customer_id();
+        if ( ! empty( $customer_id ) ) {
+            $action_token_type_payload['paymentInformation']['customer']['id'] = $customer_id;
+        }
+        $action_token_type_payload['processingInformation']['actionTokenTypes'] = array( 'customer', 'paymentInstrument', 'instrumentIdentifier' );
+        return $action_token_type_payload;
+    }
 
 	/**
 	 * Gets action list.
@@ -556,11 +577,16 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 		// Get client IP address.
 		$ip_address = $this->get_client_ip_address();
 		
-		// Build device information array.
-		$device_info_array = array(
-			'fingerprintSessionId' => $session_id,
-			'ipAddress'            => $this->mask_value( $ip_address ),
-		);
+		// Build device information array — omit fingerprintSessionId when empty.
+		$device_info_array = array();
+		if ( ! empty( $session_id ) ) {
+			$device_info_array['fingerprintSessionId'] = $session_id;
+		}
+		$is_valid_ip = ! empty( $ip_address )
+			&& filter_var( $ip_address, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) !== false;
+		if ( $is_valid_ip ) {
+			$device_info_array['ipAddress'] = $ip_address;
+		}
 		
 		// Add browser information for 3DS - ONLY for enrollment requests.
 		if ( $is_enrollment && ! $merchant_initiated ) {
@@ -570,7 +596,12 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 			}
 			
 			if ( isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
-				$device_info_array['httpBrowserLanguage'] = sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) );
+				$lang = sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) );
+				// CyberSource only accepts a simple language tag (e.g. "en-US"), not the full header with quality values.
+				if ( strpos( $lang, ',' ) !== false ) {
+					$lang = trim( strstr( $lang, ',', true ) );
+				}
+				$device_info_array['httpBrowserLanguage'] = $lang;
 			}
 			
 			if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
@@ -613,8 +644,8 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 			}
 		}
 		
-		$device_information = new \CyberSource\Model\Ptsv2paymentsDeviceInformation( $device_info_array );
-		return $device_information;
+		$device_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsDeviceInformation( $device_info_array );
+		return ! empty( $device_info_array ) ? $device_information : null;
 	}
 
 	/**
@@ -728,7 +759,7 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
                 'http_code' => $api_response[VISA_ACCEPTANCE_VAL_ONE],
                 'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
             );
-        } catch ( \CyberSource\ApiException $e ) {
+        } catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
             $error_message = $e->getMessage();
             $error_body    = $e->getResponseBody();
             return array(

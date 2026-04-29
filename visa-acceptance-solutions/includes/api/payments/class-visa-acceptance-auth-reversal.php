@@ -135,16 +135,17 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 	 * @param string    $reason auth reversal reason.
 	 * @param string    $transaction_id transaction id.
 	 * @param string    $reversal_order_id client reference id.
+	 * @throws \Throwable If the API call fails.
 	 * 
 	 * @return array
 	 */
 	public function get_reversal_response( $order, $amount, $reason, $transaction_id ,$reversal_order_id =VISA_ACCEPTANCE_STRING_EMPTY) {
 		$request      = new Visa_Acceptance_Payment_Adapter( $this->gateway );
 		$api_client   = $request->get_api_client();
-		$reversal_api = new \CyberSource\Api\ReversalApi( $api_client );
+		$reversal_api = new \Pymt_Vas\Dependencies\CyberSource\Api\ReversalApi( $api_client );
 		
 		// Build the payload for the reversal request.
-		$client_reference_information_partner = new \CyberSource\Model\Ptsv2paymentsidreversalsClientReferenceInformationPartner(
+		$client_reference_information_partner = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsClientReferenceInformationPartner(
 			array(
 				'developerId' => VISA_ACCEPTANCE_DEVELOPER_ID,
 				'solutionId'  => VISA_ACCEPTANCE_SOLUTION_ID,
@@ -152,10 +153,10 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 		);
 
 		if($order) {
-			$reversal_order_id = $order->get_id();
+			$reversal_order_id = strval( $order->get_id() );
 		}
 
-		$client_reference_information = new \CyberSource\Model\Ptsv2paymentsidreversalsClientReferenceInformation(
+		$client_reference_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsClientReferenceInformation(
 			array(
 				'code'               => $reversal_order_id,
 				'partner'            => $client_reference_information_partner,
@@ -164,26 +165,24 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 			)
 		);
 
-		$reversal_information_amount_details = new \CyberSource\Model\Ptsv2paymentsidreversalsReversalInformationAmountDetails(
+		$reversal_information_amount_details = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsReversalInformationAmountDetails(
 			array(
 				'totalAmount' => (string) $amount,
 			)
 		);
 
-		$reversal_information = new \CyberSource\Model\Ptsv2paymentsidreversalsReversalInformation(
+		$reversal_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsReversalInformation(
 			array(
 				'amountDetails' => $reversal_information_amount_details,
 				'reason'        => $reason,
 			)
 		);
 
-		$processing_information = new \CyberSource\Model\Ptsv2paymentsidreversalsProcessingInformation(
-			array(
-				'paymentSolution' => $request->get_payment_solution( $order ),
-			)
+		$processing_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsProcessingInformation(
+			$request->get_payment_solution( $order ),
 		);
 
-		$order_information = new \CyberSource\Model\Ptsv2paymentsidreversalsOrderInformation(
+		$order_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsOrderInformation(
 			array(
 				'lineItems' => $request->get_line_items_information( $order ),
 			)
@@ -207,7 +206,7 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 			'reversalInformation'        => $reversal_information,
 			);
 		}
-		$reversal_request_array = new \CyberSource\Model\AuthReversalRequest( $reversal_request );
+		$reversal_request_array = new \Pymt_Vas\Dependencies\CyberSource\Model\AuthReversalRequest( $reversal_request );
 		if ( ! empty( $reversal_request_array ) ) {
 			$this->gateway->add_logs_data( $reversal_request_array, true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
 			try {

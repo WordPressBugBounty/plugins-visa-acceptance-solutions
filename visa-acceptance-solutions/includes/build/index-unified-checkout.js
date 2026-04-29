@@ -9,6 +9,8 @@ var {
     decodeEntities
 } = wp.htmlEntities;
 
+var { __ } = wp.i18n;
+
 var { useSelect } = window.wp.data;
 var { CHECKOUT_STORE_KEY } = window.wc.wcBlocksData;
 var { ValidatedTextInput } = window.wc.blocksCheckout;
@@ -306,31 +308,31 @@ var ucblockssavedcomponent = (props) => {
                     if (flexInstance) {
                         // Validate that Flex instance has the createToken method.
                         if (typeof flexInstance.createToken !== 'function') {
-                            console.error('Flex instance does not have createToken method');
-                            setValidationError("Payment system error. Please refresh and try again.");
+                            console.error('The Flex instance does not support the createToken method.');
+                            setValidationError(__('Payment system error. Please refresh and try again.', 'visa-acceptance-solutions'));
                             return {
                                 type: emitResponse.responseTypes.ERROR,
-                                message: __("Payment system error. Please refresh and try again."),
+                                message: __('Payment system error. Please refresh and try again.', 'visa-acceptance-solutions'),
                                 messageContext: emitResponse.noticeContexts.PAYMENTS,
                             };
                         }
                         await new Promise(resolve => setTimeout(resolve, 100));
                         if (!flexInstance.securityCode) {
-                            console.error('Security code field not available');
-                            setValidationError("Security code field not loaded. Please refresh and try again.");
+                           console.error('The security code (CVV) field is not available.');
+                            setValidationError(__('Security code field not loaded. Please refresh and try again.', 'visa-acceptance-solutions'));
                             return {
                                 type: emitResponse.responseTypes.ERROR,
-                                message: __("Security code field not loaded. Please refresh and try again."),
+                                message: __('Security code field not loaded. Please refresh and try again.', 'visa-acceptance-solutions'),
                                 messageContext: emitResponse.noticeContexts.PAYMENTS,
                             };
                         }
                         
                         if (!flexFieldValid) {
-                            console.error('Security code field is not valid - user needs to enter CVV');
-                            setValidationError("Please enter a valid security code.");
+                            console.error('The security code (CVV) field is invalid. Please enter a valid CVV.');
+                            setValidationError(__('Please enter a valid security code.', 'visa-acceptance-solutions'));
                             return {
                                 type: emitResponse.responseTypes.ERROR,
-                                message: __("Please enter a valid security code."),
+                                message: __('Please enter a valid security code.', 'visa-acceptance-solutions'),
                                 messageContext: emitResponse.noticeContexts.PAYMENTS,
                             };
                         }
@@ -340,23 +342,23 @@ var ucblockssavedcomponent = (props) => {
                             if (!flexTokenResponse) {
                                 return {
                                     type: emitResponse.responseTypes.ERROR,
-                                    message: __("Please enter a valid security code and try again."),
+                                    message: __('Please enter a valid security code and try again.', 'visa-acceptance-solutions'),
                                     messageContext: emitResponse.noticeContexts.PAYMENTS,
                                 };
                             }
                             if (flexTokenResponse.error) {
-                                console.error('Flex token creation error:', flexTokenResponse.error);
+                                console.error('An error occurred while creating the Flex token:', flexTokenResponse.error);
                                 return {
                                     type: emitResponse.responseTypes.ERROR,
-                                    message: __("Please Enter Valid Security Code."),
+                                    message: __('Please Enter Valid Security Code.', 'visa-acceptance-solutions'),
                                     messageContext: emitResponse.noticeContexts.PAYMENTS,
                                 };
                             }
                             if (!flexTokenResponse.token) {
-                                console.error('Flex token missing in response:', flexTokenResponse);
+                                console.error('The Flex token is missing from the response:', flexTokenResponse);
                                 return {
                                     type: emitResponse.responseTypes.ERROR,
-                                    message: __("Failed to create security token. Please try again."),
+                                    message: __('Failed to create security token. Please try again.', 'visa-acceptance-solutions'),
                                     messageContext: emitResponse.noticeContexts.PAYMENTS,
                                 };
                             }
@@ -378,18 +380,18 @@ var ucblockssavedcomponent = (props) => {
                             };
                             
                         } catch (error) {               
-                            setValidationError("Please enter a valid security code.");
+                            setValidationError(__('Please enter a valid security code.', 'visa-acceptance-solutions'));
                             return {
                                 type: emitResponse.responseTypes.ERROR,
-                                message: __("Please enter a valid security code."),
+                                message: __('Please enter a valid security code.', 'visa-acceptance-solutions'),
                                 messageContext: emitResponse.noticeContexts.PAYMENTS,
                             };
                         }
                     } else {
-                        setValidationError("Security code field not loaded. Please refresh and try again.");
+                        setValidationError(__('Security code field not loaded. Please refresh and try again.', 'visa-acceptance-solutions'));
                         return {
                             type: emitResponse.responseTypes.ERROR,
-                            message: __("Security code field not loaded. Please refresh and try again."),
+                            message: __('Security code field not loaded. Please refresh and try again.', 'visa-acceptance-solutions'),
                             messageContext: emitResponse.noticeContexts.PAYMENTS,
                         };
                     }
@@ -422,13 +424,13 @@ var ucblockssavedcomponent = (props) => {
                     };
                 }
             } else {
-                console.error('No token provided for payment processing');
+                console.error('No token was provided for processing the payment.');
             }
             return {
                 type: "error",
                 validationErrors: {
                     "flex-cvv-field": {
-                        message: __("Payment method not selected properly. Please refresh and try again."),
+                        message: __('Payment method not selected properly. Please refresh and try again.', 'visa-acceptance-solutions'),
                         hidden: false
                     }
                 }
@@ -481,7 +483,7 @@ var ucblockssavedcomponent = (props) => {
             React.createElement("label", { 
                 htmlFor: "flex-cvv-field",
                 className: "saved-card-cvv-label"
-            }, "Security Code"),
+            }, __('Security Code', 'visa-acceptance-solutions')),
             // Show error message if Flex initialization failed (wrong MID credentials).
             flexError ? React.createElement("div", {
                 className: "wc-block-components-validation-error flex-cvv-error",
@@ -575,7 +577,7 @@ var ucblockssavedcomponent = (props) => {
                             }
                             
                             if (!(containerElement instanceof HTMLElement)) {
-                                console.error('FIELD_LOAD_INVALID_CONTAINER: Container is not a valid DOM element', containerElement);
+                                console.error('The container provided is not a valid DOM element:', containerElement);
                                 setFlexInstance(null);
                                 return;
                             }
@@ -592,7 +594,7 @@ var ucblockssavedcomponent = (props) => {
                                                 
                                                 microform.createToken(options, (err, flexjwtToken) => {
                                                     if (err) {
-                                                        console.error('Microform createToken error:', err);
+                                                        console.error('An error occurred while generating the Microform token:', err);
                                                         reject(err);
                                                     } else {
                                                         // Return the token directly - no AJAX call needed.
@@ -618,7 +620,7 @@ var ucblockssavedcomponent = (props) => {
                                     }
                                 });
                             } catch (fieldError) {
-                                setFlexError('Unable to load secure CVV field. Please refresh the page or contact support.');
+                                setFlexError(__('Unable to load secure CVV field. Please refresh the page or contact support.', 'visa-acceptance-solutions'));
                                 setFlexInstance(null);
                             }
                         }, 100);
@@ -626,17 +628,17 @@ var ucblockssavedcomponent = (props) => {
                     } catch (error) {
                         // Check for specific CAPTURE_CONTEXT_INVALID error.
                         if (error.message && error.message.includes('CAPTURE_CONTEXT_INVALID')) {
-                            setFlexError('Payment configuration error. Invalid merchant credentials detected. Please contact the site administrator.');
+                            setFlexError(__('Payment configuration error. Invalid merchant credentials detected. Please contact the site administrator.', 'visa-acceptance-solutions'));
                         } else if (error.message && error.message.includes('AUTHENTICATION')) {
-                            setFlexError('Payment gateway authentication failed. Please contact the site administrator.');
+                            setFlexError(__('Payment gateway authentication failed. Please contact the site administrator.', 'visa-acceptance-solutions'));
                         } else {
-                            setFlexError('Unable to initialize secure payment form. Please contact support.');
+                            setFlexError(__('Unable to initialize secure payment form. Please contact support.', 'visa-acceptance-solutions'));
                         }
                         
                         setFlexInstance(null);
                     }
                 } else {
-                    setFlexError('Payment configuration error. Invalid security token format. Please contact support.');
+                    setFlexError(__('Payment configuration error. Invalid security token format. Please contact support.', 'visa-acceptance-solutions'));
                     setFlexInstance(null);
                 }
             } else {
@@ -780,7 +782,7 @@ var ucComponents = (props) => {
 
             return {
                 type: emitResponse.responseTypes.ERROR,
-                message: __('There was an error'),
+                message: __('There was an error', 'visa-acceptance-solutions'),
             };
         });
 
@@ -877,7 +879,7 @@ var ucComponents = (props) => {
 
     var loader = React.createElement(LoadingMask, {
         isLoading: true,
-        screenReaderLabel: "Loading Capture Context",
+        screenReaderLabel: __('Loading Capture Context', 'visa-acceptance-solutions'),
         showSpinner: true
     });
 
@@ -1047,7 +1049,7 @@ var ucExpressPayComponents = (props) => {
 
             return {
                 type: emitResponse.responseTypes.ERROR,
-                message: __('There was an error'),
+                message: __('There was an error', 'visa-acceptance-solutions'),
             };
         });
  
@@ -1212,7 +1214,7 @@ var ucExpressPayComponents = (props) => {
 
     var loaderCC = React.createElement(LoadingMask, {
         isLoading: true,
-        screenReaderLabel: "Loading Capture Context",
+        screenReaderLabel: __('Loading Capture Context', 'visa-acceptance-solutions'),
         showSpinner: true
     });
 
@@ -1297,7 +1299,7 @@ var ucOptions = {
     edit: React.createElement("div", {}, null),
     canMakePayment,
     paymentMethodId: ucBlocksSettings.visa_acceptance_solutions_uc_id,
-    ariaLabel: "Unified Checkout",
+    ariaLabel: __('Unified Checkout', 'visa-acceptance-solutions'),
     supports: {
         showSaveOption: ucBlocksSettings.enable_tokenization,
         features: ucBlocksSettings?.supports ?? [],
@@ -1317,7 +1319,7 @@ else {
             edit: React.createElement('div', {}, null),
             canMakePayment,
             paymentMethodId: ucExpressPaySettings.express_pay_uc_id,
-            ariaLabel: "Express Checkout",
+            ariaLabel: __('Express Checkout', 'visa-acceptance-solutions'),
             supports: {
                 features: ucExpressPaySettings?.supports ?? [],
             },
@@ -1328,7 +1330,7 @@ else {
 
 if(ucExpressPaySettings.force_tokenization || ucBlocksSettings.force_tokenization){
     window.wp.data.dispatch( 'core/notices' ).createInfoNotice(
-        ('One or more items in your order is a subscription/recurring purchase. By continuing with payment, you agree that your payment method will be automatically charged at the price and frequency listed here until it ends or you cancel.'),
+        __('One or more items in your order is a subscription/recurring purchase. By continuing with payment, you agree that your payment method will be automatically charged at the price and frequency listed here until it ends or you cancel.', 'visa-acceptance-solutions'),
         {id:"checkout",context:"visa_acceptance_solutions_notice_container",  isDismissible:false}
     );
 }

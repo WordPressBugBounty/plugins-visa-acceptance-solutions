@@ -52,7 +52,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 		add_filter( 'woocommerce_subscription_payment_meta', array( $this, 'admin_add_payment_meta' ), VISA_ACCEPTANCE_VAL_NINE, VISA_ACCEPTANCE_VAL_TWO );
 		add_filter( 'woocommerce_payment_gateways_renewal_support_status_html', array( $this, 'subscriptions_maybe_edit_renewal_support_status' ), VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY, VISA_ACCEPTANCE_VAL_TWO );
 		add_filter( 'woocommerce_subscriptions_process_payment_for_change_method_via_pay_shortcode', array( $this, 'remove_order_meta_from_change_payment' ), VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY, VISA_ACCEPTANCE_VAL_TWO );
-		add_action( 'woocommerce_update_options_checkout_' . $this->get_id(), array( $this, 'visa_acceptance_solutions_subscription_notice' ) );
+		add_action( 'admin_notices', array( $this, 'visa_acceptance_solutions_subscription_notice' ) );
 		add_action( 'woocommerce_subscription_validate_payment_meta_' . $this->get_id(), array( $this, 'admin_validate_payment_meta' ), VISA_ACCEPTANCE_VAL_NINE );
 		add_filter( 'woocommerce_order_needs_payment', array( $this, 'dm_review_early_renewal_needs_payment' ), VISA_ACCEPTANCE_VAL_TEN, VISA_ACCEPTANCE_VAL_TWO );
 	}
@@ -77,22 +77,44 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	}
 
 	/**
-	 * Save the setting for subscription notice.
+	 * Display admin notice when WooCommerce Subscriptions is active but Tokenization is disabled.
 	 */
 	public function visa_acceptance_solutions_subscription_notice() {
-		$wc_payment_gateway_activator = new Visa_Acceptance_Payment_Gateway_Activator();
-		if ( VISA_ACCEPTANCE_YES === $this->enabled && ! ( VISA_ACCEPTANCE_YES === $this->get_option( 'tokenization' ) ) ) {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Reading URL parameters for conditional notice display only.
+		$page    = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY;
+		$tab     = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY;
+		$section = isset( $_GET['section'] ) ? sanitize_text_field( wp_unslash( $_GET['section'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY;
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+		if ( 'wc-settings' !== $page || 'checkout' !== $tab || $this->get_id() !== $section ) {
+			return;
+		}
+		if ( ! class_exists( 'WC_Subscriptions' ) ) {
+			return;
+		}
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		if ( isset( $_POST['save'] ) ) {
+			$enabled_key      = $this->get_field_key( 'enabled' );
+			$tokenization_key = $this->get_field_key( 'tokenization' );
+			$enabled          = isset( $_POST[ $enabled_key ] ) ? VISA_ACCEPTANCE_YES : VISA_ACCEPTANCE_NO;
+			$tokenization     = isset( $_POST[ $tokenization_key ] ) ? VISA_ACCEPTANCE_YES : VISA_ACCEPTANCE_NO;
+		} else {
+			$enabled      = $this->get_option( 'enabled' );
+			$tokenization = $this->get_option( 'tokenization' );
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		if ( VISA_ACCEPTANCE_YES === $enabled && VISA_ACCEPTANCE_YES !== $tokenization ) {
 			/* translators: %s - payment method name */
 			$message = sprintf( __( 'To use WooCommerce subscriptions with %s, please enable Tokenization.', 'visa-acceptance-solutions' ), $this->method_title );
 			wp_admin_notice(
 				$message,
 				array(
-					'id'                 => 'message',
-					'additional_classes' => array( VISA_ACCEPTANCE_ERROR ),
-					'dismissible'        => true,
+					'id'          => 'visa-acceptance-subscription-tokenization-notice',
+					'type'        => VISA_ACCEPTANCE_WARNING,
+					'dismissible' => true,
 				)
 			);
 		} else {
+			$wc_payment_gateway_activator = new Visa_Acceptance_Payment_Gateway_Activator();
 			global $wpdb;
 			$payment_method = 'cybersource_credit_card';
 			$type           = 'shop_subscription';
@@ -389,7 +411,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 			// Set commerceIndicator to recurring only when a subscription token exists AND the order is a renewal.
 			if ( ( ! empty( $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ) ) || $contain_token ) && wcs_order_contains_renewal( $order ) ) { 
 			$payload['commerceIndicator'] = VISA_ACCEPTANCE_RECURRING;
-		} elseif ( wcs_order_contains_subscription( $order ) || wcs_order_contains_renewal( $order ) ) {
+		} elseif ( wcs_order_contains_subscription( $order ) && ! wcs_order_contains_renewal( $order ) ) {
 			$payload['recurringOptions']['firstRecurringPayment'] = true;
 		}
 		}
@@ -409,7 +431,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 		$contain_token = $this->has_subscription_token ( $order );
 		if ( ( ! empty( $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ) ) || $contain_token ) && wcs_order_contains_renewal( $order ) ) { 
 			$payload['commerceIndicator'] = VISA_ACCEPTANCE_RECURRING;
-		} elseif ( wcs_order_contains_subscription( $order ) || wcs_order_contains_renewal( $order ) ) {
+		} elseif ( wcs_order_contains_subscription( $order ) && ! wcs_order_contains_renewal( $order ) ) {
 			$payload['recurringOptions']['firstRecurringPayment'] = true;
 		}
 		return $payload;
