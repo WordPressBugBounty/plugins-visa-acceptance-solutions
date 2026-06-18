@@ -36,7 +36,7 @@ if (!function_exists('array_last')) {
         return p\Php85::array_last($array);
     }
 }
-if (!function_exists('locale_is_right_to_left')) {
+if (extension_loaded('intl') && !function_exists('locale_is_right_to_left')) {
     function locale_is_right_to_left(string $locale): bool
     {
         return p\Php85::locale_is_right_to_left($locale);

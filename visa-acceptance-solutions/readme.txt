@@ -4,10 +4,10 @@ Author: Visa Acceptance Solutions
 Contributors: visaacceptancesolutions
 Tags: woocommerce, payments, visa
 Requires at least: 6.9
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 8.2.0
-Stable tag: 2.2.1
-WC tested up to: 10.7.0
+Stable tag: 2.2.2
+WC tested up to: 10.8.1
 WC requires at least: 10.3.7
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -61,6 +61,15 @@ In most cases we can provide support through the WordPress or WooCommerce forums
 Sign up [here](https://developer.visaacceptance.com/hello-world/sandbox.html).  Note sandbox accounts are configured for USD currency
 
 == Changelog ==
+
+= 2.2.2 =
+**Enhancements**
+* Wordpress v7.0 compatibility
+** Bug Fix **
+* Optimized order status handling
+**Misc**
+* Removed Express Pay from Product Page
+* Added Express Pay Configuration
 
 = 2.2.1 =
 **Enhancements**
@@ -122,7 +131,7 @@ Sign up [here](https://developer.visaacceptance.com/hello-world/sandbox.html).  
 **Initial release** supporting Card Payments, Tokenisation, Payer Authentication (3D Secure), and Fraud Screening tools.
 
 == Upgrade Notice ==
-Version 2.2.1 is now available.  Please refer to change log for details.
+Version 2.2.2 is now available.  Please refer to change log for details.
 
 == Admin Notice ==
-Version 2.2.1 is now available.  Please refer to change log for details.
+Version 2.2.2 is now available.  Please refer to change log for details.

@@ -30,6 +30,9 @@ final class SessionValueResolver implements ValueResolverInterface
         if (SessionInterface::class !== $type && !is_subclass_of($type, SessionInterface::class)) {
             return [];
         }
+        if ($request->attributes->has($argument->getName())) {
+            return [];
+        }
         return $request->getSession() instanceof $type ? [$request->getSession()] : [];
     }
 }

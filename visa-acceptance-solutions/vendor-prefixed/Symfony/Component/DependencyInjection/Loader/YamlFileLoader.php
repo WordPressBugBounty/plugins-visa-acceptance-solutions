@@ -521,6 +521,9 @@ class YamlFileLoader extends FileLoader
      */
     private function parseCallable(mixed $callable, string $parameter, string $id, string $file): string|array|Reference
     {
+        if ($callable instanceof Reference) {
+            return [$callable, '__invoke'];
+        }
         if (\is_string($callable)) {
             if (str_starts_with($callable, '@=')) {
                 if ('factory' !== $parameter) {
@@ -592,7 +595,7 @@ class YamlFileLoader extends FileLoader
                 continue;
             }
             if (!$this->prepend && !$this->container->hasExtension($namespace)) {
-                $extensionNamespaces = array_filter(array_map(fn(ExtensionInterface $ext) => $ext->getAlias(), $this->container->getExtensions()));
+                $extensionNamespaces = array_filter(array_map(static fn(ExtensionInterface $ext) => $ext->getAlias(), $this->container->getExtensions()));
                 throw new InvalidArgumentException(UndefinedExtensionHandler::getErrorMessage($namespace, $file, $namespace, $extensionNamespaces));
             }
         }

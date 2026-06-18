@@ -7,8 +7,8 @@ namespace Composer\Autoload;
 class MozartStaticInitf9dc672f053eb0d580851d45e624f3f4
 {
     public static $files = array (
-        '61ccda383994d37a85b24f08d99c4b93' => __DIR__ . '/../../libs/paragonie/sodium_compat/autoload.php',
         'c600386d7c8e7d3b05cabaf2cc50fdef' => __DIR__ . '/../../libs/symfony/deprecation-contracts/function.php',
+        '61ccda383994d37a85b24f08d99c4b93' => __DIR__ . '/../../libs/paragonie/sodium_compat/autoload.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -3158,6 +3158,7 @@ class MozartStaticInitf9dc672f053eb0d580851d45e624f3f4
         'Pymt_Vas\\Dependencies\\Symfony\\Contracts\\Service\\ServiceSubscriberTrait' => __DIR__ . '/../Symfony/Contracts/Service/ServiceSubscriberTrait.php',
         'Pymt_Vas\\Dependencies\\Symfony\\Contracts\\Service\\ServiceMethodsSubscriberTrait' => __DIR__ . '/../Symfony/Contracts/Service/ServiceMethodsSubscriberTrait.php',
         'Pymt_Vas\\Dependencies\\Symfony\\Contracts\\Service\\ServiceLocatorTrait' => __DIR__ . '/../Symfony/Contracts/Service/ServiceLocatorTrait.php',
+        'Pymt_Vas\\Dependencies\\Symfony\\Contracts\\Service\\ContainerAwareInterface' => __DIR__ . '/../Symfony/Contracts/Service/ContainerAwareInterface.php',
         'Pymt_Vas\\Dependencies\\Symfony\\Component\\HttpKernel\\DataCollector\\DumpDataCollector' => __DIR__ . '/../Symfony/Component/HttpKernel/DataCollector/DumpDataCollector.php',
         'Pymt_Vas\\Dependencies\\Symfony\\Component\\HttpKernel\\DataCollector\\MemoryDataCollector' => __DIR__ . '/../Symfony/Component/HttpKernel/DataCollector/MemoryDataCollector.php',
         'Pymt_Vas\\Dependencies\\Symfony\\Component\\HttpKernel\\DataCollector\\LateDataCollectorInterface' => __DIR__ . '/../Symfony/Component/HttpKernel/DataCollector/LateDataCollectorInterface.php',
@@ -3816,6 +3817,7 @@ class MozartStaticInitf9dc672f053eb0d580851d45e624f3f4
         'Pymt_Vas\\Dependencies\\Symfony\\Component\\DependencyInjection\\Compiler\\AutowirePass' => __DIR__ . '/../Symfony/Component/DependencyInjection/Compiler/AutowirePass.php',
         'Pymt_Vas\\Dependencies\\Symfony\\Component\\DependencyInjection\\Compiler\\ServiceLocatorTagPass' => __DIR__ . '/../Symfony/Component/DependencyInjection/Compiler/ServiceLocatorTagPass.php',
         'Pymt_Vas\\Dependencies\\Symfony\\Component\\DependencyInjection\\Compiler\\ResolveTaggedIteratorArgumentPass' => __DIR__ . '/../Symfony/Component/DependencyInjection/Compiler/ResolveTaggedIteratorArgumentPass.php',
+        'Pymt_Vas\\Dependencies\\Symfony\\Component\\DependencyInjection\\Compiler\\CheckFactoryBuilderCircularReferencePass' => __DIR__ . '/../Symfony/Component/DependencyInjection/Compiler/CheckFactoryBuilderCircularReferencePass.php',
         'Pymt_Vas\\Dependencies\\Symfony\\Component\\DependencyInjection\\Compiler\\ResolveEnvPlaceholdersPass' => __DIR__ . '/../Symfony/Component/DependencyInjection/Compiler/ResolveEnvPlaceholdersPass.php',
         'Pymt_Vas\\Dependencies\\Symfony\\Component\\DependencyInjection\\Compiler\\CheckCircularReferencesPass' => __DIR__ . '/../Symfony/Component/DependencyInjection/Compiler/CheckCircularReferencesPass.php',
         'Pymt_Vas\\Dependencies\\Symfony\\Component\\DependencyInjection\\Compiler\\CheckExceptionOnInvalidReferenceBehaviorPass' => __DIR__ . '/../Symfony/Component/DependencyInjection/Compiler/CheckExceptionOnInvalidReferenceBehaviorPass.php',

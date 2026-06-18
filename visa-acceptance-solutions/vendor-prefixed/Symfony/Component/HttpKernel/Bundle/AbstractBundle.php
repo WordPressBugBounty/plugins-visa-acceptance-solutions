@@ -27,10 +27,10 @@ abstract class AbstractBundle extends Bundle implements ConfigurableExtensionInt
     public function configure(DefinitionConfigurator $definition): void
     {
     }
-    public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
+    public function prependExtension(ContainerConfigurator $configurator, ContainerBuilder $container): void
     {
     }
-    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
+    public function loadExtension(array $config, ContainerConfigurator $configurator, ContainerBuilder $container): void
     {
     }
     public function getContainerExtension(): ?ExtensionInterface

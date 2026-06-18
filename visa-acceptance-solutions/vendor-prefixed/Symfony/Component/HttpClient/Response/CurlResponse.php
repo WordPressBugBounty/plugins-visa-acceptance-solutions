@@ -36,7 +36,7 @@ final class CurlResponse implements ResponseInterface, StreamableInterface
     /**
      * @internal
      */
-    public function __construct(private CurlClientState $multi, \CurlHandle|string $ch, ?array $options = null, ?LoggerInterface $logger = null, string $method = 'GET', ?callable $resolveRedirect = null, ?int $curlVersion = null, ?string $originalUrl = null)
+    public function __construct(private CurlClientState $multi, \CurlHandle|string $ch, ?array $options = null, ?LoggerInterface $logger = null, string $method = 'GET', ?callable $resolveRedirect = null, ?int $curlVersion = null, ?string $originalUrl = null, private ?string $ntlmOriginKey = null)
     {
         if ($ch instanceof \CurlHandle) {
             $this->handle = $ch;
@@ -250,6 +250,9 @@ final class CurlResponse implements ResponseInterface, StreamableInterface
                 $result = $info['result'];
                 $id = (int) $ch = $info['handle'];
                 $waitFor = @curl_getinfo($ch, \CURLINFO_PRIVATE) ?: '_0';
+                if (isset($responses[$id]) && self::retryNtlmOnFreshConnection($multi, $ch, $responses[$id]->ntlmOriginKey, $result)) {
+                    continue;
+                }
                 if (\in_array($result, [
                     \CURLE_SEND_ERROR,
                     \CURLE_RECV_ERROR,
@@ -380,5 +383,33 @@ final class CurlResponse implements ResponseInterface, StreamableInterface
         }
         $location = null;
         return \strlen($data);
+    }
+    /**
+     * Handles servers that do not persist NTLM authentication across requests on a reused
+     * TCP connection (e.g. IIS with authPersistNonNTLM=false). On such servers, libcurl
+     * still considers the pooled socket authenticated client-side and skips the handshake,
+     * but the server returns a fresh 401 + NTLM challenge that libcurl cannot pick up on
+     * the same request, so the caller sees an unauthenticated 401.
+     *
+     * The discriminator is CURLINFO_NUM_CONNECTS == 0: no new connection was opened for
+     * this request, so the socket came from the pool. A 401 + NTLM challenge on a brand
+     * new socket is the legitimate first leg of libcurl's in-request 3-way handshake and
+     * must NOT trigger this path.
+     *
+     * When detected, the deauthenticated socket is closed, the request is retried once on
+     * a fresh one, and the origin is recorded so subsequent requests to it skip the pool
+     * from the start.
+     */
+    private static function retryNtlmOnFreshConnection(CurlClientState $multi, \CurlHandle $ch, ?string $originKey, int $result): bool
+    {
+        if (null === $originKey || \CURLE_OK !== $result || 401 !== curl_getinfo($ch, \CURLINFO_RESPONSE_CODE) || 0 === (curl_getinfo($ch, \CURLINFO_HTTPAUTH_AVAIL) & \CURLAUTH_NTLM) || 0 !== curl_getinfo($ch, \CURLINFO_NUM_CONNECTS) || isset($multi->ntlmRequiresFreshConnection[$originKey])) {
+            return false;
+        }
+        $multi->ntlmRequiresFreshConnection[$originKey] = true;
+        $multi->logger?->info(\sprintf('Discarding NTLM-deauthenticated connection to "%s" and retrying on a fresh one', $originKey));
+        curl_setopt($ch, \CURLOPT_FORBID_REUSE, true);
+        curl_multi_remove_handle($multi->handle, $ch);
+        curl_setopt($ch, \CURLOPT_FRESH_CONNECT, true);
+        return 0 === curl_multi_add_handle($multi->handle, $ch);
     }
 }

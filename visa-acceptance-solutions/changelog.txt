@@ -1,5 +1,11 @@
 *** Visa Acceptance Solutions Changelog ***
 
+2026-06-09 - version 2.2.2
+* Feature - Wordpress v7.0 compatibility
+* Bug Fix - Optimized order status handling
+* Misc - Removed Express Pay from Product Page
+* Misc - Added Express Pay Configuration
+
 2026-04-23 - version 2.2.1
 * Feature - Updated Cybersource Rest Client SDK to v0.0.72
 * Bug Fix - WordPress validation issue fixed

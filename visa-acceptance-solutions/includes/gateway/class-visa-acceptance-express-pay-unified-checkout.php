@@ -83,6 +83,11 @@ class Visa_Acceptance_Express_Pay_Unified_Checkout extends AbstractPaymentMethod
 		$force_tokenization  = false;
 		$subscription_order = false;
 		$uc_settings         = get_option( VISA_ACCEPTANCE_WOOCOMMERCE_UNDERSCORE . $this->gateway->get_id() . VISA_ACCEPTANCE_UNDERSCORE_SETTINGS, array() );
+		// Return empty array if express pay is disabled.
+		$is_express_pay_enabled = isset( $uc_settings['enable_express_pay'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enable_express_pay'];
+		if ( ! $is_express_pay_enabled ) {
+			return array();
+		}
 		$payment_gateway_unified_checkout = new Visa_Acceptance_Payment_Gateway_Unified_Checkout();
 		$available_gateways = WC()->payment_gateways()->get_available_payment_gateways();
 		$is_gateway_available = isset( $available_gateways[ $this->gateway->id ] );
@@ -115,6 +120,7 @@ class Visa_Acceptance_Express_Pay_Unified_Checkout extends AbstractPaymentMethod
 				'subscription_order'			  => $subscription_order,
 				'is_user_logged_in'				  => is_user_logged_in(),
 				'enabled_payment_methods'         => ! empty( $uc_settings['enabled_payment_methods'] ) ? $uc_settings['enabled_payment_methods'] : array(),
+				'enable_express_pay'              => isset( $uc_settings['enable_express_pay'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enable_express_pay'],
 				'express_pay_uc_id'               => VISA_ACCEPTANCE_EXPRESS_PAY_UC_ID,
 				'form_load_error'                 => __( 'Unable to load the payment form. Please contact customer care for any assistance.', 'visa-acceptance-solutions' ),
 				'cvv_error'                       => __( 'Please enter valid Security Code.', 'visa-acceptance-solutions' ),

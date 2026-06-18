@@ -54,9 +54,7 @@ final class TraceableCommand extends Command
         $this->setDescription($command->getDescription());
         parent::__construct($command->getName());
         // init below enables calling {@see parent::run()}
-        [$code, $processTitle, $ignoreValidationErrors] = \Closure::bind(function () {
-            return [$this->code, $this->processTitle, $this->ignoreValidationErrors];
-        }, $command, Command::class)();
+        [$code, $processTitle, $ignoreValidationErrors] = \Closure::bind(fn() => [$this->code, $this->processTitle, $this->ignoreValidationErrors], $command, Command::class)();
         if (\is_callable($code)) {
             $this->setCode($code);
         }
@@ -132,9 +130,7 @@ final class TraceableCommand extends Command
     public function setCode(callable $code): static
     {
         if ($code instanceof InvokableCommand) {
-            $r = \Closure::bind(function () {
-                return $this->invokable;
-            }, $code, InvokableCommand::class)();
+            $r = \Closure::bind(fn() => $this->invokable, $code, InvokableCommand::class)();
             $this->invokableCommandInfo = ['class' => $r->getClosureScopeClass()->name, 'file' => $r->getFileName(), 'line' => $r->getStartLine()];
             // Pass the original callable to avoid double-wrapping in Command::setCode()
             $this->command->setCode($code->getCode());

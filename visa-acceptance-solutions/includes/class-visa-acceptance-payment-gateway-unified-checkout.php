@@ -402,7 +402,21 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 				$sanitized_data[ $field_prefix . 'api_shared_secret' ] = sanitize_text_field( $raw_api_shared_secret );
 			}
 		}
+		// Validate Express Pay dependency.
+		$enable_express_pay = isset( $post_data[ $field_prefix . 'enable_express_pay' ] )
+			? $post_data[ $field_prefix . 'enable_express_pay' ]
+			: '0';
 
+		$enabled_payment_methods = isset( $post_data[ $field_prefix . 'enabled_payment_methods' ] )
+			? (array) $post_data[ $field_prefix . 'enabled_payment_methods' ]
+			: array();
+
+		if ( '1' === $enable_express_pay && empty( $enabled_payment_methods ) ) {
+			$validation_errors[] = __(
+				'Please select atleast one Digital Payment Method when Express Pay is enabled.',
+				'visa-acceptance-solutions'
+			);
+		}
 		if ( '1' === $enable_mle ) {
 			$raw_mle_certificate_path = isset( $post_data[ $field_prefix . 'mle_certificate_path' ] ) ? $post_data[ $field_prefix . 'mle_certificate_path' ] : VISA_ACCEPTANCE_STRING_EMPTY;
 			$trimmed_mle_certificate_path = trim( $raw_mle_certificate_path );
@@ -679,12 +693,15 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 			// Browser data collection for 3DS device information.
 			$this->loader->add_action( 'wp_ajax_store_browser_data', $this->plugin_public, 'store_browser_data' );
 			$this->loader->add_action( 'wp_ajax_nopriv_store_browser_data', $this->plugin_public, 'store_browser_data' );	
+			// For Express pay — only register hooks when ExpressPay is enabled.
+            $express_pay_enabled = isset( $settings['enable_express_pay'] ) ? $settings['enable_express_pay'] : VISA_ACCEPTANCE_YES;
+            if ( VISA_ACCEPTANCE_YES === $express_pay_enabled ) {
 			// For Express pay product page.
-			$this->loader->add_action( 'woocommerce_after_add_to_cart_button', $this->express_pay_plugin_public, 'add_express_pay_at_product_page' );
-			$this->loader->add_action( 'wp_ajax_express_pay_for_order', $this->express_pay_plugin_public,  'express_pay_product_page_pay_for_order' );
-			$this->loader->add_action( 'wp_ajax_nopriv_express_pay_for_order', $this->express_pay_plugin_public,  'express_pay_product_page_pay_for_order' );
-			$this->loader->add_action( 'wp_ajax_product_page_quantity_update', $this->express_pay_plugin_public, 'product_page_quantity_update' );
-			$this->loader->add_action( 'wp_ajax_nopriv_product_page_quantity_update', $this->express_pay_plugin_public, 'product_page_quantity_update' );
+			// $this->loader->add_action( 'woocommerce_after_add_to_cart_button', $this->express_pay_plugin_public, 'add_express_pay_at_product_page' );
+			// $this->loader->add_action( 'wp_ajax_express_pay_for_order', $this->express_pay_plugin_public,  'express_pay_product_page_pay_for_order' );
+			// $this->loader->add_action( 'wp_ajax_nopriv_express_pay_for_order', $this->express_pay_plugin_public,  'express_pay_product_page_pay_for_order' );
+			// $this->loader->add_action( 'wp_ajax_product_page_quantity_update', $this->express_pay_plugin_public, 'product_page_quantity_update' );
+			// $this->loader->add_action( 'wp_ajax_nopriv_product_page_quantity_update', $this->express_pay_plugin_public, 'product_page_quantity_update' );
 			// AJAX handler for getting addresses from transient token (for blocks checkout).
 			$this->loader->add_action( 'wp_ajax_get_addresses_from_transient_token', $this->express_pay_plugin_public, 'ajax_get_addresses_from_transient_token' );
 			$this->loader->add_action( 'wp_ajax_nopriv_get_addresses_from_transient_token', $this->express_pay_plugin_public, 'ajax_get_addresses_from_transient_token' );
@@ -692,6 +709,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 			$this->loader->add_action( 'woocommerce_checkout_before_customer_details', $this->express_pay_plugin_public, 'add_express_pay_at_normal_checkout' );
 			// For Express pay at Pay for orders page.
 			$this->loader->add_action('before_woocommerce_pay', $this->express_pay_plugin_public, 'add_express_pay_at_normal_checkout', VISA_ACCEPTANCE_VAL_FIVE);
+            }
 		}
 	}
 

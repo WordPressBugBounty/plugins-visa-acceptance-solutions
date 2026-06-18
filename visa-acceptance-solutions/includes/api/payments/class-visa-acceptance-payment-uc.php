@@ -314,14 +314,18 @@ class Visa_Acceptance_Payment_UC extends Visa_Acceptance_Request {
 					$order->update_meta_data( '_vas_payment_type', VISA_ACCEPTANCE_CHECK );
 					$order->save();
 					$this->add_capture_data( $order, $payment_response_array );
-					$this->update_order_notes( VISA_ACCEPTANCE_CHARGE_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING );
+					$order->payment_complete( $payment_response_array['transaction_id'] );
+					$_note_title = method_exists( $this, 'get_title' ) ? $this->get_title() : $this->gateway->get_title();
+					$order->add_order_note( sprintf( $_note_title . ' - ' . VISA_ACCEPTANCE_CHARGE_TRANSACTION, $payment_response_array['transaction_id'] ) );
 				} elseif ( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $status ) {
 					$order->update_meta_data( '_vas_payment_type', VISA_ACCEPTANCE_PAYMENT_TYPE_CARD );
 					$order->save();
 
 					if ( $is_charge_transaction ) {
 						$this->add_capture_data( $order, $payment_response_array );
-						$this->update_order_notes( VISA_ACCEPTANCE_CHARGE_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING );
+						$order->payment_complete( $payment_response_array['transaction_id'] );
+						$_note_title = method_exists( $this, 'get_title' ) ? $this->get_title() : $this->gateway->get_title();
+						$order->add_order_note( sprintf( $_note_title . ' - ' . VISA_ACCEPTANCE_CHARGE_TRANSACTION, $payment_response_array['transaction_id'] ) );
 					} else {
 						$this->add_transaction_data( $order, $payment_response_array );
 						if ( $order->get_total() === VISA_ACCEPTANCE_PLACEHOLDER_AMOUNT ) {

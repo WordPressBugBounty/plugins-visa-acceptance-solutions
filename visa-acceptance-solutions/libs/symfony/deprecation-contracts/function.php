@@ -1,9 +1,5 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
-
 /*
  * This file is part of the Symfony package.
  *
@@ -12,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-if (!function_exists('pymt_vas_trigger_deprecation')) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+if (!function_exists('pymt_vas_trigger_deprecation')) {
     /**
      * Triggers a silenced deprecation notice.
      *
@@ -23,8 +19,8 @@ if (!function_exists('pymt_vas_trigger_deprecation')) { // phpcs:ignore WordPres
      *
      * @author Nicolas Grekas <p@tchwork.com>
      */
-    function pymt_vas_trigger_deprecation(string $package, string $version, string $message, mixed ...$args): void // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+    function pymt_vas_trigger_deprecation(string $package, string $version, string $message, mixed ...$args): void
     {
-        @trigger_error(($package || $version ? "Since {$package} {$version}: " : '') . ($args ? vsprintf($message, $args) : $message), \E_USER_DEPRECATED); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error, WordPress.Security.EscapeOutput.OutputNotEscaped
+        @trigger_error(($package || $version ? "Since {$package} {$version}: " : '') . ($args ? vsprintf($message, $args) : $message), \E_USER_DEPRECATED);
     }
 }

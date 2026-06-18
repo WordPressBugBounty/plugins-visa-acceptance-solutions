@@ -247,18 +247,21 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public {
 					$contexts = ['jwt' => null];
 				}
 				else {
-					$contexts = [
-						'jwt' => $flex_request->get_unified_checkout_capture_context(),
-					];
-					// Only generate Express Pay JWT if digital wallet payments are enabled (not Click to Pay).
-					$digital_payment_methods = array_intersect(
-						! empty( $uc_settings['enabled_payment_methods'] ) ? $uc_settings['enabled_payment_methods'] : array(),
-						array('enable_gpay', 'enable_apay', 'enable_paze')
-					);
-					if (! empty( $digital_payment_methods ) && ! $this->is_user_in_add_payment_method_page() ) {
-						$contexts['ep_jwt'] = $flex_request->get_unified_checkout_capture_context(true);
-					}
-				}
+                    $contexts = [
+                        'jwt' => $flex_request->get_unified_checkout_capture_context(),
+                    ];
+                    $express_pay_enabled     = isset( $uc_settings['enable_express_pay'] ) ? $uc_settings['enable_express_pay'] : VISA_ACCEPTANCE_YES;
+                    $digital_payment_methods = array_intersect(
+                        ! empty( $uc_settings['enabled_payment_methods'] ) ? $uc_settings['enabled_payment_methods'] : array(),
+                        array('enable_gpay', 'enable_apay', 'enable_paze')
+                    );
+                    if (! empty( $digital_payment_methods ) && ! $this->is_user_in_add_payment_method_page() && VISA_ACCEPTANCE_YES === $express_pay_enabled ) {
+                        $contexts['ep_jwt'] = $flex_request->get_unified_checkout_capture_context(true);
+                    }
+                    if ( VISA_ACCEPTANCE_NO === $express_pay_enabled ) {
+                        $digital_payment_methods = array();
+                    }
+                }
 				foreach ($contexts as $key => &$context) {
 					if (!isset($context) || !is_array($context)) {
 						continue;

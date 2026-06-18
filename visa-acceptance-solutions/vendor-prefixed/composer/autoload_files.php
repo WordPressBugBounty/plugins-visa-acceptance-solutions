@@ -6,6 +6,6 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir, 1);
 
 return array(
-    '61ccda383994d37a85b24f08d99c4b93' => $baseDir . '/libs/paragonie/sodium_compat/autoload.php',
     'c600386d7c8e7d3b05cabaf2cc50fdef' => $baseDir . '/libs/symfony/deprecation-contracts/function.php',
+    '61ccda383994d37a85b24f08d99c4b93' => $baseDir . '/libs/paragonie/sodium_compat/autoload.php',
 );

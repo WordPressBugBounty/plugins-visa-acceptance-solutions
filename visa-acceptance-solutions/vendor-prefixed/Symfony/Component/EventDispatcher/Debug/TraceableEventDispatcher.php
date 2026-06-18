@@ -213,7 +213,7 @@ class TraceableEventDispatcher implements EventDispatcherInterface, ResetInterfa
             return;
         }
         foreach ($this->dispatcher->getListeners($eventName) as $listener) {
-            $priority = $this->getListenerPriority($eventName, $listener);
+            $priority = $this->getListenerPriority($eventName, $listener) ?? 0;
             $wrappedListener = new WrappedListener($listener instanceof WrappedListener ? $listener->getWrappedListener() : $listener, null, $this->stopwatch, $this);
             $this->wrappedListeners[$eventName][] = $wrappedListener;
             $this->dispatcher->removeListener($eventName, $listener);
@@ -223,7 +223,10 @@ class TraceableEventDispatcher implements EventDispatcherInterface, ResetInterfa
     }
     private function postProcess(string $eventName): void
     {
-        --$this->dispatchDepth[$eventName];
+        if (null === $this->callStack) {
+            return;
+        }
+        $this->dispatchDepth[$eventName] = ($this->dispatchDepth[$eventName] ?? 1) - 1;
         unset($this->wrappedListeners[$eventName]);
         $skipped = false;
         foreach ($this->dispatcher->getListeners($eventName) as $listener) {

@@ -160,7 +160,7 @@ final class AmpResponseV5 implements ResponseInterface, StreamableInterface
     {
         $delay = new DeferredFuture();
         $id = EventLoop::delay($timeout, $delay->complete(...));
-        awaitFirst((function () use ($delay, $multi) {
+        awaitFirst((static function () use ($delay, $multi) {
             yield $delay->getFuture();
             foreach ($multi->openHandles as $deferred) {
                 yield $deferred->getFuture();

@@ -14,7 +14,10 @@
     "require": {
         "composer-plugin-api": "^2.0",
         "cybersource/rest-client-php": "0.0.72",
-        "monolog/monolog": "^2.0"
+        "monolog/monolog": "^2.0",
+        "phpseclib/phpseclib": "3.0.52",
+        "symfony/http-kernel": "7.4.12",
+        "symfony/http-foundation": "7.4.13"
     },
     "require-dev": {
         "composer/installers": "^2.0",

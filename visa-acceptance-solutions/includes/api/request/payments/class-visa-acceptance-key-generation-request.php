@@ -443,7 +443,11 @@ class Visa_Acceptance_Key_Generation_Request extends Visa_Acceptance_Request {
 		if ( isset( $uc_setting['enable_echeck'] ) && VISA_ACCEPTANCE_YES === $uc_setting['enable_echeck'] ) {
 			array_push( $payment_method_array, VISA_ACCEPTANCE_CHECK );
 		}
-
+        $express_pay_enabled = isset( $uc_setting['enable_express_pay'] ) ? $uc_setting['enable_express_pay'] : VISA_ACCEPTANCE_YES;
+        if ( VISA_ACCEPTANCE_NO === $express_pay_enabled ) {
+            $digital_methods      = $this->get_digital_payment_methods_array( $uc_setting );
+            $payment_method_array = array_merge( $payment_method_array, $digital_methods );
+        }
 		$checkout_total_amount = $this->get_admin_checkout_total_amount();
 		if ( $checkout_total_amount['is_admin_order_pay_page'] ) {
 			$total_amount = $checkout_total_amount['total_amount'];
@@ -528,6 +532,11 @@ class Visa_Acceptance_Key_Generation_Request extends Visa_Acceptance_Request {
 		if ( isset( $uc_setting['enable_echeck'] ) && VISA_ACCEPTANCE_YES === $uc_setting['enable_echeck'] ) {
 			array_push( $payment_method_array, VISA_ACCEPTANCE_CHECK );
 		}
+		$express_pay_enabled = isset( $uc_setting['enable_express_pay'] ) ? $uc_setting['enable_express_pay'] : VISA_ACCEPTANCE_YES;
+        if ( VISA_ACCEPTANCE_NO === $express_pay_enabled && ! is_add_payment_method_page() ) {
+            $digital_methods      = $this->get_digital_payment_methods_array( $uc_setting );
+            $payment_method_array = array_merge( $payment_method_array, $digital_methods );
+        }
 		
 		$total_amount         = WC()->cart->get_totals()['total'];
 		if ( ! is_add_payment_method_page() && ( WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment ||
@@ -573,7 +582,6 @@ class Visa_Acceptance_Key_Generation_Request extends Visa_Acceptance_Request {
 		// Get tokenization setting (default to false if not set).
 		// Only enable save card checkbox for logged-in users.
         $enable_save_card = ( isset( $uc_setting['tokenization'] ) && VISA_ACCEPTANCE_YES === $uc_setting['tokenization'] && !is_add_payment_method_page() && is_user_logged_in());
-		
 
 		$order_information = new Upv1capturecontextsOrderInformation();
 		$order_information->setAmountDetails(

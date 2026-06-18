@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 require_once plugin_dir_path( __DIR__ ) . 'includes/api/payments/class-visa-acceptance-auth-reversal.php';
 require_once plugin_dir_path( __DIR__ ) . 'includes/api/payments/class-visa-acceptance-refund.php';
+require_once plugin_dir_path( __DIR__ ) . 'includes/api/request/payments/class-visa-acceptance-payment-adapter.php';
 
 /**
  * Visa Acceptance admin-specific functionality of the plugin.
@@ -161,6 +162,17 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 	 * @param \WC_Order $order order object.
 	 */
 	public function enqueue_edit_order_assets( \WC_Order $order ) {
+		$settings         = $this->gateway->get_gateway_settings();
+		$transaction_type = isset( $settings['transaction_type'] ) ? $settings['transaction_type'] : VISA_ACCEPTANCE_STRING_EMPTY;
+		$is_charge_settled = VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $transaction_type
+			&& in_array( $order->get_status(), array( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_COMPLETED ), true );
+
+		// Check if virtual order was auto-charged (same logic as refund method)
+        $payment_adapter = new Visa_Acceptance_Payment_Adapter( $this->gateway );
+        $is_virtual_order_auto_charged = $payment_adapter->check_virtual_order_enabled( $settings, $order );
+        $order_fully_captured = $this->is_order_captured( $order )
+            || $is_charge_settled
+            || $is_virtual_order_auto_charged;
 
 		wp_enqueue_script( 'wc-payment-gateway-unified-checkout-admin-order', plugin_dir_url( __FILE__ ) . 'js/visa-acceptance-payment-gateway-unified-checkout-admin.js', array( 'jquery' ), VISA_ACCEPTANCE_PLUGIN_VERSION, true );
 
@@ -181,7 +193,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 				'total_refund_amount'             => $order->get_remaining_refund_amount(),
 				'visa_acceptance_solutions_uc_id' => VISA_ACCEPTANCE_UC_ID,
 				'error_failure'                   => __( 'Unable to process your request. Please try again later.', 'visa-acceptance-solutions' ),
-				'order_fully_capture'             => $this->is_order_fully_captured( $order ) ? VISA_ACCEPTANCE_YES : VISA_ACCEPTANCE_NO,
+				'order_fully_capture'             => $order_fully_captured ? VISA_ACCEPTANCE_YES : VISA_ACCEPTANCE_NO,
 			)
 		);
 	}
@@ -522,6 +534,13 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 				'css'     => 'width: 350px;',
 				'options' => $this->get_supported_card_types(),
 			),
+			'enable_express_pay' => array(
+				'title'       => __( 'Express Pay', 'visa-acceptance-solutions' ),
+				'type'        => 'checkbox',
+				'description' => __( 'If not enabled, Digital Payment Methods load in the main checkout widget', 'visa-acceptance-solutions' ),
+				'default'     => VISA_ACCEPTANCE_NO,
+				'label'       => __( 'Enable Express Pay on the checkout page', 'visa-acceptance-solutions' ),
+			),
 			'enabled_payment_methods' => array(
                 'title'       => __( 'Digital Payment Methods', 'visa-acceptance-solutions' ),
                 'class'   => 'wc-enhanced-select',
@@ -613,6 +632,55 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 	}
 
 	/**
+	 * Check if transaction is settled by querying Visa API
+	 *
+	 * @param object $order WooCommerce order object.
+	 * @return bool True if transaction is settled, false otherwise.
+	 */
+	private function is_transaction_settled_via_api( $order ) {
+		try {
+			require_once plugin_dir_path( __DIR__ ) . 'includes/api/request/payments/class-visa-acceptance-payment-adapter.php';
+			
+			$transaction_id = $this->get_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_ID );
+			if ( empty( $transaction_id ) ) {
+				return false;
+			}
+			
+			$payment_adapter = new Visa_Acceptance_Payment_Adapter( $this->gateway );
+			$transaction_details = $payment_adapter->get_transaction_details_sdk( $transaction_id );
+			
+			if ( empty( $transaction_details['http_code'] ) || VISA_ACCEPTANCE_TWO_ZERO_ZERO !== (int) $transaction_details['http_code'] ) {
+				// API call failed, return false to use fallback logic
+				return false;
+			}
+			
+			$transaction_data = json_decode( $transaction_details['body'], true );
+			
+			// Check if transaction has settlement information in applicationInformation
+			if ( ! empty( $transaction_data['applicationInformation']['applications'] ) ) {
+				foreach ( $transaction_data['applicationInformation']['applications'] as $application ) {
+					$app_name = isset( $application['name'] ) ? strtolower( $application['name'] ) : '';
+					$app_reason = isset( $application['reasonCode'] ) ? $application['reasonCode'] : '';
+					
+					// Check for settlement or capture application
+					if ( strpos( $app_name, 'settlement' ) !== false || strpos( $app_name, 'capture' ) !== false ) {
+						// If reason code is 100 (success), transaction is settled
+						if ( '100' === $app_reason ) {
+							return true;
+						}
+					}
+				}
+			}
+			
+			return false;
+			
+		} catch ( \Exception $e ) {
+			$this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to check transaction settlement status via API', true );
+			return false;
+		}
+	}
+
+	/**
 	 * Handles Refund from Admin Page
 	 *
 	 * @param int    $order_id order id.
@@ -629,11 +697,34 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 			$refund        = new Visa_Acceptance_Refund( $this->gateway );
 			$payment_type = $order->get_meta('_vas_payment_type', true);
 			$is_echeck    = ( strtoupper( $payment_type ) === VISA_ACCEPTANCE_CHECK );
+			$settings         = $this->gateway->get_gateway_settings();
+			$transaction_type = isset( $settings['transaction_type'] ) ? $settings['transaction_type'] : VISA_ACCEPTANCE_STRING_EMPTY;
+			$payment_adapter = new Visa_Acceptance_Payment_Adapter( $this->gateway );
+			$is_virtual_order_auto_charged = $payment_adapter->check_virtual_order_enabled( $settings, $order );
+			$is_transaction_charged_and_settled = ( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $transaction_type || $is_virtual_order_auto_charged )
+				&& in_array( $order->get_status(), array( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_COMPLETED ), true );
+			$is_settled_externally = false;
+			if ( VISA_ACCEPTANCE_TRANSACTION_TYPE_AUTHORIZATION === $transaction_type 
+				&& ! $this->is_order_captured( $order ) 
+				&& ! $is_transaction_charged_and_settled 
+				&& ! $is_echeck ) {
+				// Query Visa API to check if authorization was settled outside of WooCommerce
+				$is_settled_externally = $this->is_transaction_settled_via_api( $order );
+			}
 			if ( $is_echeck ) {
 				$response = $refund->do_refund( $order, $amount, $reason );
-			} elseif ( ! $this->is_order_captured( $order ) ) {
+			} 
+			// Case 2: Transaction settled externally (detected via API check)
+			elseif ( $is_settled_externally ) {
+				$response = $refund->do_refund( $order, $amount, $reason );
+			} 
+			elseif ( ! $this->is_order_captured( $order ) 
+					&& ! $is_transaction_charged_and_settled 
+					&& ! $is_virtual_order_auto_charged 
+					&& VISA_ACCEPTANCE_TRANSACTION_TYPE_AUTHORIZATION === $transaction_type ) {
 				$response = $auth_reversal->process_void( $order, $amount, $reason );
-			} else {
+			} 
+			else {
 				$response = $refund->do_refund( $order, $amount, $reason );
 			}
 		}	

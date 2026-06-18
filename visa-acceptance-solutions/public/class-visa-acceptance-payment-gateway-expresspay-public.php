@@ -1109,7 +1109,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 				wp_send_json_error(array('message' => __( 'Failed to add product to cart.', 'visa-acceptance-solutions' )));
 			}
 
-			// Calculate totals — WCS applies switch pricing here.
+			// Calculate totals - WCS applies switch pricing here.
 			WC()->cart->calculate_totals();
 
 			// Create the switch order via WooCommerce checkout.
@@ -1130,7 +1130,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 				wp_send_json_error(array('message' => __( 'Failed to retrieve order.', 'visa-acceptance-solutions' )));
 			}
 
-			// Apply addresses, switch metadata, payment method and token — then save once.
+			// Apply addresses, switch metadata, payment method and token â€” then save once.
 			if (! empty($billing)) {
 				$order->set_address($billing,  'billing');
 			}
@@ -1912,7 +1912,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			$cart_total = VISA_ACCEPTANCE_VAL_ZERO;
 
 			if (null !== $existing_switch_cart_key) {
-				// Cart already has the correct switch item — just read the total.
+				// Cart already has the correct switch item â€” just read the total.
 				WC()->cart->calculate_totals();
 				$cart_total = $normalize_total(WC()->cart->get_total('raw'));
 			} else {

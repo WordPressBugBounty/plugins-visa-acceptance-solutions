@@ -146,7 +146,9 @@ class Visa_Acceptance_Validation extends Visa_Acceptance_Request {
 				if ( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $status ) {
 					if ( $is_charge_transaction ) {
 						$this->add_capture_data( $order, $payment_response_array );
-						$this->update_order_notes( VISA_ACCEPTANCE_CHARGE_TRANSACTION, $order, $payment_response_array, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING );
+						$order->payment_complete( $payment_response_array['transaction_id'] );
+						$_note_title = method_exists( $this, 'get_title' ) ? $this->get_title() : $this->gateway->get_title();
+						$order->add_order_note( sprintf( $_note_title . ' - ' . VISA_ACCEPTANCE_CHARGE_TRANSACTION, $payment_response_array['transaction_id'] ) );
 
 					} else {
 						$this->add_transaction_data( $order, $payment_response_array );
