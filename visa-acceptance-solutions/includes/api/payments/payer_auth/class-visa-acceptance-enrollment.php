@@ -66,7 +66,7 @@ class Visa_Acceptance_Enrollment extends Visa_Acceptance_Request {
 	 */
 	public function do_enrollment( $order, $token, $saved_token, $is_save_card, $reference_id, $sca_case, $flex_cvv_token = null ) {
 		$response = array();
-		if ( $this->gateway->get_id() === $order->data['payment_method'] || VISA_ACCEPTANCE_ADMIN === $order->created_via ) {
+		if ( $this->gateway->get_id() === $order->get_payment_method() || VISA_ACCEPTANCE_ADMIN === $order->get_created_via() ) {
 			$response = $this->handleEnrollmentResponse( $order, $token, $saved_token, $is_save_card, $reference_id, $sca_case, $flex_cvv_token );
 		}
 		return $response;

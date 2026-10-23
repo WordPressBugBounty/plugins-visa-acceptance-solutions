@@ -300,12 +300,12 @@ trait Visa_Acceptance_Payment_Gateway_Admin_Trait {
 		);
 		if ( ( VISA_ACCEPTANCE_UC_ID === $gateway_id || VISA_ACCEPTANCE_SV_GATEWAY_ID === $gateway_id ) && false !== $order ) {
 			$result_response    = $payment_gateway_uc->init_process_capture( $order_id, $gateway_id );
-			if ( ! $result_response[ VISA_ACCEPTANCE_ERROR ] && ( VISA_ACCEPTANCE_YES === $result_response[ VISA_ACCEPTANCE_SUCCESS ] ) ) {
+			if ( empty( $result_response[ VISA_ACCEPTANCE_ERROR ] ) && ( VISA_ACCEPTANCE_YES === ( $result_response[ VISA_ACCEPTANCE_SUCCESS ] ?? '' ) ) ) {
 				$response[ VISA_ACCEPTANCE_SUCCESS ] = VISA_ACCEPTANCE_VAL_ONE;
-				$response['message']                 = $result_response['alert_message'];
+				$response['message']                 = $result_response['alert_message'] ?? '';
 			} else {
 				$response[ VISA_ACCEPTANCE_SUCCESS ] = VISA_ACCEPTANCE_VAL_ZERO;
-				$response['message']                 = $result_response['error_message'];
+				$response['message']                 = $result_response['error_message'] ?? '';
 			}
 		}
 		wp_send_json( $response );

@@ -94,10 +94,18 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
-		// Load the settings.
-		$this->init_form_fields();
+		// Initialize settings immediately (no translations used)
 		$this->init_settings();
+		
+		// Delay form fields initialization to prevent translation warnings
+		// Form fields will be lazy-loaded when accessed in admin
+		if ( did_action( 'init' ) ) {
+			// If init already fired, load form fields now
+			$this->init_form_fields();
+		} else {
+			// Hook to init to load form fields after translations are ready
+			add_action( 'init', array( $this, 'init_form_fields' ), 5 );
+		}
 
 		// trigger payment_fields function.
 		$this->has_fields = true;
@@ -493,10 +501,27 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 	 */
 	protected function setup_properties() {
 		$this->id                 = VISA_ACCEPTANCE_UC_ID;
-		$this->method_title       = __( 'Visa Acceptance Solutions', 'visa-acceptance-solutions' );
-		$this->method_description = __( 'Choose from a range of secure payment options.', 'visa-acceptance-solutions' );
+		// Don't translate these yet - they will be translated after 'init' hook
+		$this->method_title       = 'Visa Acceptance Solutions';
+		$this->method_description = 'Choose from a range of secure payment options.';
 		$this->icon               = plugins_url( '/../public/img/brand-icon.png', __FILE__ );
 		$this->has_fields         = true;
+		
+		// Translate properties after init hook
+		add_action( 'init', array( $this, 'translate_properties' ), 99 );
+	}
+	
+	/**
+	 * Translate properties after WordPress init.
+	 * This prevents "translation loaded too early" warnings.
+	 *
+	 * @return void
+	 */
+	public function translate_properties() {
+		if ( did_action( 'init' ) ) {
+			$this->method_title       = __( 'Visa Acceptance Solutions', 'visa-acceptance-solutions' );
+			$this->method_description = __( 'Choose from a range of secure payment options.', 'visa-acceptance-solutions' );
+		}
 	}
 
 	/**
@@ -762,14 +787,18 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout extends \WC_Payment_Gatew
 
 	/**
 	 * Initialize Form Fields.
+	 * This is delayed until 'init' hook to ensure translations are loaded.
 	 *
 	 * @return void
 	 */
 	public function init_form_fields() {
+		// Prevent multiple initializations
+		if ( ! empty( $this->form_fields ) ) {
+			return;
+		}
+		
 		$this->form_fields = $this->plugin_admin->init_form_fields();
 	}
-
-
 
 	/**
 	 * Returns the current environment.

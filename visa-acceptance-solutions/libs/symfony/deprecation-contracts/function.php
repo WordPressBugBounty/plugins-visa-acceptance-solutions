@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /*
  * This file is part of the Symfony package.
  *
@@ -19,8 +23,9 @@ if (!function_exists('pymt_vas_trigger_deprecation')) {
      *
      * @author Nicolas Grekas <p@tchwork.com>
      */
-    function pymt_vas_trigger_deprecation(string $package, string $version, string $message, mixed ...$args): void
+    function pymt_vas_trigger_deprecation(string $package, string $version, string $message, mixed ...$args): void // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
     {
-        @trigger_error(($package || $version ? "Since {$package} {$version}: " : '') . ($args ? vsprintf($message, $args) : $message), \E_USER_DEPRECATED);
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
+        @trigger_error( ( $package || $version ? "Since {$package} {$version}: " : '' ) . ( $args ? vsprintf( $message, $args ) : $message ), \E_USER_DEPRECATED );
     }
 }
