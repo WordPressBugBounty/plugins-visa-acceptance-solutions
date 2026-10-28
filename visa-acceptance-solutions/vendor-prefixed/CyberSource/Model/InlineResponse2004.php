@@ -48,12 +48,12 @@ class InlineResponse2004 implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['id' => 'int', 'fieldType' => 'string', 'label' => 'string', 'customerVisible' => 'bool', 'textMinLength' => 'int', 'textMaxLength' => 'int', 'possibleValues' => 'string', 'textDefaultValue' => 'string', 'merchantId' => 'string', 'referenceType' => 'string', 'readOnly' => 'bool', 'merchantDefinedDataIndex' => 'int'];
+    protected static $swaggerTypes = ['id' => 'string', 'fieldType' => 'string', 'label' => 'string', 'customerVisible' => 'bool', 'textMinLength' => 'int', 'textMaxLength' => 'int', 'possibleValues' => 'string', 'textDefaultValue' => 'string', 'merchantId' => 'string', 'referenceType' => 'string', 'readOnly' => 'bool', 'merchantDefinedDataIndex' => 'int'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['id' => 'int64', 'fieldType' => null, 'label' => null, 'customerVisible' => null, 'textMinLength' => 'int32', 'textMaxLength' => 'int32', 'possibleValues' => null, 'textDefaultValue' => null, 'merchantId' => null, 'referenceType' => null, 'readOnly' => null, 'merchantDefinedDataIndex' => 'int32'];
+    protected static $swaggerFormats = ['id' => null, 'fieldType' => null, 'label' => null, 'customerVisible' => null, 'textMinLength' => 'int32', 'textMaxLength' => 'int32', 'possibleValues' => null, 'textDefaultValue' => null, 'merchantId' => null, 'referenceType' => null, 'readOnly' => null, 'merchantDefinedDataIndex' => 'int32'];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -135,7 +135,7 @@ class InlineResponse2004 implements ArrayAccess
     }
     /**
      * Gets id
-     * @return int
+     * @return string
      */
     public function getId()
     {
@@ -143,7 +143,7 @@ class InlineResponse2004 implements ArrayAccess
     }
     /**
      * Sets id
-     * @param int $id
+     * @param string $id
      * @return $this
      */
     public function setId($id)

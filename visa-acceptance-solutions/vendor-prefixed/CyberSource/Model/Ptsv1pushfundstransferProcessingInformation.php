@@ -48,12 +48,12 @@ class Ptsv1pushfundstransferProcessingInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['businessApplicationId' => 'string', 'payoutsOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pushfundstransferProcessingInformationPayoutsOptions', 'feeProgramId' => 'string', 'networkPartnerId' => 'string', 'processingCode' => 'string', 'sharingGroupCode' => 'string', 'purposeOfPayment' => 'string', 'reconciliationId' => 'string'];
+    protected static $swaggerTypes = ['businessApplicationId' => 'string', 'payoutsOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pushfundstransferProcessingInformationPayoutsOptions', 'feeProgramId' => 'string', 'networkPartnerId' => 'string', 'transactionTypeIndicator' => 'string', 'interchangeRateDesignator' => 'string', 'processingCode' => 'string', 'sharingGroupCode' => 'string', 'purposeOfPayment' => 'string', 'reconciliationId' => 'string', 'accountVerificationCode' => 'string[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['businessApplicationId' => null, 'payoutsOptions' => null, 'feeProgramId' => null, 'networkPartnerId' => null, 'processingCode' => null, 'sharingGroupCode' => null, 'purposeOfPayment' => null, 'reconciliationId' => null];
+    protected static $swaggerFormats = ['businessApplicationId' => null, 'payoutsOptions' => null, 'feeProgramId' => null, 'networkPartnerId' => null, 'transactionTypeIndicator' => null, 'interchangeRateDesignator' => null, 'processingCode' => null, 'sharingGroupCode' => null, 'purposeOfPayment' => null, 'reconciliationId' => null, 'accountVerificationCode' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv1pushfundstransferProcessingInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['businessApplicationId' => 'businessApplicationId', 'payoutsOptions' => 'payoutsOptions', 'feeProgramId' => 'feeProgramId', 'networkPartnerId' => 'networkPartnerId', 'processingCode' => 'processingCode', 'sharingGroupCode' => 'sharingGroupCode', 'purposeOfPayment' => 'purposeOfPayment', 'reconciliationId' => 'reconciliationId'];
+    protected static $attributeMap = ['businessApplicationId' => 'businessApplicationId', 'payoutsOptions' => 'payoutsOptions', 'feeProgramId' => 'feeProgramId', 'networkPartnerId' => 'networkPartnerId', 'transactionTypeIndicator' => 'transactionTypeIndicator', 'interchangeRateDesignator' => 'interchangeRateDesignator', 'processingCode' => 'processingCode', 'sharingGroupCode' => 'sharingGroupCode', 'purposeOfPayment' => 'purposeOfPayment', 'reconciliationId' => 'reconciliationId', 'accountVerificationCode' => 'accountVerificationCode'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['businessApplicationId' => 'setBusinessApplicationId', 'payoutsOptions' => 'setPayoutsOptions', 'feeProgramId' => 'setFeeProgramId', 'networkPartnerId' => 'setNetworkPartnerId', 'processingCode' => 'setProcessingCode', 'sharingGroupCode' => 'setSharingGroupCode', 'purposeOfPayment' => 'setPurposeOfPayment', 'reconciliationId' => 'setReconciliationId'];
+    protected static $setters = ['businessApplicationId' => 'setBusinessApplicationId', 'payoutsOptions' => 'setPayoutsOptions', 'feeProgramId' => 'setFeeProgramId', 'networkPartnerId' => 'setNetworkPartnerId', 'transactionTypeIndicator' => 'setTransactionTypeIndicator', 'interchangeRateDesignator' => 'setInterchangeRateDesignator', 'processingCode' => 'setProcessingCode', 'sharingGroupCode' => 'setSharingGroupCode', 'purposeOfPayment' => 'setPurposeOfPayment', 'reconciliationId' => 'setReconciliationId', 'accountVerificationCode' => 'setAccountVerificationCode'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['businessApplicationId' => 'getBusinessApplicationId', 'payoutsOptions' => 'getPayoutsOptions', 'feeProgramId' => 'getFeeProgramId', 'networkPartnerId' => 'getNetworkPartnerId', 'processingCode' => 'getProcessingCode', 'sharingGroupCode' => 'getSharingGroupCode', 'purposeOfPayment' => 'getPurposeOfPayment', 'reconciliationId' => 'getReconciliationId'];
+    protected static $getters = ['businessApplicationId' => 'getBusinessApplicationId', 'payoutsOptions' => 'getPayoutsOptions', 'feeProgramId' => 'getFeeProgramId', 'networkPartnerId' => 'getNetworkPartnerId', 'transactionTypeIndicator' => 'getTransactionTypeIndicator', 'interchangeRateDesignator' => 'getInterchangeRateDesignator', 'processingCode' => 'getProcessingCode', 'sharingGroupCode' => 'getSharingGroupCode', 'purposeOfPayment' => 'getPurposeOfPayment', 'reconciliationId' => 'getReconciliationId', 'accountVerificationCode' => 'getAccountVerificationCode'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -104,10 +104,13 @@ class Ptsv1pushfundstransferProcessingInformation implements ArrayAccess
         $this->container['payoutsOptions'] = isset($data['payoutsOptions']) ? $data['payoutsOptions'] : null;
         $this->container['feeProgramId'] = isset($data['feeProgramId']) ? $data['feeProgramId'] : null;
         $this->container['networkPartnerId'] = isset($data['networkPartnerId']) ? $data['networkPartnerId'] : null;
+        $this->container['transactionTypeIndicator'] = isset($data['transactionTypeIndicator']) ? $data['transactionTypeIndicator'] : null;
+        $this->container['interchangeRateDesignator'] = isset($data['interchangeRateDesignator']) ? $data['interchangeRateDesignator'] : null;
         $this->container['processingCode'] = isset($data['processingCode']) ? $data['processingCode'] : null;
         $this->container['sharingGroupCode'] = isset($data['sharingGroupCode']) ? $data['sharingGroupCode'] : null;
         $this->container['purposeOfPayment'] = isset($data['purposeOfPayment']) ? $data['purposeOfPayment'] : null;
         $this->container['reconciliationId'] = isset($data['reconciliationId']) ? $data['reconciliationId'] : null;
+        $this->container['accountVerificationCode'] = isset($data['accountVerificationCode']) ? $data['accountVerificationCode'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -139,7 +142,7 @@ class Ptsv1pushfundstransferProcessingInformation implements ArrayAccess
     }
     /**
      * Sets businessApplicationId
-     * @param string $businessApplicationId Money Transfer (MT) - `AA`: Account to Account - `BI`: Bank-Initiated Money Transfer - `CD`: Cash Deposit - `FT`: Funds Transfer - `TU`: Prepaid Card Loan - `WT`: Wallet Transfer-Staged Digital Wallet (SDW) Transfer - `PP`: P2P Money Transfer  Funds Disbursement (FD) - `BB`: Business-to-business Supplier Payments - `BP`: Non-Card Bill Pay  - `CP`: Credit Card Bill Pay - `FD`: General Funds Disbursements - `GD`: Government Disbursements and Government Initiated Tax Refunds - `GP`: Gambling/Gaming Payouts (other than online gaming) - `LO`: Loyalty Payments - `MD`: Merchant Settlement - `MI`: Faster Refunds - `OG`: Online Gambling Payouts - `PD`: Payroll and Pension Disbursements - `RP`: Request-to-Pay Service
+     * @param string $businessApplicationId Payouts transaction type.  Money Transfer (MT) - `AA`: Account to Account - `BI`: Bank-Initiated Money Transfer - `CD`: Cash Deposit - `FT`: Funds Transfer - `LA`: Liquid Assets - `PP`: P2P Money Transfer - `WT`: Wallet Transfer-Staged Digital Wallet (SDW) Transfer  Funds Disbursement (FD) - `BB`: Business-to-business Supplier Payments - `BP`: Non-Card Bill Pay - `CP`: Credit Card Bill Pay - `FD`: General Funds Disbursements - `GD`: Government Disbursements and Government Initiated Tax Refunds - `GP`: Gambling/Gaming Payouts (other than online gaming) - `LO`: Loyalty Payments - `MD`: Merchant Settlement - `MI`: Faster Refunds - `OG`: Online Gambling Payouts - `PD`: Payroll and Pension Disbursements - `RP`: Request-to-Pay Service - `TU`: Prepaid Card Load  Supported BAIs vary by payment gateway and configuration. Clients are responsible for confirming gateway specific BAI availability. Conditional - If not provided in payload, the value is picked from Merchant Configuration.
      * @return $this
      */
     public function setBusinessApplicationId($businessApplicationId)
@@ -199,6 +202,42 @@ class Ptsv1pushfundstransferProcessingInformation implements ArrayAccess
     public function setNetworkPartnerId($networkPartnerId)
     {
         $this->container['networkPartnerId'] = $networkPartnerId;
+        return $this;
+    }
+    /**
+     * Gets transactionTypeIndicator
+     * @return string
+     */
+    public function getTransactionTypeIndicator()
+    {
+        return $this->container['transactionTypeIndicator'];
+    }
+    /**
+     * Sets transactionTypeIndicator
+     * @param string $transactionTypeIndicator Transaction Type Identifier for Mastercard Send. 3-character code that identifies the transaction type on the Mastercard network. When provided, this value takes priority over businessApplicationId for determining the payment type.
+     * @return $this
+     */
+    public function setTransactionTypeIndicator($transactionTypeIndicator)
+    {
+        $this->container['transactionTypeIndicator'] = $transactionTypeIndicator;
+        return $this;
+    }
+    /**
+     * Gets interchangeRateDesignator
+     * @return string
+     */
+    public function getInterchangeRateDesignator()
+    {
+        return $this->container['interchangeRateDesignator'];
+    }
+    /**
+     * Sets interchangeRateDesignator
+     * @param string $interchangeRateDesignator The IRD used for clearing the transaction on the Mastercard network. Details - Alphanumeric, length 2 characters.  This field is supported for Visa Platform Connect, Chase Paymentech Salem.
+     * @return $this
+     */
+    public function setInterchangeRateDesignator($interchangeRateDesignator)
+    {
+        $this->container['interchangeRateDesignator'] = $interchangeRateDesignator;
         return $this;
     }
     /**
@@ -271,6 +310,24 @@ class Ptsv1pushfundstransferProcessingInformation implements ArrayAccess
     public function setReconciliationId($reconciliationId)
     {
         $this->container['reconciliationId'] = $reconciliationId;
+        return $this;
+    }
+    /**
+     * Gets accountVerificationCode
+     * @return string[]
+     */
+    public function getAccountVerificationCode()
+    {
+        return $this->container['accountVerificationCode'];
+    }
+    /**
+     * Sets accountVerificationCode
+     * @param string[] $accountVerificationCode Account verification code will inform what Payment Account Verification should be performed. With this array of codes, a merchant can choose à la carte what verifications to run. This field is optional, and the default is 1 if it is not passed in. This means that a full validation of the fields will be performed. Valid verification codes: - `1` = Full Account Verification (Card Account, CVN, CAVV, TAVV, Address, Name, eMail, Phone, Identity) - `2` = Card Account Verification - `3` = Address Verification - `4` = Card Authentication Method (CAM) (Cryptogram) - `5` = Cardholder Authentication Verification (CAVV) - `6` = Cardholder Identity Verification - `7` = CVV2 Verification - `8` = eMail Verification - `9` = Name Verification - `10` = Phone Verification
+     * @return $this
+     */
+    public function setAccountVerificationCode($accountVerificationCode)
+    {
+        $this->container['accountVerificationCode'] = $accountVerificationCode;
         return $this;
     }
     /**

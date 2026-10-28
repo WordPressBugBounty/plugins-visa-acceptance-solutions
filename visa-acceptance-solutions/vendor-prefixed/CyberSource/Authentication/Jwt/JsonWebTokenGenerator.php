@@ -30,25 +30,33 @@ class JsonWebTokenGenerator implements TokenGenerator
         self::$cache = new Cache();
     }
     //calling Signature
-    public function generateToken($resourcePath, $payloadData, $method, $merchantConfig, $isResponseMLEForAPI = false)
+    public function generateToken($resourcePath, $payloadData, $method, $merchantConfig, $date, $isResponseMLEForAPI = false)
     {
         $jwtPayload = $this->getPayloadClaimSet($resourcePath, $payloadData, $method, $merchantConfig, $isResponseMLEForAPI);
         $headerClaimSet = $this->getHeaderClaimSet();
-        try {
-            $cacheData = self::$cache->grabFileFromP12($merchantConfig);
-        } catch (AuthException $e) {
-            self::$logger->error("Failed to grab file from P12: " . $e->getMessage());
-            throw $e;
-        }
-        if (!empty($cacheData['private_key']) && !empty($cacheData['x509_certificate'])) {
-            $privateKey = $cacheData['private_key'];
-            $x509Certificate = $cacheData['x509_certificate'];
+        if ($merchantConfig->isSharedSecretKeyType()) {
+            /* JWT with SHARED_SECRET — sign with HMAC-SHA256 (symmetric / HS256) */
+            $secretKeyBytes = base64_decode($merchantConfig->getSecretKey());
+            $kid = $merchantConfig->getApiKeyID();
+            $generatedToken = JWT::encode($jwtPayload, $secretKeyBytes, GlobalParameter::HS256, $kid, $headerClaimSet);
         } else {
-            self::$logger->error("AuthException: " . GlobalParameter::EMPTY_PRIVATE_OR_PUBLIC_KEY_ERROR);
-            throw new AuthException("AuthException: " . GlobalParameter::EMPTY_PRIVATE_OR_PUBLIC_KEY_ERROR);
+            /* JWT with P12 (default) — sign with RS256 (asymmetric) */
+            try {
+                $cacheData = self::$cache->grabFileFromP12($merchantConfig);
+            } catch (AuthException $e) {
+                self::$logger->error("Failed to grab file from P12: " . $e->getMessage());
+                throw $e;
+            }
+            if (!empty($cacheData['private_key']) && !empty($cacheData['x509_certificate'])) {
+                $privateKey = $cacheData['private_key'];
+                $x509Certificate = $cacheData['x509_certificate'];
+            } else {
+                self::$logger->error("AuthException: " . GlobalParameter::EMPTY_PRIVATE_OR_PUBLIC_KEY_ERROR);
+                throw new AuthException("AuthException: " . GlobalParameter::EMPTY_PRIVATE_OR_PUBLIC_KEY_ERROR);
+            }
+            $kid = strval($this->extractSerialNumber($x509Certificate));
+            $generatedToken = JWT::encode($jwtPayload, $privateKey, GlobalParameter::RS256, $kid, $headerClaimSet);
         }
-        $kid = strval($this->extractSerialNumber($x509Certificate));
-        $generatedToken = JWT::encode($jwtPayload, $privateKey, GlobalParameter::RS256, $kid, $headerClaimSet);
         self::$logger->close();
         return "Bearer " . $generatedToken;
     }
@@ -70,7 +78,7 @@ class JsonWebTokenGenerator implements TokenGenerator
         // Set the request method, host and resource path in the JWT body as per the specification for all request types
         $jwtPayload["request-method"] = strtoupper($method);
         $jwtPayload["request-host"] = $merchantConfig->getRunEnvironment();
-        $jwtPayload["request-resource-path"] = $this->extractResourcePath($resourcePath);
+        $jwtPayload["request-resource-path"] = $resourcePath;
         // Choose issuer claim in the JWT body as per the use_metakey flag in the config file
         if ($merchantConfig->getUseMetaKey()) {
             $issuer = $merchantConfig->getPortfolioID();
@@ -111,14 +119,5 @@ class JsonWebTokenGenerator implements TokenGenerator
             self::$logger->error("Error extracting serial number from certificate: " . $e->getMessage());
             throw new AuthException("Error extracting serial number from certificate: " . $e->getMessage());
         }
-    }
-    private function extractResourcePath($resourcePath)
-    {
-        if (empty($resourcePath)) {
-            return "";
-        }
-        // Split the string to remove the query params
-        $parts = explode('?', $resourcePath, 2);
-        return $parts[0];
     }
 }

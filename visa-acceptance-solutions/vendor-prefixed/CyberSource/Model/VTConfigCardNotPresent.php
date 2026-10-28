@@ -48,7 +48,7 @@ class VTConfigCardNotPresent implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['globalPaymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\VTConfigCardNotPresentGlobalPaymentInformation', 'receiptInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\VTConfigCardNotPresentReceiptInformation'];
+    protected static $swaggerTypes = ['globalPaymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\VirtualTerminalGlobalPaymentSettings', 'receiptInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\VTConfigCardNotPresentReceiptInformation'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -125,7 +125,7 @@ class VTConfigCardNotPresent implements ArrayAccess
     }
     /**
      * Gets globalPaymentInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\VTConfigCardNotPresentGlobalPaymentInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\VirtualTerminalGlobalPaymentSettings
      */
     public function getGlobalPaymentInformation()
     {
@@ -133,7 +133,7 @@ class VTConfigCardNotPresent implements ArrayAccess
     }
     /**
      * Sets globalPaymentInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\VTConfigCardNotPresentGlobalPaymentInformation $globalPaymentInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\VirtualTerminalGlobalPaymentSettings $globalPaymentInformation
      * @return $this
      */
     public function setGlobalPaymentInformation($globalPaymentInformation)

@@ -48,12 +48,12 @@ class Ptsv2paymentsOrderInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['amountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationAmountDetails', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationBillTo', 'shipTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationShipTo', 'lineItems' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationLineItems[]', 'invoiceDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationInvoiceDetails', 'shippingDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationShippingDetails', 'returnsAccepted' => 'bool', 'isCryptocurrencyPurchase' => 'string', 'cutoffDateTime' => 'string', 'preOrder' => 'string', 'preOrderDate' => 'string', 'reordered' => 'bool', 'totalOffersCount' => 'string'];
+    protected static $swaggerTypes = ['extensionDays' => 'string', 'amountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationAmountDetails', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationBillTo', 'shipTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationShipTo', 'lineItems' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationLineItems[]', 'invoiceDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationInvoiceDetails', 'shippingDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationShippingDetails', 'digitalCurrency' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationDigitalCurrency', 'returnsAccepted' => 'bool', 'isCryptocurrencyPurchase' => 'string', 'cutoffDateTime' => 'string', 'preOrder' => 'string', 'preOrderDate' => 'string', 'reordered' => 'bool', 'totalOffersCount' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['amountDetails' => null, 'billTo' => null, 'shipTo' => null, 'lineItems' => null, 'invoiceDetails' => null, 'shippingDetails' => null, 'returnsAccepted' => null, 'isCryptocurrencyPurchase' => null, 'cutoffDateTime' => null, 'preOrder' => null, 'preOrderDate' => null, 'reordered' => null, 'totalOffersCount' => null];
+    protected static $swaggerFormats = ['extensionDays' => null, 'amountDetails' => null, 'billTo' => null, 'shipTo' => null, 'lineItems' => null, 'invoiceDetails' => null, 'shippingDetails' => null, 'digitalCurrency' => null, 'returnsAccepted' => null, 'isCryptocurrencyPurchase' => null, 'cutoffDateTime' => null, 'preOrder' => null, 'preOrderDate' => null, 'reordered' => null, 'totalOffersCount' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2paymentsOrderInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['amountDetails' => 'amountDetails', 'billTo' => 'billTo', 'shipTo' => 'shipTo', 'lineItems' => 'lineItems', 'invoiceDetails' => 'invoiceDetails', 'shippingDetails' => 'shippingDetails', 'returnsAccepted' => 'returnsAccepted', 'isCryptocurrencyPurchase' => 'isCryptocurrencyPurchase', 'cutoffDateTime' => 'cutoffDateTime', 'preOrder' => 'preOrder', 'preOrderDate' => 'preOrderDate', 'reordered' => 'reordered', 'totalOffersCount' => 'totalOffersCount'];
+    protected static $attributeMap = ['extensionDays' => 'extensionDays', 'amountDetails' => 'amountDetails', 'billTo' => 'billTo', 'shipTo' => 'shipTo', 'lineItems' => 'lineItems', 'invoiceDetails' => 'invoiceDetails', 'shippingDetails' => 'shippingDetails', 'digitalCurrency' => 'digitalCurrency', 'returnsAccepted' => 'returnsAccepted', 'isCryptocurrencyPurchase' => 'isCryptocurrencyPurchase', 'cutoffDateTime' => 'cutoffDateTime', 'preOrder' => 'preOrder', 'preOrderDate' => 'preOrderDate', 'reordered' => 'reordered', 'totalOffersCount' => 'totalOffersCount'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['amountDetails' => 'setAmountDetails', 'billTo' => 'setBillTo', 'shipTo' => 'setShipTo', 'lineItems' => 'setLineItems', 'invoiceDetails' => 'setInvoiceDetails', 'shippingDetails' => 'setShippingDetails', 'returnsAccepted' => 'setReturnsAccepted', 'isCryptocurrencyPurchase' => 'setIsCryptocurrencyPurchase', 'cutoffDateTime' => 'setCutoffDateTime', 'preOrder' => 'setPreOrder', 'preOrderDate' => 'setPreOrderDate', 'reordered' => 'setReordered', 'totalOffersCount' => 'setTotalOffersCount'];
+    protected static $setters = ['extensionDays' => 'setExtensionDays', 'amountDetails' => 'setAmountDetails', 'billTo' => 'setBillTo', 'shipTo' => 'setShipTo', 'lineItems' => 'setLineItems', 'invoiceDetails' => 'setInvoiceDetails', 'shippingDetails' => 'setShippingDetails', 'digitalCurrency' => 'setDigitalCurrency', 'returnsAccepted' => 'setReturnsAccepted', 'isCryptocurrencyPurchase' => 'setIsCryptocurrencyPurchase', 'cutoffDateTime' => 'setCutoffDateTime', 'preOrder' => 'setPreOrder', 'preOrderDate' => 'setPreOrderDate', 'reordered' => 'setReordered', 'totalOffersCount' => 'setTotalOffersCount'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['amountDetails' => 'getAmountDetails', 'billTo' => 'getBillTo', 'shipTo' => 'getShipTo', 'lineItems' => 'getLineItems', 'invoiceDetails' => 'getInvoiceDetails', 'shippingDetails' => 'getShippingDetails', 'returnsAccepted' => 'getReturnsAccepted', 'isCryptocurrencyPurchase' => 'getIsCryptocurrencyPurchase', 'cutoffDateTime' => 'getCutoffDateTime', 'preOrder' => 'getPreOrder', 'preOrderDate' => 'getPreOrderDate', 'reordered' => 'getReordered', 'totalOffersCount' => 'getTotalOffersCount'];
+    protected static $getters = ['extensionDays' => 'getExtensionDays', 'amountDetails' => 'getAmountDetails', 'billTo' => 'getBillTo', 'shipTo' => 'getShipTo', 'lineItems' => 'getLineItems', 'invoiceDetails' => 'getInvoiceDetails', 'shippingDetails' => 'getShippingDetails', 'digitalCurrency' => 'getDigitalCurrency', 'returnsAccepted' => 'getReturnsAccepted', 'isCryptocurrencyPurchase' => 'getIsCryptocurrencyPurchase', 'cutoffDateTime' => 'getCutoffDateTime', 'preOrder' => 'getPreOrder', 'preOrderDate' => 'getPreOrderDate', 'reordered' => 'getReordered', 'totalOffersCount' => 'getTotalOffersCount'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -100,12 +100,14 @@ class Ptsv2paymentsOrderInformation implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
+        $this->container['extensionDays'] = isset($data['extensionDays']) ? $data['extensionDays'] : null;
         $this->container['amountDetails'] = isset($data['amountDetails']) ? $data['amountDetails'] : null;
         $this->container['billTo'] = isset($data['billTo']) ? $data['billTo'] : null;
         $this->container['shipTo'] = isset($data['shipTo']) ? $data['shipTo'] : null;
         $this->container['lineItems'] = isset($data['lineItems']) ? $data['lineItems'] : null;
         $this->container['invoiceDetails'] = isset($data['invoiceDetails']) ? $data['invoiceDetails'] : null;
         $this->container['shippingDetails'] = isset($data['shippingDetails']) ? $data['shippingDetails'] : null;
+        $this->container['digitalCurrency'] = isset($data['digitalCurrency']) ? $data['digitalCurrency'] : null;
         $this->container['returnsAccepted'] = isset($data['returnsAccepted']) ? $data['returnsAccepted'] : null;
         $this->container['isCryptocurrencyPurchase'] = isset($data['isCryptocurrencyPurchase']) ? $data['isCryptocurrencyPurchase'] : null;
         $this->container['cutoffDateTime'] = isset($data['cutoffDateTime']) ? $data['cutoffDateTime'] : null;
@@ -133,6 +135,24 @@ class Ptsv2paymentsOrderInformation implements ArrayAccess
     public function valid()
     {
         return true;
+    }
+    /**
+     * Gets extensionDays
+     * @return string
+     */
+    public function getExtensionDays()
+    {
+        return $this->container['extensionDays'];
+    }
+    /**
+     * Sets extensionDays
+     * @param string $extensionDays Request field for merchant to increase the AUTH expiry days for Klarna Advantage Plus. Applicable for Re-Authorization (AP_REAUTH) service.
+     * @return $this
+     */
+    public function setExtensionDays($extensionDays)
+    {
+        $this->container['extensionDays'] = $extensionDays;
+        return $this;
     }
     /**
      * Gets amountDetails
@@ -240,6 +260,24 @@ class Ptsv2paymentsOrderInformation implements ArrayAccess
     public function setShippingDetails($shippingDetails)
     {
         $this->container['shippingDetails'] = $shippingDetails;
+        return $this;
+    }
+    /**
+     * Gets digitalCurrency
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationDigitalCurrency
+     */
+    public function getDigitalCurrency()
+    {
+        return $this->container['digitalCurrency'];
+    }
+    /**
+     * Sets digitalCurrency
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationDigitalCurrency $digitalCurrency
+     * @return $this
+     */
+    public function setDigitalCurrency($digitalCurrency)
+    {
+        $this->container['digitalCurrency'] = $digitalCurrency;
         return $this;
     }
     /**

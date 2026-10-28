@@ -48,7 +48,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['clientCorrelationId' => 'string', 'deviceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensDeviceInformation', 'buyerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensBuyerInformation', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensBillTo', 'consumerIdentity' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensConsumerIdentity', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensPaymentInformation', 'enrollmentReferenceData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensEnrollmentReferenceData', 'assuranceData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensAssuranceData[]', 'consentData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensConsentData[]'];
+    protected static $swaggerTypes = ['clientCorrelationId' => 'string', 'deviceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensDeviceInformation', 'buyerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensBuyerInformation', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensBillTo', 'consumerIdentity' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensConsumerIdentity', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensPaymentInformation', 'enrollmentReferenceData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensEnrollmentReferenceData', 'assuranceData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensAssuranceData[]', 'consentData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensConsentData[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -186,7 +186,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Gets deviceInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensDeviceInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensDeviceInformation
      */
     public function getDeviceInformation()
     {
@@ -194,7 +194,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Sets deviceInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensDeviceInformation $deviceInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensDeviceInformation $deviceInformation
      * @return $this
      */
     public function setDeviceInformation($deviceInformation)
@@ -204,7 +204,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Gets buyerInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensBuyerInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensBuyerInformation
      */
     public function getBuyerInformation()
     {
@@ -212,7 +212,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Sets buyerInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensBuyerInformation $buyerInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensBuyerInformation $buyerInformation
      * @return $this
      */
     public function setBuyerInformation($buyerInformation)
@@ -222,7 +222,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Gets billTo
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensBillTo
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensBillTo
      */
     public function getBillTo()
     {
@@ -230,7 +230,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Sets billTo
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensBillTo $billTo
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensBillTo $billTo
      * @return $this
      */
     public function setBillTo($billTo)
@@ -240,7 +240,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Gets consumerIdentity
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensConsumerIdentity
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensConsumerIdentity
      */
     public function getConsumerIdentity()
     {
@@ -248,7 +248,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Sets consumerIdentity
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensConsumerIdentity $consumerIdentity
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensConsumerIdentity $consumerIdentity
      * @return $this
      */
     public function setConsumerIdentity($consumerIdentity)
@@ -258,7 +258,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Gets paymentInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensPaymentInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensPaymentInformation
      */
     public function getPaymentInformation()
     {
@@ -266,7 +266,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Sets paymentInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensPaymentInformation $paymentInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensPaymentInformation $paymentInformation
      * @return $this
      */
     public function setPaymentInformation($paymentInformation)
@@ -276,7 +276,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Gets enrollmentReferenceData
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensEnrollmentReferenceData
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensEnrollmentReferenceData
      */
     public function getEnrollmentReferenceData()
     {
@@ -284,7 +284,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Sets enrollmentReferenceData
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensEnrollmentReferenceData $enrollmentReferenceData
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensEnrollmentReferenceData $enrollmentReferenceData
      * @return $this
      */
     public function setEnrollmentReferenceData($enrollmentReferenceData)
@@ -294,7 +294,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Gets assuranceData
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensAssuranceData[]
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensAssuranceData[]
      */
     public function getAssuranceData()
     {
@@ -302,7 +302,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Sets assuranceData
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensAssuranceData[] $assuranceData Assurance data.
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensAssuranceData[] $assuranceData Assurance data.
      * @return $this
      */
     public function setAssuranceData($assuranceData)
@@ -312,7 +312,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Gets consentData
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensConsentData[]
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensConsentData[]
      */
     public function getConsentData()
     {
@@ -320,7 +320,7 @@ class AgenticCardEnrollmentRequest implements ArrayAccess
     }
     /**
      * Sets consentData
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensConsentData[] $consentData Consent data.
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensConsentData[] $consentData Consent data.
      * @return $this
      */
     public function setConsentData($consentData)

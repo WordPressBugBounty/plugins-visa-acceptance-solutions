@@ -48,12 +48,12 @@ class InlineResponse2011TokenizedCard implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['id' => 'string', 'object' => 'string', 'source' => 'string', 'state' => 'string', 'enrollmentId' => 'string', 'tokenReferenceId' => 'string', 'number' => 'string', 'expirationMonth' => 'string', 'expirationYear' => 'string', 'type' => 'string', 'reason' => 'string', 'cryptogram' => 'string', 'securityCode' => 'string', 'eci' => 'string', 'requestorId' => 'string', 'paymentAccountReference' => 'string', 'card' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCardCard'];
+    protected static $swaggerTypes = ['id' => 'string', 'object' => 'string', 'source' => 'string', 'state' => 'string', 'enrollmentId' => 'string', 'tokenReferenceId' => 'string', 'number' => 'string', 'expirationMonth' => 'string', 'expirationYear' => 'string', 'type' => 'string', 'reason' => 'string', 'cryptogram' => 'string', 'securityCode' => 'string', 'eci' => 'string', 'requestorId' => 'string', 'paymentAccountReference' => 'string', 'applicationTransactionCounter' => 'string', 'card' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCardCard', 'verificationResults' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCardVerificationResults'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['id' => null, 'object' => null, 'source' => null, 'state' => null, 'enrollmentId' => null, 'tokenReferenceId' => null, 'number' => null, 'expirationMonth' => null, 'expirationYear' => null, 'type' => null, 'reason' => null, 'cryptogram' => null, 'securityCode' => null, 'eci' => null, 'requestorId' => null, 'paymentAccountReference' => null, 'card' => null];
+    protected static $swaggerFormats = ['id' => null, 'object' => null, 'source' => null, 'state' => null, 'enrollmentId' => null, 'tokenReferenceId' => null, 'number' => null, 'expirationMonth' => null, 'expirationYear' => null, 'type' => null, 'reason' => null, 'cryptogram' => null, 'securityCode' => null, 'eci' => null, 'requestorId' => null, 'paymentAccountReference' => null, 'applicationTransactionCounter' => null, 'card' => null, 'verificationResults' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class InlineResponse2011TokenizedCard implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['id' => 'id', 'object' => 'object', 'source' => 'source', 'state' => 'state', 'enrollmentId' => 'enrollmentId', 'tokenReferenceId' => 'tokenReferenceId', 'number' => 'number', 'expirationMonth' => 'expirationMonth', 'expirationYear' => 'expirationYear', 'type' => 'type', 'reason' => 'reason', 'cryptogram' => 'cryptogram', 'securityCode' => 'securityCode', 'eci' => 'eci', 'requestorId' => 'requestorId', 'paymentAccountReference' => 'paymentAccountReference', 'card' => 'card'];
+    protected static $attributeMap = ['id' => 'id', 'object' => 'object', 'source' => 'source', 'state' => 'state', 'enrollmentId' => 'enrollmentId', 'tokenReferenceId' => 'tokenReferenceId', 'number' => 'number', 'expirationMonth' => 'expirationMonth', 'expirationYear' => 'expirationYear', 'type' => 'type', 'reason' => 'reason', 'cryptogram' => 'cryptogram', 'securityCode' => 'securityCode', 'eci' => 'eci', 'requestorId' => 'requestorId', 'paymentAccountReference' => 'paymentAccountReference', 'applicationTransactionCounter' => 'applicationTransactionCounter', 'card' => 'card', 'verificationResults' => 'verificationResults'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['id' => 'setId', 'object' => 'setObject', 'source' => 'setSource', 'state' => 'setState', 'enrollmentId' => 'setEnrollmentId', 'tokenReferenceId' => 'setTokenReferenceId', 'number' => 'setNumber', 'expirationMonth' => 'setExpirationMonth', 'expirationYear' => 'setExpirationYear', 'type' => 'setType', 'reason' => 'setReason', 'cryptogram' => 'setCryptogram', 'securityCode' => 'setSecurityCode', 'eci' => 'setEci', 'requestorId' => 'setRequestorId', 'paymentAccountReference' => 'setPaymentAccountReference', 'card' => 'setCard'];
+    protected static $setters = ['id' => 'setId', 'object' => 'setObject', 'source' => 'setSource', 'state' => 'setState', 'enrollmentId' => 'setEnrollmentId', 'tokenReferenceId' => 'setTokenReferenceId', 'number' => 'setNumber', 'expirationMonth' => 'setExpirationMonth', 'expirationYear' => 'setExpirationYear', 'type' => 'setType', 'reason' => 'setReason', 'cryptogram' => 'setCryptogram', 'securityCode' => 'setSecurityCode', 'eci' => 'setEci', 'requestorId' => 'setRequestorId', 'paymentAccountReference' => 'setPaymentAccountReference', 'applicationTransactionCounter' => 'setApplicationTransactionCounter', 'card' => 'setCard', 'verificationResults' => 'setVerificationResults'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['id' => 'getId', 'object' => 'getObject', 'source' => 'getSource', 'state' => 'getState', 'enrollmentId' => 'getEnrollmentId', 'tokenReferenceId' => 'getTokenReferenceId', 'number' => 'getNumber', 'expirationMonth' => 'getExpirationMonth', 'expirationYear' => 'getExpirationYear', 'type' => 'getType', 'reason' => 'getReason', 'cryptogram' => 'getCryptogram', 'securityCode' => 'getSecurityCode', 'eci' => 'getEci', 'requestorId' => 'getRequestorId', 'paymentAccountReference' => 'getPaymentAccountReference', 'card' => 'getCard'];
+    protected static $getters = ['id' => 'getId', 'object' => 'getObject', 'source' => 'getSource', 'state' => 'getState', 'enrollmentId' => 'getEnrollmentId', 'tokenReferenceId' => 'getTokenReferenceId', 'number' => 'getNumber', 'expirationMonth' => 'getExpirationMonth', 'expirationYear' => 'getExpirationYear', 'type' => 'getType', 'reason' => 'getReason', 'cryptogram' => 'getCryptogram', 'securityCode' => 'getSecurityCode', 'eci' => 'getEci', 'requestorId' => 'getRequestorId', 'paymentAccountReference' => 'getPaymentAccountReference', 'applicationTransactionCounter' => 'getApplicationTransactionCounter', 'card' => 'getCard', 'verificationResults' => 'getVerificationResults'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -116,7 +116,9 @@ class InlineResponse2011TokenizedCard implements ArrayAccess
         $this->container['eci'] = isset($data['eci']) ? $data['eci'] : null;
         $this->container['requestorId'] = isset($data['requestorId']) ? $data['requestorId'] : null;
         $this->container['paymentAccountReference'] = isset($data['paymentAccountReference']) ? $data['paymentAccountReference'] : null;
+        $this->container['applicationTransactionCounter'] = isset($data['applicationTransactionCounter']) ? $data['applicationTransactionCounter'] : null;
         $this->container['card'] = isset($data['card']) ? $data['card'] : null;
+        $this->container['verificationResults'] = isset($data['verificationResults']) ? $data['verificationResults'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -427,6 +429,24 @@ class InlineResponse2011TokenizedCard implements ArrayAccess
         return $this;
     }
     /**
+     * Gets applicationTransactionCounter
+     * @return string
+     */
+    public function getApplicationTransactionCounter()
+    {
+        return $this->container['applicationTransactionCounter'];
+    }
+    /**
+     * Sets applicationTransactionCounter
+     * @param string $applicationTransactionCounter A sequence counter used as part of the input to the TAVV cryptogram and it is incremented for each cryptogram generation. This field is only returned for Visa network tokens.
+     * @return $this
+     */
+    public function setApplicationTransactionCounter($applicationTransactionCounter)
+    {
+        $this->container['applicationTransactionCounter'] = $applicationTransactionCounter;
+        return $this;
+    }
+    /**
      * Gets card
      * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCardCard
      */
@@ -442,6 +462,24 @@ class InlineResponse2011TokenizedCard implements ArrayAccess
     public function setCard($card)
     {
         $this->container['card'] = $card;
+        return $this;
+    }
+    /**
+     * Gets verificationResults
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCardVerificationResults
+     */
+    public function getVerificationResults()
+    {
+        return $this->container['verificationResults'];
+    }
+    /**
+     * Sets verificationResults
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCardVerificationResults $verificationResults
+     * @return $this
+     */
+    public function setVerificationResults($verificationResults)
+    {
+        $this->container['verificationResults'] = $verificationResults;
         return $this;
     }
     /**

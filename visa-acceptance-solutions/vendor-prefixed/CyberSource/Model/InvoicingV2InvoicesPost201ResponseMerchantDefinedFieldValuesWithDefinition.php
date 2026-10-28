@@ -48,12 +48,12 @@ class InvoicingV2InvoicesPost201ResponseMerchantDefinedFieldValuesWithDefinition
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['referenceType' => 'string', 'label' => 'string', 'fieldType' => 'string', 'customerVisible' => 'bool', 'readOnly' => 'bool', 'textMinLength' => 'int', 'textMaxLength' => 'int', 'textDefaultValue' => 'string', 'possibleValues' => 'string', 'value' => 'string', 'position' => 'int', 'definitionId' => 'int', 'merchantDefinedDataIndex' => 'int'];
+    protected static $swaggerTypes = ['mdfValueId' => 'string', 'referenceType' => 'string', 'label' => 'string', 'fieldType' => 'string', 'customerVisible' => 'bool', 'readOnly' => 'bool', 'textMinLength' => 'int', 'textMaxLength' => 'int', 'textDefaultValue' => 'string', 'possibleValues' => 'string', 'value' => 'string', 'position' => 'int', 'definitionId' => 'int', 'merchantDefinedDataIndex' => 'int'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['referenceType' => null, 'label' => null, 'fieldType' => null, 'customerVisible' => null, 'readOnly' => null, 'textMinLength' => 'int32', 'textMaxLength' => 'int32', 'textDefaultValue' => null, 'possibleValues' => null, 'value' => null, 'position' => null, 'definitionId' => null, 'merchantDefinedDataIndex' => null];
+    protected static $swaggerFormats = ['mdfValueId' => null, 'referenceType' => null, 'label' => null, 'fieldType' => null, 'customerVisible' => null, 'readOnly' => null, 'textMinLength' => 'int32', 'textMaxLength' => 'int32', 'textDefaultValue' => null, 'possibleValues' => null, 'value' => null, 'position' => null, 'definitionId' => null, 'merchantDefinedDataIndex' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class InvoicingV2InvoicesPost201ResponseMerchantDefinedFieldValuesWithDefinition
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['referenceType' => 'referenceType', 'label' => 'label', 'fieldType' => 'fieldType', 'customerVisible' => 'customerVisible', 'readOnly' => 'readOnly', 'textMinLength' => 'textMinLength', 'textMaxLength' => 'textMaxLength', 'textDefaultValue' => 'textDefaultValue', 'possibleValues' => 'possibleValues', 'value' => 'value', 'position' => 'position', 'definitionId' => 'definitionId', 'merchantDefinedDataIndex' => 'merchantDefinedDataIndex'];
+    protected static $attributeMap = ['mdfValueId' => 'mdfValueId', 'referenceType' => 'referenceType', 'label' => 'label', 'fieldType' => 'fieldType', 'customerVisible' => 'customerVisible', 'readOnly' => 'readOnly', 'textMinLength' => 'textMinLength', 'textMaxLength' => 'textMaxLength', 'textDefaultValue' => 'textDefaultValue', 'possibleValues' => 'possibleValues', 'value' => 'value', 'position' => 'position', 'definitionId' => 'definitionId', 'merchantDefinedDataIndex' => 'merchantDefinedDataIndex'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['referenceType' => 'setReferenceType', 'label' => 'setLabel', 'fieldType' => 'setFieldType', 'customerVisible' => 'setCustomerVisible', 'readOnly' => 'setReadOnly', 'textMinLength' => 'setTextMinLength', 'textMaxLength' => 'setTextMaxLength', 'textDefaultValue' => 'setTextDefaultValue', 'possibleValues' => 'setPossibleValues', 'value' => 'setValue', 'position' => 'setPosition', 'definitionId' => 'setDefinitionId', 'merchantDefinedDataIndex' => 'setMerchantDefinedDataIndex'];
+    protected static $setters = ['mdfValueId' => 'setMdfValueId', 'referenceType' => 'setReferenceType', 'label' => 'setLabel', 'fieldType' => 'setFieldType', 'customerVisible' => 'setCustomerVisible', 'readOnly' => 'setReadOnly', 'textMinLength' => 'setTextMinLength', 'textMaxLength' => 'setTextMaxLength', 'textDefaultValue' => 'setTextDefaultValue', 'possibleValues' => 'setPossibleValues', 'value' => 'setValue', 'position' => 'setPosition', 'definitionId' => 'setDefinitionId', 'merchantDefinedDataIndex' => 'setMerchantDefinedDataIndex'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['referenceType' => 'getReferenceType', 'label' => 'getLabel', 'fieldType' => 'getFieldType', 'customerVisible' => 'getCustomerVisible', 'readOnly' => 'getReadOnly', 'textMinLength' => 'getTextMinLength', 'textMaxLength' => 'getTextMaxLength', 'textDefaultValue' => 'getTextDefaultValue', 'possibleValues' => 'getPossibleValues', 'value' => 'getValue', 'position' => 'getPosition', 'definitionId' => 'getDefinitionId', 'merchantDefinedDataIndex' => 'getMerchantDefinedDataIndex'];
+    protected static $getters = ['mdfValueId' => 'getMdfValueId', 'referenceType' => 'getReferenceType', 'label' => 'getLabel', 'fieldType' => 'getFieldType', 'customerVisible' => 'getCustomerVisible', 'readOnly' => 'getReadOnly', 'textMinLength' => 'getTextMinLength', 'textMaxLength' => 'getTextMaxLength', 'textDefaultValue' => 'getTextDefaultValue', 'possibleValues' => 'getPossibleValues', 'value' => 'getValue', 'position' => 'getPosition', 'definitionId' => 'getDefinitionId', 'merchantDefinedDataIndex' => 'getMerchantDefinedDataIndex'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -100,6 +100,7 @@ class InvoicingV2InvoicesPost201ResponseMerchantDefinedFieldValuesWithDefinition
      */
     public function __construct(array $data = null)
     {
+        $this->container['mdfValueId'] = isset($data['mdfValueId']) ? $data['mdfValueId'] : null;
         $this->container['referenceType'] = isset($data['referenceType']) ? $data['referenceType'] : null;
         $this->container['label'] = isset($data['label']) ? $data['label'] : null;
         $this->container['fieldType'] = isset($data['fieldType']) ? $data['fieldType'] : null;
@@ -133,6 +134,24 @@ class InvoicingV2InvoicesPost201ResponseMerchantDefinedFieldValuesWithDefinition
     public function valid()
     {
         return true;
+    }
+    /**
+     * Gets mdfValueId
+     * @return string
+     */
+    public function getMdfValueId()
+    {
+        return $this->container['mdfValueId'];
+    }
+    /**
+     * Sets mdfValueId
+     * @param string $mdfValueId
+     * @return $this
+     */
+    public function setMdfValueId($mdfValueId)
+    {
+        $this->container['mdfValueId'] = $mdfValueId;
+        return $this;
     }
     /**
      * Gets referenceType

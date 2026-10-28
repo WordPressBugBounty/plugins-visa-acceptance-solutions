@@ -48,7 +48,7 @@ class AgenticConfirmTransactionEventsRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['clientCorrelationId' => 'string', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensPaymentInformation', 'confirmationData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1instructionsinstructionIdconfirmationsConfirmationData[]'];
+    protected static $swaggerTypes = ['clientCorrelationId' => 'string', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensPaymentInformation', 'confirmationData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1instructionsinstructionIdconfirmationsConfirmationData[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -162,7 +162,7 @@ class AgenticConfirmTransactionEventsRequest implements ArrayAccess
     }
     /**
      * Gets paymentInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensPaymentInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensPaymentInformation
      */
     public function getPaymentInformation()
     {
@@ -170,7 +170,7 @@ class AgenticConfirmTransactionEventsRequest implements ArrayAccess
     }
     /**
      * Sets paymentInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensPaymentInformation $paymentInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensPaymentInformation $paymentInformation
      * @return $this
      */
     public function setPaymentInformation($paymentInformation)
@@ -180,7 +180,7 @@ class AgenticConfirmTransactionEventsRequest implements ArrayAccess
     }
     /**
      * Gets confirmationData
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1instructionsinstructionIdconfirmationsConfirmationData[]
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1instructionsinstructionIdconfirmationsConfirmationData[]
      */
     public function getConfirmationData()
     {
@@ -188,7 +188,7 @@ class AgenticConfirmTransactionEventsRequest implements ArrayAccess
     }
     /**
      * Sets confirmationData
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1instructionsinstructionIdconfirmationsConfirmationData[] $confirmationData (Required) Contains Transaction, Order and Payment Confirmation Events.
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1instructionsinstructionIdconfirmationsConfirmationData[] $confirmationData (Required) Contains Transaction, Order and Payment Confirmation Events.
      * @return $this
      */
     public function setConfirmationData($confirmationData)

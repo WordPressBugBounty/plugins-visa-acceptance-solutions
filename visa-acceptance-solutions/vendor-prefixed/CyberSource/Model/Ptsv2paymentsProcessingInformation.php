@@ -48,12 +48,12 @@ class Ptsv2paymentsProcessingInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['actionList' => 'string[]', 'enableEscrowOption' => 'bool', 'actionTokenTypes' => 'string[]', 'binSource' => 'string', 'capture' => 'bool', 'processorId' => 'string', 'businessApplicationId' => 'string', 'commerceIndicator' => 'string', 'commerceIndicatorLabel' => 'string', 'paymentSolution' => 'string', 'reconciliationId' => 'string', 'linkId' => 'string', 'purchaseLevel' => 'string', 'transactionTimeout' => 'int', 'intentsId' => 'string', 'reportGroup' => 'string', 'visaCheckoutId' => 'string', 'industryDataType' => 'string', 'authorizationOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationAuthorizationOptions', 'captureOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationCaptureOptions', 'recurringOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationRecurringOptions', 'bankTransferOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationBankTransferOptions', 'purchaseOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationPurchaseOptions', 'electronicBenefitsTransfer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationElectronicBenefitsTransfer', 'loanOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationLoanOptions', 'walletType' => 'string', 'nationalNetDomesticData' => 'string', 'merchantVerificationValue' => 'string', 'japanPaymentOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationJapanPaymentOptions', 'mobileRemotePaymentType' => 'string', 'extendedCreditTotalCount' => 'string', 'networkRoutingOrder' => 'string', 'payByPointsIndicator' => 'bool', 'timeout' => 'int', 'isReturnAuthRecordEnabled' => 'bool', 'networkPartnerId' => 'string', 'paymentType' => 'string', 'enablerId' => 'string', 'processingInstruction' => 'string', 'transactionTypeIndicator' => 'string', 'purposeOfPayment' => 'string', 'languageCode' => 'string', 'originalPaymentId' => 'string'];
+    protected static $swaggerTypes = ['actionList' => 'string[]', 'enableEscrowOption' => 'bool', 'actionTokenTypes' => 'string[]', 'binSource' => 'string', 'capture' => 'bool', 'processorId' => 'string', 'businessApplicationId' => 'string', 'commerceIndicator' => 'string', 'commerceIndicatorLabel' => 'string', 'paymentSolution' => 'string', 'reconciliationId' => 'string', 'linkId' => 'string', 'purchaseLevel' => 'string', 'transactionTimeout' => 'int', 'intentsId' => 'string', 'reportGroup' => 'string', 'visaCheckoutId' => 'string', 'industryDataType' => 'string', 'authorizationOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\ProcessingInfoAuthorizationOptions', 'cardVerification' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationCardVerification', 'captureOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationCaptureOptions', 'recurringOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationRecurringOptions', 'bankTransferOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationBankTransferOptions', 'purchaseOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationPurchaseOptions', 'electronicBenefitsTransfer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationElectronicBenefitsTransfer', 'loanOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationLoanOptions', 'walletType' => 'string', 'nationalNetDomesticData' => 'string', 'merchantVerificationValue' => 'string', 'japanPaymentOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationJapanPaymentOptions', 'mobileRemotePaymentType' => 'string', 'extendedCreditTotalCount' => 'string', 'networkRoutingOrder' => 'string', 'payByPointsIndicator' => 'bool', 'timeout' => 'int', 'isReturnAuthRecordEnabled' => 'bool', 'networkPartnerId' => 'string', 'paymentType' => 'string', 'enablerId' => 'string', 'processingInstruction' => 'string', 'transactionTypeIndicator' => 'string', 'purposeOfPayment' => 'string', 'languageCode' => 'string', 'originalPaymentId' => 'string', 'amexIndirectModelType' => 'string', 'walletTransactionIntent' => 'float', 'destinationType' => 'float', 'programIndicators' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationProgramIndicators', 'inquiryType' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['actionList' => null, 'enableEscrowOption' => null, 'actionTokenTypes' => null, 'binSource' => null, 'capture' => null, 'processorId' => null, 'businessApplicationId' => null, 'commerceIndicator' => null, 'commerceIndicatorLabel' => null, 'paymentSolution' => null, 'reconciliationId' => null, 'linkId' => null, 'purchaseLevel' => null, 'transactionTimeout' => null, 'intentsId' => null, 'reportGroup' => null, 'visaCheckoutId' => null, 'industryDataType' => null, 'authorizationOptions' => null, 'captureOptions' => null, 'recurringOptions' => null, 'bankTransferOptions' => null, 'purchaseOptions' => null, 'electronicBenefitsTransfer' => null, 'loanOptions' => null, 'walletType' => null, 'nationalNetDomesticData' => null, 'merchantVerificationValue' => null, 'japanPaymentOptions' => null, 'mobileRemotePaymentType' => null, 'extendedCreditTotalCount' => null, 'networkRoutingOrder' => null, 'payByPointsIndicator' => null, 'timeout' => null, 'isReturnAuthRecordEnabled' => null, 'networkPartnerId' => null, 'paymentType' => null, 'enablerId' => null, 'processingInstruction' => null, 'transactionTypeIndicator' => null, 'purposeOfPayment' => null, 'languageCode' => null, 'originalPaymentId' => null];
+    protected static $swaggerFormats = ['actionList' => null, 'enableEscrowOption' => null, 'actionTokenTypes' => null, 'binSource' => null, 'capture' => null, 'processorId' => null, 'businessApplicationId' => null, 'commerceIndicator' => null, 'commerceIndicatorLabel' => null, 'paymentSolution' => null, 'reconciliationId' => null, 'linkId' => null, 'purchaseLevel' => null, 'transactionTimeout' => null, 'intentsId' => null, 'reportGroup' => null, 'visaCheckoutId' => null, 'industryDataType' => null, 'authorizationOptions' => null, 'cardVerification' => null, 'captureOptions' => null, 'recurringOptions' => null, 'bankTransferOptions' => null, 'purchaseOptions' => null, 'electronicBenefitsTransfer' => null, 'loanOptions' => null, 'walletType' => null, 'nationalNetDomesticData' => null, 'merchantVerificationValue' => null, 'japanPaymentOptions' => null, 'mobileRemotePaymentType' => null, 'extendedCreditTotalCount' => null, 'networkRoutingOrder' => null, 'payByPointsIndicator' => null, 'timeout' => null, 'isReturnAuthRecordEnabled' => null, 'networkPartnerId' => null, 'paymentType' => null, 'enablerId' => null, 'processingInstruction' => null, 'transactionTypeIndicator' => null, 'purposeOfPayment' => null, 'languageCode' => null, 'originalPaymentId' => null, 'amexIndirectModelType' => null, 'walletTransactionIntent' => null, 'destinationType' => null, 'programIndicators' => null, 'inquiryType' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2paymentsProcessingInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['actionList' => 'actionList', 'enableEscrowOption' => 'enableEscrowOption', 'actionTokenTypes' => 'actionTokenTypes', 'binSource' => 'binSource', 'capture' => 'capture', 'processorId' => 'processorId', 'businessApplicationId' => 'businessApplicationId', 'commerceIndicator' => 'commerceIndicator', 'commerceIndicatorLabel' => 'commerceIndicatorLabel', 'paymentSolution' => 'paymentSolution', 'reconciliationId' => 'reconciliationId', 'linkId' => 'linkId', 'purchaseLevel' => 'purchaseLevel', 'transactionTimeout' => 'transactionTimeout', 'intentsId' => 'intentsId', 'reportGroup' => 'reportGroup', 'visaCheckoutId' => 'visaCheckoutId', 'industryDataType' => 'industryDataType', 'authorizationOptions' => 'authorizationOptions', 'captureOptions' => 'captureOptions', 'recurringOptions' => 'recurringOptions', 'bankTransferOptions' => 'bankTransferOptions', 'purchaseOptions' => 'purchaseOptions', 'electronicBenefitsTransfer' => 'electronicBenefitsTransfer', 'loanOptions' => 'loanOptions', 'walletType' => 'walletType', 'nationalNetDomesticData' => 'nationalNetDomesticData', 'merchantVerificationValue' => 'merchantVerificationValue', 'japanPaymentOptions' => 'japanPaymentOptions', 'mobileRemotePaymentType' => 'mobileRemotePaymentType', 'extendedCreditTotalCount' => 'extendedCreditTotalCount', 'networkRoutingOrder' => 'networkRoutingOrder', 'payByPointsIndicator' => 'payByPointsIndicator', 'timeout' => 'timeout', 'isReturnAuthRecordEnabled' => 'isReturnAuthRecordEnabled', 'networkPartnerId' => 'networkPartnerId', 'paymentType' => 'paymentType', 'enablerId' => 'enablerId', 'processingInstruction' => 'processingInstruction', 'transactionTypeIndicator' => 'transactionTypeIndicator', 'purposeOfPayment' => 'purposeOfPayment', 'languageCode' => 'languageCode', 'originalPaymentId' => 'originalPaymentId'];
+    protected static $attributeMap = ['actionList' => 'actionList', 'enableEscrowOption' => 'enableEscrowOption', 'actionTokenTypes' => 'actionTokenTypes', 'binSource' => 'binSource', 'capture' => 'capture', 'processorId' => 'processorId', 'businessApplicationId' => 'businessApplicationId', 'commerceIndicator' => 'commerceIndicator', 'commerceIndicatorLabel' => 'commerceIndicatorLabel', 'paymentSolution' => 'paymentSolution', 'reconciliationId' => 'reconciliationId', 'linkId' => 'linkId', 'purchaseLevel' => 'purchaseLevel', 'transactionTimeout' => 'transactionTimeout', 'intentsId' => 'intentsId', 'reportGroup' => 'reportGroup', 'visaCheckoutId' => 'visaCheckoutId', 'industryDataType' => 'industryDataType', 'authorizationOptions' => 'authorizationOptions', 'cardVerification' => 'cardVerification', 'captureOptions' => 'captureOptions', 'recurringOptions' => 'recurringOptions', 'bankTransferOptions' => 'bankTransferOptions', 'purchaseOptions' => 'purchaseOptions', 'electronicBenefitsTransfer' => 'electronicBenefitsTransfer', 'loanOptions' => 'loanOptions', 'walletType' => 'walletType', 'nationalNetDomesticData' => 'nationalNetDomesticData', 'merchantVerificationValue' => 'merchantVerificationValue', 'japanPaymentOptions' => 'japanPaymentOptions', 'mobileRemotePaymentType' => 'mobileRemotePaymentType', 'extendedCreditTotalCount' => 'extendedCreditTotalCount', 'networkRoutingOrder' => 'networkRoutingOrder', 'payByPointsIndicator' => 'payByPointsIndicator', 'timeout' => 'timeout', 'isReturnAuthRecordEnabled' => 'isReturnAuthRecordEnabled', 'networkPartnerId' => 'networkPartnerId', 'paymentType' => 'paymentType', 'enablerId' => 'enablerId', 'processingInstruction' => 'processingInstruction', 'transactionTypeIndicator' => 'transactionTypeIndicator', 'purposeOfPayment' => 'purposeOfPayment', 'languageCode' => 'languageCode', 'originalPaymentId' => 'originalPaymentId', 'amexIndirectModelType' => 'amexIndirectModelType', 'walletTransactionIntent' => 'walletTransactionIntent', 'destinationType' => 'destinationType', 'programIndicators' => 'programIndicators', 'inquiryType' => 'inquiryType'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['actionList' => 'setActionList', 'enableEscrowOption' => 'setEnableEscrowOption', 'actionTokenTypes' => 'setActionTokenTypes', 'binSource' => 'setBinSource', 'capture' => 'setCapture', 'processorId' => 'setProcessorId', 'businessApplicationId' => 'setBusinessApplicationId', 'commerceIndicator' => 'setCommerceIndicator', 'commerceIndicatorLabel' => 'setCommerceIndicatorLabel', 'paymentSolution' => 'setPaymentSolution', 'reconciliationId' => 'setReconciliationId', 'linkId' => 'setLinkId', 'purchaseLevel' => 'setPurchaseLevel', 'transactionTimeout' => 'setTransactionTimeout', 'intentsId' => 'setIntentsId', 'reportGroup' => 'setReportGroup', 'visaCheckoutId' => 'setVisaCheckoutId', 'industryDataType' => 'setIndustryDataType', 'authorizationOptions' => 'setAuthorizationOptions', 'captureOptions' => 'setCaptureOptions', 'recurringOptions' => 'setRecurringOptions', 'bankTransferOptions' => 'setBankTransferOptions', 'purchaseOptions' => 'setPurchaseOptions', 'electronicBenefitsTransfer' => 'setElectronicBenefitsTransfer', 'loanOptions' => 'setLoanOptions', 'walletType' => 'setWalletType', 'nationalNetDomesticData' => 'setNationalNetDomesticData', 'merchantVerificationValue' => 'setMerchantVerificationValue', 'japanPaymentOptions' => 'setJapanPaymentOptions', 'mobileRemotePaymentType' => 'setMobileRemotePaymentType', 'extendedCreditTotalCount' => 'setExtendedCreditTotalCount', 'networkRoutingOrder' => 'setNetworkRoutingOrder', 'payByPointsIndicator' => 'setPayByPointsIndicator', 'timeout' => 'setTimeout', 'isReturnAuthRecordEnabled' => 'setIsReturnAuthRecordEnabled', 'networkPartnerId' => 'setNetworkPartnerId', 'paymentType' => 'setPaymentType', 'enablerId' => 'setEnablerId', 'processingInstruction' => 'setProcessingInstruction', 'transactionTypeIndicator' => 'setTransactionTypeIndicator', 'purposeOfPayment' => 'setPurposeOfPayment', 'languageCode' => 'setLanguageCode', 'originalPaymentId' => 'setOriginalPaymentId'];
+    protected static $setters = ['actionList' => 'setActionList', 'enableEscrowOption' => 'setEnableEscrowOption', 'actionTokenTypes' => 'setActionTokenTypes', 'binSource' => 'setBinSource', 'capture' => 'setCapture', 'processorId' => 'setProcessorId', 'businessApplicationId' => 'setBusinessApplicationId', 'commerceIndicator' => 'setCommerceIndicator', 'commerceIndicatorLabel' => 'setCommerceIndicatorLabel', 'paymentSolution' => 'setPaymentSolution', 'reconciliationId' => 'setReconciliationId', 'linkId' => 'setLinkId', 'purchaseLevel' => 'setPurchaseLevel', 'transactionTimeout' => 'setTransactionTimeout', 'intentsId' => 'setIntentsId', 'reportGroup' => 'setReportGroup', 'visaCheckoutId' => 'setVisaCheckoutId', 'industryDataType' => 'setIndustryDataType', 'authorizationOptions' => 'setAuthorizationOptions', 'cardVerification' => 'setCardVerification', 'captureOptions' => 'setCaptureOptions', 'recurringOptions' => 'setRecurringOptions', 'bankTransferOptions' => 'setBankTransferOptions', 'purchaseOptions' => 'setPurchaseOptions', 'electronicBenefitsTransfer' => 'setElectronicBenefitsTransfer', 'loanOptions' => 'setLoanOptions', 'walletType' => 'setWalletType', 'nationalNetDomesticData' => 'setNationalNetDomesticData', 'merchantVerificationValue' => 'setMerchantVerificationValue', 'japanPaymentOptions' => 'setJapanPaymentOptions', 'mobileRemotePaymentType' => 'setMobileRemotePaymentType', 'extendedCreditTotalCount' => 'setExtendedCreditTotalCount', 'networkRoutingOrder' => 'setNetworkRoutingOrder', 'payByPointsIndicator' => 'setPayByPointsIndicator', 'timeout' => 'setTimeout', 'isReturnAuthRecordEnabled' => 'setIsReturnAuthRecordEnabled', 'networkPartnerId' => 'setNetworkPartnerId', 'paymentType' => 'setPaymentType', 'enablerId' => 'setEnablerId', 'processingInstruction' => 'setProcessingInstruction', 'transactionTypeIndicator' => 'setTransactionTypeIndicator', 'purposeOfPayment' => 'setPurposeOfPayment', 'languageCode' => 'setLanguageCode', 'originalPaymentId' => 'setOriginalPaymentId', 'amexIndirectModelType' => 'setAmexIndirectModelType', 'walletTransactionIntent' => 'setWalletTransactionIntent', 'destinationType' => 'setDestinationType', 'programIndicators' => 'setProgramIndicators', 'inquiryType' => 'setInquiryType'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['actionList' => 'getActionList', 'enableEscrowOption' => 'getEnableEscrowOption', 'actionTokenTypes' => 'getActionTokenTypes', 'binSource' => 'getBinSource', 'capture' => 'getCapture', 'processorId' => 'getProcessorId', 'businessApplicationId' => 'getBusinessApplicationId', 'commerceIndicator' => 'getCommerceIndicator', 'commerceIndicatorLabel' => 'getCommerceIndicatorLabel', 'paymentSolution' => 'getPaymentSolution', 'reconciliationId' => 'getReconciliationId', 'linkId' => 'getLinkId', 'purchaseLevel' => 'getPurchaseLevel', 'transactionTimeout' => 'getTransactionTimeout', 'intentsId' => 'getIntentsId', 'reportGroup' => 'getReportGroup', 'visaCheckoutId' => 'getVisaCheckoutId', 'industryDataType' => 'getIndustryDataType', 'authorizationOptions' => 'getAuthorizationOptions', 'captureOptions' => 'getCaptureOptions', 'recurringOptions' => 'getRecurringOptions', 'bankTransferOptions' => 'getBankTransferOptions', 'purchaseOptions' => 'getPurchaseOptions', 'electronicBenefitsTransfer' => 'getElectronicBenefitsTransfer', 'loanOptions' => 'getLoanOptions', 'walletType' => 'getWalletType', 'nationalNetDomesticData' => 'getNationalNetDomesticData', 'merchantVerificationValue' => 'getMerchantVerificationValue', 'japanPaymentOptions' => 'getJapanPaymentOptions', 'mobileRemotePaymentType' => 'getMobileRemotePaymentType', 'extendedCreditTotalCount' => 'getExtendedCreditTotalCount', 'networkRoutingOrder' => 'getNetworkRoutingOrder', 'payByPointsIndicator' => 'getPayByPointsIndicator', 'timeout' => 'getTimeout', 'isReturnAuthRecordEnabled' => 'getIsReturnAuthRecordEnabled', 'networkPartnerId' => 'getNetworkPartnerId', 'paymentType' => 'getPaymentType', 'enablerId' => 'getEnablerId', 'processingInstruction' => 'getProcessingInstruction', 'transactionTypeIndicator' => 'getTransactionTypeIndicator', 'purposeOfPayment' => 'getPurposeOfPayment', 'languageCode' => 'getLanguageCode', 'originalPaymentId' => 'getOriginalPaymentId'];
+    protected static $getters = ['actionList' => 'getActionList', 'enableEscrowOption' => 'getEnableEscrowOption', 'actionTokenTypes' => 'getActionTokenTypes', 'binSource' => 'getBinSource', 'capture' => 'getCapture', 'processorId' => 'getProcessorId', 'businessApplicationId' => 'getBusinessApplicationId', 'commerceIndicator' => 'getCommerceIndicator', 'commerceIndicatorLabel' => 'getCommerceIndicatorLabel', 'paymentSolution' => 'getPaymentSolution', 'reconciliationId' => 'getReconciliationId', 'linkId' => 'getLinkId', 'purchaseLevel' => 'getPurchaseLevel', 'transactionTimeout' => 'getTransactionTimeout', 'intentsId' => 'getIntentsId', 'reportGroup' => 'getReportGroup', 'visaCheckoutId' => 'getVisaCheckoutId', 'industryDataType' => 'getIndustryDataType', 'authorizationOptions' => 'getAuthorizationOptions', 'cardVerification' => 'getCardVerification', 'captureOptions' => 'getCaptureOptions', 'recurringOptions' => 'getRecurringOptions', 'bankTransferOptions' => 'getBankTransferOptions', 'purchaseOptions' => 'getPurchaseOptions', 'electronicBenefitsTransfer' => 'getElectronicBenefitsTransfer', 'loanOptions' => 'getLoanOptions', 'walletType' => 'getWalletType', 'nationalNetDomesticData' => 'getNationalNetDomesticData', 'merchantVerificationValue' => 'getMerchantVerificationValue', 'japanPaymentOptions' => 'getJapanPaymentOptions', 'mobileRemotePaymentType' => 'getMobileRemotePaymentType', 'extendedCreditTotalCount' => 'getExtendedCreditTotalCount', 'networkRoutingOrder' => 'getNetworkRoutingOrder', 'payByPointsIndicator' => 'getPayByPointsIndicator', 'timeout' => 'getTimeout', 'isReturnAuthRecordEnabled' => 'getIsReturnAuthRecordEnabled', 'networkPartnerId' => 'getNetworkPartnerId', 'paymentType' => 'getPaymentType', 'enablerId' => 'getEnablerId', 'processingInstruction' => 'getProcessingInstruction', 'transactionTypeIndicator' => 'getTransactionTypeIndicator', 'purposeOfPayment' => 'getPurposeOfPayment', 'languageCode' => 'getLanguageCode', 'originalPaymentId' => 'getOriginalPaymentId', 'amexIndirectModelType' => 'getAmexIndirectModelType', 'walletTransactionIntent' => 'getWalletTransactionIntent', 'destinationType' => 'getDestinationType', 'programIndicators' => 'getProgramIndicators', 'inquiryType' => 'getInquiryType'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -119,6 +119,7 @@ class Ptsv2paymentsProcessingInformation implements ArrayAccess
         $this->container['visaCheckoutId'] = isset($data['visaCheckoutId']) ? $data['visaCheckoutId'] : null;
         $this->container['industryDataType'] = isset($data['industryDataType']) ? $data['industryDataType'] : null;
         $this->container['authorizationOptions'] = isset($data['authorizationOptions']) ? $data['authorizationOptions'] : null;
+        $this->container['cardVerification'] = isset($data['cardVerification']) ? $data['cardVerification'] : null;
         $this->container['captureOptions'] = isset($data['captureOptions']) ? $data['captureOptions'] : null;
         $this->container['recurringOptions'] = isset($data['recurringOptions']) ? $data['recurringOptions'] : null;
         $this->container['bankTransferOptions'] = isset($data['bankTransferOptions']) ? $data['bankTransferOptions'] : null;
@@ -143,6 +144,11 @@ class Ptsv2paymentsProcessingInformation implements ArrayAccess
         $this->container['purposeOfPayment'] = isset($data['purposeOfPayment']) ? $data['purposeOfPayment'] : null;
         $this->container['languageCode'] = isset($data['languageCode']) ? $data['languageCode'] : null;
         $this->container['originalPaymentId'] = isset($data['originalPaymentId']) ? $data['originalPaymentId'] : null;
+        $this->container['amexIndirectModelType'] = isset($data['amexIndirectModelType']) ? $data['amexIndirectModelType'] : null;
+        $this->container['walletTransactionIntent'] = isset($data['walletTransactionIntent']) ? $data['walletTransactionIntent'] : null;
+        $this->container['destinationType'] = isset($data['destinationType']) ? $data['destinationType'] : null;
+        $this->container['programIndicators'] = isset($data['programIndicators']) ? $data['programIndicators'] : null;
+        $this->container['inquiryType'] = isset($data['inquiryType']) ? $data['inquiryType'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -372,7 +378,7 @@ class Ptsv2paymentsProcessingInformation implements ArrayAccess
     }
     /**
      * Sets linkId
-     * @param string $linkId Value that links the current authorization request to the original authorization request. Set this value to the ID that was returned in the reply message from the original authorization request.  This value is used for:  - Partial authorizations - Split shipments
+     * @param string $linkId Value that links the current authorization request to the original authorization request or previous declined Merchant Initiated Debt Recovery Transactions . Set this value to the ID that was returned in the reply message from the original authorization request or previous declined Merchant Initiated Debt Recovery Transactions.  This value is used for:  - Partial authorizations - Split shipments - Merchant Initiated Debt Recovery Transactions for Visa Platform Connect and China Union Pay merchants
      * @return $this
      */
     public function setLinkId($linkId)
@@ -490,7 +496,7 @@ class Ptsv2paymentsProcessingInformation implements ArrayAccess
     }
     /**
      * Gets authorizationOptions
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationAuthorizationOptions
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\ProcessingInfoAuthorizationOptions
      */
     public function getAuthorizationOptions()
     {
@@ -498,12 +504,30 @@ class Ptsv2paymentsProcessingInformation implements ArrayAccess
     }
     /**
      * Sets authorizationOptions
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationAuthorizationOptions $authorizationOptions
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\ProcessingInfoAuthorizationOptions $authorizationOptions
      * @return $this
      */
     public function setAuthorizationOptions($authorizationOptions)
     {
         $this->container['authorizationOptions'] = $authorizationOptions;
+        return $this;
+    }
+    /**
+     * Gets cardVerification
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationCardVerification
+     */
+    public function getCardVerification()
+    {
+        return $this->container['cardVerification'];
+    }
+    /**
+     * Sets cardVerification
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationCardVerification $cardVerification
+     * @return $this
+     */
+    public function setCardVerification($cardVerification)
+    {
+        $this->container['cardVerification'] = $cardVerification;
         return $this;
     }
     /**
@@ -804,7 +828,7 @@ class Ptsv2paymentsProcessingInformation implements ArrayAccess
     }
     /**
      * Sets networkPartnerId
-     * @param string $networkPartnerId Merchant payment gateway ID that is assigned by Mastercard and is provided by the acquirer when a registered merchant payment gateway service provider is involved in the transaction.  This field is supported for Visa Platform Connect.
+     * @param string $networkPartnerId Merchant payment gateway ID that is assigned by Mastercard and is provided by the acquirer when a registered merchant payment gateway service provider is involved in the transaction. This field is supported for Visa Platform Connect, Chase Paymentech Salem.
      * @return $this
      */
     public function setNetworkPartnerId($networkPartnerId)
@@ -936,6 +960,96 @@ class Ptsv2paymentsProcessingInformation implements ArrayAccess
     public function setOriginalPaymentId($originalPaymentId)
     {
         $this->container['originalPaymentId'] = $originalPaymentId;
+        return $this;
+    }
+    /**
+     * Gets amexIndirectModelType
+     * @return string
+     */
+    public function getAmexIndirectModelType()
+    {
+        return $this->container['amexIndirectModelType'];
+    }
+    /**
+     * Sets amexIndirectModelType
+     * @param string $amexIndirectModelType Effective with the April 2025 release, American Express is introducing the following new Indirect Acceptor models : - Digital Wallet Operator   - Staged back to back transaction   - Peer to peer (P2P) transaction   - Stored value transaction - Marketplace  Each model must have a separate American Express Merchant Account number and will be assigned a unique Indirect Model Type value.  Valid/Sample Values : - `1`: Bill payment provider - `2`: Installment payment transaction - `3`: Marketplace - `4`: Peer to peer transaction - `5`: Staged back to back transaction - `6`: Stored value transaction
+     * @return $this
+     */
+    public function setAmexIndirectModelType($amexIndirectModelType)
+    {
+        $this->container['amexIndirectModelType'] = $amexIndirectModelType;
+        return $this;
+    }
+    /**
+     * Gets walletTransactionIntent
+     * @return float
+     */
+    public function getWalletTransactionIntent()
+    {
+        return $this->container['walletTransactionIntent'];
+    }
+    /**
+     * Sets walletTransactionIntent
+     * @param float $walletTransactionIntent Identifies the type of operation being performed by the staged digital wallet operator. The value distinguishes between a Cash-in transaction (coded as \"02\"), where funds are loaded into the digital wallet from a registered payment card, and a Purchase transaction (coded as \"01\"), where the wallet is used to make a payment to a merchant or transfer funds between wallets. This distinction is essential for transaction processing, reporting, and ensuring compliance with the specific rules and requirements associated with each card brand and transaction type.
+     * @return $this
+     */
+    public function setWalletTransactionIntent($walletTransactionIntent)
+    {
+        $this->container['walletTransactionIntent'] = $walletTransactionIntent;
+        return $this;
+    }
+    /**
+     * Gets destinationType
+     * @return float
+     */
+    public function getDestinationType()
+    {
+        return $this->container['destinationType'];
+    }
+    /**
+     * Sets destinationType
+     * @param float $destinationType Identifies the destination/purpose of the cash-in:  • 04: M2M (Same ownership, same portfolio/arrangement) • 05: P2P (For another holder, same wallet/arrangement) • 06: Transfer to another arrangement (same ownership) • 07: Transfer to another arrangement (other ownership) • 08: Transfer to stored value digital wallet.
+     * @return $this
+     */
+    public function setDestinationType($destinationType)
+    {
+        $this->container['destinationType'] = $destinationType;
+        return $this;
+    }
+    /**
+     * Gets programIndicators
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationProgramIndicators
+     */
+    public function getProgramIndicators()
+    {
+        return $this->container['programIndicators'];
+    }
+    /**
+     * Sets programIndicators
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationProgramIndicators $programIndicators
+     * @return $this
+     */
+    public function setProgramIndicators($programIndicators)
+    {
+        $this->container['programIndicators'] = $programIndicators;
+        return $this;
+    }
+    /**
+     * Gets inquiryType
+     * @return string
+     */
+    public function getInquiryType()
+    {
+        return $this->container['inquiryType'];
+    }
+    /**
+     * Sets inquiryType
+     * @param string $inquiryType Type of inquiry for Zero dollar transactions. Mastercard is introducing Mastercard One Credential, a single, digitally connected credential that offers cardholders the ability to access multiple payment methods.   This field is used for Product Status Inquiry (PSI), Account Status Inquiry with Product Status Inquiry (ASI with PSI), and Account Status Inquiry with Product Status Inquiry and Probability Indicator.  This field is supported for Zero dollar transactions only.  Possible values: - `01`: Product status inquiry - `02`: Account status inquiry with product status inquiry - `03`: Account status Inquiry with Product Status Inquiry and Probability Indicator  #### Used by **Authorization (Zero dollar transactions)** Optional field.
+     * @return $this
+     */
+    public function setInquiryType($inquiryType)
+    {
+        $this->container['inquiryType'] = $inquiryType;
         return $this;
     }
     /**

@@ -3,11 +3,11 @@
 Author: Visa Acceptance Solutions
 Contributors: visaacceptancesolutions
 Tags: woocommerce, payments, visa
-Requires at least: 6.9
-Tested up to: 7.0
+Requires at least: 7.0
+Tested up to: 7.1
 Requires PHP: 8.2.0
-Stable tag: 2.2.2
-WC tested up to: 10.8.1
+Stable tag: 3.0.0
+WC tested up to: 11.2.1
 WC requires at least: 10.3.7
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -16,7 +16,7 @@ Accept payments securely with Visa Acceptance Solutions.
 
 == Description == 
 
-This plugin integrates **Visa Acceptance Solutions** into your **WooCommerce** store, offering multiple payment methods such as Card Payments, Apple Pay, Google Pay, Click to Pay, Paze, and eCheck/ACH.
+This plugin integrates **Visa Acceptance Solutions** into your **WooCommerce** store, offering multiple payment methods such as Card Payments, Apple Pay, Google Pay, Click to Pay, Paze, eCheck/ACH, PayPal and Venmo.
 Securely store customer payment details with our Token Management Services.
 Utilize Cybersource’s fraud prevention services to process transactions safely.
 Compatible with [WooCommerce Subscriptions](https://woocommerce.com/products/woocommerce-subscriptions)
@@ -30,6 +30,9 @@ Compatible with [WooCommerce Subscriptions](https://woocommerce.com/products/woo
 6. Checkout 3
 7. Express Pay 1
 8. Express Pay 2
+
+== Mandatory Environment Prerequisite ==
+The GMP PHP extension must be enabled on your MAMP or XAMPP server for JSON Web Token messaging.
 
 == Installation ==
 1. Upload the entire “visa-acceptance-solutions” folder to the “/wp-content/plugins/” directory in your WordPress installation.
@@ -61,6 +64,17 @@ In most cases we can provide support through the WordPress or WooCommerce forums
 Sign up [here](https://developer.visaacceptance.com/hello-world/sandbox.html).  Note sandbox accounts are configured for USD currency
 
 == Changelog ==
+
+= 3.0.0 =
+**Enhancements**
+* Migrated to Unified Checkout v1.x including Unified Checkout becoming responsible for calling Payer Authentication, Tokenization, and Fraud screening.
+* Added webhook support for payment response and Fraud Management
+* Support for PayPal and Venmo
+* Offer Sidebar and Embedded display for Unified Checkout widget
+* Network Token Support
+* Full Message-Level Encryption(MLE)
+** Bug Fix **
+* Handled Zero Amount Checkout due to discount
 
 = 2.2.2 =
 **Enhancements**
@@ -131,7 +145,7 @@ Sign up [here](https://developer.visaacceptance.com/hello-world/sandbox.html).  
 **Initial release** supporting Card Payments, Tokenisation, Payer Authentication (3D Secure), and Fraud Screening tools.
 
 == Upgrade Notice ==
-Version 2.2.2 is now available.  Please refer to change log for details.
+Version 3.0.0 is now available.  Please refer to change log for details.
 
 == Admin Notice ==
-Version 2.2.2 is now available.  Please refer to change log for details.
+Version 3.0.0 is now available.  Please refer to change log for details.

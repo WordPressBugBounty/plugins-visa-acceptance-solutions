@@ -48,12 +48,12 @@ class Ptsv2paymentsidcapturesAggregatorInformationSubMerchant implements ArrayAc
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['name' => 'string', 'address1' => 'string', 'locality' => 'string', 'administrativeArea' => 'string', 'postalCode' => 'string', 'country' => 'string', 'email' => 'string', 'phoneNumber' => 'string', 'id' => 'string'];
+    protected static $swaggerTypes = ['name' => 'string', 'address1' => 'string', 'locality' => 'string', 'administrativeArea' => 'string', 'postalCode' => 'string', 'country' => 'string', 'email' => 'string', 'phoneNumber' => 'string', 'id' => 'string', 'merchantCategoryCode' => 'float'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['name' => null, 'address1' => null, 'locality' => null, 'administrativeArea' => null, 'postalCode' => null, 'country' => null, 'email' => null, 'phoneNumber' => null, 'id' => null];
+    protected static $swaggerFormats = ['name' => null, 'address1' => null, 'locality' => null, 'administrativeArea' => null, 'postalCode' => null, 'country' => null, 'email' => null, 'phoneNumber' => null, 'id' => null, 'merchantCategoryCode' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2paymentsidcapturesAggregatorInformationSubMerchant implements ArrayAc
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['name' => 'name', 'address1' => 'address1', 'locality' => 'locality', 'administrativeArea' => 'administrativeArea', 'postalCode' => 'postalCode', 'country' => 'country', 'email' => 'email', 'phoneNumber' => 'phoneNumber', 'id' => 'id'];
+    protected static $attributeMap = ['name' => 'name', 'address1' => 'address1', 'locality' => 'locality', 'administrativeArea' => 'administrativeArea', 'postalCode' => 'postalCode', 'country' => 'country', 'email' => 'email', 'phoneNumber' => 'phoneNumber', 'id' => 'id', 'merchantCategoryCode' => 'merchantCategoryCode'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['name' => 'setName', 'address1' => 'setAddress1', 'locality' => 'setLocality', 'administrativeArea' => 'setAdministrativeArea', 'postalCode' => 'setPostalCode', 'country' => 'setCountry', 'email' => 'setEmail', 'phoneNumber' => 'setPhoneNumber', 'id' => 'setId'];
+    protected static $setters = ['name' => 'setName', 'address1' => 'setAddress1', 'locality' => 'setLocality', 'administrativeArea' => 'setAdministrativeArea', 'postalCode' => 'setPostalCode', 'country' => 'setCountry', 'email' => 'setEmail', 'phoneNumber' => 'setPhoneNumber', 'id' => 'setId', 'merchantCategoryCode' => 'setMerchantCategoryCode'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['name' => 'getName', 'address1' => 'getAddress1', 'locality' => 'getLocality', 'administrativeArea' => 'getAdministrativeArea', 'postalCode' => 'getPostalCode', 'country' => 'getCountry', 'email' => 'getEmail', 'phoneNumber' => 'getPhoneNumber', 'id' => 'getId'];
+    protected static $getters = ['name' => 'getName', 'address1' => 'getAddress1', 'locality' => 'getLocality', 'administrativeArea' => 'getAdministrativeArea', 'postalCode' => 'getPostalCode', 'country' => 'getCountry', 'email' => 'getEmail', 'phoneNumber' => 'getPhoneNumber', 'id' => 'getId', 'merchantCategoryCode' => 'getMerchantCategoryCode'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -109,6 +109,7 @@ class Ptsv2paymentsidcapturesAggregatorInformationSubMerchant implements ArrayAc
         $this->container['email'] = isset($data['email']) ? $data['email'] : null;
         $this->container['phoneNumber'] = isset($data['phoneNumber']) ? $data['phoneNumber'] : null;
         $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        $this->container['merchantCategoryCode'] = isset($data['merchantCategoryCode']) ? $data['merchantCategoryCode'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -290,6 +291,24 @@ class Ptsv2paymentsidcapturesAggregatorInformationSubMerchant implements ArrayAc
     public function setId($id)
     {
         $this->container['id'] = $id;
+        return $this;
+    }
+    /**
+     * Gets merchantCategoryCode
+     * @return float
+     */
+    public function getMerchantCategoryCode()
+    {
+        return $this->container['merchantCategoryCode'];
+    }
+    /**
+     * Sets merchantCategoryCode
+     * @param float $merchantCategoryCode
+     * @return $this
+     */
+    public function setMerchantCategoryCode($merchantCategoryCode)
+    {
+        $this->container['merchantCategoryCode'] = $merchantCategoryCode;
         return $this;
     }
     /**

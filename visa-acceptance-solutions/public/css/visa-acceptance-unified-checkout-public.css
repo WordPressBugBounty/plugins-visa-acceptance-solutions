@@ -1,0 +1,65 @@
+/**
+ * VAS - Unified Checkout Public Styles
+ *
+ * Extracted from inline styles for WordPress coding standards compliance
+ * and Content Security Policy (CSP) compatibility.
+ *
+ * @package Visa_Acceptance_Solutions
+ * @since   2.2.1
+ */
+ 
+/* Payment Token Radio Buttons */
+.wc-vas-payment-token-radio {
+    width: auto !important;
+    margin-right: 0.5em;
+}
+ 
+/* Flex Microform CVV Field */
+.wc-vas-flex-cvv-field {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 14px;
+    min-height: 40px;
+    width: 100%;
+    margin-top: 5px;
+    display: none;
+}
+ 
+/* Regular CVV Input Field */
+.wc-vas-saved-card-cvn {
+    margin-top: 5px;
+}
+ 
+/* Use New Card Radio Button */
+.wc-vas-use-new-payment-radio {
+    width: auto !important;
+    margin-right: 0.5em;
+}
+ 
+/* Use New Card Label */
+.wc-vas-use-new-payment-label {
+    display: inline;
+    margin-left: 8px;
+}
+ 
+/* Error Messages */
+.wc-vas-error-message {
+    display: none;
+    color: #d63638; /* WordPress error color */
+    margin: 10px 0;
+}
+ 
+.wc-vas-error-message p {
+    margin: 5px 0;
+}
+ 
+/* Hide tokenization when disabled */
+.wc-vas-tokenization-disabled #wc-unified-checkout-saved-cards-options {
+    display: none !important;
+}
+ 
+.wc-vas-tokenization-disabled #wc-unified-checkout-saved-card {
+    display: none !important;
+}
+ 

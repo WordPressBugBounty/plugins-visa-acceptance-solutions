@@ -69,6 +69,17 @@ class MerchantConfiguration
      */
     protected $secretKey = '';
     /**
+     * JWT key type. Determines which credentials are used for JWT signing.
+     *
+     * - 'P12' (default) — asymmetric signing (RS256) using a .p12 certificate file.
+     *   Requires: keysDirectory, keyFileName, keyAlias, keyPass.
+     * - 'SHARED_SECRET' — symmetric signing (HS256) using a shared secret key.
+     *   Requires: merchantKeyId (apiKeyID), merchantsecretKey (secretKey).
+     *
+     * @var string
+     */
+    protected $jwtKeyType = GlobalParameter::JWT_KEY_TYPE_P12;
+    /**
      * flag for MetaKey authentication
      *
      * @var bool
@@ -299,6 +310,12 @@ class MerchantConfiguration
      */
     protected $responseMlePrivateKeyFilePassword = '';
     /**
+     * Flag indicating whether the SDK is being used by mcp
+     *
+     * @var bool
+     */
+    protected $isSDK = false;
+    /**
      * Constructor
      */
     public function __construct()
@@ -308,6 +325,31 @@ class MerchantConfiguration
         if (self::$logger === null) {
             self::$logger = (new LogFactory())->getLogger(\Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ClassHelper::getClassName(get_class($this)), $this->logConfig);
         }
+    }
+    /**
+     * Sets whether the SDK is being used by mcp.
+     * Only boolean true is accepted; any other value will be treated as false.
+     *
+     * @param bool $isSDK Must be boolean true to enable SDK telemetry
+     *
+     * @return void
+     */
+    public function setIsSDK($isSDK)
+    {
+        if ($isSDK === true || is_string($isSDK) && strcasecmp(trim($isSDK), 'true') === 0) {
+            $this->isSDK = true;
+        } else {
+            $this->isSDK = false;
+        }
+    }
+    /**
+     * Gets whether the SDK is being used
+     *
+     * @return bool
+     */
+    public function getIsSDK()
+    {
+        return $this->isSDK;
     }
     /**
      * Sets the access token for OAuth
@@ -1222,6 +1264,50 @@ class MerchantConfiguration
         return $this->setRequestMleKeyAlias($mleKeyAlias);
     }
     /**
+     * Gets the JWT key type.
+     *
+     * @return string 'P12' or 'SHARED_SECRET'
+     */
+    public function getJwtKeyType()
+    {
+        return $this->jwtKeyType;
+    }
+    /**
+     * Sets the JWT key type.
+     *
+     * @param string $jwtKeyType 'P12' or 'SHARED_SECRET'
+     * @return $this
+     */
+    public function setJwtKeyType($jwtKeyType)
+    {
+        $this->jwtKeyType = strtoupper(trim((string) $jwtKeyType));
+        return $this;
+    }
+    /**
+     * Returns true if the JWT key type is SHARED_SECRET (symmetric / HS256).
+     *
+     * @return bool true for shared secret, false for P12 (or default)
+     */
+    public function isSharedSecretKeyType()
+    {
+        return strcasecmp($this->jwtKeyType, GlobalParameter::JWT_KEY_TYPE_SHARED_SECRET) === 0;
+    }
+    /**
+     * Validates the jwtKeyType value. Must be P12 or SHARED_SECRET.
+     *
+     * @throws AuthException if jwtKeyType is invalid
+     */
+    private function checkJwtKeyType()
+    {
+        if (strcasecmp($this->jwtKeyType, GlobalParameter::JWT_KEY_TYPE_P12) !== 0 && strcasecmp($this->jwtKeyType, GlobalParameter::JWT_KEY_TYPE_SHARED_SECRET) !== 0) {
+            $error_message = GlobalParameter::INVALID_JWT_KEY_TYPE . $this->jwtKeyType;
+            if (self::$logger) {
+                self::$logger->error($error_message);
+            }
+            throw new AuthException($error_message, 0);
+        }
+    }
+    /**
      * Gets the essential information for debugging
      *
      * @return string The report for debugging
@@ -1248,6 +1334,10 @@ class MerchantConfiguration
             $config = $config->setAuthenticationType(strtoupper(trim($connectionDet->authenticationType ?? '')));
         } else {
             $error_message .= GlobalParameter::AUTHTYPE;
+        }
+        // JWT key type — defaults to P12 for backward compatibility
+        if (isset($connectionDet->jwtKeyType)) {
+            $config = $config->setJwtKeyType(strtoupper(trim($connectionDet->jwtKeyType ?? '')));
         }
         if (isset($connectionDet->merchantID)) {
             $config = $config->setMerchantID($connectionDet->merchantID);
@@ -1373,6 +1463,9 @@ class MerchantConfiguration
         if (isset($connectionDet->responseMlePrivateKey)) {
             $config = $config->setResponseMlePrivateKey($connectionDet->responseMlePrivateKey);
         }
+        if (isset($connectionDet->isSDK)) {
+            $config->setIsSDK($connectionDet->isSDK);
+        }
         $config->validateMerchantData();
         if ($error_message != null) {
             $error_message = GlobalParameter::NOT_ENTERED . $error_message;
@@ -1425,30 +1518,48 @@ class MerchantConfiguration
         if (empty($this->getMerchantID()) && $this->getAuthenticationType() == GlobalParameter::JWT) {
             $error_message .= GlobalParameter::MERCHANTID_REQ . PHP_EOL;
         }
-        if (empty($this->getKeyAlias()) && $this->getAuthenticationType() == GlobalParameter::JWT) {
-            $warning_message .= GlobalParameter::KEY_ALIAS_NULL_EMPTY . PHP_EOL;
+        if ($this->getAuthenticationType() == GlobalParameter::JWT) {
+            $this->checkJwtKeyType();
         }
-        // Only enforce KeyAlias = MerchantId when UseMetaKey is false
-        if ($this->getAuthenticationType() == GlobalParameter::JWT && !$this->getUseMetaKey()) {
-            if (!empty($this->getKeyAlias()) && $this->getKeyAlias() != $this->getMerchantID()) {
-                $this->setKeyAlias($this->getMerchantID());
-                $warning_message .= GlobalParameter::KEY_ALIAS_INCORRECT . PHP_EOL;
+        if ($this->getAuthenticationType() == GlobalParameter::JWT && $this->isSharedSecretKeyType()) {
+            /* JWT with SHARED_SECRET (symmetric / HS256) — validate shared-secret fields */
+            if (empty($this->getApiKeyID())) {
+                $error_message .= GlobalParameter::MERCHANT_KEY_ID_REQ . PHP_EOL;
+            }
+            if (empty($this->getSecretKey())) {
+                $error_message .= GlobalParameter::MERCHANT_SECRET_KEY_REQ . PHP_EOL;
             }
         }
-        if ($this->getAuthenticationType() == GlobalParameter::JWT && $this->getUseMetaKey()) {
-            if (!empty($this->getKeyAlias()) && $this->getKeyAlias() != $this->getPortfolioID()) {
-                $this->setKeyAlias($this->getPortfolioID());
-                $warning_message .= GlobalParameter::INCORRECT_KEY_ALIAS_FOR_METAKEY . PHP_EOL;
+        if ($this->getAuthenticationType() == GlobalParameter::JWT && !$this->isSharedSecretKeyType()) {
+            /* JWT with P12 (asymmetric / RS256) — validate certificate fields */
+            // Only enforce KeyAlias = MerchantId when UseMetaKey is false
+            if (!$this->getUseMetaKey()) {
+                if (empty($this->getKeyAlias())) {
+                    $this->setKeyAlias($this->getMerchantID());
+                    $warning_message .= GlobalParameter::KEY_ALIAS_NULL_EMPTY . PHP_EOL;
+                } elseif ($this->getKeyAlias() != $this->getMerchantID()) {
+                    $this->setKeyAlias($this->getMerchantID());
+                    $warning_message .= GlobalParameter::KEY_ALIAS_INCORRECT . PHP_EOL;
+                }
             }
-        }
-        if (empty($this->getKeyFileName()) && $this->getAuthenticationType() == GlobalParameter::JWT) {
-            $warning_message .= GlobalParameter::KEY_FILE_NULL_EMPTY . PHP_EOL;
-        }
-        if (empty($this->getKeyPassword()) && $this->getAuthenticationType() == GlobalParameter::JWT) {
-            $error_message .= GlobalParameter::KEY_PASSWORD_EMPTY . PHP_EOL;
-        }
-        if (empty($this->getKeysDirectory()) && $this->getAuthenticationType() == GlobalParameter::JWT) {
-            $warning_message .= GlobalParameter::KEY_DIRECTORY_EMPTY . PHP_EOL;
+            if ($this->getUseMetaKey()) {
+                if (empty($this->getKeyAlias())) {
+                    $this->setKeyAlias($this->getPortfolioID());
+                    $warning_message .= GlobalParameter::KEY_ALIAS_NULL_EMPTY . PHP_EOL;
+                } elseif ($this->getKeyAlias() != $this->getPortfolioID()) {
+                    $this->setKeyAlias($this->getPortfolioID());
+                    $warning_message .= GlobalParameter::INCORRECT_KEY_ALIAS_FOR_METAKEY . PHP_EOL;
+                }
+            }
+            if (empty($this->getKeyFileName())) {
+                $warning_message .= GlobalParameter::KEY_FILE_NULL_EMPTY . PHP_EOL;
+            }
+            if (empty($this->getKeyPassword())) {
+                $error_message .= GlobalParameter::KEY_PASSWORD_EMPTY . PHP_EOL;
+            }
+            if (empty($this->getKeysDirectory())) {
+                $warning_message .= GlobalParameter::KEY_DIRECTORY_EMPTY . PHP_EOL;
+            }
         }
         if (empty($this->getMerchantID()) && $this->getAuthenticationType() == GlobalParameter::HTTP_SIGNATURE) {
             $error_message .= GlobalParameter::MERCHANTID_REQ . PHP_EOL;

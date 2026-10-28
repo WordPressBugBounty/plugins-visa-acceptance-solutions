@@ -70,13 +70,14 @@ class Visa_Acceptance_Authorization_Response extends Visa_Acceptance_Response {
 	}
 
 	/**
-	 * Checks whether the transaction status is authorized
+	 * Checks whether the transaction status is authorized or completed
 	 *
 	 * @param string $status transaction status.
 	 *
 	 * @return boolean
 	 */
 	public function is_transaction_status_approved( $status ) {
-		return in_array( $status, array( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED, VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED_PENDING_REVIEW ), true ) ? true : false;
+		// Accept AUTHORIZED (card), AUTHORIZED_PENDING_REVIEW (DM review), and COMPLETED (APM/PayPal/etc).
+		return in_array( $status, array( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED, VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED_PENDING_REVIEW, VISA_ACCEPTANCE_STRING_COMPLETED ), true ) ? true : false;
 	}
 }

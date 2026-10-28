@@ -3,9 +3,10 @@
 declare (strict_types=1);
 namespace Pymt_Vas\Dependencies\Brick\Math\Exception;
 
+use Throwable;
 /**
- * Base class for all math exceptions.
+ * Base interface for all math exceptions.
  */
-class MathException extends \Exception
+interface MathException extends Throwable
 {
 }

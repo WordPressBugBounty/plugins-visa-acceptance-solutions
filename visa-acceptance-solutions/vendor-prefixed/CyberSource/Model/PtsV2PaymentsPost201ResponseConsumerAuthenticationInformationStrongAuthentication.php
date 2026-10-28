@@ -48,12 +48,12 @@ class PtsV2PaymentsPost201ResponseConsumerAuthenticationInformationStrongAuthent
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['issuerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsStrongAuthIssuerInformation'];
+    protected static $swaggerTypes = ['issuerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsStrongAuthIssuerInformation', 'outageExemptionIndicator' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['issuerInformation' => null];
+    protected static $swaggerFormats = ['issuerInformation' => null, 'outageExemptionIndicator' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PtsV2PaymentsPost201ResponseConsumerAuthenticationInformationStrongAuthent
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['issuerInformation' => 'issuerInformation'];
+    protected static $attributeMap = ['issuerInformation' => 'issuerInformation', 'outageExemptionIndicator' => 'outageExemptionIndicator'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['issuerInformation' => 'setIssuerInformation'];
+    protected static $setters = ['issuerInformation' => 'setIssuerInformation', 'outageExemptionIndicator' => 'setOutageExemptionIndicator'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['issuerInformation' => 'getIssuerInformation'];
+    protected static $getters = ['issuerInformation' => 'getIssuerInformation', 'outageExemptionIndicator' => 'getOutageExemptionIndicator'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -101,6 +101,7 @@ class PtsV2PaymentsPost201ResponseConsumerAuthenticationInformationStrongAuthent
     public function __construct(array $data = null)
     {
         $this->container['issuerInformation'] = isset($data['issuerInformation']) ? $data['issuerInformation'] : null;
+        $this->container['outageExemptionIndicator'] = isset($data['outageExemptionIndicator']) ? $data['outageExemptionIndicator'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -138,6 +139,24 @@ class PtsV2PaymentsPost201ResponseConsumerAuthenticationInformationStrongAuthent
     public function setIssuerInformation($issuerInformation)
     {
         $this->container['issuerInformation'] = $issuerInformation;
+        return $this;
+    }
+    /**
+     * Gets outageExemptionIndicator
+     * @return string
+     */
+    public function getOutageExemptionIndicator()
+    {
+        return $this->container['outageExemptionIndicator'];
+    }
+    /**
+     * Sets outageExemptionIndicator
+     * @param string $outageExemptionIndicator This field will contain the outage exemption indicator with one of the following values: Possible values: - `0`  (Outage Authentication exemption does not apply to the transaction) - `1` (Outage exempt from SCA as authentication could not be done due to outage)
+     * @return $this
+     */
+    public function setOutageExemptionIndicator($outageExemptionIndicator)
+    {
+        $this->container['outageExemptionIndicator'] = $outageExemptionIndicator;
         return $this;
     }
     /**

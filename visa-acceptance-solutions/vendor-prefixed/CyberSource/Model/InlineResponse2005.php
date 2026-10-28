@@ -48,7 +48,7 @@ class InlineResponse2005 implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['registrationInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsRegistrationInformation', 'integrationInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2005IntegrationInformation', 'organizationInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsOrganizationInformation', 'productInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsProductInformation', 'productInformationSetups' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2014ProductInformationSetups[]', 'documentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsDocumentInformation', 'details' => 'map[string,object[]]'];
+    protected static $swaggerTypes = ['registrationInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsRegistrationInformation', 'integrationInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2005IntegrationInformation', 'organizationInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsOrganizationInformation', 'productInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsProductInformation', 'productInformationSetups' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2016ProductInformationSetups[]', 'documentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsDocumentInformation', 'details' => 'map[string,object[]]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -202,7 +202,7 @@ class InlineResponse2005 implements ArrayAccess
     }
     /**
      * Gets productInformationSetups
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2014ProductInformationSetups[]
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2016ProductInformationSetups[]
      */
     public function getProductInformationSetups()
     {
@@ -210,7 +210,7 @@ class InlineResponse2005 implements ArrayAccess
     }
     /**
      * Sets productInformationSetups
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2014ProductInformationSetups[] $productInformationSetups
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2016ProductInformationSetups[] $productInformationSetups
      * @return $this
      */
     public function setProductInformationSetups($productInformationSetups)

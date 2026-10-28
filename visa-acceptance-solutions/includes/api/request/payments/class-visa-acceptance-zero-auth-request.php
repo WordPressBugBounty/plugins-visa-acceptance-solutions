@@ -62,11 +62,8 @@ class Visa_Acceptance_Zero_Auth_Request extends Visa_Acceptance_Request {
 			// To randomly generate 5 char value.
 			'code'               => strtoupper( wp_generate_password( VISA_ACCEPTANCE_VAL_FIVE, false, false ) ),
 			'partner'            => array(
-				'developerId' => VISA_ACCEPTANCE_DEVELOPER_ID,
 				'solutionId'  => VISA_ACCEPTANCE_SOLUTION_ID,
-			),
-			'applicationName'    => VISA_ACCEPTANCE_PLUGIN_APPLICATION_NAME . VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_PLUGIN_API_TYPE,
-			'applicationVersion' => VISA_ACCEPTANCE_PLUGIN_VERSION,
+			)
 		);
 		return $client_reference_information_data;
 	}
@@ -79,18 +76,22 @@ class Visa_Acceptance_Zero_Auth_Request extends Visa_Acceptance_Request {
 	 * @return array
 	 */
 	public function get_order_information( $customer ) {
+		$bill_to_map = array(
+			'firstName'          => $customer->get_billing_first_name(),
+			'lastName'           => $customer->get_billing_last_name(),
+			'address1'           => $customer->get_billing_address_1(),
+			'administrativeArea' => $customer->get_billing_state(),
+			'postalCode'         => $customer->get_billing_postcode(),
+			'locality'           => $customer->get_billing_city(),
+			'country'            => $customer->get_billing_country(),
+			'email'              => $customer->get_billing_email(),
+			'phoneNumber'        => $customer->get_billing_phone(),
+		);
+		// Filter out empty values to avoid sending invalid data.
+		$bill_to_data = array_filter( $bill_to_map, function( $v ) { return ! empty( $v ); } );
+		
 		$order_information = array(
-			'billTo'        => array(
-				'firstName'          => $customer->get_billing_first_name(),
-				'lastName'           => $customer->get_billing_last_name(),
-				'address1'           => $customer->get_billing_address_1(),
-				'administrativeArea' => $customer->get_billing_state(),
-				'postalCode'         => $customer->get_billing_postcode(),
-				'locality'           => $customer->get_billing_city(),
-				'country'            => $customer->get_billing_country(),
-				'email'              => $customer->get_billing_email(),
-				'phoneNumber'        => $customer->get_billing_phone(),
-			),
+			'billTo'        => $bill_to_data,
 			'amountDetails' => array(
 				'totalAmount' => VISA_ACCEPTANCE_ZERO_AMOUNT,
 				'currency'    => get_woocommerce_currency(),

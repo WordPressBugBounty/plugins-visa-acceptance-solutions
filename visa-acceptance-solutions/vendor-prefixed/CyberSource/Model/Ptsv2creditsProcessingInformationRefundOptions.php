@@ -48,12 +48,12 @@ class Ptsv2creditsProcessingInformationRefundOptions implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['reason' => 'string'];
+    protected static $swaggerTypes = ['reason' => 'string', 'reconciliationIdAlternate' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['reason' => null];
+    protected static $swaggerFormats = ['reason' => null, 'reconciliationIdAlternate' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2creditsProcessingInformationRefundOptions implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['reason' => 'reason'];
+    protected static $attributeMap = ['reason' => 'reason', 'reconciliationIdAlternate' => 'reconciliationIdAlternate'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['reason' => 'setReason'];
+    protected static $setters = ['reason' => 'setReason', 'reconciliationIdAlternate' => 'setReconciliationIdAlternate'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['reason' => 'getReason'];
+    protected static $getters = ['reason' => 'getReason', 'reconciliationIdAlternate' => 'getReconciliationIdAlternate'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -101,6 +101,7 @@ class Ptsv2creditsProcessingInformationRefundOptions implements ArrayAccess
     public function __construct(array $data = null)
     {
         $this->container['reason'] = isset($data['reason']) ? $data['reason'] : null;
+        $this->container['reconciliationIdAlternate'] = isset($data['reconciliationIdAlternate']) ? $data['reconciliationIdAlternate'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -138,6 +139,24 @@ class Ptsv2creditsProcessingInformationRefundOptions implements ArrayAccess
     public function setReason($reason)
     {
         $this->container['reason'] = $reason;
+        return $this;
+    }
+    /**
+     * Gets reconciliationIdAlternate
+     * @return string
+     */
+    public function getReconciliationIdAlternate()
+    {
+        return $this->container['reconciliationIdAlternate'];
+    }
+    /**
+     * Sets reconciliationIdAlternate
+     * @param string $reconciliationIdAlternate Alternative reference number that can be up to 12 characters in length. If this field is used, it overrides any data added to the ccCaptureService_reconciliationID field. You can use this value to reconcile Cybersource reports with processor reports.
+     * @return $this
+     */
+    public function setReconciliationIdAlternate($reconciliationIdAlternate)
+    {
+        $this->container['reconciliationIdAlternate'] = $reconciliationIdAlternate;
         return $this;
     }
     /**

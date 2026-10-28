@@ -49,7 +49,7 @@ class PaymentInstrumentListEmbedded implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['paymentInstruments' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrument[]'];
+    protected static $swaggerTypes = ['paymentInstruments' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentInstrument[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -125,7 +125,7 @@ class PaymentInstrumentListEmbedded implements ArrayAccess
     }
     /**
      * Gets paymentInstruments
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrument[]
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentInstrument[]
      */
     public function getPaymentInstruments()
     {
@@ -133,7 +133,7 @@ class PaymentInstrumentListEmbedded implements ArrayAccess
     }
     /**
      * Sets paymentInstruments
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrument[] $paymentInstruments
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentInstrument[] $paymentInstruments
      * @return $this
      */
     public function setPaymentInstruments($paymentInstruments)

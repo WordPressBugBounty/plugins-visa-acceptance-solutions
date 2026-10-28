@@ -48,12 +48,12 @@ class PtsV2PaymentsRefundPost201ResponseOrderInformationAmountDetails implements
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['settlementAmount' => 'string', 'settlementCurrency' => 'string', 'exchangeRate' => 'string', 'foreignAmount' => 'string', 'foreignCurrency' => 'string'];
+    protected static $swaggerTypes = ['cashbackAmount' => 'string', 'settlementAmount' => 'string', 'settlementCurrency' => 'string', 'exchangeRate' => 'string', 'foreignAmount' => 'string', 'foreignCurrency' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['settlementAmount' => null, 'settlementCurrency' => null, 'exchangeRate' => null, 'foreignAmount' => null, 'foreignCurrency' => null];
+    protected static $swaggerFormats = ['cashbackAmount' => null, 'settlementAmount' => null, 'settlementCurrency' => null, 'exchangeRate' => null, 'foreignAmount' => null, 'foreignCurrency' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PtsV2PaymentsRefundPost201ResponseOrderInformationAmountDetails implements
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['settlementAmount' => 'settlementAmount', 'settlementCurrency' => 'settlementCurrency', 'exchangeRate' => 'exchangeRate', 'foreignAmount' => 'foreignAmount', 'foreignCurrency' => 'foreignCurrency'];
+    protected static $attributeMap = ['cashbackAmount' => 'cashbackAmount', 'settlementAmount' => 'settlementAmount', 'settlementCurrency' => 'settlementCurrency', 'exchangeRate' => 'exchangeRate', 'foreignAmount' => 'foreignAmount', 'foreignCurrency' => 'foreignCurrency'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['settlementAmount' => 'setSettlementAmount', 'settlementCurrency' => 'setSettlementCurrency', 'exchangeRate' => 'setExchangeRate', 'foreignAmount' => 'setForeignAmount', 'foreignCurrency' => 'setForeignCurrency'];
+    protected static $setters = ['cashbackAmount' => 'setCashbackAmount', 'settlementAmount' => 'setSettlementAmount', 'settlementCurrency' => 'setSettlementCurrency', 'exchangeRate' => 'setExchangeRate', 'foreignAmount' => 'setForeignAmount', 'foreignCurrency' => 'setForeignCurrency'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['settlementAmount' => 'getSettlementAmount', 'settlementCurrency' => 'getSettlementCurrency', 'exchangeRate' => 'getExchangeRate', 'foreignAmount' => 'getForeignAmount', 'foreignCurrency' => 'getForeignCurrency'];
+    protected static $getters = ['cashbackAmount' => 'getCashbackAmount', 'settlementAmount' => 'getSettlementAmount', 'settlementCurrency' => 'getSettlementCurrency', 'exchangeRate' => 'getExchangeRate', 'foreignAmount' => 'getForeignAmount', 'foreignCurrency' => 'getForeignCurrency'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -100,6 +100,7 @@ class PtsV2PaymentsRefundPost201ResponseOrderInformationAmountDetails implements
      */
     public function __construct(array $data = null)
     {
+        $this->container['cashbackAmount'] = isset($data['cashbackAmount']) ? $data['cashbackAmount'] : null;
         $this->container['settlementAmount'] = isset($data['settlementAmount']) ? $data['settlementAmount'] : null;
         $this->container['settlementCurrency'] = isset($data['settlementCurrency']) ? $data['settlementCurrency'] : null;
         $this->container['exchangeRate'] = isset($data['exchangeRate']) ? $data['exchangeRate'] : null;
@@ -125,6 +126,24 @@ class PtsV2PaymentsRefundPost201ResponseOrderInformationAmountDetails implements
     public function valid()
     {
         return true;
+    }
+    /**
+     * Gets cashbackAmount
+     * @return string
+     */
+    public function getCashbackAmount()
+    {
+        return $this->container['cashbackAmount'];
+    }
+    /**
+     * Sets cashbackAmount
+     * @param string $cashbackAmount This field contains the purchase cashback amount expressed in the acquirer transaction currency.  Use this field only for clearing with your acquirer.
+     * @return $this
+     */
+    public function setCashbackAmount($cashbackAmount)
+    {
+        $this->container['cashbackAmount'] = $cashbackAmount;
+        return $this;
     }
     /**
      * Gets settlementAmount

@@ -48,7 +48,7 @@ class Ptsv1pushfundstransferRecipientInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pushfundstransferRecipientInformationPaymentInformation', 'address1' => 'string', 'address2' => 'string', 'locality' => 'string', 'postalCode' => 'string', 'administrativeArea' => 'string', 'country' => 'string', 'firstName' => 'string', 'middleName' => 'string', 'lastName' => 'string', 'phoneNumber' => 'string', 'email' => 'string', 'personalIdentification' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pushfundstransferRecipientInformationPersonalIdentification', 'buildingNumber' => 'string', 'streetName' => 'string', 'type' => 'string'];
+    protected static $swaggerTypes = ['paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFundsTransferPaymentInformation', 'address1' => 'string', 'address2' => 'string', 'locality' => 'string', 'postalCode' => 'string', 'administrativeArea' => 'string', 'country' => 'string', 'firstName' => 'string', 'middleName' => 'string', 'lastName' => 'string', 'phoneNumber' => 'string', 'email' => 'string', 'personalIdentification' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pushfundstransferRecipientInformationPersonalIdentification', 'buildingNumber' => 'string', 'streetName' => 'string', 'type' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -139,7 +139,7 @@ class Ptsv1pushfundstransferRecipientInformation implements ArrayAccess
     }
     /**
      * Gets paymentInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pushfundstransferRecipientInformationPaymentInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PushFundsTransferPaymentInformation
      */
     public function getPaymentInformation()
     {
@@ -147,7 +147,7 @@ class Ptsv1pushfundstransferRecipientInformation implements ArrayAccess
     }
     /**
      * Sets paymentInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pushfundstransferRecipientInformationPaymentInformation $paymentInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PushFundsTransferPaymentInformation $paymentInformation
      * @return $this
      */
     public function setPaymentInformation($paymentInformation)

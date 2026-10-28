@@ -48,12 +48,12 @@ class ValueAddedServicesProducts implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['reporting' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'transactionSearch' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'bankAccountValidation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax'];
+    protected static $swaggerTypes = ['reporting' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'transactionSearch' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'bankAccountValidation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'flexapi' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'webhooks' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['reporting' => null, 'transactionSearch' => null, 'bankAccountValidation' => null];
+    protected static $swaggerFormats = ['reporting' => null, 'transactionSearch' => null, 'bankAccountValidation' => null, 'flexapi' => null, 'webhooks' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class ValueAddedServicesProducts implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['reporting' => 'reporting', 'transactionSearch' => 'transactionSearch', 'bankAccountValidation' => 'bankAccountValidation'];
+    protected static $attributeMap = ['reporting' => 'reporting', 'transactionSearch' => 'transactionSearch', 'bankAccountValidation' => 'bankAccountValidation', 'flexapi' => 'flexapi', 'webhooks' => 'webhooks'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['reporting' => 'setReporting', 'transactionSearch' => 'setTransactionSearch', 'bankAccountValidation' => 'setBankAccountValidation'];
+    protected static $setters = ['reporting' => 'setReporting', 'transactionSearch' => 'setTransactionSearch', 'bankAccountValidation' => 'setBankAccountValidation', 'flexapi' => 'setFlexapi', 'webhooks' => 'setWebhooks'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['reporting' => 'getReporting', 'transactionSearch' => 'getTransactionSearch', 'bankAccountValidation' => 'getBankAccountValidation'];
+    protected static $getters = ['reporting' => 'getReporting', 'transactionSearch' => 'getTransactionSearch', 'bankAccountValidation' => 'getBankAccountValidation', 'flexapi' => 'getFlexapi', 'webhooks' => 'getWebhooks'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -103,6 +103,8 @@ class ValueAddedServicesProducts implements ArrayAccess
         $this->container['reporting'] = isset($data['reporting']) ? $data['reporting'] : null;
         $this->container['transactionSearch'] = isset($data['transactionSearch']) ? $data['transactionSearch'] : null;
         $this->container['bankAccountValidation'] = isset($data['bankAccountValidation']) ? $data['bankAccountValidation'] : null;
+        $this->container['flexapi'] = isset($data['flexapi']) ? $data['flexapi'] : null;
+        $this->container['webhooks'] = isset($data['webhooks']) ? $data['webhooks'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -176,6 +178,42 @@ class ValueAddedServicesProducts implements ArrayAccess
     public function setBankAccountValidation($bankAccountValidation)
     {
         $this->container['bankAccountValidation'] = $bankAccountValidation;
+        return $this;
+    }
+    /**
+     * Gets flexapi
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax
+     */
+    public function getFlexapi()
+    {
+        return $this->container['flexapi'];
+    }
+    /**
+     * Sets flexapi
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax $flexapi
+     * @return $this
+     */
+    public function setFlexapi($flexapi)
+    {
+        $this->container['flexapi'] = $flexapi;
+        return $this;
+    }
+    /**
+     * Gets webhooks
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax
+     */
+    public function getWebhooks()
+    {
+        return $this->container['webhooks'];
+    }
+    /**
+     * Sets webhooks
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax $webhooks
+     * @return $this
+     */
+    public function setWebhooks($webhooks)
+    {
+        $this->container['webhooks'] = $webhooks;
         return $this;
     }
     /**

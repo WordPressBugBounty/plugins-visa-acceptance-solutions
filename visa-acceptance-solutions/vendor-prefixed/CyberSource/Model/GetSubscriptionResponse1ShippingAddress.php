@@ -49,7 +49,7 @@ class GetSubscriptionResponse1ShippingAddress implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['id' => 'string', 'shipTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddressShipTo'];
+    protected static $swaggerTypes = ['id' => 'string', 'shipTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddressShipTo'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -144,7 +144,7 @@ class GetSubscriptionResponse1ShippingAddress implements ArrayAccess
     }
     /**
      * Gets shipTo
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddressShipTo
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddressShipTo
      */
     public function getShipTo()
     {
@@ -152,7 +152,7 @@ class GetSubscriptionResponse1ShippingAddress implements ArrayAccess
     }
     /**
      * Sets shipTo
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddressShipTo $shipTo
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddressShipTo $shipTo
      * @return $this
      */
     public function setShipTo($shipTo)

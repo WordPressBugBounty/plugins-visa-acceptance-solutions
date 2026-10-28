@@ -48,12 +48,12 @@ class InlineResponse2019 implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019ClientReferenceInformation', 'id' => 'string', 'submitTimeUtc' => 'string', 'status' => 'string', 'errorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019ErrorInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019OrderInformation', 'processorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019ProcessorInformation'];
+    protected static $swaggerTypes = ['eventDate' => 'string', 'eventType' => 'string', 'organizationId' => 'string', 'payloads' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019Payloads', 'productId' => 'string', 'requestType' => 'string', 'retryNumber' => 'int', 'transactionTraceId' => 'string', 'webhookId' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['clientReferenceInformation' => null, 'id' => null, 'submitTimeUtc' => null, 'status' => null, 'errorInformation' => null, 'orderInformation' => null, 'processorInformation' => null];
+    protected static $swaggerFormats = ['eventDate' => null, 'eventType' => null, 'organizationId' => null, 'payloads' => null, 'productId' => null, 'requestType' => null, 'retryNumber' => null, 'transactionTraceId' => null, 'webhookId' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class InlineResponse2019 implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['clientReferenceInformation' => 'clientReferenceInformation', 'id' => 'id', 'submitTimeUtc' => 'submitTimeUtc', 'status' => 'status', 'errorInformation' => 'errorInformation', 'orderInformation' => 'orderInformation', 'processorInformation' => 'processorInformation'];
+    protected static $attributeMap = ['eventDate' => 'eventDate', 'eventType' => 'eventType', 'organizationId' => 'organizationId', 'payloads' => 'payloads', 'productId' => 'productId', 'requestType' => 'requestType', 'retryNumber' => 'retryNumber', 'transactionTraceId' => 'transactionTraceId', 'webhookId' => 'webhookId'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['clientReferenceInformation' => 'setClientReferenceInformation', 'id' => 'setId', 'submitTimeUtc' => 'setSubmitTimeUtc', 'status' => 'setStatus', 'errorInformation' => 'setErrorInformation', 'orderInformation' => 'setOrderInformation', 'processorInformation' => 'setProcessorInformation'];
+    protected static $setters = ['eventDate' => 'setEventDate', 'eventType' => 'setEventType', 'organizationId' => 'setOrganizationId', 'payloads' => 'setPayloads', 'productId' => 'setProductId', 'requestType' => 'setRequestType', 'retryNumber' => 'setRetryNumber', 'transactionTraceId' => 'setTransactionTraceId', 'webhookId' => 'setWebhookId'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['clientReferenceInformation' => 'getClientReferenceInformation', 'id' => 'getId', 'submitTimeUtc' => 'getSubmitTimeUtc', 'status' => 'getStatus', 'errorInformation' => 'getErrorInformation', 'orderInformation' => 'getOrderInformation', 'processorInformation' => 'getProcessorInformation'];
+    protected static $getters = ['eventDate' => 'getEventDate', 'eventType' => 'getEventType', 'organizationId' => 'getOrganizationId', 'payloads' => 'getPayloads', 'productId' => 'getProductId', 'requestType' => 'getRequestType', 'retryNumber' => 'getRetryNumber', 'transactionTraceId' => 'getTransactionTraceId', 'webhookId' => 'getWebhookId'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -100,13 +100,15 @@ class InlineResponse2019 implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['clientReferenceInformation'] = isset($data['clientReferenceInformation']) ? $data['clientReferenceInformation'] : null;
-        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
-        $this->container['submitTimeUtc'] = isset($data['submitTimeUtc']) ? $data['submitTimeUtc'] : null;
-        $this->container['status'] = isset($data['status']) ? $data['status'] : null;
-        $this->container['errorInformation'] = isset($data['errorInformation']) ? $data['errorInformation'] : null;
-        $this->container['orderInformation'] = isset($data['orderInformation']) ? $data['orderInformation'] : null;
-        $this->container['processorInformation'] = isset($data['processorInformation']) ? $data['processorInformation'] : null;
+        $this->container['eventDate'] = isset($data['eventDate']) ? $data['eventDate'] : null;
+        $this->container['eventType'] = isset($data['eventType']) ? $data['eventType'] : null;
+        $this->container['organizationId'] = isset($data['organizationId']) ? $data['organizationId'] : null;
+        $this->container['payloads'] = isset($data['payloads']) ? $data['payloads'] : null;
+        $this->container['productId'] = isset($data['productId']) ? $data['productId'] : null;
+        $this->container['requestType'] = isset($data['requestType']) ? $data['requestType'] : null;
+        $this->container['retryNumber'] = isset($data['retryNumber']) ? $data['retryNumber'] : null;
+        $this->container['transactionTraceId'] = isset($data['transactionTraceId']) ? $data['transactionTraceId'] : null;
+        $this->container['webhookId'] = isset($data['webhookId']) ? $data['webhookId'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -116,15 +118,6 @@ class InlineResponse2019 implements ArrayAccess
     public function listInvalidProperties()
     {
         $invalid_properties = [];
-        if ($this->container['id'] === null) {
-            $invalid_properties[] = "'id' can't be null";
-        }
-        if ($this->container['submitTimeUtc'] === null) {
-            $invalid_properties[] = "'submitTimeUtc' can't be null";
-        }
-        if ($this->container['status'] === null) {
-            $invalid_properties[] = "'status' can't be null";
-        }
         return $invalid_properties;
     }
     /**
@@ -135,141 +128,168 @@ class InlineResponse2019 implements ArrayAccess
      */
     public function valid()
     {
-        if ($this->container['id'] === null) {
-            return false;
-        }
-        if ($this->container['submitTimeUtc'] === null) {
-            return false;
-        }
-        if ($this->container['status'] === null) {
-            return false;
-        }
         return true;
     }
     /**
-     * Gets clientReferenceInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019ClientReferenceInformation
-     */
-    public function getClientReferenceInformation()
-    {
-        return $this->container['clientReferenceInformation'];
-    }
-    /**
-     * Sets clientReferenceInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019ClientReferenceInformation $clientReferenceInformation
-     * @return $this
-     */
-    public function setClientReferenceInformation($clientReferenceInformation)
-    {
-        $this->container['clientReferenceInformation'] = $clientReferenceInformation;
-        return $this;
-    }
-    /**
-     * Gets id
+     * Gets eventDate
      * @return string
      */
-    public function getId()
+    public function getEventDate()
     {
-        return $this->container['id'];
+        return $this->container['eventDate'];
     }
     /**
-     * Sets id
-     * @param string $id Request ID generated by Cybersource. This was sent in the header on the request. Echo value from x-requestid
+     * Sets eventDate
+     * @param string $eventDate Date that the webhook was delivered
      * @return $this
      */
-    public function setId($id)
+    public function setEventDate($eventDate)
     {
-        $this->container['id'] = $id;
+        $this->container['eventDate'] = $eventDate;
         return $this;
     }
     /**
-     * Gets submitTimeUtc
+     * Gets eventType
      * @return string
      */
-    public function getSubmitTimeUtc()
+    public function getEventType()
     {
-        return $this->container['submitTimeUtc'];
+        return $this->container['eventType'];
     }
     /**
-     * Sets submitTimeUtc
-     * @param string $submitTimeUtc Time of request in UTC. Format: `YYYY-MM-DDThh:mm:ssZ`  **Example** `2023-05-17T22:47:57Z` equals May 17, 2023, at 22:47:57 (10:47:57 PM). The `T` separates the date and the time. The `Z` indicates UTC.
+     * Sets eventType
+     * @param string $eventType The event name the webhook was delivered for
      * @return $this
      */
-    public function setSubmitTimeUtc($submitTimeUtc)
+    public function setEventType($eventType)
     {
-        $this->container['submitTimeUtc'] = $submitTimeUtc;
+        $this->container['eventType'] = $eventType;
         return $this;
     }
     /**
-     * Gets status
+     * Gets organizationId
      * @return string
      */
-    public function getStatus()
+    public function getOrganizationId()
     {
-        return $this->container['status'];
+        return $this->container['organizationId'];
     }
     /**
-     * Sets status
-     * @param string $status Message describing the status of the currency conversion request.   Possible values: - PENDING - DECLINED - SERVER_ERROR
+     * Sets organizationId
+     * @param string $organizationId The Organization Identifier.
      * @return $this
      */
-    public function setStatus($status)
+    public function setOrganizationId($organizationId)
     {
-        $this->container['status'] = $status;
+        $this->container['organizationId'] = $organizationId;
         return $this;
     }
     /**
-     * Gets errorInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019ErrorInformation
+     * Gets payloads
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019Payloads
      */
-    public function getErrorInformation()
+    public function getPayloads()
     {
-        return $this->container['errorInformation'];
+        return $this->container['payloads'];
     }
     /**
-     * Sets errorInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019ErrorInformation $errorInformation
+     * Sets payloads
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019Payloads $payloads
      * @return $this
      */
-    public function setErrorInformation($errorInformation)
+    public function setPayloads($payloads)
     {
-        $this->container['errorInformation'] = $errorInformation;
+        $this->container['payloads'] = $payloads;
         return $this;
     }
     /**
-     * Gets orderInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019OrderInformation
+     * Gets productId
+     * @return string
      */
-    public function getOrderInformation()
+    public function getProductId()
     {
-        return $this->container['orderInformation'];
+        return $this->container['productId'];
     }
     /**
-     * Sets orderInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019OrderInformation $orderInformation
+     * Sets productId
+     * @param string $productId The product the webhook was delivered for
      * @return $this
      */
-    public function setOrderInformation($orderInformation)
+    public function setProductId($productId)
     {
-        $this->container['orderInformation'] = $orderInformation;
+        $this->container['productId'] = $productId;
         return $this;
     }
     /**
-     * Gets processorInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019ProcessorInformation
+     * Gets requestType
+     * @return string
      */
-    public function getProcessorInformation()
+    public function getRequestType()
     {
-        return $this->container['processorInformation'];
+        return $this->container['requestType'];
     }
     /**
-     * Sets processorInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019ProcessorInformation $processorInformation
+     * Sets requestType
+     * @param string $requestType Identifies the the type of request
      * @return $this
      */
-    public function setProcessorInformation($processorInformation)
+    public function setRequestType($requestType)
     {
-        $this->container['processorInformation'] = $processorInformation;
+        $this->container['requestType'] = $requestType;
+        return $this;
+    }
+    /**
+     * Gets retryNumber
+     * @return int
+     */
+    public function getRetryNumber()
+    {
+        return $this->container['retryNumber'];
+    }
+    /**
+     * Sets retryNumber
+     * @param int $retryNumber The number of retry attempts for a given webhook
+     * @return $this
+     */
+    public function setRetryNumber($retryNumber)
+    {
+        $this->container['retryNumber'] = $retryNumber;
+        return $this;
+    }
+    /**
+     * Gets transactionTraceId
+     * @return string
+     */
+    public function getTransactionTraceId()
+    {
+        return $this->container['transactionTraceId'];
+    }
+    /**
+     * Sets transactionTraceId
+     * @param string $transactionTraceId The identifier for the webhook
+     * @return $this
+     */
+    public function setTransactionTraceId($transactionTraceId)
+    {
+        $this->container['transactionTraceId'] = $transactionTraceId;
+        return $this;
+    }
+    /**
+     * Gets webhookId
+     * @return string
+     */
+    public function getWebhookId()
+    {
+        return $this->container['webhookId'];
+    }
+    /**
+     * Sets webhookId
+     * @param string $webhookId The identifier of the subscription
+     * @return $this
+     */
+    public function setWebhookId($webhookId)
+    {
+        $this->container['webhookId'] = $webhookId;
         return $this;
     }
     /**

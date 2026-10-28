@@ -182,11 +182,11 @@ class DeviceSearchApi
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4008', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse40012', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 401:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse401', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4012', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 403:
@@ -301,11 +301,11 @@ class DeviceSearchApi
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4008', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse40012', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 401:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse401', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4012', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 403:

@@ -48,12 +48,12 @@ class Ptsv2billingagreementsPaymentInformationBank implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['account' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsPaymentInformationBankAccount', 'iban' => 'string', 'swiftCode' => 'string', 'scheme' => 'string'];
+    protected static $swaggerTypes = ['account' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsPaymentInformationBankAccount', 'iban' => 'string', 'swiftCode' => 'string', 'scheme' => 'string', 'accountAlias' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsPaymentInformationBankAccountAlias'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['account' => null, 'iban' => null, 'swiftCode' => null, 'scheme' => null];
+    protected static $swaggerFormats = ['account' => null, 'iban' => null, 'swiftCode' => null, 'scheme' => null, 'accountAlias' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2billingagreementsPaymentInformationBank implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['account' => 'account', 'iban' => 'iban', 'swiftCode' => 'swiftCode', 'scheme' => 'scheme'];
+    protected static $attributeMap = ['account' => 'account', 'iban' => 'iban', 'swiftCode' => 'swiftCode', 'scheme' => 'scheme', 'accountAlias' => 'accountAlias'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['account' => 'setAccount', 'iban' => 'setIban', 'swiftCode' => 'setSwiftCode', 'scheme' => 'setScheme'];
+    protected static $setters = ['account' => 'setAccount', 'iban' => 'setIban', 'swiftCode' => 'setSwiftCode', 'scheme' => 'setScheme', 'accountAlias' => 'setAccountAlias'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['account' => 'getAccount', 'iban' => 'getIban', 'swiftCode' => 'getSwiftCode', 'scheme' => 'getScheme'];
+    protected static $getters = ['account' => 'getAccount', 'iban' => 'getIban', 'swiftCode' => 'getSwiftCode', 'scheme' => 'getScheme', 'accountAlias' => 'getAccountAlias'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -104,6 +104,7 @@ class Ptsv2billingagreementsPaymentInformationBank implements ArrayAccess
         $this->container['iban'] = isset($data['iban']) ? $data['iban'] : null;
         $this->container['swiftCode'] = isset($data['swiftCode']) ? $data['swiftCode'] : null;
         $this->container['scheme'] = isset($data['scheme']) ? $data['scheme'] : null;
+        $this->container['accountAlias'] = isset($data['accountAlias']) ? $data['accountAlias'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -195,6 +196,24 @@ class Ptsv2billingagreementsPaymentInformationBank implements ArrayAccess
     public function setScheme($scheme)
     {
         $this->container['scheme'] = $scheme;
+        return $this;
+    }
+    /**
+     * Gets accountAlias
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsPaymentInformationBankAccountAlias
+     */
+    public function getAccountAlias()
+    {
+        return $this->container['accountAlias'];
+    }
+    /**
+     * Sets accountAlias
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsPaymentInformationBankAccountAlias $accountAlias
+     * @return $this
+     */
+    public function setAccountAlias($accountAlias)
+    {
+        $this->container['accountAlias'] = $accountAlias;
         return $this;
     }
     /**

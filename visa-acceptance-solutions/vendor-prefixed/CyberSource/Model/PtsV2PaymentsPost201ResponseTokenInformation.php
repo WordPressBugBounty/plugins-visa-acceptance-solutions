@@ -48,12 +48,12 @@ class PtsV2PaymentsPost201ResponseTokenInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['instrumentidentifierNew' => 'bool', 'customer' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseTokenInformationCustomer', 'paymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseTokenInformationPaymentInstrument', 'shippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseTokenInformationShippingAddress', 'instrumentIdentifier' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseTokenInformationInstrumentIdentifier'];
+    protected static $swaggerTypes = ['instrumentidentifierNew' => 'bool', 'customer' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseTokenInformationCustomer', 'paymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseTokenInformationPaymentInstrument', 'shippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseTokenInformationShippingAddress', 'instrumentIdentifier' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseTokenInformationInstrumentIdentifier', 'thirdPartyToken' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseTokenInformationThirdPartyToken'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['instrumentidentifierNew' => null, 'customer' => null, 'paymentInstrument' => null, 'shippingAddress' => null, 'instrumentIdentifier' => null];
+    protected static $swaggerFormats = ['instrumentidentifierNew' => null, 'customer' => null, 'paymentInstrument' => null, 'shippingAddress' => null, 'instrumentIdentifier' => null, 'thirdPartyToken' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PtsV2PaymentsPost201ResponseTokenInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['instrumentidentifierNew' => 'instrumentidentifierNew', 'customer' => 'customer', 'paymentInstrument' => 'paymentInstrument', 'shippingAddress' => 'shippingAddress', 'instrumentIdentifier' => 'instrumentIdentifier'];
+    protected static $attributeMap = ['instrumentidentifierNew' => 'instrumentidentifierNew', 'customer' => 'customer', 'paymentInstrument' => 'paymentInstrument', 'shippingAddress' => 'shippingAddress', 'instrumentIdentifier' => 'instrumentIdentifier', 'thirdPartyToken' => 'thirdPartyToken'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['instrumentidentifierNew' => 'setInstrumentidentifierNew', 'customer' => 'setCustomer', 'paymentInstrument' => 'setPaymentInstrument', 'shippingAddress' => 'setShippingAddress', 'instrumentIdentifier' => 'setInstrumentIdentifier'];
+    protected static $setters = ['instrumentidentifierNew' => 'setInstrumentidentifierNew', 'customer' => 'setCustomer', 'paymentInstrument' => 'setPaymentInstrument', 'shippingAddress' => 'setShippingAddress', 'instrumentIdentifier' => 'setInstrumentIdentifier', 'thirdPartyToken' => 'setThirdPartyToken'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['instrumentidentifierNew' => 'getInstrumentidentifierNew', 'customer' => 'getCustomer', 'paymentInstrument' => 'getPaymentInstrument', 'shippingAddress' => 'getShippingAddress', 'instrumentIdentifier' => 'getInstrumentIdentifier'];
+    protected static $getters = ['instrumentidentifierNew' => 'getInstrumentidentifierNew', 'customer' => 'getCustomer', 'paymentInstrument' => 'getPaymentInstrument', 'shippingAddress' => 'getShippingAddress', 'instrumentIdentifier' => 'getInstrumentIdentifier', 'thirdPartyToken' => 'getThirdPartyToken'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -105,6 +105,7 @@ class PtsV2PaymentsPost201ResponseTokenInformation implements ArrayAccess
         $this->container['paymentInstrument'] = isset($data['paymentInstrument']) ? $data['paymentInstrument'] : null;
         $this->container['shippingAddress'] = isset($data['shippingAddress']) ? $data['shippingAddress'] : null;
         $this->container['instrumentIdentifier'] = isset($data['instrumentIdentifier']) ? $data['instrumentIdentifier'] : null;
+        $this->container['thirdPartyToken'] = isset($data['thirdPartyToken']) ? $data['thirdPartyToken'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -214,6 +215,24 @@ class PtsV2PaymentsPost201ResponseTokenInformation implements ArrayAccess
     public function setInstrumentIdentifier($instrumentIdentifier)
     {
         $this->container['instrumentIdentifier'] = $instrumentIdentifier;
+        return $this;
+    }
+    /**
+     * Gets thirdPartyToken
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseTokenInformationThirdPartyToken
+     */
+    public function getThirdPartyToken()
+    {
+        return $this->container['thirdPartyToken'];
+    }
+    /**
+     * Sets thirdPartyToken
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseTokenInformationThirdPartyToken $thirdPartyToken
+     * @return $this
+     */
+    public function setThirdPartyToken($thirdPartyToken)
+    {
+        $this->container['thirdPartyToken'] = $thirdPartyToken;
         return $this;
     }
     /**

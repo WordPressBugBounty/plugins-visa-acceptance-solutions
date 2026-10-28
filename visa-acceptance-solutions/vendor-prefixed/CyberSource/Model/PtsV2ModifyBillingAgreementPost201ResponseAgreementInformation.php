@@ -48,12 +48,12 @@ class PtsV2ModifyBillingAgreementPost201ResponseAgreementInformation implements 
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['id' => 'string', 'dateSigned' => 'string', 'dateCreated' => 'string', 'dateRevoked' => 'string', 'encodedHtml' => 'string', 'encodedHtmlPopup' => 'string', 'url' => 'string', 'transactionId' => 'string'];
+    protected static $swaggerTypes = ['id' => 'string', 'dateSigned' => 'string', 'dateCreated' => 'string', 'dateRevoked' => 'string', 'type' => 'string', 'frequency' => 'string', 'encodedHtml' => 'string', 'encodedHtmlPopup' => 'string', 'url' => 'string', 'transactionId' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['id' => null, 'dateSigned' => null, 'dateCreated' => null, 'dateRevoked' => null, 'encodedHtml' => null, 'encodedHtmlPopup' => null, 'url' => null, 'transactionId' => null];
+    protected static $swaggerFormats = ['id' => null, 'dateSigned' => null, 'dateCreated' => null, 'dateRevoked' => null, 'type' => null, 'frequency' => null, 'encodedHtml' => null, 'encodedHtmlPopup' => null, 'url' => null, 'transactionId' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PtsV2ModifyBillingAgreementPost201ResponseAgreementInformation implements 
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['id' => 'id', 'dateSigned' => 'dateSigned', 'dateCreated' => 'dateCreated', 'dateRevoked' => 'dateRevoked', 'encodedHtml' => 'encodedHtml', 'encodedHtmlPopup' => 'encodedHtmlPopup', 'url' => 'url', 'transactionId' => 'transactionId'];
+    protected static $attributeMap = ['id' => 'id', 'dateSigned' => 'dateSigned', 'dateCreated' => 'dateCreated', 'dateRevoked' => 'dateRevoked', 'type' => 'type', 'frequency' => 'frequency', 'encodedHtml' => 'encodedHtml', 'encodedHtmlPopup' => 'encodedHtmlPopup', 'url' => 'url', 'transactionId' => 'transactionId'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['id' => 'setId', 'dateSigned' => 'setDateSigned', 'dateCreated' => 'setDateCreated', 'dateRevoked' => 'setDateRevoked', 'encodedHtml' => 'setEncodedHtml', 'encodedHtmlPopup' => 'setEncodedHtmlPopup', 'url' => 'setUrl', 'transactionId' => 'setTransactionId'];
+    protected static $setters = ['id' => 'setId', 'dateSigned' => 'setDateSigned', 'dateCreated' => 'setDateCreated', 'dateRevoked' => 'setDateRevoked', 'type' => 'setType', 'frequency' => 'setFrequency', 'encodedHtml' => 'setEncodedHtml', 'encodedHtmlPopup' => 'setEncodedHtmlPopup', 'url' => 'setUrl', 'transactionId' => 'setTransactionId'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['id' => 'getId', 'dateSigned' => 'getDateSigned', 'dateCreated' => 'getDateCreated', 'dateRevoked' => 'getDateRevoked', 'encodedHtml' => 'getEncodedHtml', 'encodedHtmlPopup' => 'getEncodedHtmlPopup', 'url' => 'getUrl', 'transactionId' => 'getTransactionId'];
+    protected static $getters = ['id' => 'getId', 'dateSigned' => 'getDateSigned', 'dateCreated' => 'getDateCreated', 'dateRevoked' => 'getDateRevoked', 'type' => 'getType', 'frequency' => 'getFrequency', 'encodedHtml' => 'getEncodedHtml', 'encodedHtmlPopup' => 'getEncodedHtmlPopup', 'url' => 'getUrl', 'transactionId' => 'getTransactionId'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -104,6 +104,8 @@ class PtsV2ModifyBillingAgreementPost201ResponseAgreementInformation implements 
         $this->container['dateSigned'] = isset($data['dateSigned']) ? $data['dateSigned'] : null;
         $this->container['dateCreated'] = isset($data['dateCreated']) ? $data['dateCreated'] : null;
         $this->container['dateRevoked'] = isset($data['dateRevoked']) ? $data['dateRevoked'] : null;
+        $this->container['type'] = isset($data['type']) ? $data['type'] : null;
+        $this->container['frequency'] = isset($data['frequency']) ? $data['frequency'] : null;
         $this->container['encodedHtml'] = isset($data['encodedHtml']) ? $data['encodedHtml'] : null;
         $this->container['encodedHtmlPopup'] = isset($data['encodedHtmlPopup']) ? $data['encodedHtmlPopup'] : null;
         $this->container['url'] = isset($data['url']) ? $data['url'] : null;
@@ -199,6 +201,42 @@ class PtsV2ModifyBillingAgreementPost201ResponseAgreementInformation implements 
     public function setDateRevoked($dateRevoked)
     {
         $this->container['dateRevoked'] = $dateRevoked;
+        return $this;
+    }
+    /**
+     * Gets type
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->container['type'];
+    }
+    /**
+     * Sets type
+     * @param string $type Identifies the type of schedule as either recurring, one-off, split or usage.  Possible values: - recurring - oneoff - split - usage
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->container['type'] = $type;
+        return $this;
+    }
+    /**
+     * Gets frequency
+     * @return string
+     */
+    public function getFrequency()
+    {
+        return $this->container['frequency'];
+    }
+    /**
+     * Sets frequency
+     * @param string $frequency Regularity with which the event occurs.  Possible values: - annual - monthly - quarterly - semiannual - weekly - daily - adhoc - intraday - fortnightly
+     * @return $this
+     */
+    public function setFrequency($frequency)
+    {
+        $this->container['frequency'] = $frequency;
         return $this;
     }
     /**

@@ -48,7 +48,7 @@ class PaymentsProductsUnifiedCheckoutSubscriptionInformation implements ArrayAcc
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['enabled' => 'bool', 'enablementStatus' => 'string', 'selfServiceability' => 'string', 'features' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsUnifiedCheckoutSubscriptionInformationFeatures'];
+    protected static $swaggerTypes = ['enabled' => 'bool', 'enablementStatus' => 'string', 'selfServiceability' => 'string', 'features' => '\Pymt_Vas\Dependencies\CyberSource\Model\UcFeatureSubscription'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -181,7 +181,7 @@ class PaymentsProductsUnifiedCheckoutSubscriptionInformation implements ArrayAcc
     }
     /**
      * Gets features
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsUnifiedCheckoutSubscriptionInformationFeatures
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\UcFeatureSubscription
      */
     public function getFeatures()
     {
@@ -189,7 +189,7 @@ class PaymentsProductsUnifiedCheckoutSubscriptionInformation implements ArrayAcc
     }
     /**
      * Sets features
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsUnifiedCheckoutSubscriptionInformationFeatures $features
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\UcFeatureSubscription $features
      * @return $this
      */
     public function setFeatures($features)

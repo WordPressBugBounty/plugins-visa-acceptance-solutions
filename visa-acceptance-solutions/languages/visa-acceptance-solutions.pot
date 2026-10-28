@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Visa Acceptance Solutions\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 12:26+0000\n"
+"POT-Creation-Date: 2026-10-13 11:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -13,247 +13,321 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.6.9; wp-6.5.3\n"
-"X-Domain: wc-vas-gateway"
-
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:178
-msgid " Authorization Failed"
-msgstr ""
-
-#. %s - Transaction ID
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:167
-#, php-format
-msgid " Authorization Failed: (Transaction ID %s)"
-msgstr ""
-
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:174
-msgid " Transaction Failed ("
-msgstr ""
+"X-Loco-Version: 2.8.9; wp-7.1.3; php-8.2.0\n"
+"X-Domain: visa-acceptance-solutions"
 
 #. %1$s - reason
-#: includes/api/payments/class-visa-acceptance-auth-reversal.php:251
+#: includes/api/payments/class-visa-acceptance-auth-reversal.php:281
 #, php-format
 msgid " Voided because of reason - %1$s."
 msgstr ""
 
 #. %1$s -subscription order number, %2$s - subscription order number.
-#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:259
+#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:376
 #, php-format
 msgid "#%s"
 msgstr ""
 
-#. %1$s - payment gateway title , %2$s - transaction amount. Definitions: Capture, as in capture funds from a credit card.
-#: includes/api/payments/class-visa-acceptance-capture.php:79
+#. %1$s: gateway title, %2$s: transaction ID
+#: includes/trait-visa-acceptance-payment-gateway-includes.php:91
 #, php-format
-msgid "%1$s Capture of %2$s Approved"
+msgid "%1$s - Authorization Failed: (Transaction ID %2$s)"
+msgstr ""
+
+#. %1$s - payment gateway title , %2$s - transaction amount. Definitions: Capture, as in capture funds from a credit card.
+#: includes/api/payments/class-visa-acceptance-capture.php:104
+#, php-format
+msgid "%1$s - Capture of %2$s Approved:"
+msgstr ""
+
+#. %1$s - payment gateway title
+#: includes/api/payments/class-visa-acceptance-partial-capture.php:183
+#, php-format
+msgid "%1$s - Full Capture Complete"
+msgstr ""
+
+#. %1$s - payment gateway title, %2$s - captured amount
+#: includes/api/payments/class-visa-acceptance-partial-capture.php:197
+#, php-format
+msgid "%1$s - Partial Capture of %2$s Approved:"
+msgstr ""
+
+#. %1$s: gateway title, %2$s: error message
+#: includes/trait-visa-acceptance-payment-gateway-includes.php:99
+#, php-format
+msgid "%1$s - Transaction Failed (%2$s)."
 msgstr ""
 
 #. %1$s - payment method name, %2$s - last four digits of the card.
-#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:239
+#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:355
 #, php-format
 msgid "%1$s card ending with %2$s"
 msgstr ""
 
+#. %1$s - payment method name, %2$s - last four digits of the account.
+#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:352
+#, php-format
+msgid "%1$s eCheck ending with %2$s"
+msgstr ""
+
+#. 1: Account type 2: Last 4 digits of the account number
+#: includes/api/payments/class-visa-acceptance-payment-token-echeck.php:42
+#, php-format
+msgid "%1$s ending in %2$s"
+msgstr ""
+
 #. %1$s - payment gateway title , %2$s - error message
-#: includes/api/payments/class-visa-acceptance-refund.php:188
-#: includes/api/payments/class-visa-acceptance-refund.php:196
+#: includes/api/payments/class-visa-acceptance-refund.php:322
 #, php-format
 msgid "%1$s Refund Failed. %2$s"
 msgstr ""
 
+#. 1: note prefix 2: status 3: payment action type (AUTH or CAPTURE)
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:1538
+#, php-format
+msgid "%1$s Status: %2$s via UC response webhook. Payment Action: %3$s"
+msgstr ""
+
 #. Placeholders: %1$s - payment gateway title, %2$s - error message. Void as in to void an order.
-#: includes/api/payments/class-visa-acceptance-auth-reversal.php:119
+#: includes/api/payments/class-visa-acceptance-auth-reversal.php:129
 #, php-format
 msgid "%1$s Void Failed: %2$s"
 msgstr ""
 
 #. Placeholders: %1$s - payment gateway title, %2$s - error code, %3$s - error message. Void as in to void an order.
-#: includes/api/payments/class-visa-acceptance-auth-reversal.php:111
+#: includes/api/payments/class-visa-acceptance-auth-reversal.php:121
 #, php-format
 msgid "%1$s Void Failed: %2$s - %3$s"
 msgstr ""
 
+#. 1: item name, 2: quantity to capture, 3: remaining quantity
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:750
+#, php-format
+msgid "%1$s: Cannot capture %2$d (only %3$d remaining)"
+msgstr ""
+
+#. %s: gateway title
+#: includes/trait-visa-acceptance-payment-gateway-includes.php:108
+#, php-format
+msgid "%s - Authorization Failed"
+msgstr ""
+
+#. %s: field title
+#: includes/class-visa-acceptance-settings-validator.php:55
+#, php-format
+msgid "%s contains invalid characters."
+msgstr ""
+
 #. %s - label of the required field.
-#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:534
+#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:1093
 #, php-format
 msgid "%s is required."
 msgstr ""
 
-#. Placeholders: %1$s - payment gateway title, %2$s - error code, %3$s - error message. Void as in to void an order.
+#. %s: field title
+#: includes/class-visa-acceptance-settings-validator.php:44
+#, php-format
+msgid "%s is required. Please fill out this field."
+msgstr ""
+
+#. %d: remaining quantity
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:859
+msgid "(%d remaining to capture)"
+msgstr ""
+
 #. %s - transaction id
-#. %1$s - payment gateway title , %2$s - transaction amount. Definitions: Capture, as in capture funds from a credit card.
-#: includes/api/payments/class-visa-acceptance-auth-reversal.php:261
-#: includes/api/payments/class-visa-acceptance-refund.php:170
-#: includes/api/payments/class-visa-acceptance-capture.php:91
+#: includes/api/payments/class-visa-acceptance-refund.php:285
 #, php-format
 msgid "(Transaction ID %s)"
 msgstr ""
 
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:1045
-msgid "A valid URL was not provided."
+#. %s: plugin name
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:216
+#, php-format
+msgid ""
+"<strong>%s</strong> is currently in Test environment. No real transactions "
+"will be processed."
+msgstr ""
+
+#. %s: existing capture/settlement transaction ID
+#: includes/api/payments/class-visa-acceptance-capture.php:74
+#, php-format
+msgid ""
+"A settlement has already been initiated for this order (Transaction ID: %s). "
+"Manual capture blocked to prevent duplicate settlement."
+msgstr ""
+
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:273
+msgid ""
+"A settlement is already pending for this order. Manual capture is disabled "
+"to prevent duplicate charges."
 msgstr ""
 
 #. Description of the plugin
 msgid "Accept payments in WooCommerce with Visa Acceptance Solutions."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:487
-msgid "Accepted Card Types"
+#: includes/api/payments/class-visa-acceptance-payment-methods.php:552
+msgid "Account Saved Successfully."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:522
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1279
+msgid "Action"
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:585
 msgid ""
 "Allow customers to securely save their payment details for future checkout."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:558
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:904
+msgid "Already captured:"
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:627
 msgid "American Express"
 msgstr ""
 
-#: includes/api/payments/class-visa-acceptance-payment-methods.php:201
-msgid "An error occurred while processing your card. Please try again."
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:913
+msgid "Amount to capture:"
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:162
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:965
+msgid "An error occurred while refreshing payment status."
+msgstr ""
+
+#: includes/trait-visa-acceptance-payment-gateway-public.php:164
 msgid "An error occurred, please try again or try an alternate form of payment"
 msgstr ""
 
-#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:447
+#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:978
 msgid ""
 "An error occurred, please try again or try an alternate form of payment."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:418
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:835
+msgid "API credentials not configured."
+msgstr ""
+
+#: includes/class-visa-acceptance-settings-validator.php:154
+msgid "API Key contains invalid characters."
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:497
 msgid "API Key Detail"
 msgstr ""
 
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:380
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:383
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:439
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:442
-msgid "API Key Detail is required. Please fill out this field."
+#: includes/class-visa-acceptance-settings-validator.php:146
+msgid "API Key is required."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:424
-msgid "API Shared Secret Key"
-msgstr ""
-
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:394
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:397
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:453
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:456
-msgid "API Shared Secret Key is required. Please fill out this field."
-msgstr ""
-
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:504
-msgid "Apple Pay"
-msgstr ""
-
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:82
+#: includes/visa-acceptance-translation-constants.php:98
 msgid "Approved (Transaction ID "
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:181
-msgid "Are you sure you want to delete this payment method?"
-msgstr ""
-
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:144
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:309
 msgid ""
 "Are you sure you wish to process this capture? The action cannot be reversed."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:384
-msgid "Authorization"
-msgstr ""
-
 #. Placeholders: %1$s - <a> tag
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:19
+#: includes/visa-acceptance-translation-constants.php:35
 #, php-format
 msgid "Authorization Approved: (Transaction ID %s)"
 msgstr ""
 
 #. Placeholders: %1$s - <a> tag
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:57
+#: includes/visa-acceptance-translation-constants.php:73
 #, php-format
 msgid "Authorization Rejected by Decision Manager: (Transaction ID %s)"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:394
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:473
 msgid ""
 "Automatically capture orders when they are changed to Processing or "
 "Completed."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:355
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:442
 msgid "By enabling the gateway credit card will be enabled by default."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-admin.php:193
-#: includes/trait-visa-acceptance-payment-gateway-admin.php:206
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:932
+msgid "Cancel"
+msgstr ""
+
+#. %s: amount to capture
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:926
+#, php-format
+msgid "Capture %s via Visa Acceptance Solutions"
+msgstr ""
+
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:257
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:281
 msgid "Capture Charge"
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:76
+#: includes/visa-acceptance-translation-constants.php:92
 msgid "Capture of"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:397
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:476
 msgid "Capture Paid Orders"
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:1109
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:1119
-msgid "Card deletion failed. Please try again."
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:890
+msgid "Capture shipping:"
 msgstr ""
 
-#: includes/api/payments/class-visa-acceptance-payment-methods.php:314
+#: includes/api/payments/class-visa-acceptance-payment-methods.php:333
+#: includes/api/payments/class-visa-acceptance-payment-methods.php:353
 msgid "Card is already saved. Please try with another card."
 msgstr ""
 
-#: includes/api/payments/class-visa-acceptance-payment-methods.php:446
+#: includes/api/payments/class-visa-acceptance-payment-methods.php:553
 msgid "Card Saved Succesfully."
 msgstr ""
 
-#: includes/api/payments/class-visa-acceptance-reporting.php:101
-#: includes/api/payments/class-visa-acceptance-reporting.php:114
+#: includes/api/payments/class-visa-acceptance-reporting.php:105
+#: includes/api/payments/class-visa-acceptance-reporting.php:123
 msgid "Case Management System."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:383
-msgid "Charge"
-msgstr ""
-
 #. Placeholders: %1$s - <a> tag
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:26
+#: includes/visa-acceptance-translation-constants.php:42
 #, php-format
 msgid "Charge Approved: (Transaction ID %s)."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:391
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:465
+msgid "Charge Virtual Orders"
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:469
 msgid "Charge Virtual-Only Orders"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:379
-msgid ""
-"Charge will automatically capture/settle a transaction if the authorization "
-"is approved. Authorization simply authorizes the order total for capture "
-"later."
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:572
+msgid "Checkout Display Mode"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:571
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:602
+msgid "Checkout Version (optional)"
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:637
 msgid "China UnionPay"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:375
-msgid "Choose from a range of secure Payment Options."
-msgstr ""
-
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:556
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:462
 msgid "Choose from a range of secure payment options."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:506
-msgid "Click to Pay"
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:573
+msgid ""
+"Choose how the Unified Checkout payment form is displayed. Embedded: the "
+"payment details form appears inline on the checkout page. Sidebar: the "
+"payment details form opens as a side panel."
 msgstr ""
 
 #: includes/class-visa-acceptance-payment-gateway-loader.php:185
@@ -265,40 +339,24 @@ msgctxt "coordinating conjunction for a list of items: a, b, and c"
 msgid "and"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:475
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:554
 msgid "Debug Mode"
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:1012
-msgid "Default"
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1309
+msgid "Delete"
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:942
-msgid "Default?"
-msgstr ""
-
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:371
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:458
 msgid "Description"
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:939
-msgid "Details"
-msgstr ""
-
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:495
-msgid "Digital Payment Methods"
-msgstr ""
-
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:569
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:635
 msgid "Diners"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:559
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:628
 msgid "Discover"
-msgstr ""
-
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:535
-msgid "Display the Card Security Code field when paying with a saved card"
 msgstr ""
 
 #. Docs as in Documentation
@@ -306,199 +364,236 @@ msgstr ""
 msgid "Docs"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:516
-msgid "Enable 3D Secure"
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:607
+msgid "e.g 1.x"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:542
-msgid "Enable Cybersource Fraud Screening."
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:577
+msgid "Embedded"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:454
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:569
+msgid "Enable Express Pay"
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:599
+msgid "Enable Fraud Webhook Subscription"
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:533
 msgid "Enable MLE Authentication"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:529
-msgid "Enable Strong Customer Authentication while saving card"
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:591
+msgid "Enable Network Token"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:359
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:472
+msgid "Enable Paid Capture"
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:551
+msgid "Enable Response MLE"
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:446
 msgid "Enable the gateway"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:354
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:596
+msgid ""
+"Enable this option when using Visa Acceptance Solutions fraud management "
+"services. The plugin will automatically register and maintain the required "
+"webhook subscriptions."
+msgstr ""
+
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1319
+msgid ""
+"Enable webhook features in settings above and save to automatically "
+"subscribe."
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:441
 msgid "Enable/Disable"
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-express-pay-public.php:199
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:179
-#: includes/gateway/class-visa-acceptance-blocks-handler-unified-checkout.php:113
+#: includes/gateway/class-visa-acceptance-blocks-handler-unified-checkout.php:186
 msgid "encrypt"
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:312
-msgid "Enter Security Code"
-msgstr ""
-
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:100
+#: includes/visa-acceptance-translation-constants.php:116
 msgid "Enter valid amount"
 msgstr ""
 
 #. environment as in a software environment (test/production)
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:401
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:480
 msgid "Environment"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:460
-msgid "EX. C:/users/folderName/ Or /var/folderName/"
+#. %s: error message
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:813
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:862
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:716
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1057
+#, php-format
+msgid "Error: %s"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:466
-msgid "EX. MessageLevelEncryptionCertificate"
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1278
+msgid "Event Types"
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-express-pay-public.php:74
-#: public/class-visa-acceptance-payment-gateway-express-pay-public.php:132
-msgid "Express Checkout"
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:539
+msgid "EX. C:/users/folderName/fileName.p12"
 msgstr ""
 
-#: includes/gateway/class-visa-acceptance-express-pay-unified-checkout.php:113
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:565
+#: includes/gateway/class-visa-acceptance-express-pay-unified-checkout.php:111
 msgid "Express Pay"
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:88
+#: includes/visa-acceptance-translation-constants.php:104
 msgid "Failed to capture the order."
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:1196
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:1206
-msgid "Failed to update as default payment method. Please try again."
+#. %d: HTTP response code
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:880
+msgid "Failed to delete webhook. HTTP code: %d"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:538
-msgid "Fraud Screening"
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:961
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1053
+msgid "Failed to refresh payment status."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:505
-msgid "Google Pay"
+#: includes/class-visa-acceptance-settings-validator.php:175
+msgid "File path contains invalid characters."
+msgstr ""
+
+#: includes/class-visa-acceptance-settings-validator.php:195
+msgid "Filename contains invalid characters."
+msgstr ""
+
+#: includes/class-visa-acceptance-settings-validator.php:201
+msgid "Filename format is invalid."
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:594
+msgid "Fraud Management"
 msgstr ""
 
 #. Author URI of the plugin
 msgid "https://visaacceptance.com"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:526
-msgid "If enabled, card holder will be 3DS challenged when saving a card."
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:566
+msgid ""
+"If not enabled, Digital Payment Methods load in the main checkout widget."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:388
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:466
 msgid ""
 "If the order contains exclusively virtual items, enable this to immediately "
 "charge, rather than authorize, the transaction."
 msgstr ""
 
-#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:162
+#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:185
 msgid "Inactive"
 msgstr ""
 
-#: includes/api/class-visa-acceptance-response.php:83
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:788
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:919
+msgid "Insufficient permissions."
+msgstr ""
+
+#: includes/api/visa-acceptance-response-constants.php:97
 msgid "Internal server error. Please try again later."
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:421
-msgid "Invalid payment method"
+#. %d: item ID
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:742
+msgid "Invalid item ID: %d"
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:94
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:925
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:542
+msgid "Invalid order ID."
+msgstr ""
+
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1033
+msgid "Invalid order or transaction ID."
+msgstr ""
+
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:682
+msgid "Invalid order."
+msgstr ""
+
+#: includes/visa-acceptance-translation-constants.php:110
 msgid "Invalid request"
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-express-pay-public.php:170
-msgid ""
-"Item in your order is a subscription/recurring purchase. By continuing with "
-"payment, you agree that your payment method will be automatically charged at "
-"the price and frequency listed here until it ends or you cancel."
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:795
+msgid "Invalid webhook ID."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:570
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:639
+msgid "Jaywan"
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:636
 msgid "JCB"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:457
-msgid "Key Directory Path"
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:227
+msgid "JSON content required"
 msgstr ""
 
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:476
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:479
-msgid "Key Directory Path is required. Please fill out this field."
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:536
+msgid "Key File Path"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:463
-msgid "Key File Name"
-msgstr ""
-
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:503
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:506
-msgid "Key File Name is invalid. Please fill out this field."
-msgstr ""
-
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:490
-msgid "Key File Name is required. Please fill out this field."
-msgstr ""
-
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:493
-msgid "Key File Name is requiredsss. Please fill out this field."
-msgstr ""
-
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:469
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:543
 msgid "Key Password"
 msgstr ""
 
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:517
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:520
-msgid "Key Password is required. Please fill out this field."
-msgstr ""
-
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:572
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:638
 msgid "Maestro"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:557
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:626
 msgid "MasterCard"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:412
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:491
 msgid "Merchant ID"
 msgstr ""
 
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:366
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:369
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:425
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:428
-msgid "Merchant ID is invalid. Please fill out this field."
+#: includes/class-visa-acceptance-settings-validator.php:129
+msgid "Merchant ID contains invalid characters."
 msgstr ""
 
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:352
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:355
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:411
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:414
-msgid "Merchant ID is required. Please fill out this field."
+#: includes/class-visa-acceptance-settings-validator.php:121
+msgid "Merchant ID is required."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:451
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:530
 msgid "Message Level Encryption"
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-express-pay-public.php:567
-msgid "No saved address found. Kindly add a shipping address and try again."
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:537
+msgid "Missing required parameters."
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-express-pay-public.php:557
-msgid "Note: This order may include shipping charges and applicable taxes."
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1301
+msgid "N/A"
 msgstr ""
 
-#: includes/api/payments/class-visa-acceptance-payment-methods.php:183
-msgid "Note: Verification amount reversal pending."
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:588
+msgid "Network Tokens"
+msgstr ""
+
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1318
+msgid "No webhook subscriptions found."
 msgstr ""
 
 #: includes/class-visa-acceptance-payment-gateway-loader.php:165
@@ -506,151 +601,280 @@ msgctxt "noun"
 msgid "Support"
 msgstr ""
 
-#. Placeholders: %1$s - <a> tag, %2$s - </a> tag
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:481
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:560
 msgid "Off"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:482
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:561
 msgid "On"
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:351
-msgid ""
-"One or more items in your order is a subscription/recurring purchase. By "
-"continuing with payment, you agree that your payment method will be "
-"automatically charged at the price and frequency listed here until it ends "
-"or you cancel."
-msgstr ""
-
-#: public/class-visa-acceptance-payment-gateway-express-pay-public.php:76
-msgid "Or continue below"
-msgstr ""
-
-#: includes/api/payments/class-visa-acceptance-reporting.php:101
+#: includes/api/payments/class-visa-acceptance-reporting.php:105
 msgid "Order Accepted in"
 msgstr ""
 
-#: includes/api/payments/class-visa-acceptance-capture.php:61
+#. 1: reviewer decision code, 2: capture transaction ID
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:861
+#, php-format
+msgid ""
+"Order accepted via Fraud Management webhook (Reviewer decision: %1$s). "
+"CyberSource capture/settlement pending (ID: %2$s) — manual capture disabled."
+msgstr ""
+
+#. %s: reviewer decision code from CyberSource, e.g. ACCEPT
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:784
+#, php-format
+msgid "Order Accepted via Fraud Management webhook. Reviewer decision: %s."
+msgstr ""
+
+#. %s: reviewer decision code from CyberSource, e.g. REJECT or REJECTED_REVIEW
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:1031
+#, php-format
+msgid ""
+"Order cancelled: Fraud Management review decision %s via webhook "
+"notification."
+msgstr ""
+
+#: includes/api/payments/class-visa-acceptance-capture.php:86
 msgid "Order cannot be captured"
 msgstr ""
 
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:930
+msgid "Order not found."
+msgstr ""
+
 #. %s - payment gateway title
-#: includes/api/payments/class-visa-acceptance-refund.php:113
+#: includes/api/payments/class-visa-acceptance-refund.php:228
 msgid "Order refunded."
 msgstr ""
 
-#: includes/api/payments/class-visa-acceptance-reporting.php:114
+#: includes/api/payments/class-visa-acceptance-reporting.php:123
 msgid "Order Rejected in"
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:44
+#: includes/visa-acceptance-translation-constants.php:60
 msgid ""
 "Order requires manual review in Visa Acceptance Solutions Case Management "
 "system."
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-express-pay-public.php:75
-#: public/class-visa-acceptance-payment-gateway-express-pay-public.php:133
-#: includes/gateway/class-visa-acceptance-express-pay-unified-checkout.php:114
-msgid "Pay with Digital Payment Via Unified Checkout"
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:685
+msgid ""
+"Order set to pending payment: flagged for Fraud Management review via "
+"webhook notification."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:512
-msgid "Payer Authentication / 3D Secure"
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1047
+msgid "Order updated."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:372
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:262
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:286
+msgid "Partial Capture"
+msgstr ""
+
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:704
+msgid "Partial capture completed successfully."
+msgstr ""
+
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:709
+#: includes/api/payments/class-visa-acceptance-partial-capture.php:221
+msgid "Partial capture failed."
+msgstr ""
+
+#. %1$s - captured amount, %2$s - transaction ID
+#: includes/api/payments/class-visa-acceptance-partial-capture.php:215
+#, php-format
+msgid "Partial Capture of %1$s Approved (Transaction ID %2$s)"
+msgstr ""
+
+#. 1: captured amount, 2: original amount, 3: reviewer decision
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:839
+#, php-format
+msgid ""
+"Partial Capture: %1$s of %2$s accepted via Fraud Management webhook. "
+"Reviewer decision: %3$s."
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:949
+msgid "Payment accepted via refresh status check."
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:951
+msgid "Payment failed - detected via refresh status."
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:459
 msgid "Payment method description that the customer will see on your website."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:364
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:451
 msgid "Payment method title that the customer will see in the checkout page."
 msgstr ""
 
-#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:373
+#. %s: transaction ID
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1121
+#, php-format
+msgid "Payment REFUNDED. Transaction ID: %s"
+msgstr ""
+
+#. %s: payment status
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:958
+#, php-format
+msgid "Payment status refreshed successfully. Status: %s"
+msgstr ""
+
+#. %s: payment status
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1047
+#, php-format
+msgid "Payment status refreshed: %s."
+msgstr ""
+
+#. %s: payment status
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1118
+#, php-format
+msgid "Payment status: %s"
+msgstr ""
+
+#. %s: payment status
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1088
+#, php-format
+msgid "Payment status: %s - failed."
+msgstr ""
+
+#. %s: payment status
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1082
+#, php-format
+msgid "Payment status: %s - pending."
+msgstr ""
+
+#. %s: transaction ID
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1076
+#, php-format
+msgid "Payment status: COMPLETED. Transaction ID: %s"
+msgstr ""
+
+#. %s: transaction ID
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1094
+#, php-format
+msgid "Payment status: REVERSED. Transaction ID: %s"
+msgstr ""
+
+#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:891
 msgid "Payment Token"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:507
-msgid "Paze"
-msgstr ""
-
-#: includes/api/payments/class-visa-acceptance-payment-methods.php:191
-msgid "Please add the address to proceed."
-msgstr ""
-
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:904
-msgid "Please enter card details"
-msgstr ""
-
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:316
-msgid "Please enter valid Security Code"
-msgstr ""
-
-#: includes/gateway/class-visa-acceptance-blocks-handler-unified-checkout.php:115
-#: includes/gateway/class-visa-acceptance-express-pay-unified-checkout.php:126
-msgid "Please enter valid Security Code."
-msgstr ""
-
-#: includes/trait-visa-acceptance-payment-gateway-public.php:217
+#: includes/trait-visa-acceptance-payment-gateway-public.php:219
 msgid "Please enter your card expiration date and try again."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:203
+#: includes/trait-visa-acceptance-payment-gateway-public.php:205
 msgid "Please enter your card number and try again."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:181
+#: includes/trait-visa-acceptance-payment-gateway-public.php:183
 msgid "Please enter your card verification number and try again."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:192
+#: includes/trait-visa-acceptance-payment-gateway-public.php:194
 msgid "Please select the card type and try again."
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:1105
-msgid "Please set another card to default and try deleting the card again."
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1277
+msgid "Product Id"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:406
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:485
 msgid "Production"
 msgstr ""
 
-#. %1$s - payment gateway title , %2$s - a monetary amount
-#: includes/api/payments/class-visa-acceptance-refund.php:148
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:866
+msgid "Qty to capture:"
+msgstr ""
+
+#. 1: amount available for refund, 2: amount that remains authorized but uncaptured
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:756
 #, php-format
-msgid "Refund amount of %1$s approved."
+msgid ""
+"Refund amount exceeds captured amount. Only %1$s is available to refund. "
+"%2$s remains authorized (uncaptured) and cannot be reversed separately once "
+"a capture has occurred; it will be released automatically if \"release "
+"remaining balance\" was selected during capture, or will expire per the "
+"issuing bank's authorization hold period."
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:705
+msgid "Refund failed."
+msgstr ""
+
+#: includes/api/payments/class-visa-acceptance-refund.php:130
+#: includes/api/payments/class-visa-acceptance-refund.php:214
+msgid "Refund Failed:"
+msgstr ""
+
+#. %1$s - a monetary amount
+#: includes/api/payments/class-visa-acceptance-refund.php:273
+#, php-format
+msgid "Refund of %1$s Approved:"
+msgstr ""
+
+#. 1: amount already refunded, 2: amount that failed, 3: failure reason
+#: includes/api/payments/class-visa-acceptance-refund.php:191
+#, php-format
+msgid ""
+"Refund partially completed: %1$s was refunded before a %2$s portion failed - "
+"%3$s. Please verify the processor account and reconcile manually if needed."
 msgstr ""
 
 #. Placeholders: %1$s - <a> tag
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:107
+#: includes/visa-acceptance-translation-constants.php:123
 #, php-format
 msgid "Refunded because of reason - %1$s."
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:357
-msgid "Save payment information to my account for future purchases."
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:610
+msgid "Registered Webhooks"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:532
-msgid "Saved Card Verification"
+#: includes/api/payments/class-visa-acceptance-refund.php:158
+msgid ""
+"Requested amount exceeds the total balance remaining across all captured "
+"transactions."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:501
-msgid "Select one or more Digital Payment Methods"
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:548
+msgid "Response Message Level Encryption"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:402
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:503
+msgid "REST Shared Secret"
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:782
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:913
+msgid "Security check failed."
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:481
 msgid "Select the gateway environment to use for transactions."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:476
+#. Placeholders: %1$s - <a> tag, %2$s - </a> tag
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:556
 msgid "Select to enable request/response logs."
 msgstr ""
 
-#: includes/api/class-visa-acceptance-response.php:77
+#: includes/api/visa-acceptance-response-constants.php:91
 msgid "Session expired. Please try again."
+msgstr ""
+
+#: includes/api/request/payments/class-visa-acceptance-key-generation-request.php:1394
+#: includes/api/request/payments/class-visa-acceptance-key-generation-request.php:1469
+msgid "Shipping"
+msgstr ""
+
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:578
+msgid "Sidebar"
 msgstr ""
 
 #: includes/trait-visa-acceptance-payment-gateway-admin.php:62
@@ -663,241 +887,276 @@ msgctxt "software environment"
 msgid "Test"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:147
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:314
 msgid ""
-"Something went wrong, and the capture could no be completed. Please try "
+"Something went wrong, and the capture could not be completed. Please try "
 "again."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:525
-msgid "Strong Customer Authentication"
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:603
+msgid ""
+"Specify the unified checkout version (e.g. 1.0). If provided, it must start "
+"with 1.x."
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:954
-msgid "Subscriptions"
-msgstr ""
-
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:407
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:486
 msgid "Test"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:438
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:517
 msgid "Test API Key Detail"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:445
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:524
 msgid "Test API Shared Secret Key"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:431
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:510
 msgid "Test Merchant ID"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:419
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:498
 msgid "The API Key ID for your Visa Acceptance Solutions account."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:439
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:518
 msgid "The API Key ID for your Visa Acceptance Solutions sandbox account."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:425
-msgid "The API Shared Secret Key for your Visa Acceptance Solutions account."
-msgstr ""
-
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:446
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:525
 msgid ""
 "The API Shared Secret Key for your Visa Acceptance Solutions sandbox account."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:225
+#: includes/trait-visa-acceptance-payment-gateway-public.php:227
 msgid "The bank account number is invalid, please re-enter and try again."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:222
+#: includes/trait-visa-acceptance-payment-gateway-public.php:224
 msgid "The bank routing number is invalid, please re-enter and try again."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:208
+#: includes/trait-visa-acceptance-payment-gateway-public.php:210
 msgid "The card expiration date is invalid, please re-enter and try again."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:211
+#: includes/trait-visa-acceptance-payment-gateway-public.php:213
 msgid "The card expiration month is invalid, please re-enter and try again."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:214
+#: includes/trait-visa-acceptance-payment-gateway-public.php:216
 msgid "The card expiration year is invalid, please re-enter and try again."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:239
+#: includes/trait-visa-acceptance-payment-gateway-public.php:241
 msgid ""
 "The card is inactive or not authorized for card-not-present transactions, "
 "please use an alternate card or other form of payment."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:200
+#: includes/trait-visa-acceptance-payment-gateway-public.php:202
 msgid "The card number is invalid, please re-enter and try again."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:189
-#: includes/trait-visa-acceptance-payment-gateway-public.php:197
+#: includes/trait-visa-acceptance-payment-gateway-public.php:191
+#: includes/trait-visa-acceptance-payment-gateway-public.php:199
 msgid ""
 "The card type is invalid or does not correlate with the credit card number.  "
 "Please try again or use an alternate card or other form of payment."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:186
+#: includes/trait-visa-acceptance-payment-gateway-public.php:188
 msgid ""
 "The card type is not accepted, please use an alternate card or other form of "
 "payment."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:413
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:492
 msgid "The Merchant ID for your Visa Acceptance Solutions account."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:432
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:511
 msgid "The Merchant ID for your Visa Acceptance Solutions sandbox account."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:168
-#: includes/trait-visa-acceptance-payment-gateway-public.php:175
+#: includes/trait-visa-acceptance-payment-gateway-public.php:170
+#: includes/trait-visa-acceptance-payment-gateway-public.php:177
 msgid ""
 "The order is being placed on hold for review. Please contact us to complete "
 "the transaction."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:248
+#: includes/trait-visa-acceptance-payment-gateway-public.php:250
 msgid ""
 "The provided address does not match the billing address for cardholder. "
 "Please verify the address and try again."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:230
+#: includes/trait-visa-acceptance-payment-gateway-public.php:232
 msgid ""
 "The provided card is expired, please use an alternate card or other form of "
 "payment."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-admin.php:187
-#: includes/trait-visa-acceptance-payment-gateway-admin.php:200
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:504
+msgid ""
+"The REST API Shared Secret Key for your Visa Acceptance Solutions account."
+msgstr ""
+
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:251
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:275
 msgid "This charge has been fully captured."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-admin.php:189
-#: includes/trait-visa-acceptance-payment-gateway-admin.php:202
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:253
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:277
 msgid "This Order cannot be captured."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:363
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:936
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:450
 msgid "Title"
 msgstr ""
 
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:333
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:336
-msgid "Title is invalid. Please fill out this field."
+#: includes/class-visa-acceptance-settings-validator.php:223
+msgid "Title contains invalid characters."
 msgstr ""
 
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:319
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:322
-msgid "Title is required. Please fill out this field."
+#: includes/class-visa-acceptance-settings-validator.php:217
+msgid "Title is required."
 msgstr ""
 
 #. %s - payment method name
-#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:85
+#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:107
 #, php-format
 msgid "To use WooCommerce subscriptions with %s, please enable Tokenization."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:519
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:582
 msgid "Tokenization"
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:38
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:215
+msgid "Too many requests"
+msgstr ""
+
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:899
+msgid "Total authorized amount:"
+msgstr ""
+
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:909
+msgid "Total available to capture:"
+msgstr ""
+
+#: includes/visa-acceptance-translation-constants.php:54
 msgid "Transaction Authorized (Authorization only transaction)."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:32
+#: includes/visa-acceptance-translation-constants.php:48
 msgid "Transaction Authorized and Charged (Charge only transaction)."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:50
+#: includes/visa-acceptance-translation-constants.php:66
 msgid "Transaction held for Review (Authorization only transaction)."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:63
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:937
+msgid "Transaction ID not found."
+msgstr ""
+
+#: includes/visa-acceptance-translation-constants.php:79
 msgid "Transaction Rejected (Authorization only transaction)."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:378
-msgid "Transaction Type"
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:1510
+msgid "UC Response Webhook received."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:251
-#: public/class-visa-acceptance-payment-gateway-express-pay-public.php:92
-#: public/class-visa-acceptance-payment-gateway-express-pay-public.php:175
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:334
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:588
-#: includes/api/class-visa-acceptance-response.php:71
-#: includes/gateway/class-visa-acceptance-blocks-handler-unified-checkout.php:116
-#: includes/gateway/class-visa-acceptance-express-pay-unified-checkout.php:127
-#: includes/api/payments/payer_auth/class-visa-acceptance-enrollment.php:187
-#: includes/api/payments/payer_auth/class-visa-acceptance-setup.php:92
-#: includes/api/payments/payer_auth/class-visa-acceptance-validation.php:180
+#. 1: status 2: transaction ID
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:1542
+#, php-format
+msgid "UC response webhook: %1$s confirmed. Transaction ID: %2$s"
+msgstr ""
+
+#. %s: status
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:1553
+#, php-format
+msgid "UC response webhook: payment %s — awaiting external confirmation."
+msgstr ""
+
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:1568
+msgid "UC response webhook: payment COMPLETED confirmed."
+msgstr ""
+
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:1565
+msgid "UC response webhook: payment COMPLETED."
+msgstr ""
+
+#. 1: status 2: transaction ID
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:1557
+#, php-format
+msgid "UC response webhook: payment status %1$s. Transaction ID: %2$s"
+msgstr ""
+
+#. %s: status string
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:1575
+#, php-format
+msgid "UC response webhook: unhandled status %s. Order requires manual review."
+msgstr ""
+
+#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:291
+#: includes/trait-visa-acceptance-payment-gateway-public.php:253
+#: includes/api/visa-acceptance-response-constants.php:85
+#: includes/gateway/class-visa-acceptance-blocks-handler-unified-checkout.php:188
+#: includes/gateway/class-visa-acceptance-express-pay-unified-checkout.php:121
 msgid "Unable to complete your order. Please check your details and try again."
 msgstr ""
 
-#: includes/api/payments/class-visa-acceptance-payment-methods.php:405
-msgid "Unable to fetch card information. Please try again later."
+#. %s: Payment type (either 'eCheck' or 'card')
+#: includes/api/payments/class-visa-acceptance-payment-methods.php:498
+#, php-format
+msgid "Unable to fetch %s information. Please try again later."
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-express-pay-public.php:200
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:180
-#: includes/api/class-visa-acceptance-response.php:47
-#: includes/gateway/class-visa-acceptance-blocks-handler-unified-checkout.php:114
-#: includes/gateway/class-visa-acceptance-express-pay-unified-checkout.php:125
+#: includes/api/visa-acceptance-response-constants.php:61
+#: includes/gateway/class-visa-acceptance-blocks-handler-unified-checkout.php:187
+#: includes/gateway/class-visa-acceptance-express-pay-unified-checkout.php:120
 msgid ""
 "Unable to load the payment form. Please contact customer care for any "
 "assistance."
 msgstr ""
 
-#: includes/api/class-visa-acceptance-response.php:41
+#: includes/api/visa-acceptance-response-constants.php:55
 msgid ""
 "Unable to process your request. Please contact customer care for any "
 "assistance."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:153
-#: public/class-visa-acceptance-payment-gateway-express-pay-public.php:201
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:183
-#: includes/api/class-visa-acceptance-response.php:28
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:320
+#: includes/api/visa-acceptance-response-constants.php:42
 msgid "Unable to process your request. Please try again later."
 msgstr ""
 
-#: includes/api/payments/class-visa-acceptance-payment-methods.php:187
-#: includes/api/payments/class-visa-acceptance-payment-methods.php:319
+#: includes/api/payments/class-visa-acceptance-payment-methods.php:474
+msgid "Unable to retrieve payment information. Please try again."
+msgstr ""
+
+#: includes/api/payments/class-visa-acceptance-payment-methods.php:358
 msgid "Unable to save card. Please try again later."
 msgstr ""
 
-#: includes/api/payments/class-visa-acceptance-payment-methods.php:451
+#: includes/api/payments/class-visa-acceptance-payment-methods.php:559
 msgid "Unable to store card information. Please try again later."
 msgstr ""
 
-#: includes/api/class-visa-acceptance-response.php:21
+#: includes/api/visa-acceptance-response-constants.php:35
 msgid ""
 "Unauthorized error encountered. Please contact customer care for any "
 "assistance."
 msgstr ""
 
-#: includes/api/class-visa-acceptance-response.php:59
+#: includes/api/visa-acceptance-response-constants.php:73
 msgid ""
 "Unexpected error occurred, please contact customer care for any assistance."
-msgstr ""
-
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:325
-msgid "Use a new card"
 msgstr ""
 
 #: includes/class-visa-acceptance-payment-gateway-loader.php:170
@@ -905,99 +1164,107 @@ msgctxt "verb"
 msgid "Review"
 msgstr ""
 
-#: includes/api/payments/class-visa-acceptance-payment-methods.php:178
-msgid "Verification amount ($1) automatically reversed."
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:612
+msgid ""
+"View and manage your webhook subscriptions. Webhooks are automatically "
+"created when you enable the features above and save settings."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:556
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:625
 msgid "Visa"
 msgstr ""
 
 #. Name of the plugin
 #. Author of the plugin
-#: includes/class-visa-acceptance-payment-gateway-unified-checkout.php:555
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:367
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:217
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:454
 msgid "Visa Acceptance Solutions"
 msgstr ""
 
 #. Placeholders: %1$s - payment gateway title, %2$s - a monetary amount. Void as in to void an order.
-#: includes/api/payments/class-visa-acceptance-auth-reversal.php:240
+#: includes/api/payments/class-visa-acceptance-auth-reversal.php:270
 #, php-format
-msgid "Void amount of %1$s approved."
+msgid "Void amount of %1$s Approved:"
 msgstr ""
 
 #. Placeholders: %1$s - <a> tag
-#: includes/trait-visa-acceptance-payment-gateway-includes.php:70
+#: includes/visa-acceptance-translation-constants.php:86
 #, php-format
 msgid "Void Approved with Transaction ID %s"
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:178
-#: includes/trait-visa-acceptance-payment-gateway-public.php:233
-#: includes/trait-visa-acceptance-payment-gateway-public.php:245
+#: includes/api/payments/class-visa-acceptance-auth-reversal.php:104
+msgid "Void Failed:"
+msgstr ""
+
+#: includes/trait-visa-acceptance-payment-gateway-public.php:180
+#: includes/trait-visa-acceptance-payment-gateway-public.php:235
+#: includes/trait-visa-acceptance-payment-gateway-public.php:247
 msgid ""
 "We are unable to complete your order. Please check your payment details and "
 "try again."
 msgstr ""
 
-#: includes/api/class-visa-acceptance-response.php:35
+#: includes/api/visa-acceptance-response-constants.php:49
 msgid ""
 "We are unable to process your order. Please try a different payment method "
 "or try again later."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:165
+#: includes/trait-visa-acceptance-payment-gateway-public.php:167
 msgid ""
 "We cannot process your order with the payment information that you provided. "
 "Please use a different payment account or an alternate payment method."
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:1068
-#: includes/api/class-visa-acceptance-response.php:65
+#: includes/api/visa-acceptance-response-constants.php:79
 msgid "We encountered an error. Please try again later."
 msgstr ""
 
-#: includes/api/class-visa-acceptance-response.php:53
+#: includes/api/visa-acceptance-response-constants.php:67
 msgid ""
 "We were unable to complete your order. Please check your payment details and "
 "try again."
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:1083
-msgid ""
-"We will contact your card issuer to verify your account. No payment will be "
-"taken."
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:806
+msgid "Webhook deleted successfully."
 msgstr ""
 
-#: public/class-visa-acceptance-payment-gateway-unified-checkout-public.php:182
-msgid "You are not connected to internet!!"
+#: includes/api/payments/class-visa-acceptance-webhook-handler.php:202
+msgid "Webhook signature required"
 msgstr ""
 
-#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:161
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:527
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:673
+msgid "You do not have permission to capture payments."
+msgstr ""
+
+#: includes/trait-visa-acceptance-payment-gateway-admin.php:1025
+msgid "You do not have permission to refresh payment status."
+msgstr ""
+
+#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:184
 msgid ""
 "You must enable tokenization for this gateway in order to support automatic "
 "renewal payments with the WooCommerce Subscriptions extension."
 msgstr ""
 
-#: includes/trait-visa-acceptance-payment-gateway-public.php:236
-#: includes/trait-visa-acceptance-payment-gateway-public.php:242
+#: includes/trait-visa-acceptance-payment-gateway-public.php:238
+#: includes/trait-visa-acceptance-payment-gateway-public.php:244
 msgid ""
 "Your card issuer was unable to authorize your order. Please check with them "
 "before trying again"
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:513
-msgid "Your merchant account must have this optional service enabled."
+#: includes/class-visa-acceptance-payment-gateway-subscriptions.php:272
+msgid "Your early renewal order was successful."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:459
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:538
 msgid "Your Visa Acceptance Solutions Merchant Key File Directory."
 msgstr ""
 
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:464
-msgid "Your Visa Acceptance Solutions Merchant Key File Name."
-msgstr ""
-
-#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:471
+#: admin/class-visa-acceptance-payment-gateway-unified-checkout-admin.php:545
 msgid "Your Visa Acceptance Solutions Merchant Key File Password."
 msgstr ""

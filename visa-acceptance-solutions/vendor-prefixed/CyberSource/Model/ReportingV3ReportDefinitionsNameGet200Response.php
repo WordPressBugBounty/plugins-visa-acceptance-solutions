@@ -48,7 +48,7 @@ class ReportingV3ReportDefinitionsNameGet200Response implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['type' => 'string', 'reportDefinitionId' => 'int', 'reportDefintionName' => 'string', 'attributes' => '\Pymt_Vas\Dependencies\CyberSource\Model\ReportingV3ReportDefinitionsNameGet200ResponseAttributes[]', 'supportedFormats' => 'string[]', 'description' => 'string', 'defaultSettings' => '\Pymt_Vas\Dependencies\CyberSource\Model\ReportingV3ReportDefinitionsNameGet200ResponseDefaultSettings', 'subscriptionType' => 'string'];
+    protected static $swaggerTypes = ['type' => 'string', 'reportDefinitionId' => 'int', 'reportDefintionName' => 'string', 'attributes' => '\Pymt_Vas\Dependencies\CyberSource\Model\ReportingV3ReportDefinitionsNameGet200ResponseAttributes[]', 'supportedFormats' => 'string[]', 'description' => 'string', 'defaultSettings' => '\Pymt_Vas\Dependencies\CyberSource\Model\ReportDefinitionDefaultSettings', 'subscriptionType' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -239,7 +239,7 @@ class ReportingV3ReportDefinitionsNameGet200Response implements ArrayAccess
     }
     /**
      * Gets defaultSettings
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\ReportingV3ReportDefinitionsNameGet200ResponseDefaultSettings
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\ReportDefinitionDefaultSettings
      */
     public function getDefaultSettings()
     {
@@ -247,7 +247,7 @@ class ReportingV3ReportDefinitionsNameGet200Response implements ArrayAccess
     }
     /**
      * Sets defaultSettings
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\ReportingV3ReportDefinitionsNameGet200ResponseDefaultSettings $defaultSettings
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\ReportDefinitionDefaultSettings $defaultSettings
      * @return $this
      */
     public function setDefaultSettings($defaultSettings)

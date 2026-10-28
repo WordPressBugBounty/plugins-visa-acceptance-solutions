@@ -1,0 +1,32 @@
+/**
+ * VAS - Express Pay Public Styles
+ *
+ * Extracted from inline styles for WordPress coding standards compliance
+ * and Content Security Policy (CSP) compatibility.
+ *
+ * @package Visa_Acceptance_Solutions
+ * @since   2.2.1
+ */
+ 
+/* Error Messages */
+.wc-vas-expresspay-error-message {
+    display: none;
+    color: red; /* WordPress error color */
+    margin: 10px 0;
+}
+ 
+.wc-vas-expresspay-error-message p {
+    margin: 5px 0;
+}
+ 
+/* Clear Float Utility */
+.wc-vas-clear {
+    clear: both;
+}
+ 
+/* Express Checkout Container */
+.wc-vas-product-checkout-container-hidden {
+    display: none;
+}
+ 
+ 

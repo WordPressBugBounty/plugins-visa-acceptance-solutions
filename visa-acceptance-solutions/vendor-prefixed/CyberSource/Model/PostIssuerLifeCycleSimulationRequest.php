@@ -49,7 +49,7 @@ class PostIssuerLifeCycleSimulationRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['state' => 'string', 'card' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardstokenizedCardIdissuerlifecycleeventsimulationsCard', 'metadata' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardstokenizedCardIdissuerlifecycleeventsimulationsMetadata'];
+    protected static $swaggerTypes = ['state' => 'string', 'card' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardstokenizedCardIdissuerlifecycleeventsimulationsCard', 'metadata' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsIssuerLifeCycleEventSimulationMetadata'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -163,7 +163,7 @@ class PostIssuerLifeCycleSimulationRequest implements ArrayAccess
     }
     /**
      * Gets metadata
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardstokenizedCardIdissuerlifecycleeventsimulationsMetadata
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TmsIssuerLifeCycleEventSimulationMetadata
      */
     public function getMetadata()
     {
@@ -171,7 +171,7 @@ class PostIssuerLifeCycleSimulationRequest implements ArrayAccess
     }
     /**
      * Sets metadata
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardstokenizedCardIdissuerlifecycleeventsimulationsMetadata $metadata
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TmsIssuerLifeCycleEventSimulationMetadata $metadata
      * @return $this
      */
     public function setMetadata($metadata)

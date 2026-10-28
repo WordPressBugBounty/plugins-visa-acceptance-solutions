@@ -114,6 +114,7 @@
                     type: 'POST',
                     data: {
                         action: 'product_page_quantity_update',
+                        nonce: express_pay_ajaxUCObj.quantity_update_nonce,
                         quantity: $('input.qty').val() || 1,
                         product_id: variation.variation_id,
                         timestamp: new Date().getTime(),
@@ -239,6 +240,7 @@
                         type: 'POST',
                         data: {
                             action: 'product_page_quantity_update',
+                            nonce: express_pay_ajaxUCObj.quantity_update_nonce,
                             product_id: express_pay_ajaxUCObj['product_id'],
                             grouped_items: groupedProductQuantities,
                             force_refresh: 1,
@@ -318,6 +320,7 @@
                     type: 'POST',
                     data: {
                         action: 'product_page_quantity_update',
+                        nonce: express_pay_ajaxUCObj.quantity_update_nonce,
                         quantity: updatedQuantity,
                         product_id: productIdToUse,
                         force_refresh: selectedVariationId ? 1 : 0,
@@ -371,38 +374,76 @@
             }
         };
 
-        if (typeof Accept !== 'undefined') {
+        if (typeof VAS !== 'undefined' && typeof VAS.UnifiedCheckout === 'function') {
             $('#wc-error-failure').hide();
 
-            Accept(captureContext)
-            .then(function(accept) {
-                return accept.unifiedPayments();
-            })
-            .then(function(up) {
-                return up.show(showArgs)
-            })
-            .then(function(tt) {
+            async function launchProductExpressCheckout() {
+                let client;
+                let checkout;
+                try {
+                    client = await VAS.UnifiedCheckout(captureContext);
+                    checkout = await client.createCheckout({ autoProcessing: false });
+                    const tt = await checkout.mount('#expressPaymentListContainer_product');
+
                 if (transientToken) {
                     transientToken.value = tt;
                 }
+
                 var container = document.getElementById('expressPaymentListContainer_product');
                 if (container) {
-                    try {
-                        // show loader while processing.
+                        // Show loader while processing.
                         showExpressPayLoader();
-                        // Ajax to create order.
+                        var completeMandatePromise = checkout.complete(tt)
+                                .then(function(completeResponse) {
+                                    if (!completeResponse) {
+                                        return '';
+                                    }
+                                    var serialized = '';
+                                    try {
+                                        if (typeof completeResponse === 'string') {
+                                            var trimmed = completeResponse.trim();
+                                            if (
+                                                (trimmed.charAt(0) === '{' && trimmed.charAt(trimmed.length - 1) === '}') ||
+                                                (trimmed.charAt(0) === '[' && trimmed.charAt(trimmed.length - 1) === ']')
+                                            ) {
+                                                serialized = trimmed;
+                                            } else {
+                                                // Treat as JWT — decode the middle (payload) segment.
+                                                var jwtParts = trimmed.split('.');
+                                                if (jwtParts.length === 3) {
+                                                    try {
+                                                        var decoded = JSON.parse(atob(jwtParts[1]));
+                                                        serialized = JSON.stringify(decoded);
+                                                    } catch (jwtErr) {
+                                                        serialized = trimmed;
+                                                    }
+                                                } else {
+                                                    serialized = JSON.stringify(JSON.parse(trimmed));
+                                                }
+                                            }
+                                        } else {
+                                            serialized = JSON.stringify(completeResponse);
+                                        }
+                                    } catch (e) { serialized = ''; }
+                                    return serialized;
+                                })
+                                .catch(function() {
+                                    return '';
+                                });
+
+                        return completeMandatePromise.then(function(completeResponse) {
                         var orderData = { 
                             action: 'express_pay_for_order', 
                             product_id: express_pay_ajaxUCObj['product_id'],
                             billing_details: express_pay_ajaxUCObj['billing_details'],
                             shipping_details: express_pay_ajaxUCObj['shipping_details'],
                             payment_method: express_pay_ajaxUCObj['visa_acceptance_solutions_uc_id'],
-                            payer_auth_enabled: express_pay_ajaxUCObj['payer_auth_enabled'],
                             transientToken: tt,
                             quantity: currentQuantity,
                             is_switch: express_pay_ajaxUCObj.is_switch || false,
                             switch_subscription_id: express_pay_ajaxUCObj.switch_subscription_id || '',
-                            switch_item_id: express_pay_ajaxUCObj.switch_item_id || ''
+                            switch_item_id: express_pay_ajaxUCObj.switch_item_id || '',
+                            uc_complete_response: completeResponse
                         };
                         
                         // For variable products, add the variation ID
@@ -420,6 +461,23 @@
                             type: 'POST',
                             data: orderData,
                             success: function(response) {
+                                if (response.success && response.data && response.data.sca_reload) {
+                                    hideExpressPayLoader();
+                                    var scaMsg = response.data.message || 'Your card issuer requires an extra security check to approve this payment. Please try again and follow the verification steps.';
+                                    var errorList = document.createElement('ul');
+                                    errorList.className = 'woocommerce-error';
+                                    errorList.setAttribute('role', 'alert');
+                                    var errorItem = document.createElement('li');
+                                    errorItem.appendChild(document.createTextNode(scaMsg));
+                                    errorList.appendChild(errorItem);
+                                    var noticesWrapper = jQuery('.woocommerce-notices-wrapper').first();
+                                    noticesWrapper.empty();
+                                    noticesWrapper.append(errorList);
+                                    jQuery('html, body').animate({ scrollTop: noticesWrapper.offset().top - 100 }, 400);
+                                    setTimeout(function() { window.location.reload(); }, 1500);
+                                    return;
+                                }
+                                // On successful payment redirect to order confirmation page.
                                 if (response.success && response.data.redirect_url) {
                                     window.location.href = response.data.redirect_url;
                                     hideExpressPayLoader();
@@ -453,19 +511,18 @@
                                 }
                             }
                         });
+                        }); // end completeMandatePromise.then
+                    }
                     } catch (error) {
                         $('#wc-error-failure').show();
+                        $('#expressPaymentListContainer_product').hide();
                         hideExpressPayLoader();
                         reloadAfterError();
-                        $('#expressPaymentListContainer_product').hide();
+                        if (checkout) { checkout.destroy(); }
+                    if (client) { client.destroy(); }
                     }
                 }
-            })
-            .catch(function(error) {
-                $('#wc-error-failure').show();
-                $('#expressPaymentListContainer_product').hide();
-                reloadAfterError();
-            });
+            launchProductExpressCheckout();
         } else {
             expressPaymentListContainer_product.append(errorMessagePara);
             jQuery('#wc-express-checkout-product-page-tax-shipping-notice').hide();

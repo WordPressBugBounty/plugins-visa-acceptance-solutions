@@ -48,12 +48,12 @@ class PaymentsProducts implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['cardProcessing' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsCardProcessing', 'alternativePaymentMethods' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsAlternativePaymentMethods', 'cardPresentConnect' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsCardPresentConnect', 'cybsReadyTerminal' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsCybsReadyTerminal', 'eCheck' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsECheck', 'payerAuthentication' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsPayerAuthentication', 'digitalPayments' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsDigitalPayments', 'secureAcceptance' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsSecureAcceptance', 'virtualTerminal' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsVirtualTerminal', 'currencyConversion' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsCurrencyConversion', 'tax' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'customerInvoicing' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'recurringBilling' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'paymentOrchestration' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'payouts' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsPayouts', 'differentialFee' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsDifferentialFee', 'payByLink' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'unifiedCheckout' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsUnifiedCheckout', 'receivablesManager' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'serviceFee' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsServiceFee', 'batchUpload' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax'];
+    protected static $swaggerTypes = ['cardProcessing' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsCardProcessing', 'alternativePaymentMethods' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsAlternativePaymentMethods', 'cardPresentConnect' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsCardPresentConnect', 'cybsReadyTerminal' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsCybsReadyTerminal', 'eCheck' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsECheck', 'payerAuthentication' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsPayerAuthentication', 'digitalPayments' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsDigitalPayments', 'secureAcceptance' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsSecureAcceptance', 'virtualTerminal' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsVirtualTerminal', 'currencyConversion' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsCurrencyConversion', 'tax' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'customerInvoicing' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'recurringBilling' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'paymentOrchestration' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'payouts' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsPayouts', 'differentialFee' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsDifferentialFee', 'payByLink' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'unifiedCheckout' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsUnifiedCheckout', 'receivablesManager' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'serviceFee' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsServiceFee', 'batchUpload' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'transactGuard' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax', 'microform' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsMicroform'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['cardProcessing' => null, 'alternativePaymentMethods' => null, 'cardPresentConnect' => null, 'cybsReadyTerminal' => null, 'eCheck' => null, 'payerAuthentication' => null, 'digitalPayments' => null, 'secureAcceptance' => null, 'virtualTerminal' => null, 'currencyConversion' => null, 'tax' => null, 'customerInvoicing' => null, 'recurringBilling' => null, 'paymentOrchestration' => null, 'payouts' => null, 'differentialFee' => null, 'payByLink' => null, 'unifiedCheckout' => null, 'receivablesManager' => null, 'serviceFee' => null, 'batchUpload' => null];
+    protected static $swaggerFormats = ['cardProcessing' => null, 'alternativePaymentMethods' => null, 'cardPresentConnect' => null, 'cybsReadyTerminal' => null, 'eCheck' => null, 'payerAuthentication' => null, 'digitalPayments' => null, 'secureAcceptance' => null, 'virtualTerminal' => null, 'currencyConversion' => null, 'tax' => null, 'customerInvoicing' => null, 'recurringBilling' => null, 'paymentOrchestration' => null, 'payouts' => null, 'differentialFee' => null, 'payByLink' => null, 'unifiedCheckout' => null, 'receivablesManager' => null, 'serviceFee' => null, 'batchUpload' => null, 'transactGuard' => null, 'microform' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PaymentsProducts implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['cardProcessing' => 'cardProcessing', 'alternativePaymentMethods' => 'alternativePaymentMethods', 'cardPresentConnect' => 'cardPresentConnect', 'cybsReadyTerminal' => 'cybsReadyTerminal', 'eCheck' => 'eCheck', 'payerAuthentication' => 'payerAuthentication', 'digitalPayments' => 'digitalPayments', 'secureAcceptance' => 'secureAcceptance', 'virtualTerminal' => 'virtualTerminal', 'currencyConversion' => 'currencyConversion', 'tax' => 'tax', 'customerInvoicing' => 'customerInvoicing', 'recurringBilling' => 'recurringBilling', 'paymentOrchestration' => 'paymentOrchestration', 'payouts' => 'payouts', 'differentialFee' => 'differentialFee', 'payByLink' => 'payByLink', 'unifiedCheckout' => 'unifiedCheckout', 'receivablesManager' => 'receivablesManager', 'serviceFee' => 'serviceFee', 'batchUpload' => 'batchUpload'];
+    protected static $attributeMap = ['cardProcessing' => 'cardProcessing', 'alternativePaymentMethods' => 'alternativePaymentMethods', 'cardPresentConnect' => 'cardPresentConnect', 'cybsReadyTerminal' => 'cybsReadyTerminal', 'eCheck' => 'eCheck', 'payerAuthentication' => 'payerAuthentication', 'digitalPayments' => 'digitalPayments', 'secureAcceptance' => 'secureAcceptance', 'virtualTerminal' => 'virtualTerminal', 'currencyConversion' => 'currencyConversion', 'tax' => 'tax', 'customerInvoicing' => 'customerInvoicing', 'recurringBilling' => 'recurringBilling', 'paymentOrchestration' => 'paymentOrchestration', 'payouts' => 'payouts', 'differentialFee' => 'differentialFee', 'payByLink' => 'payByLink', 'unifiedCheckout' => 'unifiedCheckout', 'receivablesManager' => 'receivablesManager', 'serviceFee' => 'serviceFee', 'batchUpload' => 'batchUpload', 'transactGuard' => 'transactGuard', 'microform' => 'microform'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['cardProcessing' => 'setCardProcessing', 'alternativePaymentMethods' => 'setAlternativePaymentMethods', 'cardPresentConnect' => 'setCardPresentConnect', 'cybsReadyTerminal' => 'setCybsReadyTerminal', 'eCheck' => 'setECheck', 'payerAuthentication' => 'setPayerAuthentication', 'digitalPayments' => 'setDigitalPayments', 'secureAcceptance' => 'setSecureAcceptance', 'virtualTerminal' => 'setVirtualTerminal', 'currencyConversion' => 'setCurrencyConversion', 'tax' => 'setTax', 'customerInvoicing' => 'setCustomerInvoicing', 'recurringBilling' => 'setRecurringBilling', 'paymentOrchestration' => 'setPaymentOrchestration', 'payouts' => 'setPayouts', 'differentialFee' => 'setDifferentialFee', 'payByLink' => 'setPayByLink', 'unifiedCheckout' => 'setUnifiedCheckout', 'receivablesManager' => 'setReceivablesManager', 'serviceFee' => 'setServiceFee', 'batchUpload' => 'setBatchUpload'];
+    protected static $setters = ['cardProcessing' => 'setCardProcessing', 'alternativePaymentMethods' => 'setAlternativePaymentMethods', 'cardPresentConnect' => 'setCardPresentConnect', 'cybsReadyTerminal' => 'setCybsReadyTerminal', 'eCheck' => 'setECheck', 'payerAuthentication' => 'setPayerAuthentication', 'digitalPayments' => 'setDigitalPayments', 'secureAcceptance' => 'setSecureAcceptance', 'virtualTerminal' => 'setVirtualTerminal', 'currencyConversion' => 'setCurrencyConversion', 'tax' => 'setTax', 'customerInvoicing' => 'setCustomerInvoicing', 'recurringBilling' => 'setRecurringBilling', 'paymentOrchestration' => 'setPaymentOrchestration', 'payouts' => 'setPayouts', 'differentialFee' => 'setDifferentialFee', 'payByLink' => 'setPayByLink', 'unifiedCheckout' => 'setUnifiedCheckout', 'receivablesManager' => 'setReceivablesManager', 'serviceFee' => 'setServiceFee', 'batchUpload' => 'setBatchUpload', 'transactGuard' => 'setTransactGuard', 'microform' => 'setMicroform'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['cardProcessing' => 'getCardProcessing', 'alternativePaymentMethods' => 'getAlternativePaymentMethods', 'cardPresentConnect' => 'getCardPresentConnect', 'cybsReadyTerminal' => 'getCybsReadyTerminal', 'eCheck' => 'getECheck', 'payerAuthentication' => 'getPayerAuthentication', 'digitalPayments' => 'getDigitalPayments', 'secureAcceptance' => 'getSecureAcceptance', 'virtualTerminal' => 'getVirtualTerminal', 'currencyConversion' => 'getCurrencyConversion', 'tax' => 'getTax', 'customerInvoicing' => 'getCustomerInvoicing', 'recurringBilling' => 'getRecurringBilling', 'paymentOrchestration' => 'getPaymentOrchestration', 'payouts' => 'getPayouts', 'differentialFee' => 'getDifferentialFee', 'payByLink' => 'getPayByLink', 'unifiedCheckout' => 'getUnifiedCheckout', 'receivablesManager' => 'getReceivablesManager', 'serviceFee' => 'getServiceFee', 'batchUpload' => 'getBatchUpload'];
+    protected static $getters = ['cardProcessing' => 'getCardProcessing', 'alternativePaymentMethods' => 'getAlternativePaymentMethods', 'cardPresentConnect' => 'getCardPresentConnect', 'cybsReadyTerminal' => 'getCybsReadyTerminal', 'eCheck' => 'getECheck', 'payerAuthentication' => 'getPayerAuthentication', 'digitalPayments' => 'getDigitalPayments', 'secureAcceptance' => 'getSecureAcceptance', 'virtualTerminal' => 'getVirtualTerminal', 'currencyConversion' => 'getCurrencyConversion', 'tax' => 'getTax', 'customerInvoicing' => 'getCustomerInvoicing', 'recurringBilling' => 'getRecurringBilling', 'paymentOrchestration' => 'getPaymentOrchestration', 'payouts' => 'getPayouts', 'differentialFee' => 'getDifferentialFee', 'payByLink' => 'getPayByLink', 'unifiedCheckout' => 'getUnifiedCheckout', 'receivablesManager' => 'getReceivablesManager', 'serviceFee' => 'getServiceFee', 'batchUpload' => 'getBatchUpload', 'transactGuard' => 'getTransactGuard', 'microform' => 'getMicroform'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -121,6 +121,8 @@ class PaymentsProducts implements ArrayAccess
         $this->container['receivablesManager'] = isset($data['receivablesManager']) ? $data['receivablesManager'] : null;
         $this->container['serviceFee'] = isset($data['serviceFee']) ? $data['serviceFee'] : null;
         $this->container['batchUpload'] = isset($data['batchUpload']) ? $data['batchUpload'] : null;
+        $this->container['transactGuard'] = isset($data['transactGuard']) ? $data['transactGuard'] : null;
+        $this->container['microform'] = isset($data['microform']) ? $data['microform'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -518,6 +520,42 @@ class PaymentsProducts implements ArrayAccess
     public function setBatchUpload($batchUpload)
     {
         $this->container['batchUpload'] = $batchUpload;
+        return $this;
+    }
+    /**
+     * Gets transactGuard
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax
+     */
+    public function getTransactGuard()
+    {
+        return $this->container['transactGuard'];
+    }
+    /**
+     * Sets transactGuard
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax $transactGuard
+     * @return $this
+     */
+    public function setTransactGuard($transactGuard)
+    {
+        $this->container['transactGuard'] = $transactGuard;
+        return $this;
+    }
+    /**
+     * Gets microform
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsMicroform
+     */
+    public function getMicroform()
+    {
+        return $this->container['microform'];
+    }
+    /**
+     * Sets microform
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsMicroform $microform
+     * @return $this
+     */
+    public function setMicroform($microform)
+    {
+        $this->container['microform'] = $microform;
         return $this;
     }
     /**

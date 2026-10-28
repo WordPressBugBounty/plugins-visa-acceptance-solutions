@@ -48,12 +48,12 @@ class Ptsv2paymentsRecipientInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['accountId' => 'string', 'accountType' => 'string', 'firstName' => 'string', 'middleName' => 'string', 'lastName' => 'string', 'address1' => 'string', 'administrativeArea' => 'string', 'postalCode' => 'string', 'country' => 'string', 'dateOfBirth' => 'string', 'beneficiaryId' => 'string', 'beneficiaryName' => 'string', 'beneficiaryAddress' => 'string', 'aliasName' => 'string', 'nationality' => 'string', 'countryOfBirth' => 'string', 'occupation' => 'string', 'email' => 'string', 'locality' => 'string'];
+    protected static $swaggerTypes = ['accountId' => 'string', 'accountType' => 'string', 'firstName' => 'string', 'middleName' => 'string', 'lastName' => 'string', 'address1' => 'string', 'administrativeArea' => 'string', 'postalCode' => 'string', 'country' => 'string', 'dateOfBirth' => 'string', 'beneficiaryId' => 'string', 'beneficiaryName' => 'string', 'beneficiaryAddress' => 'string', 'aliasName' => 'string', 'nationality' => 'string', 'countryOfBirth' => 'string', 'occupation' => 'string', 'email' => 'string', 'locality' => 'string', 'taxIdNumber' => 'float'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['accountId' => null, 'accountType' => null, 'firstName' => null, 'middleName' => null, 'lastName' => null, 'address1' => null, 'administrativeArea' => null, 'postalCode' => null, 'country' => null, 'dateOfBirth' => null, 'beneficiaryId' => null, 'beneficiaryName' => null, 'beneficiaryAddress' => null, 'aliasName' => null, 'nationality' => null, 'countryOfBirth' => null, 'occupation' => null, 'email' => null, 'locality' => null];
+    protected static $swaggerFormats = ['accountId' => null, 'accountType' => null, 'firstName' => null, 'middleName' => null, 'lastName' => null, 'address1' => null, 'administrativeArea' => null, 'postalCode' => null, 'country' => null, 'dateOfBirth' => null, 'beneficiaryId' => null, 'beneficiaryName' => null, 'beneficiaryAddress' => null, 'aliasName' => null, 'nationality' => null, 'countryOfBirth' => null, 'occupation' => null, 'email' => null, 'locality' => null, 'taxIdNumber' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2paymentsRecipientInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['accountId' => 'accountId', 'accountType' => 'accountType', 'firstName' => 'firstName', 'middleName' => 'middleName', 'lastName' => 'lastName', 'address1' => 'address1', 'administrativeArea' => 'administrativeArea', 'postalCode' => 'postalCode', 'country' => 'country', 'dateOfBirth' => 'dateOfBirth', 'beneficiaryId' => 'beneficiaryId', 'beneficiaryName' => 'beneficiaryName', 'beneficiaryAddress' => 'beneficiaryAddress', 'aliasName' => 'aliasName', 'nationality' => 'nationality', 'countryOfBirth' => 'countryOfBirth', 'occupation' => 'occupation', 'email' => 'email', 'locality' => 'locality'];
+    protected static $attributeMap = ['accountId' => 'accountId', 'accountType' => 'accountType', 'firstName' => 'firstName', 'middleName' => 'middleName', 'lastName' => 'lastName', 'address1' => 'address1', 'administrativeArea' => 'administrativeArea', 'postalCode' => 'postalCode', 'country' => 'country', 'dateOfBirth' => 'dateOfBirth', 'beneficiaryId' => 'beneficiaryId', 'beneficiaryName' => 'beneficiaryName', 'beneficiaryAddress' => 'beneficiaryAddress', 'aliasName' => 'aliasName', 'nationality' => 'nationality', 'countryOfBirth' => 'countryOfBirth', 'occupation' => 'occupation', 'email' => 'email', 'locality' => 'locality', 'taxIdNumber' => 'taxIdNumber'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['accountId' => 'setAccountId', 'accountType' => 'setAccountType', 'firstName' => 'setFirstName', 'middleName' => 'setMiddleName', 'lastName' => 'setLastName', 'address1' => 'setAddress1', 'administrativeArea' => 'setAdministrativeArea', 'postalCode' => 'setPostalCode', 'country' => 'setCountry', 'dateOfBirth' => 'setDateOfBirth', 'beneficiaryId' => 'setBeneficiaryId', 'beneficiaryName' => 'setBeneficiaryName', 'beneficiaryAddress' => 'setBeneficiaryAddress', 'aliasName' => 'setAliasName', 'nationality' => 'setNationality', 'countryOfBirth' => 'setCountryOfBirth', 'occupation' => 'setOccupation', 'email' => 'setEmail', 'locality' => 'setLocality'];
+    protected static $setters = ['accountId' => 'setAccountId', 'accountType' => 'setAccountType', 'firstName' => 'setFirstName', 'middleName' => 'setMiddleName', 'lastName' => 'setLastName', 'address1' => 'setAddress1', 'administrativeArea' => 'setAdministrativeArea', 'postalCode' => 'setPostalCode', 'country' => 'setCountry', 'dateOfBirth' => 'setDateOfBirth', 'beneficiaryId' => 'setBeneficiaryId', 'beneficiaryName' => 'setBeneficiaryName', 'beneficiaryAddress' => 'setBeneficiaryAddress', 'aliasName' => 'setAliasName', 'nationality' => 'setNationality', 'countryOfBirth' => 'setCountryOfBirth', 'occupation' => 'setOccupation', 'email' => 'setEmail', 'locality' => 'setLocality', 'taxIdNumber' => 'setTaxIdNumber'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['accountId' => 'getAccountId', 'accountType' => 'getAccountType', 'firstName' => 'getFirstName', 'middleName' => 'getMiddleName', 'lastName' => 'getLastName', 'address1' => 'getAddress1', 'administrativeArea' => 'getAdministrativeArea', 'postalCode' => 'getPostalCode', 'country' => 'getCountry', 'dateOfBirth' => 'getDateOfBirth', 'beneficiaryId' => 'getBeneficiaryId', 'beneficiaryName' => 'getBeneficiaryName', 'beneficiaryAddress' => 'getBeneficiaryAddress', 'aliasName' => 'getAliasName', 'nationality' => 'getNationality', 'countryOfBirth' => 'getCountryOfBirth', 'occupation' => 'getOccupation', 'email' => 'getEmail', 'locality' => 'getLocality'];
+    protected static $getters = ['accountId' => 'getAccountId', 'accountType' => 'getAccountType', 'firstName' => 'getFirstName', 'middleName' => 'getMiddleName', 'lastName' => 'getLastName', 'address1' => 'getAddress1', 'administrativeArea' => 'getAdministrativeArea', 'postalCode' => 'getPostalCode', 'country' => 'getCountry', 'dateOfBirth' => 'getDateOfBirth', 'beneficiaryId' => 'getBeneficiaryId', 'beneficiaryName' => 'getBeneficiaryName', 'beneficiaryAddress' => 'getBeneficiaryAddress', 'aliasName' => 'getAliasName', 'nationality' => 'getNationality', 'countryOfBirth' => 'getCountryOfBirth', 'occupation' => 'getOccupation', 'email' => 'getEmail', 'locality' => 'getLocality', 'taxIdNumber' => 'getTaxIdNumber'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -119,6 +119,7 @@ class Ptsv2paymentsRecipientInformation implements ArrayAccess
         $this->container['occupation'] = isset($data['occupation']) ? $data['occupation'] : null;
         $this->container['email'] = isset($data['email']) ? $data['email'] : null;
         $this->container['locality'] = isset($data['locality']) ? $data['locality'] : null;
+        $this->container['taxIdNumber'] = isset($data['taxIdNumber']) ? $data['taxIdNumber'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -480,6 +481,24 @@ class Ptsv2paymentsRecipientInformation implements ArrayAccess
     public function setLocality($locality)
     {
         $this->container['locality'] = $locality;
+        return $this;
+    }
+    /**
+     * Gets taxIdNumber
+     * @return float
+     */
+    public function getTaxIdNumber()
+    {
+        return $this->container['taxIdNumber'];
+    }
+    /**
+     * Sets taxIdNumber
+     * @param float $taxIdNumber CPF or CNPJ of the cash-in recipient. \"Cadastro de Pessoas Físicas\", which translates to the \"Natural Persons Register.\" It is the individual taxpayer registry identification number in Brazil, similar to a Social Security Number (SSN) in the United States or a National Insurance Number in the UK.
+     * @return $this
+     */
+    public function setTaxIdNumber($taxIdNumber)
+    {
+        $this->container['taxIdNumber'] = $taxIdNumber;
         return $this;
     }
     /**

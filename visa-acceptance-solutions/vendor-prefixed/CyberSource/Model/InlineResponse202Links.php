@@ -48,7 +48,7 @@ class InlineResponse202Links implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['self' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011LinksSelf', 'status' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse202LinksStatus[]'];
+    protected static $swaggerTypes = ['self' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4013LinksSelf', 'status' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse202LinksStatus[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -125,7 +125,7 @@ class InlineResponse202Links implements ArrayAccess
     }
     /**
      * Gets self
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011LinksSelf
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4013LinksSelf
      */
     public function getSelf()
     {
@@ -133,7 +133,7 @@ class InlineResponse202Links implements ArrayAccess
     }
     /**
      * Sets self
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011LinksSelf $self
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4013LinksSelf $self
      * @return $this
      */
     public function setSelf($self)

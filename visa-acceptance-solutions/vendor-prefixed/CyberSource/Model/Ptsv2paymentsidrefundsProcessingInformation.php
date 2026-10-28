@@ -198,7 +198,7 @@ class Ptsv2paymentsidrefundsProcessingInformation implements ArrayAccess
     }
     /**
      * Sets linkId
-     * @param string $linkId Value that links the current authorization request to the original authorization request. Set this value to the ID that was returned in the reply message from the original authorization request.  This value is used for:  - Partial authorizations - Split shipments
+     * @param string $linkId Value that links the current authorization request to the original authorization request or previous declined Merchant Initiated Debt Recovery Transactions . Set this value to the ID that was returned in the reply message from the original authorization request or previous declined Merchant Initiated Debt Recovery Transactions.  This value is used for:  - Partial authorizations - Split shipments - Merchant Initiated Debt Recovery Transactions for Visa Platform Connect and China Union Pay merchants
      * @return $this
      */
     public function setLinkId($linkId)

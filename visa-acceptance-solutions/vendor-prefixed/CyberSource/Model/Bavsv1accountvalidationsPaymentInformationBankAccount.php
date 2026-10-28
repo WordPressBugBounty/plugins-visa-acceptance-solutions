@@ -138,7 +138,7 @@ class Bavsv1accountvalidationsPaymentInformationBankAccount implements ArrayAcce
     }
     /**
      * Sets number
-     * @param string $number Account Number.  Non-Negative Integer. example: 12345678901234577
+     * @param string $number Account Number.  Non-Negative String, containing only digits.
      * @return $this
      */
     public function setNumber($number)

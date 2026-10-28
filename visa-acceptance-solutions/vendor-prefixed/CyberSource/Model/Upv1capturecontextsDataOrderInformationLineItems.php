@@ -48,7 +48,7 @@ class Upv1capturecontextsDataOrderInformationLineItems implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['productCode' => 'string', 'productName' => 'string', 'productSku' => 'string', 'quantity' => 'int', 'unitPrice' => 'string', 'unitOfMeasure' => 'string', 'totalAmount' => 'string', 'taxAmount' => 'string', 'taxRate' => 'string', 'taxAppliedAfterDiscount' => 'string', 'taxStatusIndicator' => 'string', 'taxTypeCode' => 'string', 'amountIncludesTax' => 'bool', 'typeOfSupply' => 'string', 'commodityCode' => 'string', 'discountAmount' => 'string', 'discountApplied' => 'bool', 'discountRate' => 'string', 'invoiceNumber' => 'string', 'taxDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItemsTaxDetails', 'fulfillmentType' => 'string', 'weight' => 'string', 'weightIdentifier' => 'string', 'weightUnit' => 'string', 'referenceDataCode' => 'string', 'referenceDataNumber' => 'string', 'unitTaxAmount' => 'string', 'productDescription' => 'string', 'giftCardCurrency' => 'string', 'shippingDestinationTypes' => 'string', 'gift' => 'bool', 'passenger' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItemsPassenger'];
+    protected static $swaggerTypes = ['productCode' => 'string', 'productName' => 'string', 'productSku' => 'string', 'quantity' => 'int', 'unitPrice' => 'string', 'unitOfMeasure' => 'string', 'totalAmount' => 'string', 'taxAmount' => 'string', 'taxRate' => 'string', 'taxAppliedAfterDiscount' => 'string', 'taxStatusIndicator' => 'string', 'taxTypeCode' => 'string', 'amountIncludesTax' => 'bool', 'typeOfSupply' => 'string', 'commodityCode' => 'string', 'discountAmount' => 'string', 'discountApplied' => 'bool', 'discountRate' => 'string', 'invoiceNumber' => 'string', 'taxDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationTaxDetails', 'fulfillmentType' => 'string', 'weight' => 'string', 'weightIdentifier' => 'string', 'weightUnit' => 'string', 'referenceDataCode' => 'string', 'referenceDataNumber' => 'string', 'unitTaxAmount' => 'string', 'productDescription' => 'string', 'giftCardCurrency' => 'string', 'shippingDestinationTypes' => 'string', 'gift' => 'bool', 'passenger' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationPassenger'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -497,7 +497,7 @@ class Upv1capturecontextsDataOrderInformationLineItems implements ArrayAccess
     }
     /**
      * Gets taxDetails
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItemsTaxDetails
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationTaxDetails
      */
     public function getTaxDetails()
     {
@@ -505,7 +505,7 @@ class Upv1capturecontextsDataOrderInformationLineItems implements ArrayAccess
     }
     /**
      * Sets taxDetails
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItemsTaxDetails $taxDetails
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationTaxDetails $taxDetails
      * @return $this
      */
     public function setTaxDetails($taxDetails)
@@ -713,7 +713,7 @@ class Upv1capturecontextsDataOrderInformationLineItems implements ArrayAccess
     }
     /**
      * Gets passenger
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItemsPassenger
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationPassenger
      */
     public function getPassenger()
     {
@@ -721,7 +721,7 @@ class Upv1capturecontextsDataOrderInformationLineItems implements ArrayAccess
     }
     /**
      * Sets passenger
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItemsPassenger $passenger
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationPassenger $passenger
      * @return $this
      */
     public function setPassenger($passenger)

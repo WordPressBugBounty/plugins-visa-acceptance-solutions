@@ -48,12 +48,12 @@ class InlineResponse502 implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['submitTimeUtc' => 'string', 'status' => 'string', 'reason' => 'string', 'message' => 'string', 'details' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseErrorInformationDetails[]'];
+    protected static $swaggerTypes = ['errors' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse500Errors[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['submitTimeUtc' => null, 'status' => null, 'reason' => null, 'message' => null, 'details' => null];
+    protected static $swaggerFormats = ['errors' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class InlineResponse502 implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['submitTimeUtc' => 'submitTimeUtc', 'status' => 'status', 'reason' => 'reason', 'message' => 'message', 'details' => 'details'];
+    protected static $attributeMap = ['errors' => 'errors'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['submitTimeUtc' => 'setSubmitTimeUtc', 'status' => 'setStatus', 'reason' => 'setReason', 'message' => 'setMessage', 'details' => 'setDetails'];
+    protected static $setters = ['errors' => 'setErrors'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['submitTimeUtc' => 'getSubmitTimeUtc', 'status' => 'getStatus', 'reason' => 'getReason', 'message' => 'getMessage', 'details' => 'getDetails'];
+    protected static $getters = ['errors' => 'getErrors'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -100,11 +100,7 @@ class InlineResponse502 implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['submitTimeUtc'] = isset($data['submitTimeUtc']) ? $data['submitTimeUtc'] : null;
-        $this->container['status'] = isset($data['status']) ? $data['status'] : null;
-        $this->container['reason'] = isset($data['reason']) ? $data['reason'] : null;
-        $this->container['message'] = isset($data['message']) ? $data['message'] : null;
-        $this->container['details'] = isset($data['details']) ? $data['details'] : null;
+        $this->container['errors'] = isset($data['errors']) ? $data['errors'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -127,93 +123,21 @@ class InlineResponse502 implements ArrayAccess
         return true;
     }
     /**
-     * Gets submitTimeUtc
-     * @return string
+     * Gets errors
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse500Errors[]
      */
-    public function getSubmitTimeUtc()
+    public function getErrors()
     {
-        return $this->container['submitTimeUtc'];
+        return $this->container['errors'];
     }
     /**
-     * Sets submitTimeUtc
-     * @param string $submitTimeUtc Time of request in UTC. Format: `YYYY-MM-DDThh:mm:ssZ` **Example** `2016-08-11T22:47:57Z` equals August 11, 2016, at 22:47:57 (10:47:57 p.m.). The `T` separates the date and the time. The `Z` indicates UTC.  Returned by Cybersource for all services.
+     * Sets errors
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse500Errors[] $errors
      * @return $this
      */
-    public function setSubmitTimeUtc($submitTimeUtc)
+    public function setErrors($errors)
     {
-        $this->container['submitTimeUtc'] = $submitTimeUtc;
-        return $this;
-    }
-    /**
-     * Gets status
-     * @return string
-     */
-    public function getStatus()
-    {
-        return $this->container['status'];
-    }
-    /**
-     * Sets status
-     * @param string $status The status of the submitted transaction. Possible values: - `SERVER_ERROR`
-     * @return $this
-     */
-    public function setStatus($status)
-    {
-        $this->container['status'] = $status;
-        return $this;
-    }
-    /**
-     * Gets reason
-     * @return string
-     */
-    public function getReason()
-    {
-        return $this->container['reason'];
-    }
-    /**
-     * Sets reason
-     * @param string $reason The reason of the status. Possible Values: - `INTERNAL_SERVICE_ERROR`
-     * @return $this
-     */
-    public function setReason($reason)
-    {
-        $this->container['reason'] = $reason;
-        return $this;
-    }
-    /**
-     * Gets message
-     * @return string
-     */
-    public function getMessage()
-    {
-        return $this->container['message'];
-    }
-    /**
-     * Sets message
-     * @param string $message Application failed.
-     * @return $this
-     */
-    public function setMessage($message)
-    {
-        $this->container['message'] = $message;
-        return $this;
-    }
-    /**
-     * Gets details
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseErrorInformationDetails[]
-     */
-    public function getDetails()
-    {
-        return $this->container['details'];
-    }
-    /**
-     * Sets details
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseErrorInformationDetails[] $details
-     * @return $this
-     */
-    public function setDetails($details)
-    {
-        $this->container['details'] = $details;
+        $this->container['errors'] = $errors;
         return $this;
     }
     /**

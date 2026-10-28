@@ -48,12 +48,12 @@ class Ucv1sessionsDataMerchantInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['merchantDescriptor' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataMerchantInformationMerchantDescriptor'];
+    protected static $swaggerTypes = ['merchantDescriptor' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataMerchantInformationMerchantDescriptor', 'vatRegistrationNumber' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['merchantDescriptor' => null];
+    protected static $swaggerFormats = ['merchantDescriptor' => null, 'vatRegistrationNumber' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ucv1sessionsDataMerchantInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['merchantDescriptor' => 'merchantDescriptor'];
+    protected static $attributeMap = ['merchantDescriptor' => 'merchantDescriptor', 'vatRegistrationNumber' => 'vatRegistrationNumber'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['merchantDescriptor' => 'setMerchantDescriptor'];
+    protected static $setters = ['merchantDescriptor' => 'setMerchantDescriptor', 'vatRegistrationNumber' => 'setVatRegistrationNumber'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['merchantDescriptor' => 'getMerchantDescriptor'];
+    protected static $getters = ['merchantDescriptor' => 'getMerchantDescriptor', 'vatRegistrationNumber' => 'getVatRegistrationNumber'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -101,6 +101,7 @@ class Ucv1sessionsDataMerchantInformation implements ArrayAccess
     public function __construct(array $data = null)
     {
         $this->container['merchantDescriptor'] = isset($data['merchantDescriptor']) ? $data['merchantDescriptor'] : null;
+        $this->container['vatRegistrationNumber'] = isset($data['vatRegistrationNumber']) ? $data['vatRegistrationNumber'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -138,6 +139,24 @@ class Ucv1sessionsDataMerchantInformation implements ArrayAccess
     public function setMerchantDescriptor($merchantDescriptor)
     {
         $this->container['merchantDescriptor'] = $merchantDescriptor;
+        return $this;
+    }
+    /**
+     * Gets vatRegistrationNumber
+     * @return string
+     */
+    public function getVatRegistrationNumber()
+    {
+        return $this->container['vatRegistrationNumber'];
+    }
+    /**
+     * Sets vatRegistrationNumber
+     * @param string $vatRegistrationNumber Your government-assigned tax identification number.  #### Tax Calculation Required field for value added tax only. Not applicable to U.S. and Canadian taxes.  #### CyberSource through VisaNet For CtV processors, the maximum length is 20.
+     * @return $this
+     */
+    public function setVatRegistrationNumber($vatRegistrationNumber)
+    {
+        $this->container['vatRegistrationNumber'] = $vatRegistrationNumber;
         return $this;
     }
     /**

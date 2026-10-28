@@ -48,12 +48,12 @@ class PtsV2CreditsPost201Response implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsRefundPost201ResponseLinks', 'id' => 'string', 'submitTimeUtc' => 'string', 'status' => 'string', 'reconciliationId' => 'string', 'clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseClientReferenceInformation', 'creditAmountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponseCreditAmountDetails', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponseProcessingInformation', 'processorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsRefundPost201ResponseProcessorInformation', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponsePaymentInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsRefundPost201ResponseOrderInformation', 'pointOfSaleInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsCapturesPost201ResponsePointOfSaleInformation', 'errorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsRefundPost201ResponseErrorInformation'];
+    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsRefundPost201ResponseLinks', 'id' => 'string', 'submitTimeUtc' => 'string', 'status' => 'string', 'reconciliationId' => 'string', 'clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseClientReferenceInformation', 'creditAmountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponseCreditAmountDetails', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponseProcessingInformation', 'processorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsRefundPost201ResponseProcessorInformation', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponsePaymentInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsRefundPost201ResponseOrderInformation', 'merchantInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponseMerchantInformation', 'clearingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseClearingInformation', 'pointOfSaleInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsCapturesPost201ResponsePointOfSaleInformation', 'tokenInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponseTokenInformation', 'paymentAccountInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponsePaymentAccountInformation', 'errorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsRefundPost201ResponseErrorInformation'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['links' => null, 'id' => null, 'submitTimeUtc' => null, 'status' => null, 'reconciliationId' => null, 'clientReferenceInformation' => null, 'creditAmountDetails' => null, 'processingInformation' => null, 'processorInformation' => null, 'paymentInformation' => null, 'orderInformation' => null, 'pointOfSaleInformation' => null, 'errorInformation' => null];
+    protected static $swaggerFormats = ['links' => null, 'id' => null, 'submitTimeUtc' => null, 'status' => null, 'reconciliationId' => null, 'clientReferenceInformation' => null, 'creditAmountDetails' => null, 'processingInformation' => null, 'processorInformation' => null, 'paymentInformation' => null, 'orderInformation' => null, 'merchantInformation' => null, 'clearingInformation' => null, 'pointOfSaleInformation' => null, 'tokenInformation' => null, 'paymentAccountInformation' => null, 'errorInformation' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PtsV2CreditsPost201Response implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['links' => '_links', 'id' => 'id', 'submitTimeUtc' => 'submitTimeUtc', 'status' => 'status', 'reconciliationId' => 'reconciliationId', 'clientReferenceInformation' => 'clientReferenceInformation', 'creditAmountDetails' => 'creditAmountDetails', 'processingInformation' => 'processingInformation', 'processorInformation' => 'processorInformation', 'paymentInformation' => 'paymentInformation', 'orderInformation' => 'orderInformation', 'pointOfSaleInformation' => 'pointOfSaleInformation', 'errorInformation' => 'errorInformation'];
+    protected static $attributeMap = ['links' => '_links', 'id' => 'id', 'submitTimeUtc' => 'submitTimeUtc', 'status' => 'status', 'reconciliationId' => 'reconciliationId', 'clientReferenceInformation' => 'clientReferenceInformation', 'creditAmountDetails' => 'creditAmountDetails', 'processingInformation' => 'processingInformation', 'processorInformation' => 'processorInformation', 'paymentInformation' => 'paymentInformation', 'orderInformation' => 'orderInformation', 'merchantInformation' => 'merchantInformation', 'clearingInformation' => 'clearingInformation', 'pointOfSaleInformation' => 'pointOfSaleInformation', 'tokenInformation' => 'tokenInformation', 'paymentAccountInformation' => 'paymentAccountInformation', 'errorInformation' => 'errorInformation'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['links' => 'setLinks', 'id' => 'setId', 'submitTimeUtc' => 'setSubmitTimeUtc', 'status' => 'setStatus', 'reconciliationId' => 'setReconciliationId', 'clientReferenceInformation' => 'setClientReferenceInformation', 'creditAmountDetails' => 'setCreditAmountDetails', 'processingInformation' => 'setProcessingInformation', 'processorInformation' => 'setProcessorInformation', 'paymentInformation' => 'setPaymentInformation', 'orderInformation' => 'setOrderInformation', 'pointOfSaleInformation' => 'setPointOfSaleInformation', 'errorInformation' => 'setErrorInformation'];
+    protected static $setters = ['links' => 'setLinks', 'id' => 'setId', 'submitTimeUtc' => 'setSubmitTimeUtc', 'status' => 'setStatus', 'reconciliationId' => 'setReconciliationId', 'clientReferenceInformation' => 'setClientReferenceInformation', 'creditAmountDetails' => 'setCreditAmountDetails', 'processingInformation' => 'setProcessingInformation', 'processorInformation' => 'setProcessorInformation', 'paymentInformation' => 'setPaymentInformation', 'orderInformation' => 'setOrderInformation', 'merchantInformation' => 'setMerchantInformation', 'clearingInformation' => 'setClearingInformation', 'pointOfSaleInformation' => 'setPointOfSaleInformation', 'tokenInformation' => 'setTokenInformation', 'paymentAccountInformation' => 'setPaymentAccountInformation', 'errorInformation' => 'setErrorInformation'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['links' => 'getLinks', 'id' => 'getId', 'submitTimeUtc' => 'getSubmitTimeUtc', 'status' => 'getStatus', 'reconciliationId' => 'getReconciliationId', 'clientReferenceInformation' => 'getClientReferenceInformation', 'creditAmountDetails' => 'getCreditAmountDetails', 'processingInformation' => 'getProcessingInformation', 'processorInformation' => 'getProcessorInformation', 'paymentInformation' => 'getPaymentInformation', 'orderInformation' => 'getOrderInformation', 'pointOfSaleInformation' => 'getPointOfSaleInformation', 'errorInformation' => 'getErrorInformation'];
+    protected static $getters = ['links' => 'getLinks', 'id' => 'getId', 'submitTimeUtc' => 'getSubmitTimeUtc', 'status' => 'getStatus', 'reconciliationId' => 'getReconciliationId', 'clientReferenceInformation' => 'getClientReferenceInformation', 'creditAmountDetails' => 'getCreditAmountDetails', 'processingInformation' => 'getProcessingInformation', 'processorInformation' => 'getProcessorInformation', 'paymentInformation' => 'getPaymentInformation', 'orderInformation' => 'getOrderInformation', 'merchantInformation' => 'getMerchantInformation', 'clearingInformation' => 'getClearingInformation', 'pointOfSaleInformation' => 'getPointOfSaleInformation', 'tokenInformation' => 'getTokenInformation', 'paymentAccountInformation' => 'getPaymentAccountInformation', 'errorInformation' => 'getErrorInformation'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -111,7 +111,11 @@ class PtsV2CreditsPost201Response implements ArrayAccess
         $this->container['processorInformation'] = isset($data['processorInformation']) ? $data['processorInformation'] : null;
         $this->container['paymentInformation'] = isset($data['paymentInformation']) ? $data['paymentInformation'] : null;
         $this->container['orderInformation'] = isset($data['orderInformation']) ? $data['orderInformation'] : null;
+        $this->container['merchantInformation'] = isset($data['merchantInformation']) ? $data['merchantInformation'] : null;
+        $this->container['clearingInformation'] = isset($data['clearingInformation']) ? $data['clearingInformation'] : null;
         $this->container['pointOfSaleInformation'] = isset($data['pointOfSaleInformation']) ? $data['pointOfSaleInformation'] : null;
+        $this->container['tokenInformation'] = isset($data['tokenInformation']) ? $data['tokenInformation'] : null;
+        $this->container['paymentAccountInformation'] = isset($data['paymentAccountInformation']) ? $data['paymentAccountInformation'] : null;
         $this->container['errorInformation'] = isset($data['errorInformation']) ? $data['errorInformation'] : null;
     }
     /**
@@ -198,7 +202,7 @@ class PtsV2CreditsPost201Response implements ArrayAccess
     }
     /**
      * Sets status
-     * @param string $status The status of the submitted transaction.  Possible values:  - PENDING  - COMPLETED (as in the case of PIN Debit Full Financial Credit)
+     * @param string $status The status of the submitted transaction.  Possible values:  - PENDING  - AUTHORIZED  - DECLINED  - INVALID_REQUEST  - COMPLETED (as in the case of PIN Debit Full Financial Credit)
      * @return $this
      */
     public function setStatus($status)
@@ -333,6 +337,42 @@ class PtsV2CreditsPost201Response implements ArrayAccess
         return $this;
     }
     /**
+     * Gets merchantInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponseMerchantInformation
+     */
+    public function getMerchantInformation()
+    {
+        return $this->container['merchantInformation'];
+    }
+    /**
+     * Sets merchantInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponseMerchantInformation $merchantInformation
+     * @return $this
+     */
+    public function setMerchantInformation($merchantInformation)
+    {
+        $this->container['merchantInformation'] = $merchantInformation;
+        return $this;
+    }
+    /**
+     * Gets clearingInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseClearingInformation
+     */
+    public function getClearingInformation()
+    {
+        return $this->container['clearingInformation'];
+    }
+    /**
+     * Sets clearingInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseClearingInformation $clearingInformation
+     * @return $this
+     */
+    public function setClearingInformation($clearingInformation)
+    {
+        $this->container['clearingInformation'] = $clearingInformation;
+        return $this;
+    }
+    /**
      * Gets pointOfSaleInformation
      * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsCapturesPost201ResponsePointOfSaleInformation
      */
@@ -348,6 +388,42 @@ class PtsV2CreditsPost201Response implements ArrayAccess
     public function setPointOfSaleInformation($pointOfSaleInformation)
     {
         $this->container['pointOfSaleInformation'] = $pointOfSaleInformation;
+        return $this;
+    }
+    /**
+     * Gets tokenInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponseTokenInformation
+     */
+    public function getTokenInformation()
+    {
+        return $this->container['tokenInformation'];
+    }
+    /**
+     * Sets tokenInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponseTokenInformation $tokenInformation
+     * @return $this
+     */
+    public function setTokenInformation($tokenInformation)
+    {
+        $this->container['tokenInformation'] = $tokenInformation;
+        return $this;
+    }
+    /**
+     * Gets paymentAccountInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponsePaymentAccountInformation
+     */
+    public function getPaymentAccountInformation()
+    {
+        return $this->container['paymentAccountInformation'];
+    }
+    /**
+     * Sets paymentAccountInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponsePaymentAccountInformation $paymentAccountInformation
+     * @return $this
+     */
+    public function setPaymentAccountInformation($paymentAccountInformation)
+    {
+        $this->container['paymentAccountInformation'] = $paymentAccountInformation;
         return $this;
     }
     /**

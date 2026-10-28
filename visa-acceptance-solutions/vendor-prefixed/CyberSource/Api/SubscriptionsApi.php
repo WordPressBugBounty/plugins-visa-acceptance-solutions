@@ -188,7 +188,7 @@ class SubscriptionsApi
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4003', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4005', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 404:
@@ -298,7 +298,7 @@ class SubscriptionsApi
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4003', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4005', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 404:
@@ -375,7 +375,7 @@ class SubscriptionsApi
             // for HTTP post (form)
         }
         //MLE check and mle encryption for req body
-        $inboundMLEStatus = 'false';
+        $inboundMLEStatus = 'optional';
         if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "createSubscription,createSubscriptionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
@@ -409,7 +409,7 @@ class SubscriptionsApi
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4004', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4006', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 502:
@@ -431,13 +431,14 @@ class SubscriptionsApi
      * @param string $code Filter by Subscription Code (optional)
      * @param string $status Filter by Subscription Status (optional)
      * @param string $customerId Filter by Customer Id (optional)
+     * @param string $clientReferenceInformationCode Filter by Client Reference Information Code / Merchant Reference Number (optional)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
      * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\GetAllSubscriptionsResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getAllSubscriptions($offset = null, $limit = null, $code = null, $status = null, $customerId = null)
+    public function getAllSubscriptions($offset = null, $limit = null, $code = null, $status = null, $customerId = null, $clientReferenceInformationCode = null)
     {
         self::$logger->info('CALL TO METHOD getAllSubscriptions STARTED');
-        list($response, $statusCode, $httpHeader) = $this->getAllSubscriptionsWithHttpInfo($offset, $limit, $code, $status, $customerId);
+        list($response, $statusCode, $httpHeader) = $this->getAllSubscriptionsWithHttpInfo($offset, $limit, $code, $status, $customerId, $clientReferenceInformationCode);
         self::$logger->info('CALL TO METHOD getAllSubscriptions ENDED');
         self::$logger->close();
         return [$response, $statusCode, $httpHeader];
@@ -452,10 +453,11 @@ class SubscriptionsApi
      * @param string $code Filter by Subscription Code (optional)
      * @param string $status Filter by Subscription Status (optional)
      * @param string $customerId Filter by Customer Id (optional)
+     * @param string $clientReferenceInformationCode Filter by Client Reference Information Code / Merchant Reference Number (optional)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
      * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\GetAllSubscriptionsResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getAllSubscriptionsWithHttpInfo($offset = null, $limit = null, $code = null, $status = null, $customerId = null)
+    public function getAllSubscriptionsWithHttpInfo($offset = null, $limit = null, $code = null, $status = null, $customerId = null, $clientReferenceInformationCode = null)
     {
         // parse inputs
         $resourcePath = "/rbs/v1/subscriptions";
@@ -488,6 +490,10 @@ class SubscriptionsApi
         if ($customerId !== null) {
             $queryParams['customerId'] = $this->apiClient->getSerializer()->toQueryValue($customerId);
         }
+        // query params
+        if ($clientReferenceInformationCode !== null) {
+            $queryParams['clientReferenceInformationCode'] = $this->apiClient->getSerializer()->toQueryValue($clientReferenceInformationCode);
+        }
         if ('GET' == 'POST') {
             $_tempBody = '{}';
         }
@@ -516,6 +522,7 @@ class SubscriptionsApi
         self::$logger->debug("Query Parameters :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($queryParams));
         self::$logger->debug("Query Parameters :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($queryParams));
         self::$logger->debug("Query Parameters :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($queryParams));
+        self::$logger->debug("Query Parameters :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($queryParams));
         if (isset($httpBody) and count($formParams) <= 0) {
             if ($this->apiClient->merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
                 $printHttpBody = \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\DataMasker::maskData($httpBody);
@@ -539,7 +546,7 @@ class SubscriptionsApi
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4003', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4005', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 502:
@@ -645,7 +652,7 @@ class SubscriptionsApi
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4003', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4005', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 404:
@@ -744,7 +751,260 @@ class SubscriptionsApi
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4003', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4005', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 502:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost502Response', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+            }
+            self::$logger->error("ApiException : {$e}");
+            throw $e;
+        }
+    }
+    /**
+     * Operation subscriptionsIdPaymentsGet
+     *
+     * Get Payments for a Subscription
+     *
+     * @param string $id Subscription Id (required)
+     * @param int $offset Page offset number. (optional)
+     * @param int $limit Number of items to be returned. Default - &#x60;20&#x60;, Max - &#x60;100&#x60; (optional)
+     * @param int $scheduledPaymentsCount Number of existing scheduled payments to be returned. Default - &#x60;5&#x60;, Max - &#x60;9999&#x60; (optional)
+     * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionsPaymentsResponse, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function subscriptionsIdPaymentsGet($id, $offset = null, $limit = null, $scheduledPaymentsCount = null)
+    {
+        self::$logger->info('CALL TO METHOD subscriptionsIdPaymentsGet STARTED');
+        list($response, $statusCode, $httpHeader) = $this->subscriptionsIdPaymentsGetWithHttpInfo($id, $offset, $limit, $scheduledPaymentsCount);
+        self::$logger->info('CALL TO METHOD subscriptionsIdPaymentsGet ENDED');
+        self::$logger->close();
+        return [$response, $statusCode, $httpHeader];
+    }
+    /**
+     * Operation subscriptionsIdPaymentsGetWithHttpInfo
+     *
+     * Get Payments for a Subscription
+     *
+     * @param string $id Subscription Id (required)
+     * @param int $offset Page offset number. (optional)
+     * @param int $limit Number of items to be returned. Default - &#x60;20&#x60;, Max - &#x60;100&#x60; (optional)
+     * @param int $scheduledPaymentsCount Number of existing scheduled payments to be returned. Default - &#x60;5&#x60;, Max - &#x60;9999&#x60; (optional)
+     * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionsPaymentsResponse, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function subscriptionsIdPaymentsGetWithHttpInfo($id, $offset = null, $limit = null, $scheduledPaymentsCount = null)
+    {
+        // verify the required parameter 'id' is set
+        if ($id === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter {$id} when calling subscriptionsIdPaymentsGet");
+            throw new \InvalidArgumentException('Missing the required parameter $id when calling subscriptionsIdPaymentsGet');
+        }
+        // parse inputs
+        $resourcePath = "/rbs/v1/subscriptions/{id}/payments";
+        $httpBody = '';
+        $queryParams = [];
+        $headerParams = [];
+        $formParams = [];
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json']);
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json']);
+        // query params
+        if ($offset !== null) {
+            $queryParams['offset'] = $this->apiClient->getSerializer()->toQueryValue($offset);
+        }
+        // query params
+        if ($limit !== null) {
+            $queryParams['limit'] = $this->apiClient->getSerializer()->toQueryValue($limit);
+        }
+        // query params
+        if ($scheduledPaymentsCount !== null) {
+            $queryParams['scheduledPaymentsCount'] = $this->apiClient->getSerializer()->toQueryValue($scheduledPaymentsCount);
+        }
+        // path params
+        if ($id !== null) {
+            $resourcePath = str_replace("{" . "id" . "}", $this->apiClient->getSerializer()->toPathValue($id), $resourcePath);
+        }
+        if ('GET' == 'POST') {
+            $_tempBody = '{}';
+        }
+        // for model (json/xml)
+        if (isset($_tempBody) and count($formParams) <= 0) {
+            $httpBody = $_tempBody;
+            // $_tempBody is the method argument, if present
+        } elseif (count($formParams) > 0) {
+            $httpBody = MultipartHelper::build_data_files($boundary, $formParams);
+            // for HTTP post (form)
+        }
+        //MLE check and mle encryption for req body
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "subscriptionsIdPaymentsGet,subscriptionsIdPaymentsGetWithHttpInfo")) {
+            try {
+                $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
+            } catch (Exception $e) {
+                self::$logger->error("Failed to encrypt request body:  {$e}");
+                throw new ApiException("Failed to encrypt request body : " . $e->getMessage());
+            }
+        }
+        // Logging
+        self::$logger->debug("Resource : GET {$resourcePath}");
+        self::$logger->debug("Query Parameters :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($queryParams));
+        self::$logger->debug("Query Parameters :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($queryParams));
+        self::$logger->debug("Query Parameters :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($queryParams));
+        if (isset($httpBody) and count($formParams) <= 0) {
+            if ($this->apiClient->merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
+                $printHttpBody = \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\DataMasker::maskData($httpBody);
+            } else {
+                $printHttpBody = $httpBody;
+            }
+            self::$logger->debug("Body Parameter :\n" . $printHttpBody);
+        }
+        self::$logger->debug("Return Type : \\CyberSource\\Model\\GetSubscriptionsPaymentsResponse");
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "subscriptionsIdPaymentsGet,subscriptionsIdPaymentsGetWithHttpInfo");
+        // make the API Call
+        try {
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'GET', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionsPaymentsResponse', '/rbs/v1/subscriptions/{id}/payments', $isResponseMLEForAPI);
+            self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
+            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionsPaymentsResponse', $httpHeader), $statusCode, $httpHeader];
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionsPaymentsResponse', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 400:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4008', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 404:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4041', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 502:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost502Response', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+            }
+            self::$logger->error("ApiException : {$e}");
+            throw $e;
+        }
+    }
+    /**
+     * Operation subscriptionsIdPaymentsPut
+     *
+     * Update Payments for a subscription
+     *
+     * @param string $id Subscription Id (required)
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\UpdatePayments $updatePayments Modify payments of a subscription (required)
+     * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionsPaymentsResponse1, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function subscriptionsIdPaymentsPut($id, $updatePayments)
+    {
+        self::$logger->info('CALL TO METHOD subscriptionsIdPaymentsPut STARTED');
+        list($response, $statusCode, $httpHeader) = $this->subscriptionsIdPaymentsPutWithHttpInfo($id, $updatePayments);
+        self::$logger->info('CALL TO METHOD subscriptionsIdPaymentsPut ENDED');
+        self::$logger->close();
+        return [$response, $statusCode, $httpHeader];
+    }
+    /**
+     * Operation subscriptionsIdPaymentsPutWithHttpInfo
+     *
+     * Update Payments for a subscription
+     *
+     * @param string $id Subscription Id (required)
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\UpdatePayments $updatePayments Modify payments of a subscription (required)
+     * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionsPaymentsResponse1, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function subscriptionsIdPaymentsPutWithHttpInfo($id, $updatePayments)
+    {
+        // verify the required parameter 'id' is set
+        if ($id === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter {$id} when calling subscriptionsIdPaymentsPut");
+            throw new \InvalidArgumentException('Missing the required parameter $id when calling subscriptionsIdPaymentsPut');
+        }
+        // verify the required parameter 'updatePayments' is set
+        if ($updatePayments === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter {$updatePayments} when calling subscriptionsIdPaymentsPut");
+            throw new \InvalidArgumentException('Missing the required parameter $updatePayments when calling subscriptionsIdPaymentsPut');
+        }
+        // parse inputs
+        $resourcePath = "/rbs/v1/subscriptions/{id}/payments";
+        $httpBody = '';
+        $queryParams = [];
+        $headerParams = [];
+        $formParams = [];
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json']);
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json']);
+        // path params
+        if ($id !== null) {
+            $resourcePath = str_replace("{" . "id" . "}", $this->apiClient->getSerializer()->toPathValue($id), $resourcePath);
+        }
+        // body params
+        $_tempBody = null;
+        if (isset($updatePayments)) {
+            $_tempBody = $updatePayments;
+        }
+        $sdkTracker = new \Pymt_Vas\Dependencies\CyberSource\Utilities\Tracking\SdkTracker();
+        $modelClassLocation = explode('\\', '\Pymt_Vas\Dependencies\CyberSource\Model\UpdatePayments');
+        $_tempBody = $sdkTracker->insertDeveloperIdTracker($_tempBody, end($modelClassLocation), $this->apiClient->merchantConfig->getRunEnvironment(), $this->apiClient->merchantConfig->getDefaultDeveloperId());
+        // for model (json/xml)
+        if (isset($_tempBody) and count($formParams) <= 0) {
+            $httpBody = $_tempBody;
+            // $_tempBody is the method argument, if present
+        } elseif (count($formParams) > 0) {
+            $httpBody = MultipartHelper::build_data_files($boundary, $formParams);
+            // for HTTP post (form)
+        }
+        //MLE check and mle encryption for req body
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "subscriptionsIdPaymentsPut,subscriptionsIdPaymentsPutWithHttpInfo")) {
+            try {
+                $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
+            } catch (Exception $e) {
+                self::$logger->error("Failed to encrypt request body:  {$e}");
+                throw new ApiException("Failed to encrypt request body : " . $e->getMessage());
+            }
+        }
+        // Logging
+        self::$logger->debug("Resource : PUT {$resourcePath}");
+        if (isset($httpBody) and count($formParams) <= 0) {
+            if ($this->apiClient->merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
+                $printHttpBody = \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\DataMasker::maskData($httpBody);
+            } else {
+                $printHttpBody = $httpBody;
+            }
+            self::$logger->debug("Body Parameter :\n" . $printHttpBody);
+        }
+        self::$logger->debug("Return Type : \\CyberSource\\Model\\GetSubscriptionsPaymentsResponse1");
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "subscriptionsIdPaymentsPut,subscriptionsIdPaymentsPutWithHttpInfo");
+        // make the API Call
+        try {
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'PUT', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionsPaymentsResponse1', '/rbs/v1/subscriptions/{id}/payments', $isResponseMLEForAPI);
+            self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
+            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionsPaymentsResponse1', $httpHeader), $statusCode, $httpHeader];
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionsPaymentsResponse1', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 400:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4009', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 404:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4041', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 502:
@@ -850,7 +1110,7 @@ class SubscriptionsApi
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4003', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4005', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 404:
@@ -938,7 +1198,7 @@ class SubscriptionsApi
             // for HTTP post (form)
         }
         //MLE check and mle encryption for req body
-        $inboundMLEStatus = 'false';
+        $inboundMLEStatus = 'optional';
         if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "updateSubscription,updateSubscriptionWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
@@ -972,7 +1232,7 @@ class SubscriptionsApi
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4004', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4006', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 404:

@@ -49,12 +49,12 @@ class TmsEmbeddedInstrumentIdentifierBillTo implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['address1' => 'string', 'address2' => 'string', 'locality' => 'string', 'administrativeArea' => 'string', 'postalCode' => 'string', 'country' => 'string'];
+    protected static $swaggerTypes = ['address1' => 'string', 'address2' => 'string', 'locality' => 'string', 'administrativeArea' => 'string', 'postalCode' => 'string', 'country' => 'string', 'email' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['address1' => null, 'address2' => null, 'locality' => null, 'administrativeArea' => null, 'postalCode' => null, 'country' => null];
+    protected static $swaggerFormats = ['address1' => null, 'address2' => null, 'locality' => null, 'administrativeArea' => null, 'postalCode' => null, 'country' => null, 'email' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -67,17 +67,17 @@ class TmsEmbeddedInstrumentIdentifierBillTo implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['address1' => 'address1', 'address2' => 'address2', 'locality' => 'locality', 'administrativeArea' => 'administrativeArea', 'postalCode' => 'postalCode', 'country' => 'country'];
+    protected static $attributeMap = ['address1' => 'address1', 'address2' => 'address2', 'locality' => 'locality', 'administrativeArea' => 'administrativeArea', 'postalCode' => 'postalCode', 'country' => 'country', 'email' => 'email'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['address1' => 'setAddress1', 'address2' => 'setAddress2', 'locality' => 'setLocality', 'administrativeArea' => 'setAdministrativeArea', 'postalCode' => 'setPostalCode', 'country' => 'setCountry'];
+    protected static $setters = ['address1' => 'setAddress1', 'address2' => 'setAddress2', 'locality' => 'setLocality', 'administrativeArea' => 'setAdministrativeArea', 'postalCode' => 'setPostalCode', 'country' => 'setCountry', 'email' => 'setEmail'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['address1' => 'getAddress1', 'address2' => 'getAddress2', 'locality' => 'getLocality', 'administrativeArea' => 'getAdministrativeArea', 'postalCode' => 'getPostalCode', 'country' => 'getCountry'];
+    protected static $getters = ['address1' => 'getAddress1', 'address2' => 'getAddress2', 'locality' => 'getLocality', 'administrativeArea' => 'getAdministrativeArea', 'postalCode' => 'getPostalCode', 'country' => 'getCountry', 'email' => 'getEmail'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -107,6 +107,7 @@ class TmsEmbeddedInstrumentIdentifierBillTo implements ArrayAccess
         $this->container['administrativeArea'] = isset($data['administrativeArea']) ? $data['administrativeArea'] : null;
         $this->container['postalCode'] = isset($data['postalCode']) ? $data['postalCode'] : null;
         $this->container['country'] = isset($data['country']) ? $data['country'] : null;
+        $this->container['email'] = isset($data['email']) ? $data['email'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -234,6 +235,24 @@ class TmsEmbeddedInstrumentIdentifierBillTo implements ArrayAccess
     public function setCountry($country)
     {
         $this->container['country'] = $country;
+        return $this;
+    }
+    /**
+     * Gets email
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->container['email'];
+    }
+    /**
+     * Sets email
+     * @param string $email Customer's email address, including the full domain name.
+     * @return $this
+     */
+    public function setEmail($email)
+    {
+        $this->container['email'] = $email;
         return $this;
     }
     /**

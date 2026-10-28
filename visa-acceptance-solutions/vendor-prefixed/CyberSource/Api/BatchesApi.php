@@ -181,7 +181,7 @@ class BatchesApi
                     $e->setResponseObject($data);
                     break;
                 case 403:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4013', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
             }
@@ -283,7 +283,7 @@ class BatchesApi
                     $e->setResponseObject($data);
                     break;
                 case 403:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4013', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
             }
@@ -331,7 +331,7 @@ class BatchesApi
         $queryParams = [];
         $headerParams = [];
         $formParams = [];
-        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json;charset=utf-8']);
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json', 'application/json;charset=utf-8']);
         if (!is_null($_header_accept)) {
             $headerParams['Accept'] = $_header_accept;
         }
@@ -402,11 +402,11 @@ class BatchesApi
                     $e->setResponseObject($data);
                     break;
                 case 401:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4013', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 422:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4013', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
             }
@@ -509,19 +509,19 @@ class BatchesApi
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4013', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 401:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4013', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 415:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4013', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 422:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4013', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
             }

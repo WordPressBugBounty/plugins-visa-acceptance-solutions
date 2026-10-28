@@ -48,7 +48,7 @@ class PtsV2PaymentsPost201Response1ProcessorInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['transactionId' => 'string', 'tradeNumber' => 'string', 'rawResponse' => 'string', 'rawResponseLocal' => 'string', 'responseDetails' => 'string', 'responseCode' => 'string', 'sellerProtection' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessorInformationSellerProtection', 'avs' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201Response1ProcessorInformationAvs'];
+    protected static $swaggerTypes = ['transactionId' => 'string', 'tradeNumber' => 'string', 'rawResponse' => 'string', 'rawResponseLocal' => 'string', 'responseDetails' => 'string', 'responseCode' => 'string', 'sellerProtection' => '\Pymt_Vas\Dependencies\CyberSource\Model\ProcessorInformationSellerProtection', 'avs' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201Response1ProcessorInformationAvs'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -239,7 +239,7 @@ class PtsV2PaymentsPost201Response1ProcessorInformation implements ArrayAccess
     }
     /**
      * Gets sellerProtection
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessorInformationSellerProtection
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\ProcessorInformationSellerProtection
      */
     public function getSellerProtection()
     {
@@ -247,7 +247,7 @@ class PtsV2PaymentsPost201Response1ProcessorInformation implements ArrayAccess
     }
     /**
      * Sets sellerProtection
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessorInformationSellerProtection $sellerProtection
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\ProcessorInformationSellerProtection $sellerProtection
      * @return $this
      */
     public function setSellerProtection($sellerProtection)

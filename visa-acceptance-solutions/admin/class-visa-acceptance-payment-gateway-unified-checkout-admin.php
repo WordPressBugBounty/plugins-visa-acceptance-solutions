@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once plugin_dir_path( __DIR__ ) . 'includes/api/payments/class-visa-acceptance-auth-reversal.php';
 require_once plugin_dir_path( __DIR__ ) . 'includes/api/payments/class-visa-acceptance-refund.php';
 require_once plugin_dir_path( __DIR__ ) . 'includes/api/request/payments/class-visa-acceptance-payment-adapter.php';
+ 
 
 /**
  * Visa Acceptance admin-specific functionality of the plugin.
@@ -58,7 +59,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 	 */
 	private $shared_settings;
 
-	/**
+    /**
 	 * The environment  object of this plugin.
 	 *
 	 * @var array   $environment   environment  object.
@@ -77,9 +78,117 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 		$this->id              = $wc_payment_gateway_id;
 		$this->version         = $version;
 		$this->gateway         = $gateway;
-		$this->shared_settings = array( 'merchant_id', 'api_key', 'api_shared_secret', 'test_merchant_id', 'test_api_key', 'test_api_shared_secret', 'tokenization_profile_id', 'enable_decision_manager', 'organization_id' );
+		$this->shared_settings = array( 'merchant_id', 'api_key', 'api_shared_secret', 'test_merchant_id', 'test_api_key', 'test_api_shared_secret', 'tokenization_profile_id', 'enable_fraud_webhook', 'organization_id' );
+		// AJAX handlers for webhook management.
+		add_action( 'wp_ajax_vas_delete_webhook', array( $this, 'ajax_delete_webhook' ) );
+		// AJAX handler for payment status refresh.
+        add_action( 'wp_ajax_vas_refresh_payment_status', array( $this, 'ajax_refresh_payment_status' ) );
+		add_action( 'send_headers', array( $this, 'add_clickjacking_headers' ) );
+        add_action( 'wp_head', array( $this, 'add_clickjacking_script' ), 1 );
+        add_action( 'current_screen', array( $this, 'admin_clickjacking_script' ) );
 	}
 
+	/**
+	 * Only hook the anti-clickjack output into `admin_head` on this plugin's own screens,
+	 * so it never hides the dashboard for unrelated admin pages.
+	 *
+	 * @param \WP_Screen $screen Current admin screen.
+	 * @return void
+	 */
+	public function admin_clickjacking_script( $screen ) {
+		$plugin_screens = array( 'woocommerce_page_wc-settings', 'shop_order', 'woocommerce_page_wc-orders' );
+		if ( $screen && in_array( $screen->id, $plugin_screens, true ) ) {
+			add_action( 'admin_head', array( $this, 'add_clickjacking_script' ), 1 );
+		}
+	}
+
+	/**
+     * Add clickjacking protection headers.
+     *
+     * @return void
+     */
+    public function add_clickjacking_headers() {
+        if ( defined( 'VISA_ACCEPTANCE_CLICKJACK_HEADERS_SENT' ) ) {
+            return;
+        }
+        define( 'VISA_ACCEPTANCE_CLICKJACK_HEADERS_SENT', true );
+        header( 'X-Frame-Options: SAMEORIGIN' );
+        header( "Content-Security-Policy: frame-ancestors 'self'" );
+    }
+ 
+    /**
+     * Add JavaScript-based clickjacking protection.
+     *
+     * @return void
+     */
+    public function add_clickjacking_script() {
+        if ( defined( 'VISA_ACCEPTANCE_CLICKJACK_SCRIPT_OUTPUT' ) ) {
+            return;
+        }
+        define( 'VISA_ACCEPTANCE_CLICKJACK_SCRIPT_OUTPUT', true );
+
+        // Compute the destination server-side (never from window.location) so the redirect.
+        // target is not attacker-influenced client-side data.
+        $request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+        $trusted_url = esc_url_raw( home_url( $request_uri ) );
+ 
+        wp_register_style( 'vas-anti-clickjack', false, array(), $this->version );
+        wp_enqueue_style( 'vas-anti-clickjack' );
+        wp_add_inline_style( 'vas-anti-clickjack', '#antiClickjack, html.vas-anti-clickjack { display: none !important; }' );
+ 
+        wp_register_script( 'vas-anti-clickjack', false, array(), $this->version, false );
+        wp_enqueue_script( 'vas-anti-clickjack' );
+        wp_add_inline_script(
+            'vas-anti-clickjack',
+            '(function() {
+            \'use strict\';
+ 
+            // Server-rendered, sanitized destination URL - not derived from window.location.
+            var trustedUrl = ' . wp_json_encode( $trusted_url ) . ';
+ 
+            function showPage() {
+                document.documentElement.style.display = "block";
+            }
+ 
+            function breakOut() {
+                try {
+                    var target;
+                    try {
+                        target = new URL(trustedUrl);
+                    } catch (e) {
+                        document.body.innerHTML = \'\';
+                        return;
+                    }
+                    if (target.protocol !== \'http:\' && target.protocol !== \'https:\') {
+                        document.body.innerHTML = \'\';
+                        return;
+                    }
+                    if (top.location.origin !== target.origin) {
+                        // Cross-origin framing detected - clear page content.
+                        document.body.innerHTML = \'\';
+                        return;
+                    }
+                    if (top.location.href !== target.href) {
+                        top.location.replace(target.href);
+                    }
+                } catch (e) {
+                    // If we can\'t access top.location due to cross-origin,
+                    // the page is being framed by an untrusted domain.
+                    document.body.innerHTML = \'\';
+                }
+            }
+ 
+            // Check if page is being framed.
+            if (self === top) {
+                // Not in a frame, safe to display.
+                showPage();
+            } else {
+                // Page is in a frame, attempt to break out.
+                breakOut();
+            }
+            })();'
+        );
+    }
 
 	/**
 	 * Displays an admin notice when the gateway is running in test/sandbox mode.
@@ -125,27 +234,23 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 	 */
 	public function enqueue_scripts( $hook_suffix ) {
 		if ( 'post.php' === $hook_suffix || 'woocommerce_page_wc-orders' === $hook_suffix ) {
+		// Only users who are allowed to manage WooCommerce orders may trigger asset enqueueing here.
+		if ( ! current_user_can( 'edit_shop_orders' ) && ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
 		// Sanitize and validate request data using proper WordPress functions.
 		$post_id = null;
-		$nonce   = isset( $_GET[VISA_ACCEPTANCE_NONCE] ) ? sanitize_text_field( wp_unslash( $_GET[VISA_ACCEPTANCE_NONCE] ) ) : VISA_ACCEPTANCE_STRING_EMPTY;
-
-		// Verify nonce before using GET parameters.
-		if ( ( isset( $_GET['post'] ) && ! empty( $_GET['post'] ) ) || ( isset( $_GET['id'] ) && ! empty( $_GET['id'] ) ) ) {
-			if ( ! empty( $nonce ) && ! wp_verify_nonce( $nonce, 'visa_acceptance_admin_action' ) ) {
-				return; 
-			}
-		}
-
+    
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Reading URL parameters for conditional notice display only.
 		if ( isset( $_GET['post'] ) && ! empty( $_GET['post'] ) ) {
 			$post_id = absint( sanitize_text_field( wp_unslash( $_GET['post'] ) ) );
 		} elseif ( isset( $_GET['id'] ) && ! empty( $_GET['id'] ) ) { 
 			$post_id = absint( sanitize_text_field( wp_unslash( $_GET['id'] ) ) ); 
 		}
-
-		if ( ! $post_id || $post_id <= 0 ) {
+		if ( ! $post_id || $post_id <= VISA_ACCEPTANCE_VAL_ZERO ) {
 			return;
 		}
-
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended -- Finished reading URL parameters for conditional notice display.
 		$order = wc_get_order( $post_id );
 		if ( ! $order ) {
 			return;
@@ -163,16 +268,30 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 	 */
 	public function enqueue_edit_order_assets( \WC_Order $order ) {
 		$settings         = $this->gateway->get_gateway_settings();
-		$transaction_type = isset( $settings['transaction_type'] ) ? $settings['transaction_type'] : VISA_ACCEPTANCE_STRING_EMPTY;
-		$is_charge_settled = VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $transaction_type
-			&& in_array( $order->get_status(), array( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_COMPLETED ), true );
-
-		// Check if virtual order was auto-charged (same logic as refund method)
+        $transaction_type = isset( $settings['transaction_type'] ) ? $settings['transaction_type'] : VISA_ACCEPTANCE_STRING_EMPTY;
+        $is_charge_settled = VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $transaction_type
+            && in_array( $order->get_status(), array( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_COMPLETED ), true );
+ 
+        // Check if virtual order was auto-charged (same logic as refund method).
         $payment_adapter = new Visa_Acceptance_Payment_Adapter( $this->gateway );
         $is_virtual_order_auto_charged = $payment_adapter->check_virtual_order_enabled( $settings, $order );
         $order_fully_captured = $this->is_order_captured( $order )
             || $is_charge_settled
             || $is_virtual_order_auto_charged;
+
+        $capture_context = $this->get_partial_capture_refund_context( $order );
+
+        $captured_item_quantities = array();
+        $capture_history_raw      = $order->get_meta( '_vas_partial_captures', true );
+        $capture_history_raw      = is_array( $capture_history_raw ) ? $capture_history_raw : array();
+        foreach ( $capture_history_raw as $capture ) {
+            if ( empty( $capture['items'] ) || ! is_array( $capture['items'] ) ) {
+                continue;
+            }
+            foreach ( $capture['items'] as $item_id => $qty ) {
+                $captured_item_quantities[ $item_id ] = ( $captured_item_quantities[ $item_id ] ?? VISA_ACCEPTANCE_VAL_ZERO ) + $qty;
+            }
+        }
 
 		wp_enqueue_script( 'wc-payment-gateway-unified-checkout-admin-order', plugin_dir_url( __FILE__ ) . 'js/visa-acceptance-payment-gateway-unified-checkout-admin.js', array( 'jquery' ), VISA_ACCEPTANCE_PLUGIN_VERSION, true );
 
@@ -186,6 +305,8 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 				'capture_message'                 => __( 'Are you sure you wish to process this capture? The action cannot be reversed.', 'visa-acceptance-solutions' ),
 				'capture_action'                  => VISA_ACCEPTANCE_WC_CAPTURE_ACTION,
 				'capture_nonce'                   => wp_create_nonce( VISA_ACCEPTANCE_WC_CAPTURE_ACTION ),
+				'partial_capture_nonce'           => wp_create_nonce( 'visa_acceptance_partial_capture' ),
+				'refresh_payment_status_nonce'    => wp_create_nonce( 'vas-refresh-payment-status-nonce' ),
 				'capture_error'                   => __( 'Something went wrong, and the capture could not be completed. Please try again.', 'visa-acceptance-solutions' ),
 				'refund_button_visibility'        => $this->validate_refund_amount( $order ) ? VISA_ACCEPTANCE_YES : VISA_ACCEPTANCE_NO,
 				'total_amount'                    => (float) $order->get_total(),
@@ -194,6 +315,13 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 				'visa_acceptance_solutions_uc_id' => VISA_ACCEPTANCE_UC_ID,
 				'error_failure'                   => __( 'Unable to process your request. Please try again later.', 'visa-acceptance-solutions' ),
 				'order_fully_capture'             => $order_fully_captured ? VISA_ACCEPTANCE_YES : VISA_ACCEPTANCE_NO,
+				'currency_symbol'                 => get_woocommerce_currency_symbol( $order->get_currency() ),
+				'payment_type'                    => $order->get_meta( '_vas_payment_type', true ),
+				'has_partial_capture_history'      => $capture_context['has_partial_history'] ? VISA_ACCEPTANCE_YES : VISA_ACCEPTANCE_NO,
+				'remaining_captured_amount'        => $capture_context['remaining_captured'],
+				'remaining_authorized_amount'      => $capture_context['remaining_authorized'],
+				'captured_item_quantities'         => $captured_item_quantities,
+                'has_untracked_partial_capture'    => $this->has_untracked_partial_capture( $order ) ? VISA_ACCEPTANCE_YES : VISA_ACCEPTANCE_NO,
 			)
 		);
 	}
@@ -202,75 +330,45 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 	 * Handles admin options based on conditions
 	 */
 	public function admin_options() {
-		?>
-		<style type="text/css">.nowrap { white-space: nowrap; }</style>
-		<?php
-		ob_start();
-		if ( count( $this->get_environments() ) > VISA_ACCEPTANCE_VAL_ONE ) {
-			?>
-			function titleHeaderLogo() {
-                $( '.woocommerce h2' ).addClass('wc-title-header');
-				$(".wc-title-header").each(function() {
-				if ($(this).text().trim()) {
-					var logo = $("<img>", {
-					src: "<?php echo esc_url( plugins_url( '../public/img/visa-logo.png', __FILE__ ) ); ?>",
-					alt: "Visa Logo",
-					css: {
-						height: "25px",
-						marginLeft: "8px",
-						verticalAlign: "middle"
-					}
-					});
-					$(this).append(logo);
-				}
-				});
-            }
-            titleHeaderLogo();
-				$( '#woocommerce_<?php echo esc_js( $this->get_id() ); ?>_environment' ).change( function() {
-					var environment = $( this ).val();
-					// hide all environment-dependant fields
-					$( '.environment-field' ).closest( 'tr' ).hide();
-					// show the currently configured environment fields that are not also being hidden as any shared settings
-					var environmentFields = $( '.' + environment + '-field' );
-					environmentFields.not( '.hidden' ).closest( 'tr' ).show();
-					if ($('#woocommerce_visa_acceptance_solutions_gpay_enable_decision_manager').is(':checked')) {
-						environmentFields( '.hidden' ).closest( 'tr' ).show();
-					}
-				} ).change();
-				<?php
-		}
-		
+		wp_register_style(
+        'vas-admin-settings',
+        false,
+        array(),
+        $this->version
+        );
+        wp_enqueue_style( 'vas-admin-settings' );
+        wp_add_inline_style(
+        'vas-admin-settings',
+        '.nowrap { white-space: nowrap; }'
+        );
 		if ( ! empty( $this->shared_settings ) ) {
-			wc_enqueue_js( ob_get_clean() );
-
-			// Adding Configuration.
-			if ( isset( $this->gateway->form_fields['transaction_type'] ) ) {
-				// add inline javascript.
-				ob_start();
-				?>
-			$( '#woocommerce_<?php echo esc_js( $this->gateway->get_id() ); ?>_transaction_type' ).change( function() {
-				var transaction_type = $( this ).val();
-				var virtualOrderConfiguration = $( '#woocommerce_visa_acceptance_solutions_unified_checkout_charge_virtual_orders' ).closest( 'tr' );
-				var capturePaidOrders = $( '#woocommerce_visa_acceptance_solutions_unified_checkout_enable_paid_capture' ).closest( 'tr' );
-				if(transaction_type == 'charge'){
-					virtualOrderConfiguration.hide();
-					capturePaidOrders.hide();
-				} 
-				else{
-					virtualOrderConfiguration.show();
-					capturePaidOrders.show();
-				}
-			} ).change();
-				<?php
-				wc_enqueue_js( ob_get_clean() );
-			}
-
+			// Enqueue admin settings JavaScript file.
+            wp_enqueue_script(
+                'vas-admin-settings',
+                plugin_dir_url( __FILE__ ) . 'js/visa-acceptance-admin-settings.js',
+                array( 'jquery' ),
+                $this->version,
+                true
+            );
+ 
+            // Localize script with settings data.
+            wp_localize_script(
+                'vas-admin-settings',
+                'vasAdminSettings',
+                array(
+                    'logoUrl'             => plugins_url( '../public/img/visa-logo.png', __FILE__ ),
+                    'gatewayId'           => $this->get_id(),
+                    'gatewayIdFull'       => $this->gateway->get_id(),
+                    'hasMultipleEnvs'     => count( $this->get_environments() ) > VISA_ACCEPTANCE_VAL_ONE,
+					'webhookNonce'        => wp_create_nonce( 'vas-webhook-nonce' ),
+                )
+            );
 			//validate at card type default for accepted card type.
 			if ( isset( $this->gateway->form_fields['card_types'] ) ) {
 				// add inline javascript.
 				ob_start();
 				?>
-			var $cardTypes = $('#woocommerce_<?php echo esc_js($this->get_id()); ?>_card_types');
+				var $cardTypes = $('#woocommerce_<?php echo esc_js($this->get_id()); ?>_card_types');
 				if ($cardTypes.length) {
 					// Store last valid selection
 					var lastValid = $cardTypes.val();
@@ -295,79 +393,38 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 					});
 				}
 				<?php
-				wc_enqueue_js( ob_get_clean() );
+				$js = ob_get_clean();
+				wp_add_inline_script( 'vas-admin-settings', 'jQuery(function($){' . $js . '});' );
 			}
-			// ['enable_saved_sca'] will be visible only if 3Ds is enable.
-			if ( isset( $this->gateway->form_fields['enable_threed_secure'] ) ) {
-				// add inline javascript.
-				ob_start();
-				?>
-			$( '#woocommerce_<?php echo esc_js( $this->gateway->get_id() ); ?>_enable_threed_secure' ).change( function() {
-				var enable_threed_secure = $( this ).is( ':checked' );
-				var tokenization =  $('#woocommerce_visa_acceptance_solutions_unified_checkout_tokenization').is( ':checked' );
-				var enableSavedSca = $( '#woocommerce_visa_acceptance_solutions_unified_checkout_enable_saved_sca' ).closest( 'tr' );
-				if(enable_threed_secure && tokenization){
-					enableSavedSca.show();
-				}
-				else{
-					enableSavedSca.hide();
-				}
-			} ).change();
-				<?php
-				wc_enqueue_js( ob_get_clean() );
-			}
+			// MLE Request is automatically active for all transactions.
+            if ( isset( $this->gateway->form_fields['enable_mle'] ) ) {
+                // add inline javascript.
+                ob_start();
+                ?>
+            	$( '#woocommerce_<?php echo esc_js( $this->gateway->get_id() ); ?>_enable_mle' ).prop( 'checked', true ).closest( 'tr' ).hide();
+                <?php
+				$js = ob_get_clean();
+				wp_add_inline_script( 'vas-admin-settings', 'jQuery(function($){' . $js . '});' );
+            }
 
-			// ['enable_saved_sca'] will be visible only if tokenization is enable.
-			if ( isset( $this->gateway->form_fields['tokenization'] ) ) {
-				// add inline javascript.
-				ob_start();
-				?>
-			$( '#woocommerce_<?php echo esc_js( $this->gateway->get_id() ); ?>_tokenization' ).change( function() {
-				var tokenization = $( this ).is( ':checked' );
-				var enable_threed_secure = $('#woocommerce_visa_acceptance_solutions_unified_checkout_enable_threed_secure').is( ':checked' );
-				var enableSavedSca = $( '#woocommerce_visa_acceptance_solutions_unified_checkout_enable_saved_sca' ).closest( 'tr' );
-				var enableTokenCsc = $( '#woocommerce_visa_acceptance_solutions_unified_checkout_enable_token_csc' ).closest( 'tr' );
-				if( tokenization ){
-					enableTokenCsc.show();
-				}
-				else{
-					enableTokenCsc.hide();
-				}
-				if(enable_threed_secure && tokenization){
-					enableSavedSca.show();
-				}
-				else{
-					enableSavedSca.hide();
-				}
-			} ).change();
-				<?php
-				wc_enqueue_js( ob_get_clean() );
-			}
-			// if MLE will be enabled then show Certificate path, file name & key password fields.
-
-			if ( isset( $this->gateway->form_fields['enable_mle'] ) ) {
-				// add inline javascript.
-				ob_start();
-				?>
-			$( '#woocommerce_<?php echo esc_js( $this->gateway->get_id() ); ?>_enable_mle' ).change( function() {
-				var enable_mle = $(this).is( ':checked' );
-				var mleCertificatePath = $( '#woocommerce_visa_acceptance_solutions_unified_checkout_mle_certificate_path' ).closest( 'tr' );
-				var mleFilename = $( '#woocommerce_visa_acceptance_solutions_unified_checkout_mle_filename').closest( 'tr' );
-				var mleKeyPassword = $( '#woocommerce_visa_acceptance_solutions_unified_checkout_mle_key_password').closest( 'tr' );
-				if(enable_mle){
-					mleCertificatePath.show().find('input');
-					mleFilename.show().find('input');
-					mleKeyPassword.show().find('input');
-				}
-				else{
-					mleCertificatePath.hide().find('input');
-					mleFilename.hide().find('input');
-					mleKeyPassword.hide().find('input');
-				}
-			} ).change();
-				<?php
-				wc_enqueue_js( ob_get_clean() );
-			}
+			// Show/hide Network Token Webhook field based on Tokenization setting.
+            if ( isset( $this->gateway->form_fields['enable_network_token_webhook'] ) ) {
+                ob_start();
+                ?>
+                $( '#woocommerce_<?php echo esc_js( $this->gateway->get_id() ); ?>_tokenization' ).change( function() {
+                    var tokenization_enabled = $(this).is( ':checked' );
+                    var networkTokenRow = $( '#woocommerce_<?php echo esc_js( $this->gateway->get_id() ); ?>_enable_network_token_webhook' ).closest( 'tr' );
+                    if ( tokenization_enabled ) {
+                        networkTokenRow.show();
+                    } else {
+                        networkTokenRow.hide();
+                        $( '#woocommerce_<?php echo esc_js( $this->gateway->get_id() ); ?>_enable_network_token_webhook' ).prop( 'checked', false );
+                    }
+                } ).change();
+                <?php
+					$js = ob_get_clean();
+				    wp_add_inline_script( 'vas-admin-settings', 'jQuery(function($){' . $js . '});' );
+            }
 		}
 	}
 
@@ -375,23 +432,6 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 	 * Add the Admin Fields for our payment methods
 	 */
 	public function init_form_fields() {
-
-		/**
-		 * Followed this pattern, available on WOO
-		 * 'setting_name' => array(
-		 *      'title'       => 'Title for your setting shown on the settings page',
-		 *      'description' => 'Description for your setting shown on the settings page',
-		 *      'type'        => 'text|password|textarea|checkbox|select|multiselect',
-		 *      'default'     => 'Default value for the setting',
-		 *      'class'       => 'Class for the input element',
-		 *      'css'         => 'CSS rules added inline on the input element',
-		 *      'label'       => 'Label', // For checkbox inputs only.
-		 *      'options'     => array( // Array of options for select/multiselect inputs only.
-		 *      'key' => 'value'
-		 *      ),
-		 *  )
-		 */
-
 		$form_fields = array(
 			'enabled'                 => array(
 				'title'       => __( 'Enable/Disable', 'visa-acceptance-solutions' ),
@@ -415,25 +455,17 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 				'description' => __( 'Payment method description that the customer will see on your website.', 'visa-acceptance-solutions' ),
 				'desc_tip'    => true,
 				'type'        => 'textarea',
-				'default'     => __( 'Choose from a range of secure Payment Options.', 'visa-acceptance-solutions' ),
-			),
-			'transaction_type'        => array(
-				'title'    => __( 'Transaction Type', 'visa-acceptance-solutions' ),
-				'desc_tip' => __( 'Charge will automatically capture/settle a transaction if the authorization is approved. Authorization simply authorizes the order total for capture later.', 'visa-acceptance-solutions' ),
-				'type'     => 'select',
-				'default'  => VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE,
-				'options'  => array(
-					VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE        => __( 'Charge', 'visa-acceptance-solutions' ),
-					VISA_ACCEPTANCE_TRANSACTION_TYPE_AUTHORIZATION => __( 'Authorization', 'visa-acceptance-solutions' ),
-				),
+				'default'     => __( 'Choose from a range of secure payment options.', 'visa-acceptance-solutions' ),
 			),
 			'charge_virtual_orders'   => array(
+				'title'    => __( 'Charge Virtual Orders', 'visa-acceptance-solutions' ),
 				'description' => __( 'If the order contains exclusively virtual items, enable this to immediately charge, rather than authorize, the transaction.', 'visa-acceptance-solutions' ),
 				'type'        => 'checkbox',
 				'default'     => VISA_ACCEPTANCE_NO,
 				'label'       => __( 'Charge Virtual-Only Orders', 'visa-acceptance-solutions' ),
 			),
 			'enable_paid_capture'     => array(
+				'title'    => __( 'Enable Paid Capture', 'visa-acceptance-solutions' ),
 				'description' => __( 'Automatically capture orders when they are changed to Processing or Completed.', 'visa-acceptance-solutions' ),
 				'type'        => 'checkbox',
 				'default'     => VISA_ACCEPTANCE_NO,
@@ -464,8 +496,8 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 				'class'    => 'environment-field production-field shared-settings-field',
 			),
 			'api_shared_secret'       => array(
-				'title'    => __( 'API Shared Secret Key', 'visa-acceptance-solutions' ),
-				'desc_tip' => __( 'The API Shared Secret Key for your Visa Acceptance Solutions account.', 'visa-acceptance-solutions' ),
+				'title'    => __( 'REST Shared Secret', 'visa-acceptance-solutions' ),
+				'desc_tip' => __( 'The REST API Shared Secret Key for your Visa Acceptance Solutions account.', 'visa-acceptance-solutions' ),
 				'type'     => 'password',
 				'class'    => 'environment-field production-field shared-settings-field',
 			),
@@ -493,113 +525,90 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 			'enable_mle'              => array(
 				'title'   => __( 'Message Level Encryption', 'visa-acceptance-solutions' ),
 				'type'    => 'checkbox',
-				'default' => VISA_ACCEPTANCE_NO,
+				'default' => VISA_ACCEPTANCE_YES,
 				'label'   => __( 'Enable MLE Authentication', 'visa-acceptance-solutions' ),
 			),
-			'mle_certificate_path'    => array(
-				'title'    => __( 'Key Directory Path', 'visa-acceptance-solutions' ),
+            'mle_certificate_path'    => array(
+				'title'    => __( 'Key File Path', 'visa-acceptance-solutions' ),
 				'type'     => 'text',
 				'desc_tip' => __( 'Your Visa Acceptance Solutions Merchant Key File Directory.', 'visa-acceptance-solutions' ),
-				'placeholder' => __( 'EX. C:/users/folderName/ Or /var/folderName/', 'visa-acceptance-solutions'),
+				'placeholder' => __( 'EX. C:/users/folderName/fileName.p12', 'visa-acceptance-solutions'),
 			),
-			'mle_filename'            => array(
-				'title'    => __( 'Key File Name', 'visa-acceptance-solutions' ),
-				'desc_tip' => __( 'Your Visa Acceptance Solutions Merchant Key File Name.', 'visa-acceptance-solutions' ),
-				'type'     => 'text',
-				'placeholder' => __( 'EX. MessageLevelEncryptionCertificate', 'visa-acceptance-solutions' ),
-			),
+
 			'mle_key_password'        => array(
 				'title'    => __( 'Key Password', 'visa-acceptance-solutions' ),
 				'type'     => 'password',
 				'desc_tip' => __( 'Your Visa Acceptance Solutions Merchant Key File Password.', 'visa-acceptance-solutions' ),
 			),
-			// debug mode.
+            'enable_response_mle'     => array(
+                'title'   => __( 'Response Message Level Encryption', 'visa-acceptance-solutions' ),
+                'type'    => 'checkbox',
+                'default' => VISA_ACCEPTANCE_NO,
+                'label'   => __( 'Enable Response MLE', 'visa-acceptance-solutions' ),
+            ),
 			'enable_logs'             => array(
 				'title'    => __( 'Debug Mode', 'visa-acceptance-solutions' ),
+				/* translators: Placeholders: %1$s - <a> tag, %2$s - </a> tag */
 				'desc_tip' => sprintf( __( 'Select to enable request/response logs.', 'visa-acceptance-solutions' ), '<a href="' . $this->get_wc_log_file_url( $this->get_id() ) . '">', '</a>' ),
 				'type'     => 'select',
-				/* translators: Placeholders: %1$s - <a> tag, %2$s - </a> tag */
 				'default'  => VISA_ACCEPTANCE_NO,
 				'options'  => array(
 					VISA_ACCEPTANCE_NO  => __( 'Off', 'visa-acceptance-solutions' ),
 					VISA_ACCEPTANCE_YES => __( 'On', 'visa-acceptance-solutions' ),
 				),
 			),
-			
-			'card_types'              => array(
-				'title'   => __( 'Accepted Card Types', 'visa-acceptance-solutions' ),
-				'type'    => 'multiselect',
-				'default' => array_keys( $this->get_supported_card_types( 'default' ) ),
-				'class'   => 'wc-enhanced-select',
-				'css'     => 'width: 350px;',
-				'options' => $this->get_supported_card_types(),
-			),
-			'enable_express_pay' => array(
-				'title'       => __( 'Express Pay', 'visa-acceptance-solutions' ),
-				'type'        => 'checkbox',
-				'description' => __( 'If not enabled, Digital Payment Methods load in the main checkout widget', 'visa-acceptance-solutions' ),
-				'default'     => VISA_ACCEPTANCE_NO,
-				'label'       => __( 'Enable Express Pay on the checkout page', 'visa-acceptance-solutions' ),
-			),
-			'enabled_payment_methods' => array(
-                'title'       => __( 'Digital Payment Methods', 'visa-acceptance-solutions' ),
-                'class'   => 'wc-enhanced-select',
-                'css'     => 'width: 350px;',
-                'type'        => 'multiselect',
-                'default'     => array(),
-                'custom_attributes' => array(
-                    'data-placeholder' => __( 'Select one or more Digital Payment Methods', 'visa-acceptance-solutions' ),
-                ),
-                'options'     => array(
-                    'enable_apay' => __( 'Apple Pay', 'visa-acceptance-solutions' ),
-                    'enable_gpay' => __( 'Google Pay', 'visa-acceptance-solutions' ),
-                    'enable_vco'  => __( 'Click to Pay', 'visa-acceptance-solutions' ),
-                    'enable_paze'  => __( 'Paze', 'visa-acceptance-solutions' ),
+			'enable_express_pay'      => array(
+                'title'       => __( 'Express Pay', 'visa-acceptance-solutions' ),
+                'description' => __( 'If not enabled, Digital Payment Methods load in the main checkout widget.', 'visa-acceptance-solutions' ),
+                'type'        => 'checkbox',
+                'default'     => VISA_ACCEPTANCE_NO,
+                'label'       => __( 'Enable Express Pay', 'visa-acceptance-solutions' ),
+            ),
+			'checkout_display_mode'   => array(
+				'title'    => __( 'Checkout Display Mode', 'visa-acceptance-solutions' ),
+				'desc_tip' => __( 'Choose how the Unified Checkout payment form is displayed. Embedded: the payment details form appears inline on the checkout page. Sidebar: the payment details form opens as a side panel.', 'visa-acceptance-solutions' ),
+				'type'     => 'select',
+				'default'  => 'sidebar',
+				'options'  => array(
+					'embedded' => __( 'Embedded', 'visa-acceptance-solutions' ),
+					'sidebar'  => __( 'Sidebar', 'visa-acceptance-solutions' ),
                 ),
             ),
-			'enable_echeck' => array(
-				'title'       => __( 'Enable ACH/eCheck', 'visa-acceptance-solutions' ),
-				'type'        => 'checkbox',
-				'default'     => VISA_ACCEPTANCE_NO,
-				'label'       => __( 'Allow customers to pay using bank account (ACH/eCheck)', 'visa-acceptance-solutions' ),
-				'class'       => 'shared-settings-field',
-			),
-			'enable_threed_secure'    => array(
-				'title'       => __( 'Payer Authentication / 3D Secure', 'visa-acceptance-solutions' ),
-				'description' => __( 'Your merchant account must have this optional service enabled.', 'visa-acceptance-solutions' ),
-				'type'        => 'checkbox',
-				'default'     => VISA_ACCEPTANCE_NO,
-				'label'       => __( 'Enable 3D Secure', 'visa-acceptance-solutions' ),
-			),
 			'tokenization'            => array(
 				'title'   => __( 'Tokenization', 'visa-acceptance-solutions' ),
 				'type'    => 'checkbox',
 				'default' => VISA_ACCEPTANCE_NO,
 				'label'   => __( 'Allow customers to securely save their payment details for future checkout.', 'visa-acceptance-solutions' ),
 			),
-			'enable_saved_sca'        => array(
-				'title'   => __( 'Strong Customer Authentication', 'visa-acceptance-solutions' ),
-				'description' => __( 'If enabled, card holder will be 3DS challenged when saving a card.', 'visa-acceptance-solutions' ),
-				'type'        => 'checkbox',
-				'default'     => VISA_ACCEPTANCE_NO,
-				'label'       => __( 'Enable Strong Customer Authentication while saving card', 'visa-acceptance-solutions' ),
-			),
-			'enable_token_csc'        => array(
-				'title'   => __( 'Saved Card Verification', 'visa-acceptance-solutions' ),
-				'type'    => 'checkbox',
-				'default' => VISA_ACCEPTANCE_YES,
-				'label'   => __( 'Display the Card Security Code field when paying with a saved card', 'visa-acceptance-solutions' ),
-			),
-			'enable_decision_manager' => array(
-				'title'       => __( 'Fraud Screening', 'visa-acceptance-solutions' ),
-				'type'        => 'checkbox',
-				'default'     => VISA_ACCEPTANCE_NO,
-				'class'       => 'shared-settings-field',
-				'label'       => __( 'Enable Fraud Screening.', 'visa-acceptance-solutions' ),
-			)
+			'enable_network_token_webhook' => array(
+                'title'       => __( 'Network Tokens', 'visa-acceptance-solutions' ),
+                'type'        => 'checkbox',
+                'default'     => VISA_ACCEPTANCE_NO,
+                'label'       => __( 'Enable Network Token', 'visa-acceptance-solutions' ),
+            ),
+			'enable_fraud_webhook' => array(
+                'title'       => __( 'Fraud Management', 'visa-acceptance-solutions' ),
+                'type'        => 'checkbox',
+                'desc_tip' => __( 'Enable this option when using Visa Acceptance Solutions fraud management services. The plugin will automatically register and maintain the required webhook subscriptions.', 'visa-acceptance-solutions' ),
+                'default'     => VISA_ACCEPTANCE_NO,
+                'class'       => 'shared-settings-field',
+                'label'       => __( 'Enable Fraud Webhook Subscription', 'visa-acceptance-solutions' ),
+            ),
+			'uc_client_version' => array(
+            'title'       => __( 'Checkout Version (optional)', 'visa-acceptance-solutions' ),
+            'description' => __( 'Specify the unified checkout version (e.g. 1.0). If provided, it must start with 1.x.', 'visa-acceptance-solutions' ),
+            'desc_tip'    => true,
+            'type'        => 'text',
+            'default'     => VISA_ACCEPTANCE_STRING_EMPTY,
+            'placeholder' => __( 'e.g 1.x', 'visa-acceptance-solutions' ),
+            ),
+            'registered_webhooks' => array(
+                'title'       => __( 'Registered Webhooks', 'visa-acceptance-solutions' ),
+                'type'        => 'registered_webhooks',
+                'description' => __( 'View and manage your webhook subscriptions. Webhooks are automatically created when you enable the features above and save settings.', 'visa-acceptance-solutions' ),
+            )
 		);
-
-			return $form_fields;
+		return $form_fields;
 	}
 
 	/**
@@ -615,10 +624,7 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 			'DISCOVER'   => __( 'Discover', 'visa-acceptance-solutions' ),
 		);
 
-		return 'default' === $supports
-		?
-		$default_supported_cards
-		:
+		return 'default' === $supports ? $default_supported_cards :
 		array_merge(
 			$default_supported_cards,
 			array(
@@ -632,102 +638,327 @@ class Visa_Acceptance_Payment_Gateway_Unified_Checkout_Admin {
 	}
 
 	/**
-	 * Check if transaction is settled by querying Visa API
-	 *
-	 * @param object $order WooCommerce order object.
-	 * @return bool True if transaction is settled, false otherwise.
-	 */
-	private function is_transaction_settled_via_api( $order ) {
-		try {
-			require_once plugin_dir_path( __DIR__ ) . 'includes/api/request/payments/class-visa-acceptance-payment-adapter.php';
-			
-			$transaction_id = $this->get_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_ID );
-			if ( empty( $transaction_id ) ) {
-				return false;
-			}
-			
-			$payment_adapter = new Visa_Acceptance_Payment_Adapter( $this->gateway );
-			$transaction_details = $payment_adapter->get_transaction_details_sdk( $transaction_id );
-			
-			if ( empty( $transaction_details['http_code'] ) || VISA_ACCEPTANCE_TWO_ZERO_ZERO !== (int) $transaction_details['http_code'] ) {
-				// API call failed, return false to use fallback logic
-				return false;
-			}
-			
-			$transaction_data = json_decode( $transaction_details['body'], true );
-			
-			// Check if transaction has settlement information in applicationInformation
-			if ( ! empty( $transaction_data['applicationInformation']['applications'] ) ) {
-				foreach ( $transaction_data['applicationInformation']['applications'] as $application ) {
-					$app_name = isset( $application['name'] ) ? strtolower( $application['name'] ) : '';
-					$app_reason = isset( $application['reasonCode'] ) ? $application['reasonCode'] : '';
-					
-					// Check for settlement or capture application
-					if ( strpos( $app_name, 'settlement' ) !== false || strpos( $app_name, 'capture' ) !== false ) {
-						// If reason code is 100 (success), transaction is settled
-						if ( '100' === $app_reason ) {
-							return true;
-						}
-					}
-				}
-			}
-			
-			return false;
-			
-		} catch ( \Exception $e ) {
-			$this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to check transaction settlement status via API', true );
-			return false;
-		}
-	}
+     * Check if transaction is settled by querying Visa API
+     *
+     * @param object $order WooCommerce order object.
+     * @return bool True if transaction is settled, false otherwise.
+     */
+    private function is_transaction_settled_via_api( $order ) {
+        try {
+            require_once plugin_dir_path( __DIR__ ) . 'includes/api/request/payments/class-visa-acceptance-payment-adapter.php';
+           
+            $transaction_id = $this->get_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_ID );
+            if ( empty( $transaction_id ) ) {
+                return false;
+            }
+           
+            $payment_adapter = new Visa_Acceptance_Payment_Adapter( $this->gateway );
+            $transaction_details = $payment_adapter->get_transaction_details_sdk( $transaction_id );
+           
+            if ( empty( $transaction_details['http_code'] ) || VISA_ACCEPTANCE_TWO_ZERO_ZERO !== (int) $transaction_details['http_code'] ) {
+                // API call failed, return false to use fallback logic.
+                return false;
+            }
+           
+            $transaction_data = json_decode( $transaction_details['body'], true );
+           
+            // Check if transaction has settlement information in applicationInformation.
+            if ( ! empty( $transaction_data['applicationInformation']['applications'] ) ) {
+                foreach ( $transaction_data['applicationInformation']['applications'] as $application ) {
+                    $app_name = isset( $application['name'] ) ? strtolower( $application['name'] ) : VISA_ACCEPTANCE_STRING_EMPTY;
+                    $app_reason = isset( $application['reasonCode'] ) ? $application['reasonCode'] : VISA_ACCEPTANCE_STRING_EMPTY;
+                   
+                    // Check for settlement or capture application.
+                    if ( strpos( $app_name, 'settlement' ) !== false || strpos( $app_name, 'capture' ) !== false ) {
+                        // If reason code is 100 (success), transaction is settled.
+                        if ( '100' === $app_reason ) {
+                            return true;
+                        }
+                    }
+                }
+            }
+           
+            return false;
+           
+        } catch ( \Exception $e ) {
+            $this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to check transaction settlement status via API', true );
+            return false;
+        }
+    }
+ 
 
 	/**
-	 * Handles Refund from Admin Page
-	 *
-	 * @param int    $order_id order id.
-	 * @param string $amount Amount of Refund.
-	 * @param string $reason Reason for Refund.
-	 */
-	public function process_refund( $order_id, $amount = null, $reason = VISA_ACCEPTANCE_STRING_EMPTY ) {
-		$order = wc_get_order( $order_id );
-		
-		if ( is_wp_error( $order ) ) {
-			$response = new \WP_Error( 'vas_refund_failed', __( 'Refund failed.', 'visa-acceptance-solutions' ) );
-		} else {
-			$auth_reversal = new Visa_Acceptance_Auth_Reversal( $this->gateway );
-			$refund        = new Visa_Acceptance_Refund( $this->gateway );
-			$payment_type = $order->get_meta('_vas_payment_type', true);
-			$is_echeck    = ( strtoupper( $payment_type ) === VISA_ACCEPTANCE_CHECK );
-			$settings         = $this->gateway->get_gateway_settings();
-			$transaction_type = isset( $settings['transaction_type'] ) ? $settings['transaction_type'] : VISA_ACCEPTANCE_STRING_EMPTY;
-			$payment_adapter = new Visa_Acceptance_Payment_Adapter( $this->gateway );
-			$is_virtual_order_auto_charged = $payment_adapter->check_virtual_order_enabled( $settings, $order );
-			$is_transaction_charged_and_settled = ( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $transaction_type || $is_virtual_order_auto_charged )
-				&& in_array( $order->get_status(), array( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_COMPLETED ), true );
-			$is_settled_externally = false;
-			if ( VISA_ACCEPTANCE_TRANSACTION_TYPE_AUTHORIZATION === $transaction_type 
-				&& ! $this->is_order_captured( $order ) 
-				&& ! $is_transaction_charged_and_settled 
-				&& ! $is_echeck ) {
-				// Query Visa API to check if authorization was settled outside of WooCommerce
-				$is_settled_externally = $this->is_transaction_settled_via_api( $order );
-			}
-			if ( $is_echeck ) {
-				$response = $refund->do_refund( $order, $amount, $reason );
-			} 
-			// Case 2: Transaction settled externally (detected via API check)
-			elseif ( $is_settled_externally ) {
-				$response = $refund->do_refund( $order, $amount, $reason );
-			} 
-			elseif ( ! $this->is_order_captured( $order ) 
-					&& ! $is_transaction_charged_and_settled 
-					&& ! $is_virtual_order_auto_charged 
-					&& VISA_ACCEPTANCE_TRANSACTION_TYPE_AUTHORIZATION === $transaction_type ) {
-				$response = $auth_reversal->process_void( $order, $amount, $reason );
-			} 
-			else {
-				$response = $refund->do_refund( $order, $amount, $reason );
-			}
-		}	
-		return $response;
-	}
+     * Handles Refund from Admin Page
+     *
+     * @param int    $order_id order id.
+     * @param string $amount Amount of Refund.
+     * @param string $reason Reason for Refund.
+     */
+    public function process_refund( $order_id, $amount = null, $reason = VISA_ACCEPTANCE_STRING_EMPTY ) {
+        $order = wc_get_order( $order_id );
+       
+        if ( is_wp_error( $order ) ) {
+            $response = new \WP_Error( 'vas_refund_failed', __( 'Refund failed.', 'visa-acceptance-solutions' ) );
+        } else {
+            $auth_reversal = new Visa_Acceptance_Auth_Reversal( $this->gateway );
+            $refund        = new Visa_Acceptance_Refund( $this->gateway );
+            $payment_type = $order->get_meta('_vas_payment_type', true);
+            $is_echeck    = ( strtoupper( $payment_type ) === VISA_ACCEPTANCE_CHECK );
+			$is_apm       = ( VISA_ACCEPTANCE_APM_STRING === strtolower( $payment_type ) );
+            $settings         = $this->gateway->get_gateway_settings();
+            $transaction_type = isset( $settings['transaction_type'] ) ? $settings['transaction_type'] : VISA_ACCEPTANCE_STRING_EMPTY;
+            $payment_adapter = new Visa_Acceptance_Payment_Adapter( $this->gateway );
+            $is_virtual_order_auto_charged = $payment_adapter->check_virtual_order_enabled( $settings, $order );
+            $is_transaction_charged_and_settled = ( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $transaction_type || $is_virtual_order_auto_charged )
+                && in_array( $order->get_status(), array( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_COMPLETED ), true );
+            $is_settled_externally = false;
+            if ( VISA_ACCEPTANCE_TRANSACTION_TYPE_AUTHORIZATION === $transaction_type
+                && ! $this->is_order_captured( $order )
+                && ! $is_transaction_charged_and_settled
+                && ! $is_echeck ) {
+                // Query Visa API to check if authorization was settled outside of WooCommerce.
+                $is_settled_externally = $this->is_transaction_settled_via_api( $order );
+            }
+
+            $order_payment_action = $this->get_order_meta( $order, VISA_ACCEPTANCE_PAYMENT_ACCEPTANCE_SERVICE );
+            $apm_payment_action   = $is_apm ? $order_payment_action : null;
+            // Partial capture history takes precedence over order status (an order stays
+            // On Hold whether it is uncaptured or partially captured), so it must be
+            // checked before falling back to the plain "not captured" auth-reversal path.
+            $capture_context = $this->get_partial_capture_refund_context( $order, $amount );
+            $requested_amount = round( (float) $amount, VISA_ACCEPTANCE_VAL_TWO );
+            $amount_epsilon = 0.01;
+
+            $is_apm_auth_only     = $is_apm
+                && ! $this->is_order_captured( $order )
+                && abs( $capture_context['total_captured'] - VISA_ACCEPTANCE_VAL_ZERO ) < $amount_epsilon
+                && ( VISA_ACCEPTANCE_TRANSACTION_TYPE_AUTHORIZATION === $apm_payment_action || empty( $apm_payment_action ));
+
+            if ( $is_echeck ) {
+                $response = $refund->do_refund( $order, $amount, $reason );
+            } elseif ( $is_settled_externally ) {
+                //Transaction settled externally (detected via API check).
+                $response = $refund->do_refund( $order, $amount, $reason );
+            } elseif ( $is_apm_auth_only ) {
+                //APM auth-only — must use auth reversal, not refund (refund endpoint returns HTTP 307).
+                $response = $auth_reversal->process_void( $order, $amount, $reason );
+            } elseif ( $capture_context['has_partial_history'] ) {
+                if ( $requested_amount > VISA_ACCEPTANCE_VAL_ZERO && $requested_amount <= $capture_context['remaining_captured'] + $amount_epsilon ) {
+                    // Refund only the amount that was actually captured.
+                    $response = $refund->do_refund( $order, $amount, $reason );
+                } else {
+                    $message = sprintf(
+                        /* translators: 1: amount available for refund, 2: amount that remains authorized but uncaptured */
+                        esc_html__( 'Refund amount exceeds captured amount. Only %1$s is available to refund. %2$s remains authorized (uncaptured) and cannot be reversed separately once a capture has occurred; it will be released automatically if "release remaining balance" was selected during capture, or will expire per the issuing bank\'s authorization hold period.', 'visa-acceptance-solutions' ),
+                        wc_price( $capture_context['remaining_captured'], array( 'currency' => $order->get_currency() ) ),
+                        wc_price( $capture_context['remaining_authorized'], array( 'currency' => $order->get_currency() ) )
+                    );
+                    $response = new \WP_Error( 'vas_refund_failed', $message );
+                }
+            } elseif ( ! $this->is_order_captured( $order )
+                    && ! $is_transaction_charged_and_settled
+                    && ! $is_virtual_order_auto_charged
+                    && ( VISA_ACCEPTANCE_TRANSACTION_TYPE_AUTHORIZATION === $transaction_type
+                         || VISA_ACCEPTANCE_TRANSACTION_TYPE_AUTHORIZATION === $order_payment_action ) ) {
+                $response = $auth_reversal->process_void( $order, $amount, $reason );
+            }
+            else {
+                $response = $refund->do_refund( $order, $amount, $reason );
+            }
+        }  
+        return $response;
+    }
+
+	/**
+     * AJAX handler for deleting a webhook subscription.
+     */
+     public function ajax_delete_webhook() {
+        // Verify nonce.
+        if ( ! check_ajax_referer( 'vas-webhook-nonce', 'nonce', false ) ) {
+            wp_send_json_error( array( 'message' => __( 'Security check failed.', 'visa-acceptance-solutions' ) ) );
+        }
+ 
+        // Check user capabilities.
+        // phpcs:ignore WordPress.WP.Capabilities.Unknown
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            wp_send_json_error( array( 'message' => __( 'Insufficient permissions.', 'visa-acceptance-solutions' ) ) );
+        }
+ 
+        // Validate and sanitize input.
+        $webhook_id = isset( $_POST['webhook_id'] ) ? sanitize_text_field( wp_unslash( $_POST['webhook_id'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY;
+ 
+        if ( empty( $webhook_id ) || ! preg_match( '/^[a-zA-Z0-9\-]+$/', $webhook_id ) ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid webhook ID.', 'visa-acceptance-solutions' ) ) );
+        }
+ 
+        try {
+            $result = $this->delete_webhook_from_api( $webhook_id );
+ 
+            if ( $result['success'] ) {
+                $this->clear_webhook_options( $webhook_id );
+                delete_transient( 'vas_webhooks_list_' . $this->gateway->get_merchant_id() );
+ 
+                $this->gateway->add_logs_data( array( 'Webhook deleted successfully: ' . $webhook_id ), true, 'Delete Webhook' );
+                wp_send_json_success( array( 'message' => __( 'Webhook deleted successfully.', 'visa-acceptance-solutions' ) ) );
+            } else {
+                wp_send_json_error( array( 'message' => $result['message'] ) );
+            }
+        } catch ( Exception $e ) {
+            $this->gateway->add_logs_data( array( 'Webhook delete exception: ' . $e->getMessage() ), false, 'Delete Webhook', true );
+            /* translators: %s: error message */
+            wp_send_json_error( array( 'message' => sprintf( __( 'Error: %s', 'visa-acceptance-solutions' ), $e->getMessage() ) ) );
+        }
+     }
+
+    /**
+     * Delete webhook via API.
+     *
+     * @param string $webhook_id Webhook ID to delete.
+     * @return array Array with 'success' and 'message' keys.
+     */
+    private function delete_webhook_from_api( $webhook_id ) {
+        $settings    = $this->gateway->get_gateway_settings();
+        $environment = isset( $settings['environment'] ) ? $settings['environment'] : VISA_ACCEPTANCE_ENVIRONMENT_TEST;
+        $is_test     = VISA_ACCEPTANCE_ENVIRONMENT_TEST === $environment;
+ 
+        $merchant_id = $this->gateway->get_merchant_id();
+        $api_key     = $is_test ? ( $settings['test_api_key'] ?? VISA_ACCEPTANCE_STRING_EMPTY ) : ( $settings['api_key'] ?? VISA_ACCEPTANCE_STRING_EMPTY );
+        $secret_key  = $is_test ? ( $settings['test_api_shared_secret'] ?? VISA_ACCEPTANCE_STRING_EMPTY ) : ( $settings['api_shared_secret'] ?? VISA_ACCEPTANCE_STRING_EMPTY );
+ 
+        if ( empty( $merchant_id ) || empty( $api_key ) || empty( $secret_key ) ) {
+            return array(
+                'success' => false,
+                'message' => __( 'API credentials not configured.', 'visa-acceptance-solutions' ),
+            );
+        }
+ 
+        $host     = $is_test ? VISA_ACCEPTANCE_REQUEST_HOST_APITEST : VISA_ACCEPTANCE_REQUEST_HOST_APIPRODUCTION;
+        $resource = VISA_ACCEPTANCE_NOTIFICATION_SUBSCRIPTIONS_PATH . VISA_ACCEPTANCE_SLASH . rawurlencode( $webhook_id );
+        $url      = 'https://' . $host . $resource;
+        $headers  = $this->gateway->build_webhook_http_signature_headers( $host, $resource, 'DELETE', VISA_ACCEPTANCE_STRING_EMPTY, $merchant_id, $api_key, $secret_key );
+ 
+        $this->gateway->add_logs_data( array( 'Attempting to delete webhook', 'URL: ' . $url, 'Webhook ID: ' . $webhook_id ), true, 'Delete Webhook' );
+ 
+        $response = wp_remote_request(
+            $url,
+            array(
+                'method'    => 'DELETE',
+                'headers'   => $headers,
+                'timeout'   => 20,
+                'sslverify' => ! $is_test,
+            )
+        );
+ 
+        if ( is_wp_error( $response ) ) {
+            $error_msg = $response->get_error_message();
+            $this->gateway->add_logs_data( array( 'Webhook delete WP_Error: ' . $error_msg ), false, 'Delete Webhook', true );
+            return array(
+                'success' => false,
+                /* translators: %s: error message */
+                'message' => sprintf( __( 'Error: %s', 'visa-acceptance-solutions' ), $error_msg ),
+            );
+        }
+ 
+        $http_code = wp_remote_retrieve_response_code( $response );
+        $body      = wp_remote_retrieve_body( $response );
+ 
+        $this->gateway->add_logs_data( array( 'Webhook delete response', 'HTTP: ' . $http_code, 'Body: ' . $body ), true, 'Delete Webhook' );
+ 
+        // Accept 2xx success codes and 404 (already deleted).
+        if ( ( $http_code >= VISA_ACCEPTANCE_TWO_ZERO_ZERO && $http_code < VISA_ACCEPTANCE_THREE_ZERO_ZERO ) || VISA_ACCEPTANCE_FOUR_ZERO_FOUR === (int) $http_code ) {
+            return array( 'success' => true );
+        }
+ 
+        $this->gateway->add_logs_data( array( 'Failed to delete webhook ID: ' . $webhook_id . ' HTTP ' . $http_code, 'Response: ' . $body ), false, 'Delete Webhook', true );
+        return array(
+            'success' => false,
+            /* translators: %d: HTTP response code */
+            'message' => sprintf( __( 'Failed to delete webhook. HTTP code: %d', 'visa-acceptance-solutions' ), $http_code ),
+        );
+    }
+
+    /**
+     * Clear webhook options from WordPress database.
+     *
+     * @param string $webhook_id Webhook ID to clear.
+     */
+    private function clear_webhook_options( $webhook_id ) {
+        $webhook_options = array(
+            VISA_ACCEPTANCE_FRAUD_WEBHOOK_ID_OPTION,
+            VISA_ACCEPTANCE_FRAUD_WEBHOOK_FME_ID_OPTION,
+            VISA_ACCEPTANCE_UC_WEBHOOK_ID_OPTION,
+            VISA_ACCEPTANCE_APM_WEBHOOK_ID_OPTION,
+            VISA_ACCEPTANCE_NETWORK_TOKENS_WEBHOOK_ID_OPTION,
+        );
+ 
+        foreach ( $webhook_options as $option ) {
+            if ( get_option( $option, VISA_ACCEPTANCE_STRING_EMPTY ) === $webhook_id ) {
+                delete_option( $option );
+            }
+        }
+    }
+ 
+    /**
+     * AJAX handler to refresh payment status.
+     *
+     * @return void
+     */
+     public function ajax_refresh_payment_status() {
+        // Verify nonce.
+        if ( ! check_ajax_referer( 'vas-refresh-payment-status-nonce', 'nonce', false ) ) {
+            wp_send_json_error( array( 'message' => __( 'Security check failed.', 'visa-acceptance-solutions' ) ) );
+        }
+ 
+        // Check user capabilities.
+        // phpcs:ignore WordPress.WP.Capabilities.Unknown
+        if ( ! current_user_can( 'edit_shop_orders' ) ) {
+            wp_send_json_error( array( 'message' => __( 'Insufficient permissions.', 'visa-acceptance-solutions' ) ) );
+        }
+ 
+        $order_id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : VISA_ACCEPTANCE_VAL_ZERO;
+ 
+        if ( ! $order_id ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid order ID.', 'visa-acceptance-solutions' ) ) );
+        }
+ 
+        $order = wc_get_order( $order_id );
+        if ( ! $order ) {
+            wp_send_json_error( array( 'message' => __( 'Order not found.', 'visa-acceptance-solutions' ) ) );
+        }
+ 
+        try {
+            // Get transaction ID with proper prefix (same as webhook uses for storage).
+            $transaction_id = $order->get_meta( VISA_ACCEPTANCE_WC_UC_ID . VISA_ACCEPTANCE_TRANSACTION_ID, true );
+            if ( empty( $transaction_id ) ) {
+                wp_send_json_error( array( 'message' => __( 'Transaction ID not found.', 'visa-acceptance-solutions' ) ) );
+            }
+ 
+            $payment_adapter = new Visa_Acceptance_Payment_Adapter( $this->gateway );
+            $result = $payment_adapter->refresh_payment_status( $transaction_id, $order_id );
+ 
+            if ( VISA_ACCEPTANCE_TWO_ZERO_ONE === (int) $result['http_code'] ) {
+                $response_body = json_decode( $result['body'], true );
+                $status = isset( $response_body['status'] ) ? strtoupper( $response_body['status'] ) : 'UNKNOWN';
+               
+                // Update order status based on payment status.
+                if ( 'COMPLETED' === $status ) {
+                    $order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING, __( 'Payment accepted via refresh status check.', 'visa-acceptance-solutions' ) );
+                } elseif ( in_array( $status, array( 'FAILED', 'DECLINED', 'INVALID_REQUEST' ), true ) ) {
+                    $order->update_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_FAILED, __( 'Payment failed - detected via refresh status.', 'visa-acceptance-solutions' ) );
+                    // Restock inventory if failed.
+                    wc_maybe_increase_stock_levels( $order );
+                }
+               
+                wp_send_json_success( array(
+                    /* translators: %s: payment status */
+                    'message' => sprintf( __( 'Payment status refreshed successfully. Status: %s', 'visa-acceptance-solutions' ), $status ),
+                ) );
+            } else {
+                wp_send_json_error( array( 'message' => __( 'Failed to refresh payment status.', 'visa-acceptance-solutions' ) ) );
+            }
+        } catch ( Exception $e ) {
+            $this->gateway->add_logs_data( array( 'Refresh payment status exception: ' . $e->getMessage() ), false, 'Refresh Payment Status', true );
+            wp_send_json_error( array( 'message' => __( 'An error occurred while refreshing payment status.', 'visa-acceptance-solutions' ) ) );
+        }
+    }
 }

@@ -69,3 +69,122 @@ a.button.wc-action-button.wc-action-button-complete.complete, a.button.wc-action
 	left:0;
 	text-align:center
 }
+/* Partial Capture - Minimal overrides */
+#partial-capture-button {
+	margin-left: 5px;
+}
+
+.capture-qty {
+	width: 70px;
+	text-align: center;
+}
+
+/* Disabled capture button styling */
+.do-api-capture:disabled,
+.do-api-capture.disabled {
+	opacity: 0.5;
+	cursor: not-allowed !important;
+	background-color: #cccccc !important;
+	border-color: #cccccc !important;
+	color: #666666 !important;
+}
+/* Webhook Management Table */
+
+@keyframes spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+.dashicons.spin {
+	animation: spin 1s linear infinite;
+}
+
+.vas-webhooks-table {
+	width: 100%;
+	max-width: 900px;
+	margin-top: 10px;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.vas-webhooks-table thead {
+	background: #f9f9f9;
+}
+
+.vas-webhooks-table th {
+	padding: 12px 15px;
+	font-weight: 600;
+	text-align: left;
+	border-bottom: 2px solid #ccd0d4;
+	color: #1d2327;
+}
+
+.vas-webhooks-table td {
+	padding: 12px 15px;
+	border-bottom: 1px solid #f0f0f1;
+	vertical-align: top;
+}
+
+.vas-webhooks-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.vas-webhooks-table tbody tr:hover {
+	background-color: #f9f9f9;
+}
+
+.vas-webhook-product {
+	width: 25%;
+	font-weight: 500;
+	color: #2271b1;
+}
+
+.vas-webhook-events {
+	width: 55%;
+	line-height: 1.6;
+	font-size: 13px;
+	color: #50575e;
+}
+
+.vas-webhook-action {
+	width: 20%;
+	text-align: center;
+}
+
+.vas-delete-webhook {
+	background: #dc3232;
+	border-color: #ba2121;
+	color: #fff;
+	padding: 6px 16px;
+	font-size: 13px;
+	border-radius: 3px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.vas-delete-webhook:hover {
+	background: #ba2121;
+	border-color: #a01919;
+	color: #fff;
+}
+
+.vas-delete-webhook:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	background: #dc3232;
+}
+
+.vas-no-webhooks {
+	padding: 15px 20px;
+	background: #f9f9f9;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	color: #646970;
+	margin: 10px 0;
+	font-style: italic;
+}
+
+.notice.vas-webhook-notice {
+	margin: 15px 0 2px;
+}

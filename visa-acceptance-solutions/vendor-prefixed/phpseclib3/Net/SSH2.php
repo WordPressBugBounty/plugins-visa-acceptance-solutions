@@ -115,11 +115,11 @@ class SSH2
      *     open request, and 'sender channel' is the channel number allocated by
      *     the other side.
      *
-     * @see \phpseclib3\Net\SSH2::send_channel_packet()
-     * @see \phpseclib3\Net\SSH2::get_channel_packet()
+     * @see SSH2::send_channel_packet()
+     * @see SSH2::get_channel_packet()
      */
     const CHANNEL_EXEC = 1;
-    // PuTTy uses 0x100
+    // PuTTY uses 0x100
     const CHANNEL_SHELL = 2;
     const CHANNEL_SUBSYSTEM = 3;
     const CHANNEL_AGENT_FORWARD = 4;
@@ -127,13 +127,13 @@ class SSH2
     /**
      * Returns the message numbers
      *
-     * @see \Pymt_Vas\Dependencies\phpseclib3\Net\SSH2::getLog()
+     * @see SSH2::getLog()
      */
     const LOG_SIMPLE = 1;
     /**
      * Returns the message content
      *
-     * @see \Pymt_Vas\Dependencies\phpseclib3\Net\SSH2::getLog()
+     * @see SSH2::getLog()
      */
     const LOG_COMPLEX = 2;
     /**
@@ -155,20 +155,20 @@ class SSH2
     /**
      * Make sure that the log never gets larger than this
      *
-     * @see \Pymt_Vas\Dependencies\phpseclib3\Net\SSH2::getLog()
+     * @see SSH2::getLog()
      */
     const LOG_MAX_SIZE = 1048576;
     // 1024 * 1024
     /**
      * Returns when a string matching $expect exactly is found
      *
-     * @see \Pymt_Vas\Dependencies\phpseclib3\Net\SSH2::read()
+     * @see SSH2::read()
      */
     const READ_SIMPLE = 1;
     /**
      * Returns when a string matching the regular expression $expect is found
      *
-     * @see \Pymt_Vas\Dependencies\phpseclib3\Net\SSH2::read()
+     * @see SSH2::read()
      */
     const READ_REGEX = 2;
     /**
@@ -177,7 +177,7 @@ class SSH2
      * Some data packets may only contain a single character so it may be necessary
      * to call read() multiple times when using this option
      *
-     * @see \Pymt_Vas\Dependencies\phpseclib3\Net\SSH2::read()
+     * @see SSH2::read()
      */
     const READ_NEXT = 3;
     /**
@@ -2198,6 +2198,7 @@ class SSH2
                     ,
                     ,
                     ,
+                    ,
                 ) = Strings::unpackSSH2('s3N', $response);
                 for ($i = 0; $i < count($responses); $i++) {
                     if (is_array($responses[$i])) {
@@ -3639,6 +3640,7 @@ class SSH2
                                     ,
                                     ,
                                     ,
+                                    ,
                                 ) = Strings::unpackSSH2('bsbs', $response);
                                 $this->errors[] = "SSH_MSG_CHANNEL_REQUEST (exit-signal): {$signal_name}";
                                 if (strlen($error_message)) {
@@ -4222,6 +4224,7 @@ class SSH2
      * If you are looking for messages from the SFTP layer, please see SFTP::getSFTPErrors()
      *
      * @return string[]
+     * @removed in phpseclib 4.0.0
      */
     public function getErrors()
     {
@@ -4233,6 +4236,7 @@ class SSH2
      * If you are looking for messages from the SFTP layer, please see SFTP::getLastSFTPError()
      *
      * @return string
+     * @removed in phpseclib 4.0.0
      */
     public function getLastError()
     {

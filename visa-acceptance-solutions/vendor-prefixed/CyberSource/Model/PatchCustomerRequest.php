@@ -48,7 +48,7 @@ class PatchCustomerRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerLinks', 'id' => 'string', 'objectInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerObjectInformation', 'buyerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerBuyerInformation', 'clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerClientReferenceInformation', 'merchantDefinedInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerMerchantDefinedInformation[]', 'defaultPaymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerDefaultPaymentInstrument', 'defaultShippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerDefaultShippingAddress', 'metadata' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerMetadata', 'embedded' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbedded'];
+    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerLinks', 'id' => 'string', 'objectInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerObjectInformation', 'buyerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerBuyerInformation', 'clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerClientReferenceInformation', 'merchantDefinedInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerMerchantDefinedInformation[]', 'defaultPaymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerDefaultPaymentInstrument', 'defaultShippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerDefaultShippingAddress', 'metadata' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerMetadata', 'embedded' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2customersEmbedded'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -295,7 +295,7 @@ class PatchCustomerRequest implements ArrayAccess
     }
     /**
      * Gets embedded
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbedded
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2customersEmbedded
      */
     public function getEmbedded()
     {
@@ -303,7 +303,7 @@ class PatchCustomerRequest implements ArrayAccess
     }
     /**
      * Sets embedded
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbedded $embedded
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2customersEmbedded $embedded
      * @return $this
      */
     public function setEmbedded($embedded)

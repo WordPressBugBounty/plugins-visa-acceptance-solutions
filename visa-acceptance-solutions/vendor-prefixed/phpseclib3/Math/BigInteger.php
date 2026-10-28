@@ -82,7 +82,7 @@ class BigInteger implements \JsonSerializable
     public static function setEngine($main, array $modexps = ['DefaultEngine'])
     {
         self::$engines = [];
-        $fqmain = 'phpseclib3\Math\BigInteger\Engines\\' . $main;
+        $fqmain = 'Pymt_Vas\Dependencies\phpseclib3\Math\BigInteger\Engines\\' . $main;
         if (!class_exists($fqmain) || !method_exists($fqmain, 'isValidEngine')) {
             throw new \InvalidArgumentException("{$main} is not a valid engine");
         }
@@ -283,6 +283,7 @@ class BigInteger implements \JsonSerializable
      *
      * @param BigInteger $n
      * @return BigInteger
+     * @changed in phpseclib 4.0.0
      */
     public function modInverse(BigInteger $n)
     {

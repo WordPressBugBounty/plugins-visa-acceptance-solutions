@@ -48,12 +48,12 @@ class Ptsv2paymentsPaymentInformationBank implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['account' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationBankAccount', 'routingNumber' => 'string', 'iban' => 'string', 'swiftCode' => 'string', 'code' => 'string'];
+    protected static $swaggerTypes = ['account' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationBankAccount', 'routingNumber' => 'string', 'iban' => 'string', 'swiftCode' => 'string', 'code' => 'string', 'accountAlias' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationBankAccountAlias'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['account' => null, 'routingNumber' => null, 'iban' => null, 'swiftCode' => null, 'code' => null];
+    protected static $swaggerFormats = ['account' => null, 'routingNumber' => null, 'iban' => null, 'swiftCode' => null, 'code' => null, 'accountAlias' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2paymentsPaymentInformationBank implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['account' => 'account', 'routingNumber' => 'routingNumber', 'iban' => 'iban', 'swiftCode' => 'swiftCode', 'code' => 'code'];
+    protected static $attributeMap = ['account' => 'account', 'routingNumber' => 'routingNumber', 'iban' => 'iban', 'swiftCode' => 'swiftCode', 'code' => 'code', 'accountAlias' => 'accountAlias'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['account' => 'setAccount', 'routingNumber' => 'setRoutingNumber', 'iban' => 'setIban', 'swiftCode' => 'setSwiftCode', 'code' => 'setCode'];
+    protected static $setters = ['account' => 'setAccount', 'routingNumber' => 'setRoutingNumber', 'iban' => 'setIban', 'swiftCode' => 'setSwiftCode', 'code' => 'setCode', 'accountAlias' => 'setAccountAlias'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['account' => 'getAccount', 'routingNumber' => 'getRoutingNumber', 'iban' => 'getIban', 'swiftCode' => 'getSwiftCode', 'code' => 'getCode'];
+    protected static $getters = ['account' => 'getAccount', 'routingNumber' => 'getRoutingNumber', 'iban' => 'getIban', 'swiftCode' => 'getSwiftCode', 'code' => 'getCode', 'accountAlias' => 'getAccountAlias'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -105,6 +105,7 @@ class Ptsv2paymentsPaymentInformationBank implements ArrayAccess
         $this->container['iban'] = isset($data['iban']) ? $data['iban'] : null;
         $this->container['swiftCode'] = isset($data['swiftCode']) ? $data['swiftCode'] : null;
         $this->container['code'] = isset($data['code']) ? $data['code'] : null;
+        $this->container['accountAlias'] = isset($data['accountAlias']) ? $data['accountAlias'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -214,6 +215,24 @@ class Ptsv2paymentsPaymentInformationBank implements ArrayAccess
     public function setCode($code)
     {
         $this->container['code'] = $code;
+        return $this;
+    }
+    /**
+     * Gets accountAlias
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationBankAccountAlias
+     */
+    public function getAccountAlias()
+    {
+        return $this->container['accountAlias'];
+    }
+    /**
+     * Sets accountAlias
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationBankAccountAlias $accountAlias
+     * @return $this
+     */
+    public function setAccountAlias($accountAlias)
+    {
+        $this->container['accountAlias'] = $accountAlias;
         return $this;
     }
     /**

@@ -49,7 +49,7 @@ class AgenticRetrievePaymentCredentialsResponse200 implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['transactionResponseComplete' => '\Pymt_Vas\Dependencies\CyberSource\Model\AgenticRetrievePaymentCredentialsResponse200TransactionResponseComplete', 'transactionResponseWithPendingEvents' => '\Pymt_Vas\Dependencies\CyberSource\Model\AgenticRetrievePaymentCredentialsResponse200TransactionResponseWithPendingEvents'];
+    protected static $swaggerTypes = ['transactionResponseComplete' => '\Pymt_Vas\Dependencies\CyberSource\Model\AgenticRetrievePaymentCredentialsResponse200TransactionResponseComplete', 'transactionResponseWithPendingEvents' => '\Pymt_Vas\Dependencies\CyberSource\Model\IccTransactionResponsePendingEvents'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -144,7 +144,7 @@ class AgenticRetrievePaymentCredentialsResponse200 implements ArrayAccess
     }
     /**
      * Gets transactionResponseWithPendingEvents
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\AgenticRetrievePaymentCredentialsResponse200TransactionResponseWithPendingEvents
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\IccTransactionResponsePendingEvents
      */
     public function getTransactionResponseWithPendingEvents()
     {
@@ -152,7 +152,7 @@ class AgenticRetrievePaymentCredentialsResponse200 implements ArrayAccess
     }
     /**
      * Sets transactionResponseWithPendingEvents
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\AgenticRetrievePaymentCredentialsResponse200TransactionResponseWithPendingEvents $transactionResponseWithPendingEvents
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\IccTransactionResponsePendingEvents $transactionResponseWithPendingEvents
      * @return $this
      */
     public function setTransactionResponseWithPendingEvents($transactionResponseWithPendingEvents)

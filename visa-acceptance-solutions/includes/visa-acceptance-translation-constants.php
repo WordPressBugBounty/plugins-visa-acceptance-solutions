@@ -23,10 +23,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * The function is automatically called on WordPress 'init' hook or immediately
  * if init has already fired.
  *
- * @since 2.2.2
+ * @since 3.0.0
  * @return void
  */
- function visa_acceptance_define_translation_constants() {
+ function visa_acceptance_translation_constants() {
 	/**
 	 *
 	 * Authorization Approved order note.
@@ -122,4 +122,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 	/* translators: Placeholders: %1$s - <a> tag*/
 	define( 'VISA_ACCEPTANCE_REFUND_MESSAGE', __( 'Refunded because of reason - %1$s.', 'visa-acceptance-solutions' ) );
  }
- add_action( 'init', 'visa_acceptance_define_translation_constants');
+ add_action( 'init', 'visa_acceptance_translation_constants');

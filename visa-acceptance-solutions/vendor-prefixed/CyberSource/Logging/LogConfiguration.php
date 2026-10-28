@@ -242,6 +242,6 @@ class LogConfiguration
         $this->logFormat = "[%datetime%] [%level_name%] [%channel%] : %message%\n";
         $this->logMaxFiles = 3;
         $this->logLevel = "info";
-        $this->enableMasking = false;
+        $this->enableMasking = true;
     }
 }

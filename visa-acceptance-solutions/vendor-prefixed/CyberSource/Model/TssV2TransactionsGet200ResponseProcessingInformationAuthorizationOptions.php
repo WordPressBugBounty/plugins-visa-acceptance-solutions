@@ -48,12 +48,12 @@ class TssV2TransactionsGet200ResponseProcessingInformationAuthorizationOptions i
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['authType' => 'string', 'authIndicator' => 'string', 'extendAuthIndicator' => 'string', 'cardVerificationIndicator' => 'bool', 'initiator' => '\Pymt_Vas\Dependencies\CyberSource\Model\TssV2TransactionsGet200ResponseProcessingInformationAuthorizationOptionsInitiator'];
+    protected static $swaggerTypes = ['authType' => 'string', 'authIndicator' => 'string', 'extendAuthIndicator' => 'string', 'cardVerificationIndicator' => 'bool', 'aftIndicator' => 'bool', 'initiator' => '\Pymt_Vas\Dependencies\CyberSource\Model\TssV2TransactionsGet200ResponseProcessingInformationAuthorizationOptionsInitiator'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['authType' => null, 'authIndicator' => null, 'extendAuthIndicator' => null, 'cardVerificationIndicator' => null, 'initiator' => null];
+    protected static $swaggerFormats = ['authType' => null, 'authIndicator' => null, 'extendAuthIndicator' => null, 'cardVerificationIndicator' => null, 'aftIndicator' => null, 'initiator' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class TssV2TransactionsGet200ResponseProcessingInformationAuthorizationOptions i
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['authType' => 'authType', 'authIndicator' => 'authIndicator', 'extendAuthIndicator' => 'extendAuthIndicator', 'cardVerificationIndicator' => 'cardVerificationIndicator', 'initiator' => 'initiator'];
+    protected static $attributeMap = ['authType' => 'authType', 'authIndicator' => 'authIndicator', 'extendAuthIndicator' => 'extendAuthIndicator', 'cardVerificationIndicator' => 'cardVerificationIndicator', 'aftIndicator' => 'aftIndicator', 'initiator' => 'initiator'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['authType' => 'setAuthType', 'authIndicator' => 'setAuthIndicator', 'extendAuthIndicator' => 'setExtendAuthIndicator', 'cardVerificationIndicator' => 'setCardVerificationIndicator', 'initiator' => 'setInitiator'];
+    protected static $setters = ['authType' => 'setAuthType', 'authIndicator' => 'setAuthIndicator', 'extendAuthIndicator' => 'setExtendAuthIndicator', 'cardVerificationIndicator' => 'setCardVerificationIndicator', 'aftIndicator' => 'setAftIndicator', 'initiator' => 'setInitiator'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['authType' => 'getAuthType', 'authIndicator' => 'getAuthIndicator', 'extendAuthIndicator' => 'getExtendAuthIndicator', 'cardVerificationIndicator' => 'getCardVerificationIndicator', 'initiator' => 'getInitiator'];
+    protected static $getters = ['authType' => 'getAuthType', 'authIndicator' => 'getAuthIndicator', 'extendAuthIndicator' => 'getExtendAuthIndicator', 'cardVerificationIndicator' => 'getCardVerificationIndicator', 'aftIndicator' => 'getAftIndicator', 'initiator' => 'getInitiator'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -104,6 +104,7 @@ class TssV2TransactionsGet200ResponseProcessingInformationAuthorizationOptions i
         $this->container['authIndicator'] = isset($data['authIndicator']) ? $data['authIndicator'] : null;
         $this->container['extendAuthIndicator'] = isset($data['extendAuthIndicator']) ? $data['extendAuthIndicator'] : null;
         $this->container['cardVerificationIndicator'] = isset($data['cardVerificationIndicator']) ? $data['cardVerificationIndicator'] : null;
+        $this->container['aftIndicator'] = isset($data['aftIndicator']) ? $data['aftIndicator'] : null;
         $this->container['initiator'] = isset($data['initiator']) ? $data['initiator'] : null;
     }
     /**
@@ -196,6 +197,24 @@ class TssV2TransactionsGet200ResponseProcessingInformationAuthorizationOptions i
     public function setCardVerificationIndicator($cardVerificationIndicator)
     {
         $this->container['cardVerificationIndicator'] = $cardVerificationIndicator;
+        return $this;
+    }
+    /**
+     * Gets aftIndicator
+     * @return bool
+     */
+    public function getAftIndicator()
+    {
+        return $this->container['aftIndicator'];
+    }
+    /**
+     * Sets aftIndicator
+     * @param bool $aftIndicator Indicates whether the transaction is an Account Funding Transaction (AFT).  This field is mandatory for Account Funding Transactions (AFT).   Possible values:   - `true` (This is an AFT transaction)   - `false` (default value) (This is not an AFT transaction)
+     * @return $this
+     */
+    public function setAftIndicator($aftIndicator)
+    {
+        $this->container['aftIndicator'] = $aftIndicator;
         return $this;
     }
     /**

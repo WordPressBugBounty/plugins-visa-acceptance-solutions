@@ -85,15 +85,23 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 	 * Function to Add Express Pay section at the top of checkout page.
 	 */
 	public function add_express_pay_at_normal_checkout() {
+		$express_pay_style_handle = VISA_ACCEPTANCE_GATEWAY_ID_UNDERSCORE . $this->wc_payment_gateway_id . '-expresspay';
+		wp_enqueue_style(
+			$express_pay_style_handle,
+			plugin_dir_url( __FILE__ ) . 'css/visa-acceptance-expresspay-public.css',
+			array(),
+			$this->version
+		);
 		$available_gateways = WC()->payment_gateways()->get_available_payment_gateways();
 		if ( ! isset( $available_gateways[ $this->gateway->id ] ) ) {
 			return;
 		}
-        $plugin_public = new  Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public($this->wc_payment_gateway_id,$this->gateway,$this->version);
+        $plugin_public = new  Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public($this->wc_payment_gateway_id,$this->version,$this->gateway);
 		$settings      = $plugin_public->get_uc_settings();
-		$enable_gpay = ( isset( $settings['enabled_payment_methods'] ) && is_array( $settings['enabled_payment_methods'] ) && in_array( 'enable_gpay', $settings['enabled_payment_methods'], true ) ) ? true : false;
-		$enable_apay = ( isset( $settings['enabled_payment_methods'] ) && is_array( $settings['enabled_payment_methods'] ) && in_array( 'enable_apay', $settings['enabled_payment_methods'], true ) ) ? true : false;
-		$enable_paze = ( isset( $settings['enabled_payment_methods'] ) && is_array( $settings['enabled_payment_methods'] ) && in_array( 'enable_paze', $settings['enabled_payment_methods'], true ) ) ? true : false;
+		// Check if enable_express_pay is disabled - if so, don't render express pay section.
+        if ( ! isset( $settings['enable_express_pay'] ) || VISA_ACCEPTANCE_YES !== $settings['enable_express_pay'] ) {
+            return;
+        }
 		$subscription_order = false;
 		$is_zero_initial_payment = ( VISA_ACCEPTANCE_ZERO_AMOUNT === WC()->cart->get_total( 'edit' ) && VISA_ACCEPTANCE_YES === get_option( 'woocommerce_subscriptions_zero_initial_payment_requires_payment', VISA_ACCEPTANCE_NO ) ) ? true : false;
 		$is_subscription_tokenization_enabled = false;
@@ -103,7 +111,12 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			$is_subscription_tokenization_enabled = $this->gateway->is_subscriptions_activated;
 			$subscription_order = WC_Subscriptions_Cart::cart_contains_subscription() || wcs_cart_contains_renewal() || WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment;
 		}
-		$get_data = $_GET; // phpcs:ignore WordPress.Security.NonceVerification
+		// A plain (non-subscription) order with nothing to charge, e.g. a 100%-off coupon, has no payment to verify.
+		if ( ! $subscription_order && VISA_ACCEPTANCE_ZERO_AMOUNT === WC()->cart->get_total( 'edit' ) ) {
+			$is_zero_initial_payment = true;
+		}
+		// Reading GET parameters to detect page context (public routing data, no nonce required).
+		$get_data = isset( $_GET ) ? wp_unslash( $_GET ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public routing data only.
 		// Check if on checkout page or pay for order page and not zero initial payment.
 		if ( (is_checkout() || isset( $get_data['pay_for_order'] ) ) && ! $is_zero_initial_payment) {
 			$ep_title        = __( 'Express Checkout', 'visa-acceptance-solutions' );
@@ -121,7 +134,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 
 					<?php
 					$form_load_error = __( 'Unable to load the payment form. Please contact customer care for any assistance.', 'visa-acceptance-solutions' );
-					echo '<div id="express_payment_form_load_error" style="display:none;color:red">' .
+					echo '<div id="express_payment_form_load_error" class="wc-vas-expresspay-error-message">' .
 					'<p class="failure-error-message" id="wc-failure-error"> ' . esc_html( $form_load_error ) . ' </p>' .
 						'</div>';
 
@@ -139,15 +152,6 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 				</div>
 			</div>
 			<?php
-			if ( ! $is_subscription_tokenization_enabled && $subscription_order ) {
-				echo '<style>#wc-express-checkout-section{display:none !important;}</style>';
-				echo '<style>#wc-express-checkout-section-divider{display:none !important;}</style>';
-			}
-			if ( ! ( $enable_gpay || $enable_apay || $enable_paze ) ) {
-				echo '<style>#wc-express-checkout-section{display:none !important;}</style>';
-				echo '<style>#wc-express-checkout-section-divider{display:none !important;}</style>';
-			}
-			// Hide express pay for subscription switches with a $0 total (e.g. prorate setting = Never).
 			$is_switch_cart = false;
 			if ( $subscription_active && isset( WC()->cart ) ) {
 				foreach ( WC()->cart->cart_contents as $cart_item ) {
@@ -157,9 +161,17 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 					}
 				}
 			}
-			if ( $is_switch_cart && VISA_ACCEPTANCE_ZERO_AMOUNT === WC()->cart->get_total( 'edit' ) ) {
-				echo '<style>#wc-express-checkout-section{display:none !important;}</style>';
-				echo '<style>#wc-express-checkout-section-divider{display:none !important;}</style>';
+			$hide_express_pay = ( ! $is_subscription_tokenization_enabled && $subscription_order ) || ( $is_switch_cart &&
+				VISA_ACCEPTANCE_ZERO_AMOUNT === WC()->cart->get_total( 'edit' )
+			);
+			if ( $hide_express_pay ) {
+				wp_add_inline_style(
+					$express_pay_style_handle, '
+					#wc-express-checkout-normal #wc-express-checkout-section,
+					#wc-express-checkout-normal #wc-express-checkout-section-divider {
+						display: none !important;
+					}'
+				);
 			}
 		}
 	}
@@ -174,13 +186,9 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 		if ( ! isset( $available_gateways[ $this->gateway->id ] ) ) {
 			return;
 		}
-        $plugin_public = new  Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public($this->wc_payment_gateway_id,$this->gateway,$this->version)  ;
+        $plugin_public = new  Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public($this->wc_payment_gateway_id,$this->version,$this->gateway)  ;
 		$settings          = $plugin_public->get_uc_settings();
-		$flex_request      = new Visa_Acceptance_Key_Generation( $this->gateway );
-		$enable_gpay 	   = ( isset( $settings['enabled_payment_methods'] ) && is_array( $settings['enabled_payment_methods'] ) && in_array( 'enable_gpay', $settings['enabled_payment_methods'], true ) ) ? true : false;
-		$enable_apay 	   = ( isset( $settings['enabled_payment_methods'] ) && is_array( $settings['enabled_payment_methods'] ) && in_array( 'enable_apay', $settings['enabled_payment_methods'], true ) ) ? true : false;
-		$enable_paze 	   = ( isset( $settings['enabled_payment_methods'] ) && is_array( $settings['enabled_payment_methods'] ) && in_array( 'enable_paze', $settings['enabled_payment_methods'], true ) ) ? true : false;
-		$payer_auth_enable = ! empty( $settings['enable_threed_secure'] ) ? $settings['enable_threed_secure'] : VISA_ACCEPTANCE_STRING_EMPTY;
+		$key_generation      = new Visa_Acceptance_Key_Generation( $this->gateway );
 		$force_tokenization = false;
         if ( $this->gateway->is_subscriptions_activated && class_exists( 'WC_Subscriptions_Product' ) ) {
             $current_product = wc_get_product( get_the_ID() );
@@ -198,9 +206,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
                 }
             }
         }
-
-		// Detect subscription switch parameters.
-		$get_data = $_GET; // phpcs:ignore WordPress.Security.NonceVerification
+		$get_data = isset( $_GET ) ? wp_unslash( $_GET ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public routing data for subscription switch detection.
 		$is_switch = isset( $get_data['switch-subscription'] ) && isset( $get_data['item'] );
 		$switch_subscription_id = $is_switch ? intval( $get_data['switch-subscription'] ) : VISA_ACCEPTANCE_VAL_ZERO;
 		$switch_item_id = $is_switch ? intval( $get_data['item'] ) : VISA_ACCEPTANCE_VAL_ZERO;
@@ -211,7 +217,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 		$is_grouped = $product && $product->is_type( VISA_ACCEPTANCE_PRODUCT_TYPE_GROUPED );
 
 
-		if ( ( $enable_gpay || $enable_apay || $enable_paze ) && is_product()) {
+		if ( isset( $settings['enable_express_pay'] ) && VISA_ACCEPTANCE_YES === $settings['enable_express_pay'] && is_product() ) {
 			$user_id 	= get_current_user_id();
 			$customer 	= new WC_Customer( $user_id );
 			$billing  	= $customer->get_billing();  // array with all billing fields.
@@ -219,15 +225,26 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			$ep_title        = __( 'Express Checkout', 'visa-acceptance-solutions' );
 			wp_enqueue_script( VISA_ACCEPTANCE_GATEWAY_ID_UNDERSCORE . $this->wc_payment_gateway_id . '-product', plugin_dir_url( __FILE__ ) . 'js/visa-acceptance-payment-gateway-express-pay-product-page.js', array( 'jquery' ), $this->version, true );
 			wp_enqueue_style( VISA_ACCEPTANCE_GATEWAY_ID_UNDERSCORE . $this->wc_payment_gateway_id . '-product', plugin_dir_url( __FILE__ ) . 'css/visa-acceptance-payment-gateway-express-pay-product-page.css', array(), $this->version );
+			
+			// Enqueue Express Pay specific styles (extracted from inline styles for CSP compliance).
+			wp_enqueue_style( VISA_ACCEPTANCE_GATEWAY_ID_UNDERSCORE . $this->wc_payment_gateway_id . '-expresspay', plugin_dir_url( __FILE__ ) . 'css/visa-acceptance-expresspay-public.css', array(), $this->version );
 			$express_pay_hidden = $this->hide_express_pay_product_page_tokenization_disabled();
 			if ( ! $express_pay_hidden ) {
-				$response = $flex_request->get_unified_checkout_capture_context(true);
+				$response = $key_generation->get_unified_checkout_capture_context(true);
 			}
-			$capture_context = ! empty( $response['body'] ) ? $response['body'] : VISA_ACCEPTANCE_STRING_EMPTY;
-			$msg_failed 	 = (array)$capture_context;
-			if (array_key_exists("response", $msg_failed)) {
-				$capture_context = wp_json_encode($capture_context);
+			
+			// get_unified_checkout_capture_context() returns the full response array.
+			// Extract the JWT string body the same way enqueue_scripts() does.
+			$body = ! empty( $response['body'] ) ? $response['body'] : VISA_ACCEPTANCE_STRING_EMPTY;
+			// Record completeMandate.type by jti so order status mapping is correct at completion.
+			if ( is_string( $body ) && ! empty( $body ) ) {
+				$plugin_public->store_capture_context_mandate_type( $body );
 			}
+			$body_check = (array) $body;
+			if ( array_key_exists( 'response', $body_check ) ) {
+				$body = wp_json_encode( $body );
+			}
+			$capture_context = is_string( $body ) ? $body : VISA_ACCEPTANCE_STRING_EMPTY;
 			$plugin_public->add_uc_token( $capture_context );
 			$this->enqueue_uc_client_library( $capture_context, $plugin_public );
 			if ( ! empty( $capture_context['capture_context'] ) ) {
@@ -236,10 +253,10 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 
 			// Hide Express Pay for variable products until variation is selected and for grouped products until a product is selected.
 			// EXCEPT for subscription switches where the product is already determined.
-			$hide_style = ( ( $is_variable_product || $is_grouped ) && ! $is_switch ) ? ' style="display:none;"' : VISA_ACCEPTANCE_STRING_EMPTY;
+			$hide_class = ( ( $is_variable_product || $is_grouped ) && ! $is_switch ) ? ' wc-vas-product-checkout-container-hidden' : VISA_ACCEPTANCE_STRING_EMPTY;
 			?>
-			<div class="wc-vas-clear" style="clear:both;"></div>
-			<div id="wc-express-checkout-product" class="wc-vas-product-checkout-container bottom active"<?php echo $hide_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<div class="wc-vas-clear" ></div>
+			<div id="wc-express-checkout-product" class="wc-vas-product-checkout-container bottom active<?php echo esc_attr( $hide_class ); ?>">
 				<div id="wc-express-checkout-section">
 					<div id="express-checkout-heading">
 						<span><?php echo esc_html( $ep_title ); ?></span>
@@ -247,7 +264,10 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 					</div>
 					<div id="expressPaymentListContainer_product"></div>
 					<div>
-						<input type="hidden" id="transientToken" name="transientToken" value="' . esc_attr($_GET['transientToken']) . '"/>
+						<?php
+							$transient_token = isset($_GET['transientToken']) ? sanitize_text_field(wp_unslash($_GET['transientToken'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+						?>
+						<input type="hidden" id="transientToken" name="transientToken" value = "<?php echo esc_attr($transient_token); ?>"/>
 					</div>
 					<div>
 						<input type="hidden" id="errorMessage" name="errorMessage"/>
@@ -271,7 +291,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 					?>
 				</div>
 			</div>
-<?php
+			<?php
 
 			// Check if product is grouped.
 			$is_grouped = $product && $product->is_type( VISA_ACCEPTANCE_PRODUCT_TYPE_GROUPED );
@@ -287,11 +307,13 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 				array(
 					'ajax_url'                        => admin_url( 'admin-ajax.php' ),
 					'payment_method'                  => VISA_ACCEPTANCE_GATEWAY_UC,
-					'payer_auth_enabled'              => $payer_auth_enable,
 					'product_id'                      => get_the_ID(),
 					'billing_details'                 => $billing,
 					'shipping_details'                => $shipping,
 					'nonce'                           => wp_create_nonce( 'validate_customer_postcode_express_pay' ),
+					'get_addresses_nonce'             => wp_create_nonce( 'vas_get_addresses_nonce' ),
+					'express_pay_order_nonce'         => wp_create_nonce( 'vas_express_pay_order_nonce' ),
+					'quantity_update_nonce'           => wp_create_nonce( 'wc_product_page_quantity_update' ),
 					'customer_postalcode'             => WC()->customer->get_shipping_postcode(),
 					'visa_acceptance_solutions_uc_id' => VISA_ACCEPTANCE_UC_ID,
 					'visa_acceptance_solutions_uc_id_hyphen' => VISA_ACCEPTANCE_UC_ID_HYPHEN,
@@ -305,11 +327,6 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 					'switch_item_id'                  => $switch_item_id,
 				)
 			);
-			if ( VISA_ACCEPTANCE_YES === $payer_auth_enable ) {
-				wp_enqueue_style( $this->wc_payment_gateway_id . VISA_ACCEPTANCE_UNDERSCORE_PAYER_AUTH, plugin_dir_url( __FILE__ ) . 'css/visa-acceptance-payment-gateway-payer-auth-public.css', array(), $this->version, VISA_ACCEPTANCE_STRING_ALL );
-				wp_enqueue_script( $this->wc_payment_gateway_id . VISA_ACCEPTANCE_UNDERSCORE_PAYER_AUTH, plugin_dir_url( __FILE__ ) . 'js/visa-acceptance-payment-gateway-payer-auth-public.js', array( 'jquery' ), $this->version, false );
-				$plugin_public->load_payer_auth_script( $payer_auth_enable, $settings );
-			}
 		}
 	}
 
@@ -324,7 +341,9 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 		$is_subscriptions_tokenization_enabled = $this->gateway->is_subscriptions_activated;
 		$value = false;
 		if ( ! $is_subscriptions_tokenization_enabled && $subscription_order ) {
-			echo '<style>#wc-express-checkout-product{display:none !important;}</style>';
+			wp_add_inline_style( VISA_ACCEPTANCE_GATEWAY_ID_UNDERSCORE . $this->wc_payment_gateway_id . '-expresspay',
+			'#wc-express-checkout-product{display:none !important;}'
+			);
 			ob_start();
 			wc_print_notice( esc_html__( 'There are no payment methods available. Please contact us for help placing your order.', 'visa-acceptance-solutions' ), VISA_ACCEPTANCE_ERROR );
 			$response = ob_get_clean();
@@ -340,9 +359,17 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 	 * @return int
 	 */
 	public function product_page_quantity_update() {
+		// Verify nonce for security.
+		if ( ! check_ajax_referer( 'wc_product_page_quantity_update', 'nonce', false ) ) {
+			wp_send_json_error(
+				array( 'message' => __( 'Security verification failed. Please refresh the page and try again.', 'visa-acceptance-solutions' ) ),
+				403
+			);
+			wp_die();
+		}
 		try {
-			$plugin_public = new  Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public($this->wc_payment_gateway_id,$this->gateway,$this->version)  ;
-			$post 		= $_POST; // phpcs:ignore WordPress.Security.NonceVerification
+			$plugin_public = new  Visa_Acceptance_Payment_Gateway_Unified_Checkout_Public($this->wc_payment_gateway_id,$this->version,$this->gateway)  ;
+			$post 		= isset( $_POST ) ? wp_unslash( $_POST ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified above.
 			$product_id = isset( $post['product_id'] ) ? intval( $post['product_id'] ) : VISA_ACCEPTANCE_VAL_ZERO;
 			$quantity   = isset( $post['quantity'] ) ? intval( $post['quantity'] ) : VISA_ACCEPTANCE_VAL_ONE;
 			$grouped_items_raw = isset( $post['grouped_items'] ) ? $post['grouped_items'] : array();
@@ -356,7 +383,6 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			}
 			$switch_subscription_id = isset( $post['switch_subscription_id'] ) ? intval( $post['switch_subscription_id'] ) : VISA_ACCEPTANCE_VAL_ZERO;
 			$switch_item_id = isset( $post['switch_item_id'] ) ? intval( $post['switch_item_id'] ) : VISA_ACCEPTANCE_VAL_ZERO;
-
 
 			// Sanitize grouped items.
 			if ( is_array( $grouped_items_raw ) ) {
@@ -375,7 +401,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			$product_order_total    = VISA_ACCEPTANCE_ZERO_AMOUNT;
 			$total_amount           = WC()->session->get( "wc_{$this->wc_payment_gateway_id}_capture_context_total_amount" );
 			$key_generation_request = new Visa_Acceptance_Key_Generation_Request( $this->gateway );
-			$flex_request           = new Visa_Acceptance_Key_Generation( $this->gateway );
+			$key_generation           = new Visa_Acceptance_Key_Generation( $this->gateway );
 
 			// Check if this is a subscription switch request.
 			if ( $is_switch && $switch_subscription_id && $switch_item_id ) {
@@ -439,10 +465,18 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			if ( ! empty( $grouped_items ) ) {
 				$cache_key_parts[] = md5( wp_json_encode( $grouped_items ) );
 			}
-			$cache_key = implode( '_', $cache_key_parts );
+			$cache_key = implode( VISA_ACCEPTANCE_UNDERSCORE, $cache_key_parts );
 
 			// Check if we have a cached capture context for this exact request.
 			$needs_new_context = false;
+			
+			// SCA guard: when USE_3DS_EP_CHALLENGE is '2', enqueue_scripts() / add_express_pay_at_product_page().
+			if ( isset( WC()->session ) && '2' === WC()->session->get( VISA_ACCEPTANCE_COOKIE_USE_3DS_EP_CHALLENGE, VISA_ACCEPTANCE_STRING_EMPTY ) ) {
+				$return_response[VISA_ACCEPTANCE_SUCCESS] = true;
+				wp_send_json( $return_response );
+				return;
+			}
+
 			if ( isset( $this->capture_context_cache[ $cache_key ] ) ) {
 				// Use cached capture context.
 				$return_response['capture_context_ep_jwt'] = $this->capture_context_cache[ $cache_key ];
@@ -456,11 +490,15 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 
 				// Pass custom amount for switch requests.
 				$switch_amount = ( $is_switch && $product_order_total > VISA_ACCEPTANCE_VAL_ZERO ) ? $product_order_total : null;
-				$response_ep_jwt = $flex_request->get_unified_checkout_capture_context( true, $product_id, $quantity, $grouped_items, $switch_amount );
+				$response_ep_jwt = $key_generation->get_unified_checkout_capture_context( true, $product_id, $quantity, $grouped_items, $switch_amount );
+				
 				// Handle Express Pay JWT response.
 				if ( isset( $response_ep_jwt['http_code'] ) && VISA_ACCEPTANCE_TWO_ZERO_ONE === (int) $response_ep_jwt['http_code'] ) {
 					$capture_context_ep_jwt = ! empty( $response_ep_jwt['body'] ) ? $response_ep_jwt['body'] : VISA_ACCEPTANCE_STRING_EMPTY;
 					$return_response['capture_context_ep_jwt'] = $capture_context_ep_jwt;
+
+					// Record completeMandate.type by jti so order status mapping is correct at completion.
+					$plugin_public->store_capture_context_mandate_type( $capture_context_ep_jwt );
 
 					// Cache the capture context to prevent duplicate API calls.
 					$this->capture_context_cache[ $cache_key ] = $capture_context_ep_jwt;
@@ -486,65 +524,121 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 	 * @return array Array with 'billing' and 'shipping' keys containing address arrays.
 	 */
 	private function get_addresses_from_transient_token( $transient_token ) {
-		$billing = array();
-		$shipping = array();
-
-		if ( empty( $transient_token ) ) {
-			return array( 'billing' => $billing, 'shipping' => $shipping );
-		}
-
-		$payment_uc = new Visa_Acceptance_Payment_UC( $this->gateway );
-		$payment_details_response = $payment_uc->get_payment_details_from_transient_token( $transient_token );
-
-		if ( ! $payment_details_response || ! isset( $payment_details_response['body'] ) ) {
-			return array( 'billing' => $billing, 'shipping' => $shipping );
-		}
-
-		$payment_details = $payment_details_response['body'];
-
-		// Extract billing address.
-		if ( isset( $payment_details->orderInformation ) && isset( $payment_details->orderInformation->billTo ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-			$bill_to = $payment_details->orderInformation->billTo; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-
-			// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- External API uses camelCase.
-			$billing = array(
-				'first_name' => isset( $bill_to->firstName ) ? sanitize_text_field( $bill_to->firstName ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'last_name'  => isset( $bill_to->lastName ) ? sanitize_text_field( $bill_to->lastName ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'company'    => VISA_ACCEPTANCE_STRING_EMPTY,
-				'address_1'  => isset( $bill_to->address1 ) ? sanitize_text_field( $bill_to->address1 ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'address_2'  => isset( $bill_to->address2 ) ? sanitize_text_field( $bill_to->address2 ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'city'       => isset( $bill_to->locality ) ? sanitize_text_field( $bill_to->locality ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'postcode'   => isset( $bill_to->postalCode ) ? sanitize_text_field( $bill_to->postalCode ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'country'    => isset( $bill_to->country ) ? sanitize_text_field( $bill_to->country ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'state'      => isset( $bill_to->administrativeArea ) ? sanitize_text_field( $bill_to->administrativeArea ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'email'      => isset( $bill_to->email ) ? sanitize_email( $bill_to->email ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'phone'      => isset( $bill_to->phoneNumber ) ? sanitize_text_field( $bill_to->phoneNumber ) : VISA_ACCEPTANCE_STRING_EMPTY,
-			);
-			// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-		}
-
-		// Extract shipping address.
-		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- External API uses camelCase.
-		if ( isset( $payment_details->orderInformation ) && isset( $payment_details->orderInformation->shipTo ) ) {
-			$ship_to = $payment_details->orderInformation->shipTo;
-
-			$shipping = array(
-				'first_name' => isset( $ship_to->firstName ) ? sanitize_text_field( $ship_to->firstName ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'last_name'  => isset( $ship_to->lastName ) ? sanitize_text_field( $ship_to->lastName ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'company'    => VISA_ACCEPTANCE_STRING_EMPTY,
-				'address_1'  => isset( $ship_to->address1 ) ? sanitize_text_field( $ship_to->address1 ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'address_2'  => isset( $ship_to->address2 ) ? sanitize_text_field( $ship_to->address2 ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'city'       => isset( $ship_to->locality ) ? sanitize_text_field( $ship_to->locality ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'postcode'   => isset( $ship_to->postalCode ) ? sanitize_text_field( $ship_to->postalCode ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'country'    => isset( $ship_to->country ) ? sanitize_text_field( $ship_to->country ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'state'      => isset( $ship_to->administrativeArea ) ? sanitize_text_field( $ship_to->administrativeArea ) : VISA_ACCEPTANCE_STRING_EMPTY,
-				'phone'      => isset( $ship_to->phoneNumber ) ? sanitize_text_field( $ship_to->phoneNumber ) : VISA_ACCEPTANCE_STRING_EMPTY,
-			);
-		}
-		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-
-		return array( 'billing' => $billing, 'shipping' => $shipping );
-	}
+        $billing = array();
+        $shipping = array();
+ 
+        if ( empty( $transient_token ) ) {
+            return array( 'billing' => $billing, 'shipping' => $shipping );
+        }
+ 
+        $payment_uc = new Visa_Acceptance_Payment_UC( $this->gateway );
+        $payment_details_response = $payment_uc->get_payment_details_from_transient_token( $transient_token );
+ 
+        if ( ! $payment_details_response || ! isset( $payment_details_response['body'] ) ) {
+            return array( 'billing' => $billing, 'shipping' => $shipping );
+        }
+ 
+        $payment_details = $payment_details_response['body'];
+        $decoded_token = $this->safe_decode_jwt( $transient_token, false );
+        if ( null !== $decoded_token && ! empty( $decoded_token['content']['paymentInformation']['paymentType']['name'] ) ) {
+            $payment_type_name = $decoded_token['content']['paymentInformation']['paymentType']['name'];
+            // Handle both string and array cases.
+            if ( is_array( $payment_type_name ) && isset( $payment_type_name['value'] ) ) {
+                $payment_type_name = $payment_type_name['value'];
+            }
+        }
+ 
+        // Extract billing address.
+        if ( isset( $payment_details->orderInformation ) && isset( $payment_details->orderInformation->billTo ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+            $bill_to = $payment_details->orderInformation->billTo; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+ 
+            // phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- External API uses camelCase.
+            $billing = array(
+                'first_name' => isset( $bill_to->firstName ) ? sanitize_text_field( $bill_to->firstName ) : ( ! empty( $shipping['first_name'] ) ? $shipping['first_name'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'last_name'  => isset( $bill_to->lastName ) ? sanitize_text_field( $bill_to->lastName ) : ( ! empty( $shipping['last_name'] ) ? $shipping['last_name'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'company'    => VISA_ACCEPTANCE_STRING_EMPTY,
+                'address_1'  => isset( $bill_to->address1 ) ? sanitize_text_field( $bill_to->address1 ) : ( ! empty( $shipping['address_1'] ) ? $shipping['address_1'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'address_2'  => isset( $bill_to->address2 ) ? sanitize_text_field( $bill_to->address2 ) : ( ! empty( $shipping['address_2'] ) ? $shipping['address_2'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'city'       => isset( $bill_to->locality ) ? sanitize_text_field( $bill_to->locality ) : ( ! empty( $shipping['city'] ) ? $shipping['city'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'postcode'   => isset( $bill_to->postalCode ) ? sanitize_text_field( $bill_to->postalCode ) : ( ! empty( $shipping['postcode'] ) ? $shipping['postcode'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'country'    => isset( $bill_to->country ) ? sanitize_text_field( $bill_to->country ) : ( ! empty( $shipping['country'] ) ? $shipping['country'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'state'      => isset( $bill_to->administrativeArea ) ? sanitize_text_field( $bill_to->administrativeArea ) : ( ! empty( $shipping['state'] ) ? $shipping['state'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'email'      => isset( $bill_to->email ) ? sanitize_email( $bill_to->email ) : ( ! empty( $shipping['email'] ) ? $shipping['email'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'phone'      => isset( $bill_to->phoneNumber ) ? sanitize_text_field( $bill_to->phoneNumber ) : ( ! empty( $shipping['phone'] ) ? $shipping['phone'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+            );
+            // phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+            if ( $payment_type_name == 'EWALLET' ) {
+                if ( empty( $billing['first_name'] ) ) {
+                $billing['first_name'] = 'xxx';
+                }
+                if ( empty( $billing['last_name'] ) ) {
+                $billing['last_name'] = 'xxx';
+                }
+                if ( empty( $billing['address_1'] ) ) {
+                $billing['address_1'] = 'xxx';
+                }
+                if ( empty( $billing['city'] ) ) {
+                $billing['city'] = 'xxx';
+                }
+                if ( empty( $billing['postcode'] ) ) {
+                $billing['postcode'] = '00000';
+                }
+                if ( empty( $billing['state'] ) ) {
+                $billing['state'] = 'CA';
+                }
+                if ( empty( $billing['country'] ) ) {
+                $billing['country'] = 'US';
+                }
+            }
+        }
+        if ( $payment_type_name == 'EWALLET' ) {
+                if ( empty( $shipping['first_name'] ) ) {
+                $shipping['first_name'] = $billing['first_name'];
+                }
+                if ( empty( $shipping['last_name'] ) ) {
+                $shipping['last_name'] = $billing['last_name'];
+                }
+                if ( empty( $shipping['address_1'] ) ) {
+                $shipping['address_1'] = $billing['address_1'];
+                }
+                if ( empty( $shipping['city'] ) ) {
+                $shipping['city'] = $billing['city'];
+                }
+                if ( empty( $shipping['postcode'] ) ) {
+                $shipping['postcode'] = $billing['postcode'];
+                }
+                if ( empty( $shipping['state'] ) ) {
+                $shipping['state'] = $billing['state'];
+                }
+                if ( empty( $shipping['country'] ) ) {
+                $shipping['country'] = $billing['country'];
+                }
+                
+            }
+ 
+        // Extract shipping address.
+        // phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- External API uses camelCase.
+        if ( isset( $payment_details->orderInformation ) && isset( $payment_details->orderInformation->shipTo ) ) {
+            $ship_to = $payment_details->orderInformation->shipTo;
+ 
+            $shipping = array(
+                'first_name' => isset( $ship_to->firstName ) ? sanitize_text_field( $ship_to->firstName ) : ( ! empty( $billing['first_name'] ) ? $billing['first_name'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'last_name'  => isset( $ship_to->lastName ) ? sanitize_text_field( $ship_to->lastName ) : ( ! empty( $billing['last_name'] ) ? $billing['last_name'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'company'    => VISA_ACCEPTANCE_STRING_EMPTY,
+                'address_1'  => isset( $ship_to->address1 ) ? sanitize_text_field( $ship_to->address1 ) : ( ! empty( $billing['address_1'] ) ? $billing['address_1'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'address_2'  => isset( $ship_to->address2 ) ? sanitize_text_field( $ship_to->address2 ) : VISA_ACCEPTANCE_STRING_EMPTY,
+                'city'       => isset( $ship_to->locality ) ? sanitize_text_field( $ship_to->locality ) : ( ! empty( $billing['city'] ) ? $billing['city'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'postcode'   => isset( $ship_to->postalCode ) ? sanitize_text_field( $ship_to->postalCode ) : ( ! empty( $billing['postcode'] ) ? $billing['postcode'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'country'    => isset( $ship_to->country ) ? sanitize_text_field( $ship_to->country ) : ( ! empty( $billing['country'] ) ? $billing['country'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'state'      => isset( $ship_to->administrativeArea ) ? sanitize_text_field( $ship_to->administrativeArea ) : ( ! empty( $billing['state'] ) ? $billing['state'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'phone'      => isset( $ship_to->phoneNumber ) ? sanitize_text_field( $ship_to->phoneNumber ) : ( ! empty( $billing['phone'] ) ? $billing['phone'] : VISA_ACCEPTANCE_STRING_EMPTY ),
+            );
+            
+        }
+        // phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+ 
+        return array( 'billing' => $billing, 'shipping' => $shipping );
+    }
 
 	/**
 	 * AJAX handler to get addresses from transient token for blocks checkout
@@ -552,7 +646,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 	 * @return void
 	 */
 	public function ajax_get_addresses_from_transient_token() {
-		// phpcs:ignore WordPress.Security.NonceVerification
+		check_ajax_referer('vas_get_addresses_nonce', 'nonce');
 		$transient_token = isset( $_POST['transientToken'] ) ? sanitize_text_field( wp_unslash( $_POST['transientToken'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY;
 
 		if ( empty( $transient_token ) ) {
@@ -566,12 +660,47 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 	}
 
 	/**
+	 * Validates transient token with time-based expiry check.
+	 *
+	 * @param string $transient_token The transient token to validate.
+	 * @return bool True if valid and not expired, false otherwise.
+	 */
+	private function validate_transient_token( $transient_token ) {
+		if ( empty( $transient_token ) ) {
+			return false;
+		}
+
+		// Get transient data with time-based expiry.
+		$transient_data = get_transient( 'vas_token_' . $transient_token );
+		
+		if ( false === $transient_data ) {
+			return false;
+		}
+
+		// Check if transient has expired.
+		if ( isset( $transient_data['expires'] ) && $transient_data['expires'] < time() ) {
+			delete_transient( 'vas_token_' . $transient_token );
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Function for `wp_ajax_express_pay_for_order` express-pay action-hook for product page.
 	 * 
 	 * @return void
 	 */
 	public function express_pay_product_page_pay_for_order() {
-		$post = $_POST; // phpcs:ignore WordPress.Security.NonceVerification
+    	check_ajax_referer('vas_express_pay_order_nonce', 'nonce');
+    	// Then validate transient token.
+    	$transient_token = isset($_POST['transientToken']) ? sanitize_text_field(wp_unslash($_POST['transientToken'])) : '';
+
+		if (!$this->validate_transient_token($transient_token)) {
+			wp_send_json_error(['message' => 'Invalid token']);
+			return;
+		}
+    	$post = isset( $_POST ) ? wp_unslash( $_POST ) : array();
 
 		// Check if this is a subscription switch request.
 		$is_switch = false;
@@ -602,7 +731,6 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 		$billing 			= ! empty( $billing_from_token ) ? $billing_from_token : $billing_from_frontend;
 		$shipping 			= ! empty( $shipping_from_token ) ? $shipping_from_token : $shipping_from_frontend;
 		$payment_method 	= isset($post['payment_method']) ? sanitize_text_field($post['payment_method']) : VISA_ACCEPTANCE_STRING_EMPTY;
-		$payer_auth_enabled = isset($post['payer_auth_enabled']) ? $post['payer_auth_enabled'] : false ;
 		$transient_token 	= isset($post['transientToken']) ?  $post['transientToken'] : VISA_ACCEPTANCE_STRING_EMPTY;
 		$token_id 			= isset($post['token_id']) ? $post['token_id'] : VISA_ACCEPTANCE_STRING_EMPTY;
 		$customer_id 		= get_current_user_id();
@@ -626,7 +754,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 
 		if ($is_grouped_product && !empty($grouped_items)) {
 			// Handle grouped product order creation.
-			$this->process_grouped_product_order($grouped_items, $customer_id, $billing, $shipping, $payment_method, $payer_auth_enabled, $transient_token, $token_id, $subscription_active);
+			$this->process_grouped_product_order($grouped_items, $customer_id, $billing, $shipping, $payment_method, $transient_token, $token_id, $subscription_active);
 		} elseif ($product_id_to_add) {
 			// Add product to order.
 			$product = wc_get_product($product_id_to_add);
@@ -815,12 +943,6 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 				$order->set_payment_method_title( $payment_method_title );
 			}
 
-			if (! $payer_auth_enabled) {
-				$order->update_meta_data('_payer_auth_enabled', VISA_ACCEPTANCE_NO);
-			} else {
-				$order->update_meta_data('_payer_auth_enabled', VISA_ACCEPTANCE_YES);
-			}
-
 			if (! empty($transient_token)) {
 				$this->process_transient_token($order, $transient_token);
 			}
@@ -838,17 +960,18 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 						$billing_email = $order->get_billing_email();
 					if ( ! empty( $billing_email ) ) {
 						if ( email_exists( $billing_email ) ) {
-							/* translators: %s: email address */
-							wp_send_json_error( array( 'message' => sprintf( __( 'An account is already registered with %s. Please log in or use a different email address.', 'visa-acceptance-solutions' ), $billing_email ) ) );
-                            return;
+							// Use existing account.
+							$user = get_user_by( 'email', $billing_email );
+							if ( $user ) {
+									$customer_id = $user->ID;
+								}
 						} else {
 							// Create new customer account.
 							$customer_id = wc_create_new_customer( $billing_email, VISA_ACCEPTANCE_STRING_EMPTY, wp_generate_password() );
 						}
 							// Log the user in automatically.
 							if ($customer_id && ! is_wp_error($customer_id)) {
-								wp_set_current_user($customer_id);
-								wp_set_auth_cookie($customer_id, true);
+								wc_set_customer_auth_cookie( $customer_id );
 
 								// Update WooCommerce session and customer data.
 								if ( WC()->session ) {
@@ -865,6 +988,40 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 							return;
 						}
 					}
+					if ( VISA_ACCEPTANCE_VAL_ZERO === $customer_id ) {
+						$billing_email = $order->get_billing_email();
+						if ( ! empty( $billing_email ) ) {
+							if ( email_exists( $billing_email ) ) {
+								// Use existing account.
+								$user = get_user_by( 'email', $billing_email );
+								if ( $user ) {
+									$customer_id = $user->ID;
+								}
+							} else {
+								// Create new customer account.
+								$customer_id = wc_create_new_customer($billing_email, VISA_ACCEPTANCE_STRING_EMPTY, wp_generate_password());
+							}
+
+							// Log the user in automatically.
+							if ($customer_id && ! is_wp_error($customer_id)) {
+								wc_set_customer_auth_cookie( $customer_id );
+
+								// Update WooCommerce session and customer data.
+								if ( WC()->session ) {
+									WC()->session->set_customer_session_cookie( true );
+								}
+								WC()->customer->set_id( $customer_id );
+							}
+
+							// Update order with customer ID.
+							$order->set_customer_id( $customer_id );
+							$order->save();
+						} else {
+							wp_send_json_error( array( 'message' => 'Billing email is required for subscription orders.' ) );
+							return;
+						}
+					}
+
 					// Get subscription details from product.
 					$interval = WC_Subscriptions_Product::get_interval( $product );
 					$period   = WC_Subscriptions_Product::get_period( $product );
@@ -975,12 +1132,27 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			$gateway_id = $this->gateway;
 			if ( $gateway_id && method_exists( $gateway_id, 'process_payment' ) ) {
 				$result = $gateway_id->process_payment( $order_id );
-				wp_send_json_success(['redirect_url' => $result['redirect']]);
+				if ( isset( $result['result'] ) && VISA_ACCEPTANCE_SUCCESS === $result['result'] && ! empty( $result['redirect'] ) ) {
+					wp_send_json_success( array( 'redirect_url' => $result['redirect'] ) );
+				} elseif ( ! empty( $result['reload'] ) && ! empty( $result['authRequired'] ) ) {
+					// SCA (3DS double-OTP) retry.
+					// The JS will display the error on the current page before reloading.
+					// Clear any WC session notices queued by mark_order_failed() so nothing
+					// appears again on the reloaded page — the reloaded page should be clean.
+					wc_clear_notices();
+					wp_send_json_success( array(
+						'sca_reload' => true,
+						'message'    => isset( $result['message'] ) ? $result['message'] : __( 'Your card issuer requires an extra security check to approve this payment. Please try again and follow the verification steps.', 'visa-acceptance-solutions' ),
+					) );
 			} else {
-				wp_send_json_error(array('message' => __( 'Payment gateway not found.', 'visa-acceptance-solutions' )));
+				$error_message = isset( $result['message'] ) ? $result['message'] : __( 'Payment processing failed. Please try again.', 'visa-acceptance-solutions' );
+					wp_send_json_error( array( 'message' => $error_message ) );
+				}
+			} else {
+				wp_send_json_error(array('message' => 'Payment gateway not found.'));
 			}
 		} else {
-			wp_send_json_error(array('message' => __( 'Product ID is required.', 'visa-acceptance-solutions' )));
+			wp_send_json_error(array('message' => 'Product ID is required.'));
 		}
 	}
 
@@ -1109,7 +1281,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 				wp_send_json_error(array('message' => __( 'Failed to add product to cart.', 'visa-acceptance-solutions' )));
 			}
 
-			// Calculate totals - WCS applies switch pricing here.
+			// Calculate totals — WCS applies switch pricing here.
 			WC()->cart->calculate_totals();
 
 			// Create the switch order via WooCommerce checkout.
@@ -1130,7 +1302,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 				wp_send_json_error(array('message' => __( 'Failed to retrieve order.', 'visa-acceptance-solutions' )));
 			}
 
-			// Apply addresses, switch metadata, payment method and token â€” then save once.
+			// Apply addresses, switch metadata, payment method and token — then save once.
 			if (! empty($billing)) {
 				$order->set_address($billing,  'billing');
 			}
@@ -1400,12 +1572,11 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 	 * @param array $billing Billing address.
 	 * @param array $shipping Shipping address.
 	 * @param string $payment_method Payment method.
-	 * @param bool $payer_auth_enabled Payer authentication enabled.
 	 * @param string $transient_token Transient token.
 	 * @param string $token_id Token ID.
 	 * @param bool $subscription_active Subscription plugin active.
 	 */
-	private function process_grouped_product_order($grouped_items, $customer_id, $billing, $shipping, $payment_method, $payer_auth_enabled, $transient_token, $token_id, $subscription_active) {
+	private function process_grouped_product_order($grouped_items, $customer_id, $billing, $shipping, $payment_method, $transient_token, $token_id, $subscription_active) {
 		// Validate grouped items.
 		if (empty($grouped_items)) {
 			wp_send_json_error(array('message' => __( 'No products selected in grouped product.', 'visa-acceptance-solutions' )));
@@ -1588,12 +1759,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			$order->set_payment_method_title($payment_method_title);
 		}
 
-		// Set order meta.
-		if (!$payer_auth_enabled) {
-			$order->update_meta_data('_payer_auth_enabled', VISA_ACCEPTANCE_NO);
-		} else {
-			$order->update_meta_data('_payer_auth_enabled', VISA_ACCEPTANCE_YES);
-		}
+
 		if (!empty($transient_token)) {
 			$this->process_transient_token($order, $transient_token);
 		}
@@ -1622,6 +1788,70 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			wp_send_json_error(array('message' => __( 'Payment gateway not found.', 'visa-acceptance-solutions' )));
 		}
 	}
+
+	/**
+     * Safely decodes a JWT token and returns the payload.
+     *
+     * @param string $jwt The JWT token to decode.
+     * @param bool   $verify_structure Whether to strictly validate JWT structure.
+     * @return array|null Decoded payload array or null on failure.
+     */
+    private function safe_decode_jwt( $jwt, $verify_structure = true ) {
+        if ( empty( $jwt ) || ! is_string( $jwt ) ) {
+            return null;
+        }
+ 
+        // JWT must have 3 parts: header.payload.signature.
+        $token_parts = explode( '.', $jwt );
+        if ( count( $token_parts ) !== 3 ) {
+            if ( $verify_structure ) {
+                $this->gateway->add_logs_data(
+                    'Invalid JWT structure: Expected 3 parts, got ' . count( $token_parts ),
+                    false,
+                    'JWT Validation Warning'
+                );
+                return null;
+            }
+            // Fallback for tokens with different structure.
+            if ( count( $token_parts ) < VISA_ACCEPTANCE_VAL_TWO ) {
+                return null;
+            }
+        }
+ 
+        // Decode the payload (second part).
+        $payload_b64 = $token_parts[1];
+ 
+        // URL-safe base64 decode.
+        $payload_b64 = strtr( $payload_b64, '-_', '+/' );
+        $pad         = strlen( $payload_b64 ) % VISA_ACCEPTANCE_VAL_FOUR;
+        if ( $pad ) {
+            $payload_b64 .= str_repeat( '=', VISA_ACCEPTANCE_VAL_FOUR - $pad );
+        }
+ 
+        // Decode base64.
+        $json = base64_decode( $payload_b64, true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+        if ( false === $json ) {
+            $this->gateway->add_logs_data(
+                'Failed to base64 decode JWT payload',
+                false,
+                'JWT Validation Warning'
+            );
+            return null;
+        }
+ 
+        // Decode JSON.
+        $decoded_token = json_decode( $json, true );
+        if ( null === $decoded_token || JSON_ERROR_NONE !== json_last_error() ) {
+            $this->gateway->add_logs_data(
+                'Failed to JSON decode JWT payload: ' . json_last_error_msg(),
+                false,
+                'JWT Validation Warning'
+            );
+            return null;
+        }
+ 
+        return $decoded_token;
+    }
 
 	/**
 	 * Build shipping packages for grouped products.
@@ -1912,7 +2142,7 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			$cart_total = VISA_ACCEPTANCE_VAL_ZERO;
 
 			if (null !== $existing_switch_cart_key) {
-				// Cart already has the correct switch item â€” just read the total.
+				// Cart already has the correct switch item — just read the total.
 				WC()->cart->calculate_totals();
 				$cart_total = $normalize_total(WC()->cart->get_total('raw'));
 			} else {
@@ -1920,7 +2150,8 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 				$saved_cart_session          = WC()->session->get('cart');
 				$saved_removed_cart_contents = WC()->cart->removed_cart_contents;
 				$saved_applied_coupons       = WC()->cart->applied_coupons;
-				$saved_get_params            = $_GET; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				// Saving GET parameters for cart restoration (public routing data, no nonce required).
+				$saved_get_params = isset( $_GET ) ? wp_unslash( $_GET ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Saving public routing data for restoration.
 
 				WC()->cart->empty_cart(false);
 
@@ -2043,12 +2274,11 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 			return;
 		}
 
-		$decoded_transient_token = json_decode(
-			base64_decode(explode(VISA_ACCEPTANCE_FULL_STOP, $transient_token)[VISA_ACCEPTANCE_VAL_ONE]), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
-			true
-		);
+		// Safely decode JWT token to extract payment solution information.
+        $decoded_transient_token = $this->safe_decode_jwt( $transient_token, false );
 
 		if (
+			null !== $decoded_transient_token &&
 			! empty($decoded_transient_token['content']['processingInformation']['paymentSolution']['value']) &&
 			VISA_ACCEPTANCE_GPAY_PAYMENTSOLUTION_VALUE === $decoded_transient_token['content']['processingInformation']['paymentSolution']['value']
 		) {
@@ -2111,23 +2341,9 @@ class Visa_Acceptance_Payment_Gateway_Expresspay_Public extends \WC_Payment_Gate
 	 */
 	private function process_transient_token( $order, $transient_token ) {
         $order->update_meta_data( '_transientToken', $transient_token );
-       
+
         // Update Google Pay addresses.
         $this->update_google_pay_addresses( $order, $transient_token );
-       
-        // Decode token and check if it's Google Pay.
-        $decoded_token = json_decode( base64_decode( explode( VISA_ACCEPTANCE_FULL_STOP, $transient_token )[VISA_ACCEPTANCE_VAL_ONE] ), true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
-       
-        if ( ! empty( $decoded_token['content']['processingInformation']['paymentSolution']['value'] ) &&
-             VISA_ACCEPTANCE_GPAY_PAYMENTSOLUTION_VALUE === $decoded_token['content']['processingInformation']['paymentSolution']['value'] ) {
-           
-            $payment_uc = new Visa_Acceptance_Payment_UC( $this->gateway );
-            $payment_details_response = $payment_uc->get_payment_details_from_transient_token( $transient_token );
-           
-            if ( $payment_details_response && isset( $payment_details_response['body'] ) ) {
-                $payment_uc->update_order_addresses_from_payment_details( $order, $payment_details_response['body'] );
-            }
-        }
     }
  
 }

@@ -147,7 +147,7 @@ class MerchantBoardingApi
             // for HTTP post (form)
         }
         //MLE check and mle encryption for req body
-        $inboundMLEStatus = 'false';
+        $inboundMLEStatus = 'mandatory';
         if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getRegistration,getRegistrationWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
@@ -181,11 +181,143 @@ class MerchantBoardingApi
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4007', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse40011', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 404:
                     $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4043', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 500:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse5002', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+            }
+            self::$logger->error("ApiException : {$e}");
+            throw $e;
+        }
+    }
+    /**
+     * Operation patchRegistration
+     *
+     * Updates the information on a boarding registration
+     *
+     * @param string $registrationId Identifies the boarding registration to be updated (required)
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PatchRegistrationBody $patchRegistrationBody Boarding registration data to be patched (required)
+     * @param string $vCIdempotencyId defines idempotency of the request (optional)
+     * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2005, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function patchRegistration($registrationId, $patchRegistrationBody, $vCIdempotencyId = null)
+    {
+        self::$logger->info('CALL TO METHOD patchRegistration STARTED');
+        list($response, $statusCode, $httpHeader) = $this->patchRegistrationWithHttpInfo($registrationId, $patchRegistrationBody, $vCIdempotencyId);
+        self::$logger->info('CALL TO METHOD patchRegistration ENDED');
+        self::$logger->close();
+        return [$response, $statusCode, $httpHeader];
+    }
+    /**
+     * Operation patchRegistrationWithHttpInfo
+     *
+     * Updates the information on a boarding registration
+     *
+     * @param string $registrationId Identifies the boarding registration to be updated (required)
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PatchRegistrationBody $patchRegistrationBody Boarding registration data to be patched (required)
+     * @param string $vCIdempotencyId defines idempotency of the request (optional)
+     * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2005, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function patchRegistrationWithHttpInfo($registrationId, $patchRegistrationBody, $vCIdempotencyId = null)
+    {
+        // verify the required parameter 'registrationId' is set
+        if ($registrationId === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter {$registrationId} when calling patchRegistration");
+            throw new \InvalidArgumentException('Missing the required parameter $registrationId when calling patchRegistration');
+        }
+        // verify the required parameter 'patchRegistrationBody' is set
+        if ($patchRegistrationBody === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter {$patchRegistrationBody} when calling patchRegistration");
+            throw new \InvalidArgumentException('Missing the required parameter $patchRegistrationBody when calling patchRegistration');
+        }
+        // parse inputs
+        $resourcePath = "/boarding/v1/registrations/{registrationId}";
+        $httpBody = '';
+        $queryParams = [];
+        $headerParams = [];
+        $formParams = [];
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json']);
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json']);
+        // header params
+        if ($vCIdempotencyId !== null) {
+            $headerParams['v-c-idempotency-id'] = $this->apiClient->getSerializer()->toHeaderValue($vCIdempotencyId);
+        }
+        // path params
+        if ($registrationId !== null) {
+            $resourcePath = str_replace("{" . "registrationId" . "}", $this->apiClient->getSerializer()->toPathValue($registrationId), $resourcePath);
+        }
+        // body params
+        $_tempBody = null;
+        if (isset($patchRegistrationBody)) {
+            $_tempBody = $patchRegistrationBody;
+        }
+        $sdkTracker = new \Pymt_Vas\Dependencies\CyberSource\Utilities\Tracking\SdkTracker();
+        $modelClassLocation = explode('\\', '\Pymt_Vas\Dependencies\CyberSource\Model\PatchRegistrationBody');
+        $_tempBody = $sdkTracker->insertDeveloperIdTracker($_tempBody, end($modelClassLocation), $this->apiClient->merchantConfig->getRunEnvironment(), $this->apiClient->merchantConfig->getDefaultDeveloperId());
+        // for model (json/xml)
+        if (isset($_tempBody) and count($formParams) <= 0) {
+            $httpBody = $_tempBody;
+            // $_tempBody is the method argument, if present
+        } elseif (count($formParams) > 0) {
+            $httpBody = MultipartHelper::build_data_files($boundary, $formParams);
+            // for HTTP post (form)
+        }
+        //MLE check and mle encryption for req body
+        $inboundMLEStatus = 'optional';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "patchRegistration,patchRegistrationWithHttpInfo")) {
+            try {
+                $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
+            } catch (Exception $e) {
+                self::$logger->error("Failed to encrypt request body:  {$e}");
+                throw new ApiException("Failed to encrypt request body : " . $e->getMessage());
+            }
+        }
+        // Logging
+        self::$logger->debug("Resource : PATCH {$resourcePath}");
+        if (isset($httpBody) and count($formParams) <= 0) {
+            if ($this->apiClient->merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
+                $printHttpBody = \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\DataMasker::maskData($httpBody);
+            } else {
+                $printHttpBody = $httpBody;
+            }
+            self::$logger->debug("Body Parameter :\n" . $printHttpBody);
+        }
+        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse2005");
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "patchRegistration,patchRegistrationWithHttpInfo");
+        // make the API Call
+        try {
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'PATCH', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2005', '/boarding/v1/registrations/{registrationId}', $isResponseMLEForAPI);
+            self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
+            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2005', $httpHeader), $statusCode, $httpHeader];
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2005', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 400:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse40011', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 404:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4043', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 422:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4221', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 500:
@@ -205,7 +337,7 @@ class MerchantBoardingApi
      * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PostRegistrationBody $postRegistrationBody Boarding registration data (required)
      * @param string $vCIdempotencyId defines idempotency of the request (optional)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
-     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2014, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2016, HTTP status code, HTTP response headers (array of strings)
      */
     public function postRegistration($postRegistrationBody, $vCIdempotencyId = null)
     {
@@ -223,7 +355,7 @@ class MerchantBoardingApi
      * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PostRegistrationBody $postRegistrationBody Boarding registration data (required)
      * @param string $vCIdempotencyId defines idempotency of the request (optional)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
-     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2014, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2016, HTTP status code, HTTP response headers (array of strings)
      */
     public function postRegistrationWithHttpInfo($postRegistrationBody, $vCIdempotencyId = null)
     {
@@ -264,7 +396,7 @@ class MerchantBoardingApi
             // for HTTP post (form)
         }
         //MLE check and mle encryption for req body
-        $inboundMLEStatus = 'false';
+        $inboundMLEStatus = 'optional';
         if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "postRegistration,postRegistrationWithHttpInfo")) {
             try {
                 $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
@@ -283,22 +415,22 @@ class MerchantBoardingApi
             }
             self::$logger->debug("Body Parameter :\n" . $printHttpBody);
         }
-        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse2014");
+        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse2016");
         // Response MLE check
         $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "postRegistration,postRegistrationWithHttpInfo");
         // make the API Call
         try {
-            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'POST', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2014', '/boarding/v1/registrations', $isResponseMLEForAPI);
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'POST', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2016', '/boarding/v1/registrations', $isResponseMLEForAPI);
             self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
-            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2014', $httpHeader), $statusCode, $httpHeader];
+            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2016', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 201:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2014', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2016', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4007', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse40011', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 422:

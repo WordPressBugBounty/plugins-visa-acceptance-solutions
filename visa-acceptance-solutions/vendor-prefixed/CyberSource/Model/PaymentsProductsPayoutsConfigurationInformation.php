@@ -48,7 +48,7 @@ class PaymentsProductsPayoutsConfigurationInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['configurations' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsPayoutsConfigurationInformationConfigurations'];
+    protected static $swaggerTypes = ['configurations' => '\Pymt_Vas\Dependencies\CyberSource\Model\BoardingPayoutsConfigurations'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -124,7 +124,7 @@ class PaymentsProductsPayoutsConfigurationInformation implements ArrayAccess
     }
     /**
      * Gets configurations
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsPayoutsConfigurationInformationConfigurations
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\BoardingPayoutsConfigurations
      */
     public function getConfigurations()
     {
@@ -132,7 +132,7 @@ class PaymentsProductsPayoutsConfigurationInformation implements ArrayAccess
     }
     /**
      * Sets configurations
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsPayoutsConfigurationInformationConfigurations $configurations
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\BoardingPayoutsConfigurations $configurations
      * @return $this
      */
     public function setConfigurations($configurations)

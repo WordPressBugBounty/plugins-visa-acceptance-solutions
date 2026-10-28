@@ -48,12 +48,12 @@ class PblPaymentLinksPost201Response implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\PblPaymentLinksPost201ResponseLinks', 'id' => 'string', 'submitTimeUtc' => 'string', 'status' => 'string', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iplv2paymentlinksProcessingInformation', 'purchaseInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PblPaymentLinksPost201ResponsePurchaseInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PblPaymentLinksPost201ResponseOrderInformation'];
+    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionsPaymentsResponse1Links', 'id' => 'string', 'submitTimeUtc' => 'string', 'status' => 'string', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iplv2paymentlinksProcessingInformation', 'purchaseInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PblPaymentLinksPost201ResponsePurchaseInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PblPaymentLinksPost201ResponseOrderInformation', 'merchantDefinedFieldValuesWithDefinition' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesPost201ResponseMerchantDefinedFieldValuesWithDefinition[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['links' => null, 'id' => null, 'submitTimeUtc' => null, 'status' => null, 'processingInformation' => null, 'purchaseInformation' => null, 'orderInformation' => null];
+    protected static $swaggerFormats = ['links' => null, 'id' => null, 'submitTimeUtc' => null, 'status' => null, 'processingInformation' => null, 'purchaseInformation' => null, 'orderInformation' => null, 'merchantDefinedFieldValuesWithDefinition' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PblPaymentLinksPost201Response implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['links' => '_links', 'id' => 'id', 'submitTimeUtc' => 'submitTimeUtc', 'status' => 'status', 'processingInformation' => 'processingInformation', 'purchaseInformation' => 'purchaseInformation', 'orderInformation' => 'orderInformation'];
+    protected static $attributeMap = ['links' => '_links', 'id' => 'id', 'submitTimeUtc' => 'submitTimeUtc', 'status' => 'status', 'processingInformation' => 'processingInformation', 'purchaseInformation' => 'purchaseInformation', 'orderInformation' => 'orderInformation', 'merchantDefinedFieldValuesWithDefinition' => 'merchantDefinedFieldValuesWithDefinition'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['links' => 'setLinks', 'id' => 'setId', 'submitTimeUtc' => 'setSubmitTimeUtc', 'status' => 'setStatus', 'processingInformation' => 'setProcessingInformation', 'purchaseInformation' => 'setPurchaseInformation', 'orderInformation' => 'setOrderInformation'];
+    protected static $setters = ['links' => 'setLinks', 'id' => 'setId', 'submitTimeUtc' => 'setSubmitTimeUtc', 'status' => 'setStatus', 'processingInformation' => 'setProcessingInformation', 'purchaseInformation' => 'setPurchaseInformation', 'orderInformation' => 'setOrderInformation', 'merchantDefinedFieldValuesWithDefinition' => 'setMerchantDefinedFieldValuesWithDefinition'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['links' => 'getLinks', 'id' => 'getId', 'submitTimeUtc' => 'getSubmitTimeUtc', 'status' => 'getStatus', 'processingInformation' => 'getProcessingInformation', 'purchaseInformation' => 'getPurchaseInformation', 'orderInformation' => 'getOrderInformation'];
+    protected static $getters = ['links' => 'getLinks', 'id' => 'getId', 'submitTimeUtc' => 'getSubmitTimeUtc', 'status' => 'getStatus', 'processingInformation' => 'getProcessingInformation', 'purchaseInformation' => 'getPurchaseInformation', 'orderInformation' => 'getOrderInformation', 'merchantDefinedFieldValuesWithDefinition' => 'getMerchantDefinedFieldValuesWithDefinition'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -107,6 +107,7 @@ class PblPaymentLinksPost201Response implements ArrayAccess
         $this->container['processingInformation'] = isset($data['processingInformation']) ? $data['processingInformation'] : null;
         $this->container['purchaseInformation'] = isset($data['purchaseInformation']) ? $data['purchaseInformation'] : null;
         $this->container['orderInformation'] = isset($data['orderInformation']) ? $data['orderInformation'] : null;
+        $this->container['merchantDefinedFieldValuesWithDefinition'] = isset($data['merchantDefinedFieldValuesWithDefinition']) ? $data['merchantDefinedFieldValuesWithDefinition'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -130,7 +131,7 @@ class PblPaymentLinksPost201Response implements ArrayAccess
     }
     /**
      * Gets links
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PblPaymentLinksPost201ResponseLinks
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionsPaymentsResponse1Links
      */
     public function getLinks()
     {
@@ -138,7 +139,7 @@ class PblPaymentLinksPost201Response implements ArrayAccess
     }
     /**
      * Sets links
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PblPaymentLinksPost201ResponseLinks $links
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionsPaymentsResponse1Links $links
      * @return $this
      */
     public function setLinks($links)
@@ -252,6 +253,24 @@ class PblPaymentLinksPost201Response implements ArrayAccess
     public function setOrderInformation($orderInformation)
     {
         $this->container['orderInformation'] = $orderInformation;
+        return $this;
+    }
+    /**
+     * Gets merchantDefinedFieldValuesWithDefinition
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesPost201ResponseMerchantDefinedFieldValuesWithDefinition[]
+     */
+    public function getMerchantDefinedFieldValuesWithDefinition()
+    {
+        return $this->container['merchantDefinedFieldValuesWithDefinition'];
+    }
+    /**
+     * Sets merchantDefinedFieldValuesWithDefinition
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesPost201ResponseMerchantDefinedFieldValuesWithDefinition[] $merchantDefinedFieldValuesWithDefinition
+     * @return $this
+     */
+    public function setMerchantDefinedFieldValuesWithDefinition($merchantDefinedFieldValuesWithDefinition)
+    {
+        $this->container['merchantDefinedFieldValuesWithDefinition'] = $merchantDefinedFieldValuesWithDefinition;
         return $this;
     }
     /**

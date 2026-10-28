@@ -48,7 +48,7 @@ class Boardingv1registrationsOrganizationInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['organizationId' => 'string', 'parentOrganizationId' => 'string', 'childOrganizations' => 'string[]', 'type' => 'string', 'status' => 'string', 'configurable' => 'bool', 'businessInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsOrganizationInformationBusinessInformation', 'kYC' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsOrganizationInformationKYC', 'owners' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsOrganizationInformationOwners[]'];
+    protected static $swaggerTypes = ['organizationId' => 'string', 'parentOrganizationId' => 'string', 'childOrganizations' => 'string[]', 'type' => 'string', 'status' => 'string', 'configurable' => 'bool', 'businessInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\BoardingBusinessInformation', 'kYC' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsOrganizationInformationKYC', 'owners' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsOrganizationInformationOwners[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -246,7 +246,7 @@ class Boardingv1registrationsOrganizationInformation implements ArrayAccess
     }
     /**
      * Gets businessInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsOrganizationInformationBusinessInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\BoardingBusinessInformation
      */
     public function getBusinessInformation()
     {
@@ -254,7 +254,7 @@ class Boardingv1registrationsOrganizationInformation implements ArrayAccess
     }
     /**
      * Sets businessInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsOrganizationInformationBusinessInformation $businessInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\BoardingBusinessInformation $businessInformation
      * @return $this
      */
     public function setBusinessInformation($businessInformation)

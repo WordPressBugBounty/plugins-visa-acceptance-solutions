@@ -48,7 +48,7 @@ class Ptsv2intentsidOrderInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['amountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2intentsOrderInformationAmountDetails', 'shipTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2intentsOrderInformationShipTo', 'lineItems' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2intentsOrderInformationLineItems[]', 'invoiceDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2intentsOrderInformationInvoiceDetails'];
+    protected static $swaggerTypes = ['amountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2intentsOrderInformationAmountDetails', 'shipTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2intentsOrderInformationShipTo', 'lineItems' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2intentsOrderInformationLineItems[]', 'invoiceDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsOrderInformationInvoiceDetails'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -181,7 +181,7 @@ class Ptsv2intentsidOrderInformation implements ArrayAccess
     }
     /**
      * Gets invoiceDetails
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2intentsOrderInformationInvoiceDetails
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsOrderInformationInvoiceDetails
      */
     public function getInvoiceDetails()
     {
@@ -189,7 +189,7 @@ class Ptsv2intentsidOrderInformation implements ArrayAccess
     }
     /**
      * Sets invoiceDetails
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2intentsOrderInformationInvoiceDetails $invoiceDetails
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsOrderInformationInvoiceDetails $invoiceDetails
      * @return $this
      */
     public function setInvoiceDetails($invoiceDetails)

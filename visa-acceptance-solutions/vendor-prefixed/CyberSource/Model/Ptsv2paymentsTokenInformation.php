@@ -48,12 +48,12 @@ class Ptsv2paymentsTokenInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['jti' => 'string', 'transientTokenJwt' => 'string', 'paymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsTokenInformationPaymentInstrument', 'shippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsTokenInformationShippingAddress', 'networkTokenOption' => 'string', 'tokenProvisioningInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsTokenInformationTokenProvisioningInformation'];
+    protected static $swaggerTypes = ['jti' => 'string', 'transientTokenJwt' => 'string', 'paymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsTokenInformationPaymentInstrument', 'shippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsTokenInformationShippingAddress', 'networkTokenOption' => 'string', 'tokenProvisioningInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsTokenInformationTokenProvisioningInformation', 'clientCorrelationId' => 'string', 'tokenAuthenticationInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsTokenInformationTokenAuthenticationInformation'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['jti' => null, 'transientTokenJwt' => null, 'paymentInstrument' => null, 'shippingAddress' => null, 'networkTokenOption' => null, 'tokenProvisioningInformation' => null];
+    protected static $swaggerFormats = ['jti' => null, 'transientTokenJwt' => null, 'paymentInstrument' => null, 'shippingAddress' => null, 'networkTokenOption' => null, 'tokenProvisioningInformation' => null, 'clientCorrelationId' => null, 'tokenAuthenticationInformation' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2paymentsTokenInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['jti' => 'jti', 'transientTokenJwt' => 'transientTokenJwt', 'paymentInstrument' => 'paymentInstrument', 'shippingAddress' => 'shippingAddress', 'networkTokenOption' => 'networkTokenOption', 'tokenProvisioningInformation' => 'tokenProvisioningInformation'];
+    protected static $attributeMap = ['jti' => 'jti', 'transientTokenJwt' => 'transientTokenJwt', 'paymentInstrument' => 'paymentInstrument', 'shippingAddress' => 'shippingAddress', 'networkTokenOption' => 'networkTokenOption', 'tokenProvisioningInformation' => 'tokenProvisioningInformation', 'clientCorrelationId' => 'clientCorrelationId', 'tokenAuthenticationInformation' => 'tokenAuthenticationInformation'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['jti' => 'setJti', 'transientTokenJwt' => 'setTransientTokenJwt', 'paymentInstrument' => 'setPaymentInstrument', 'shippingAddress' => 'setShippingAddress', 'networkTokenOption' => 'setNetworkTokenOption', 'tokenProvisioningInformation' => 'setTokenProvisioningInformation'];
+    protected static $setters = ['jti' => 'setJti', 'transientTokenJwt' => 'setTransientTokenJwt', 'paymentInstrument' => 'setPaymentInstrument', 'shippingAddress' => 'setShippingAddress', 'networkTokenOption' => 'setNetworkTokenOption', 'tokenProvisioningInformation' => 'setTokenProvisioningInformation', 'clientCorrelationId' => 'setClientCorrelationId', 'tokenAuthenticationInformation' => 'setTokenAuthenticationInformation'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['jti' => 'getJti', 'transientTokenJwt' => 'getTransientTokenJwt', 'paymentInstrument' => 'getPaymentInstrument', 'shippingAddress' => 'getShippingAddress', 'networkTokenOption' => 'getNetworkTokenOption', 'tokenProvisioningInformation' => 'getTokenProvisioningInformation'];
+    protected static $getters = ['jti' => 'getJti', 'transientTokenJwt' => 'getTransientTokenJwt', 'paymentInstrument' => 'getPaymentInstrument', 'shippingAddress' => 'getShippingAddress', 'networkTokenOption' => 'getNetworkTokenOption', 'tokenProvisioningInformation' => 'getTokenProvisioningInformation', 'clientCorrelationId' => 'getClientCorrelationId', 'tokenAuthenticationInformation' => 'getTokenAuthenticationInformation'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -106,6 +106,8 @@ class Ptsv2paymentsTokenInformation implements ArrayAccess
         $this->container['shippingAddress'] = isset($data['shippingAddress']) ? $data['shippingAddress'] : null;
         $this->container['networkTokenOption'] = isset($data['networkTokenOption']) ? $data['networkTokenOption'] : null;
         $this->container['tokenProvisioningInformation'] = isset($data['tokenProvisioningInformation']) ? $data['tokenProvisioningInformation'] : null;
+        $this->container['clientCorrelationId'] = isset($data['clientCorrelationId']) ? $data['clientCorrelationId'] : null;
+        $this->container['tokenAuthenticationInformation'] = isset($data['tokenAuthenticationInformation']) ? $data['tokenAuthenticationInformation'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -233,6 +235,42 @@ class Ptsv2paymentsTokenInformation implements ArrayAccess
     public function setTokenProvisioningInformation($tokenProvisioningInformation)
     {
         $this->container['tokenProvisioningInformation'] = $tokenProvisioningInformation;
+        return $this;
+    }
+    /**
+     * Gets clientCorrelationId
+     * @return string
+     */
+    public function getClientCorrelationId()
+    {
+        return $this->container['clientCorrelationId'];
+    }
+    /**
+     * Sets clientCorrelationId
+     * @param string $clientCorrelationId Client-generated unique identifier for correlating token operations across API calls. This value helps track and associate token-related transactions.
+     * @return $this
+     */
+    public function setClientCorrelationId($clientCorrelationId)
+    {
+        $this->container['clientCorrelationId'] = $clientCorrelationId;
+        return $this;
+    }
+    /**
+     * Gets tokenAuthenticationInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsTokenInformationTokenAuthenticationInformation
+     */
+    public function getTokenAuthenticationInformation()
+    {
+        return $this->container['tokenAuthenticationInformation'];
+    }
+    /**
+     * Sets tokenAuthenticationInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsTokenInformationTokenAuthenticationInformation $tokenAuthenticationInformation
+     * @return $this
+     */
+    public function setTokenAuthenticationInformation($tokenAuthenticationInformation)
+    {
+        $this->container['tokenAuthenticationInformation'] = $tokenAuthenticationInformation;
         return $this;
     }
     /**

@@ -48,12 +48,12 @@ class Ptsv1pullfundstransferProcessingInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['commerceIndicator' => 'string', 'fundingOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferProcessingInformationFundingOptions', 'recurringOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferProcessingInformationRecurringOptions', 'businessApplicationId' => 'string', 'purposeOfPayment' => 'string', 'payoutsOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferProcessingInformationPayoutsOptions', 'languageCode' => 'string'];
+    protected static $swaggerTypes = ['commerceIndicator' => 'string', 'fundingOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\AftFundingOptions', 'recurringOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferProcessingInformationRecurringOptions', 'businessApplicationId' => 'string', 'purposeOfPayment' => 'string', 'payoutsOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferProcessingInformationPayoutsOptions', 'languageCode' => 'string', 'accountVerificationCode' => 'string[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['commerceIndicator' => null, 'fundingOptions' => null, 'recurringOptions' => null, 'businessApplicationId' => null, 'purposeOfPayment' => null, 'payoutsOptions' => null, 'languageCode' => null];
+    protected static $swaggerFormats = ['commerceIndicator' => null, 'fundingOptions' => null, 'recurringOptions' => null, 'businessApplicationId' => null, 'purposeOfPayment' => null, 'payoutsOptions' => null, 'languageCode' => null, 'accountVerificationCode' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv1pullfundstransferProcessingInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['commerceIndicator' => 'commerceIndicator', 'fundingOptions' => 'fundingOptions', 'recurringOptions' => 'recurringOptions', 'businessApplicationId' => 'businessApplicationId', 'purposeOfPayment' => 'purposeOfPayment', 'payoutsOptions' => 'payoutsOptions', 'languageCode' => 'languageCode'];
+    protected static $attributeMap = ['commerceIndicator' => 'commerceIndicator', 'fundingOptions' => 'fundingOptions', 'recurringOptions' => 'recurringOptions', 'businessApplicationId' => 'businessApplicationId', 'purposeOfPayment' => 'purposeOfPayment', 'payoutsOptions' => 'payoutsOptions', 'languageCode' => 'languageCode', 'accountVerificationCode' => 'accountVerificationCode'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['commerceIndicator' => 'setCommerceIndicator', 'fundingOptions' => 'setFundingOptions', 'recurringOptions' => 'setRecurringOptions', 'businessApplicationId' => 'setBusinessApplicationId', 'purposeOfPayment' => 'setPurposeOfPayment', 'payoutsOptions' => 'setPayoutsOptions', 'languageCode' => 'setLanguageCode'];
+    protected static $setters = ['commerceIndicator' => 'setCommerceIndicator', 'fundingOptions' => 'setFundingOptions', 'recurringOptions' => 'setRecurringOptions', 'businessApplicationId' => 'setBusinessApplicationId', 'purposeOfPayment' => 'setPurposeOfPayment', 'payoutsOptions' => 'setPayoutsOptions', 'languageCode' => 'setLanguageCode', 'accountVerificationCode' => 'setAccountVerificationCode'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['commerceIndicator' => 'getCommerceIndicator', 'fundingOptions' => 'getFundingOptions', 'recurringOptions' => 'getRecurringOptions', 'businessApplicationId' => 'getBusinessApplicationId', 'purposeOfPayment' => 'getPurposeOfPayment', 'payoutsOptions' => 'getPayoutsOptions', 'languageCode' => 'getLanguageCode'];
+    protected static $getters = ['commerceIndicator' => 'getCommerceIndicator', 'fundingOptions' => 'getFundingOptions', 'recurringOptions' => 'getRecurringOptions', 'businessApplicationId' => 'getBusinessApplicationId', 'purposeOfPayment' => 'getPurposeOfPayment', 'payoutsOptions' => 'getPayoutsOptions', 'languageCode' => 'getLanguageCode', 'accountVerificationCode' => 'getAccountVerificationCode'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -107,6 +107,7 @@ class Ptsv1pullfundstransferProcessingInformation implements ArrayAccess
         $this->container['purposeOfPayment'] = isset($data['purposeOfPayment']) ? $data['purposeOfPayment'] : null;
         $this->container['payoutsOptions'] = isset($data['payoutsOptions']) ? $data['payoutsOptions'] : null;
         $this->container['languageCode'] = isset($data['languageCode']) ? $data['languageCode'] : null;
+        $this->container['accountVerificationCode'] = isset($data['accountVerificationCode']) ? $data['accountVerificationCode'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -154,7 +155,7 @@ class Ptsv1pullfundstransferProcessingInformation implements ArrayAccess
     }
     /**
      * Gets fundingOptions
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferProcessingInformationFundingOptions
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\AftFundingOptions
      */
     public function getFundingOptions()
     {
@@ -162,7 +163,7 @@ class Ptsv1pullfundstransferProcessingInformation implements ArrayAccess
     }
     /**
      * Sets fundingOptions
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferProcessingInformationFundingOptions $fundingOptions
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\AftFundingOptions $fundingOptions
      * @return $this
      */
     public function setFundingOptions($fundingOptions)
@@ -258,6 +259,24 @@ class Ptsv1pullfundstransferProcessingInformation implements ArrayAccess
     public function setLanguageCode($languageCode)
     {
         $this->container['languageCode'] = $languageCode;
+        return $this;
+    }
+    /**
+     * Gets accountVerificationCode
+     * @return string[]
+     */
+    public function getAccountVerificationCode()
+    {
+        return $this->container['accountVerificationCode'];
+    }
+    /**
+     * Sets accountVerificationCode
+     * @param string[] $accountVerificationCode Account verification code will inform what Payment Account Verification should be performed. With this array of codes, a merchant can choose à la carte what verifications to run. This field is optional, and the default is 1 if it is not passed in. This means that a full validation of the fields will be performed. Valid verification codes: - `1` = Full Account Verification (Card Account, CVN, CAVV, TAVV, Address, Name, eMail, Phone, Identity) - `2` = Card Account Verification - `3` = Address Verification - `4` = Card Authentication Method (CAM) (Cryptogram) - `5` = Cardholder Authentication Verification (CAVV) - `6` = Cardholder Identity Verification - `7` = CVV2 Verification - `8` = eMail Verification - `9` = Name Verification - `10` = Phone Verification
+     * @return $this
+     */
+    public function setAccountVerificationCode($accountVerificationCode)
+    {
+        $this->container['accountVerificationCode'] = $accountVerificationCode;
         return $this;
     }
     /**

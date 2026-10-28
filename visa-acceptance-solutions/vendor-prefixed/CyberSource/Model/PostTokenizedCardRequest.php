@@ -48,12 +48,12 @@ class PostTokenizedCardRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['accountReferenceId' => 'string', 'consumerId' => 'string', 'createPanInstrumentIdentifier' => 'bool', 'source' => 'string', 'card' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardsCard', 'passcode' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardsPasscode'];
+    protected static $swaggerTypes = ['accountReferenceId' => 'string', 'consumerId' => 'string', 'createPanInstrumentIdentifier' => 'bool', 'source' => 'string', 'card' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardsCard', 'passcode' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardsPasscode', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardsBillTo'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['accountReferenceId' => null, 'consumerId' => null, 'createPanInstrumentIdentifier' => null, 'source' => null, 'card' => null, 'passcode' => null];
+    protected static $swaggerFormats = ['accountReferenceId' => null, 'consumerId' => null, 'createPanInstrumentIdentifier' => null, 'source' => null, 'card' => null, 'passcode' => null, 'billTo' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PostTokenizedCardRequest implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['accountReferenceId' => 'accountReferenceId', 'consumerId' => 'consumerId', 'createPanInstrumentIdentifier' => 'createPanInstrumentIdentifier', 'source' => 'source', 'card' => 'card', 'passcode' => 'passcode'];
+    protected static $attributeMap = ['accountReferenceId' => 'accountReferenceId', 'consumerId' => 'consumerId', 'createPanInstrumentIdentifier' => 'createPanInstrumentIdentifier', 'source' => 'source', 'card' => 'card', 'passcode' => 'passcode', 'billTo' => 'billTo'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['accountReferenceId' => 'setAccountReferenceId', 'consumerId' => 'setConsumerId', 'createPanInstrumentIdentifier' => 'setCreatePanInstrumentIdentifier', 'source' => 'setSource', 'card' => 'setCard', 'passcode' => 'setPasscode'];
+    protected static $setters = ['accountReferenceId' => 'setAccountReferenceId', 'consumerId' => 'setConsumerId', 'createPanInstrumentIdentifier' => 'setCreatePanInstrumentIdentifier', 'source' => 'setSource', 'card' => 'setCard', 'passcode' => 'setPasscode', 'billTo' => 'setBillTo'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['accountReferenceId' => 'getAccountReferenceId', 'consumerId' => 'getConsumerId', 'createPanInstrumentIdentifier' => 'getCreatePanInstrumentIdentifier', 'source' => 'getSource', 'card' => 'getCard', 'passcode' => 'getPasscode'];
+    protected static $getters = ['accountReferenceId' => 'getAccountReferenceId', 'consumerId' => 'getConsumerId', 'createPanInstrumentIdentifier' => 'getCreatePanInstrumentIdentifier', 'source' => 'getSource', 'card' => 'getCard', 'passcode' => 'getPasscode', 'billTo' => 'getBillTo'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -106,6 +106,7 @@ class PostTokenizedCardRequest implements ArrayAccess
         $this->container['source'] = isset($data['source']) ? $data['source'] : null;
         $this->container['card'] = isset($data['card']) ? $data['card'] : null;
         $this->container['passcode'] = isset($data['passcode']) ? $data['passcode'] : null;
+        $this->container['billTo'] = isset($data['billTo']) ? $data['billTo'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -239,6 +240,24 @@ class PostTokenizedCardRequest implements ArrayAccess
     public function setPasscode($passcode)
     {
         $this->container['passcode'] = $passcode;
+        return $this;
+    }
+    /**
+     * Gets billTo
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardsBillTo
+     */
+    public function getBillTo()
+    {
+        return $this->container['billTo'];
+    }
+    /**
+     * Sets billTo
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardsBillTo $billTo
+     * @return $this
+     */
+    public function setBillTo($billTo)
+    {
+        $this->container['billTo'] = $billTo;
         return $this;
     }
     /**

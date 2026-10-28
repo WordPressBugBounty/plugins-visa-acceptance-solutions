@@ -32,6 +32,7 @@ use ArrayAccess;
  * InlineResponse40010 Class Doc Comment
  *
  * @category    Class
+ * @description Error Bean
  * @package     CyberSource
  * @author      Swagger Codegen team
  * @link        https://github.com/swagger-api/swagger-codegen
@@ -48,12 +49,12 @@ class InlineResponse40010 implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['id' => 'string', 'submitTimeUtc' => 'string', 'status' => 'string', 'reason' => 'string', 'message' => 'string', 'details' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds400ResponseDetails[]'];
+    protected static $swaggerTypes = ['code' => 'string', 'message' => 'string', 'localizationKey' => 'string', 'correlationId' => 'string', 'detail' => 'string', 'fields' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse40010Fields[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['id' => null, 'submitTimeUtc' => null, 'status' => null, 'reason' => null, 'message' => null, 'details' => null];
+    protected static $swaggerFormats = ['code' => null, 'message' => null, 'localizationKey' => null, 'correlationId' => null, 'detail' => null, 'fields' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +67,17 @@ class InlineResponse40010 implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['id' => 'id', 'submitTimeUtc' => 'submitTimeUtc', 'status' => 'status', 'reason' => 'reason', 'message' => 'message', 'details' => 'details'];
+    protected static $attributeMap = ['code' => 'code', 'message' => 'message', 'localizationKey' => 'localizationKey', 'correlationId' => 'correlationId', 'detail' => 'detail', 'fields' => 'fields'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['id' => 'setId', 'submitTimeUtc' => 'setSubmitTimeUtc', 'status' => 'setStatus', 'reason' => 'setReason', 'message' => 'setMessage', 'details' => 'setDetails'];
+    protected static $setters = ['code' => 'setCode', 'message' => 'setMessage', 'localizationKey' => 'setLocalizationKey', 'correlationId' => 'setCorrelationId', 'detail' => 'setDetail', 'fields' => 'setFields'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['id' => 'getId', 'submitTimeUtc' => 'getSubmitTimeUtc', 'status' => 'getStatus', 'reason' => 'getReason', 'message' => 'getMessage', 'details' => 'getDetails'];
+    protected static $getters = ['code' => 'getCode', 'message' => 'getMessage', 'localizationKey' => 'getLocalizationKey', 'correlationId' => 'getCorrelationId', 'detail' => 'getDetail', 'fields' => 'getFields'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -100,12 +101,12 @@ class InlineResponse40010 implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
-        $this->container['submitTimeUtc'] = isset($data['submitTimeUtc']) ? $data['submitTimeUtc'] : null;
-        $this->container['status'] = isset($data['status']) ? $data['status'] : null;
-        $this->container['reason'] = isset($data['reason']) ? $data['reason'] : null;
+        $this->container['code'] = isset($data['code']) ? $data['code'] : null;
         $this->container['message'] = isset($data['message']) ? $data['message'] : null;
-        $this->container['details'] = isset($data['details']) ? $data['details'] : null;
+        $this->container['localizationKey'] = isset($data['localizationKey']) ? $data['localizationKey'] : null;
+        $this->container['correlationId'] = isset($data['correlationId']) ? $data['correlationId'] : null;
+        $this->container['detail'] = isset($data['detail']) ? $data['detail'] : null;
+        $this->container['fields'] = isset($data['fields']) ? $data['fields'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -115,14 +116,11 @@ class InlineResponse40010 implements ArrayAccess
     public function listInvalidProperties()
     {
         $invalid_properties = [];
-        if ($this->container['id'] === null) {
-            $invalid_properties[] = "'id' can't be null";
+        if ($this->container['code'] === null) {
+            $invalid_properties[] = "'code' can't be null";
         }
-        if ($this->container['submitTimeUtc'] === null) {
-            $invalid_properties[] = "'submitTimeUtc' can't be null";
-        }
-        if ($this->container['status'] === null) {
-            $invalid_properties[] = "'status' can't be null";
+        if ($this->container['message'] === null) {
+            $invalid_properties[] = "'message' can't be null";
         }
         return $invalid_properties;
     }
@@ -134,87 +132,30 @@ class InlineResponse40010 implements ArrayAccess
      */
     public function valid()
     {
-        if ($this->container['id'] === null) {
+        if ($this->container['code'] === null) {
             return false;
         }
-        if ($this->container['submitTimeUtc'] === null) {
-            return false;
-        }
-        if ($this->container['status'] === null) {
+        if ($this->container['message'] === null) {
             return false;
         }
         return true;
     }
     /**
-     * Gets id
+     * Gets code
      * @return string
      */
-    public function getId()
+    public function getCode()
     {
-        return $this->container['id'];
+        return $this->container['code'];
     }
     /**
-     * Sets id
-     * @param string $id Request ID generated by Cybersource. This was sent in the header on the request. Echo value from x-requestid
+     * Sets code
+     * @param string $code Error code
      * @return $this
      */
-    public function setId($id)
+    public function setCode($code)
     {
-        $this->container['id'] = $id;
-        return $this;
-    }
-    /**
-     * Gets submitTimeUtc
-     * @return string
-     */
-    public function getSubmitTimeUtc()
-    {
-        return $this->container['submitTimeUtc'];
-    }
-    /**
-     * Sets submitTimeUtc
-     * @param string $submitTimeUtc Time of request in UTC. Format: `YYYY-MM-DDThh:mm:ssZ`  **Example** `2023-05-17T22:47:57Z` equals May 17, 2023, at 22:47:57 (10:47:57 PM). The `T` separates the date and the time. The `Z` indicates UTC.
-     * @return $this
-     */
-    public function setSubmitTimeUtc($submitTimeUtc)
-    {
-        $this->container['submitTimeUtc'] = $submitTimeUtc;
-        return $this;
-    }
-    /**
-     * Gets status
-     * @return string
-     */
-    public function getStatus()
-    {
-        return $this->container['status'];
-    }
-    /**
-     * Sets status
-     * @param string $status Message describing the status of the currency conversion request.   Possible values: - INVALID_REQUEST
-     * @return $this
-     */
-    public function setStatus($status)
-    {
-        $this->container['status'] = $status;
-        return $this;
-    }
-    /**
-     * Gets reason
-     * @return string
-     */
-    public function getReason()
-    {
-        return $this->container['reason'];
-    }
-    /**
-     * Sets reason
-     * @param string $reason The reason of the status.   Possible values: - MISSING_FIELD - INVALID_DATA
-     * @return $this
-     */
-    public function setReason($reason)
-    {
-        $this->container['reason'] = $reason;
+        $this->container['code'] = $code;
         return $this;
     }
     /**
@@ -227,7 +168,7 @@ class InlineResponse40010 implements ArrayAccess
     }
     /**
      * Sets message
-     * @param string $message Descriptive message to add more detail to the status
+     * @param string $message Error message
      * @return $this
      */
     public function setMessage($message)
@@ -236,21 +177,75 @@ class InlineResponse40010 implements ArrayAccess
         return $this;
     }
     /**
-     * Gets details
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds400ResponseDetails[]
+     * Gets localizationKey
+     * @return string
      */
-    public function getDetails()
+    public function getLocalizationKey()
     {
-        return $this->container['details'];
+        return $this->container['localizationKey'];
     }
     /**
-     * Sets details
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds400ResponseDetails[] $details
+     * Sets localizationKey
+     * @param string $localizationKey Localization Key Name
      * @return $this
      */
-    public function setDetails($details)
+    public function setLocalizationKey($localizationKey)
     {
-        $this->container['details'] = $details;
+        $this->container['localizationKey'] = $localizationKey;
+        return $this;
+    }
+    /**
+     * Gets correlationId
+     * @return string
+     */
+    public function getCorrelationId()
+    {
+        return $this->container['correlationId'];
+    }
+    /**
+     * Sets correlationId
+     * @param string $correlationId Correlation Id
+     * @return $this
+     */
+    public function setCorrelationId($correlationId)
+    {
+        $this->container['correlationId'] = $correlationId;
+        return $this;
+    }
+    /**
+     * Gets detail
+     * @return string
+     */
+    public function getDetail()
+    {
+        return $this->container['detail'];
+    }
+    /**
+     * Sets detail
+     * @param string $detail Error Detail
+     * @return $this
+     */
+    public function setDetail($detail)
+    {
+        $this->container['detail'] = $detail;
+        return $this;
+    }
+    /**
+     * Gets fields
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse40010Fields[]
+     */
+    public function getFields()
+    {
+        return $this->container['fields'];
+    }
+    /**
+     * Sets fields
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse40010Fields[] $fields Error fields List
+     * @return $this
+     */
+    public function setFields($fields)
+    {
+        $this->container['fields'] = $fields;
         return $this;
     }
     /**

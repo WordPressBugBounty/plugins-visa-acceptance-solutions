@@ -48,12 +48,12 @@ class Ptsv2paymentsidcapturesProcessingInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['paymentSolution' => 'string', 'reconciliationId' => 'string', 'linkId' => 'string', 'reportGroup' => 'string', 'visaCheckoutId' => 'string', 'purchaseLevel' => 'string', 'industryDataType' => 'string', 'issuer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsIssuerInformation', 'authorizationOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesProcessingInformationAuthorizationOptions', 'captureOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesProcessingInformationCaptureOptions', 'loanOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationLoanOptions', 'payByPointsIndicator' => 'bool', 'actionList' => 'string[]', 'japanPaymentOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesProcessingInformationJapanPaymentOptions'];
+    protected static $swaggerTypes = ['paymentSolution' => 'string', 'reconciliationId' => 'string', 'linkId' => 'string', 'reportGroup' => 'string', 'visaCheckoutId' => 'string', 'purchaseLevel' => 'string', 'industryDataType' => 'string', 'digitalServiceIndicator' => 'string', 'issuer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsIssuerInformation', 'authorizationOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesProcessingInformationAuthorizationOptions', 'captureOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesProcessingInformationCaptureOptions', 'loanOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationLoanOptions', 'payByPointsIndicator' => 'bool', 'actionList' => 'string[]', 'japanPaymentOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesProcessingInformationJapanPaymentOptions'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['paymentSolution' => null, 'reconciliationId' => null, 'linkId' => null, 'reportGroup' => null, 'visaCheckoutId' => null, 'purchaseLevel' => null, 'industryDataType' => null, 'issuer' => null, 'authorizationOptions' => null, 'captureOptions' => null, 'loanOptions' => null, 'payByPointsIndicator' => null, 'actionList' => null, 'japanPaymentOptions' => null];
+    protected static $swaggerFormats = ['paymentSolution' => null, 'reconciliationId' => null, 'linkId' => null, 'reportGroup' => null, 'visaCheckoutId' => null, 'purchaseLevel' => null, 'industryDataType' => null, 'digitalServiceIndicator' => null, 'issuer' => null, 'authorizationOptions' => null, 'captureOptions' => null, 'loanOptions' => null, 'payByPointsIndicator' => null, 'actionList' => null, 'japanPaymentOptions' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2paymentsidcapturesProcessingInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['paymentSolution' => 'paymentSolution', 'reconciliationId' => 'reconciliationId', 'linkId' => 'linkId', 'reportGroup' => 'reportGroup', 'visaCheckoutId' => 'visaCheckoutId', 'purchaseLevel' => 'purchaseLevel', 'industryDataType' => 'industryDataType', 'issuer' => 'issuer', 'authorizationOptions' => 'authorizationOptions', 'captureOptions' => 'captureOptions', 'loanOptions' => 'loanOptions', 'payByPointsIndicator' => 'payByPointsIndicator', 'actionList' => 'actionList', 'japanPaymentOptions' => 'japanPaymentOptions'];
+    protected static $attributeMap = ['paymentSolution' => 'paymentSolution', 'reconciliationId' => 'reconciliationId', 'linkId' => 'linkId', 'reportGroup' => 'reportGroup', 'visaCheckoutId' => 'visaCheckoutId', 'purchaseLevel' => 'purchaseLevel', 'industryDataType' => 'industryDataType', 'digitalServiceIndicator' => 'digitalServiceIndicator', 'issuer' => 'issuer', 'authorizationOptions' => 'authorizationOptions', 'captureOptions' => 'captureOptions', 'loanOptions' => 'loanOptions', 'payByPointsIndicator' => 'payByPointsIndicator', 'actionList' => 'actionList', 'japanPaymentOptions' => 'japanPaymentOptions'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['paymentSolution' => 'setPaymentSolution', 'reconciliationId' => 'setReconciliationId', 'linkId' => 'setLinkId', 'reportGroup' => 'setReportGroup', 'visaCheckoutId' => 'setVisaCheckoutId', 'purchaseLevel' => 'setPurchaseLevel', 'industryDataType' => 'setIndustryDataType', 'issuer' => 'setIssuer', 'authorizationOptions' => 'setAuthorizationOptions', 'captureOptions' => 'setCaptureOptions', 'loanOptions' => 'setLoanOptions', 'payByPointsIndicator' => 'setPayByPointsIndicator', 'actionList' => 'setActionList', 'japanPaymentOptions' => 'setJapanPaymentOptions'];
+    protected static $setters = ['paymentSolution' => 'setPaymentSolution', 'reconciliationId' => 'setReconciliationId', 'linkId' => 'setLinkId', 'reportGroup' => 'setReportGroup', 'visaCheckoutId' => 'setVisaCheckoutId', 'purchaseLevel' => 'setPurchaseLevel', 'industryDataType' => 'setIndustryDataType', 'digitalServiceIndicator' => 'setDigitalServiceIndicator', 'issuer' => 'setIssuer', 'authorizationOptions' => 'setAuthorizationOptions', 'captureOptions' => 'setCaptureOptions', 'loanOptions' => 'setLoanOptions', 'payByPointsIndicator' => 'setPayByPointsIndicator', 'actionList' => 'setActionList', 'japanPaymentOptions' => 'setJapanPaymentOptions'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['paymentSolution' => 'getPaymentSolution', 'reconciliationId' => 'getReconciliationId', 'linkId' => 'getLinkId', 'reportGroup' => 'getReportGroup', 'visaCheckoutId' => 'getVisaCheckoutId', 'purchaseLevel' => 'getPurchaseLevel', 'industryDataType' => 'getIndustryDataType', 'issuer' => 'getIssuer', 'authorizationOptions' => 'getAuthorizationOptions', 'captureOptions' => 'getCaptureOptions', 'loanOptions' => 'getLoanOptions', 'payByPointsIndicator' => 'getPayByPointsIndicator', 'actionList' => 'getActionList', 'japanPaymentOptions' => 'getJapanPaymentOptions'];
+    protected static $getters = ['paymentSolution' => 'getPaymentSolution', 'reconciliationId' => 'getReconciliationId', 'linkId' => 'getLinkId', 'reportGroup' => 'getReportGroup', 'visaCheckoutId' => 'getVisaCheckoutId', 'purchaseLevel' => 'getPurchaseLevel', 'industryDataType' => 'getIndustryDataType', 'digitalServiceIndicator' => 'getDigitalServiceIndicator', 'issuer' => 'getIssuer', 'authorizationOptions' => 'getAuthorizationOptions', 'captureOptions' => 'getCaptureOptions', 'loanOptions' => 'getLoanOptions', 'payByPointsIndicator' => 'getPayByPointsIndicator', 'actionList' => 'getActionList', 'japanPaymentOptions' => 'getJapanPaymentOptions'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -107,6 +107,7 @@ class Ptsv2paymentsidcapturesProcessingInformation implements ArrayAccess
         $this->container['visaCheckoutId'] = isset($data['visaCheckoutId']) ? $data['visaCheckoutId'] : null;
         $this->container['purchaseLevel'] = isset($data['purchaseLevel']) ? $data['purchaseLevel'] : null;
         $this->container['industryDataType'] = isset($data['industryDataType']) ? $data['industryDataType'] : null;
+        $this->container['digitalServiceIndicator'] = isset($data['digitalServiceIndicator']) ? $data['digitalServiceIndicator'] : null;
         $this->container['issuer'] = isset($data['issuer']) ? $data['issuer'] : null;
         $this->container['authorizationOptions'] = isset($data['authorizationOptions']) ? $data['authorizationOptions'] : null;
         $this->container['captureOptions'] = isset($data['captureOptions']) ? $data['captureOptions'] : null;
@@ -181,7 +182,7 @@ class Ptsv2paymentsidcapturesProcessingInformation implements ArrayAccess
     }
     /**
      * Sets linkId
-     * @param string $linkId Value that links the current authorization request to the original authorization request. Set this value to the ID that was returned in the reply message from the original authorization request.  This value is used for:  - Partial authorizations - Split shipments
+     * @param string $linkId Value that links the current authorization request to the original authorization request or previous declined Merchant Initiated Debt Recovery Transactions . Set this value to the ID that was returned in the reply message from the original authorization request or previous declined Merchant Initiated Debt Recovery Transactions.  This value is used for:  - Partial authorizations - Split shipments - Merchant Initiated Debt Recovery Transactions for Visa Platform Connect and China Union Pay merchants
      * @return $this
      */
     public function setLinkId($linkId)
@@ -259,6 +260,24 @@ class Ptsv2paymentsidcapturesProcessingInformation implements ArrayAccess
     public function setIndustryDataType($industryDataType)
     {
         $this->container['industryDataType'] = $industryDataType;
+        return $this;
+    }
+    /**
+     * Gets digitalServiceIndicator
+     * @return string
+     */
+    public function getDigitalServiceIndicator()
+    {
+        return $this->container['digitalServiceIndicator'];
+    }
+    /**
+     * Sets digitalServiceIndicator
+     * @param string $digitalServiceIndicator Mastercard Digital Enablement Service (MDES) digital service indicators for force capture scenarios.   This field is used when the client is doing authorization with a different gateway and capture with CyberSource.   This field is in ANS, EBCDIC format and flows in Field 34, DSID 04 Tag DF1F, mapped to Mastercard Data Element DE119, Sub-element 004.  #### Used by **Capture Request** Request field for force capture support when auth is done with a different gateway.
+     * @return $this
+     */
+    public function setDigitalServiceIndicator($digitalServiceIndicator)
+    {
+        $this->container['digitalServiceIndicator'] = $digitalServiceIndicator;
         return $this;
     }
     /**

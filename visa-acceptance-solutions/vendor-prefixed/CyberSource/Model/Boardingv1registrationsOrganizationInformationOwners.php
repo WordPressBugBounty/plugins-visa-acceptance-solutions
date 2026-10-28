@@ -48,7 +48,7 @@ class Boardingv1registrationsOrganizationInformationOwners implements ArrayAcces
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['firstName' => 'string', 'middleName' => 'string', 'lastName' => 'string', 'birthDate' => '\DateTime', 'isPrimary' => 'bool', 'ssn' => 'string', 'passportNumber' => 'string', 'passportCountry' => 'string', 'jobTitle' => 'string', 'hasSignificantResponsability' => 'bool', 'ownershipPercentage' => 'float', 'phoneNumber' => 'string', 'email' => 'string', 'address' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsOrganizationInformationBusinessInformationAddress'];
+    protected static $swaggerTypes = ['firstName' => 'string', 'middleName' => 'string', 'lastName' => 'string', 'birthDate' => '\DateTime', 'isPrimary' => 'bool', 'ssn' => 'string', 'passportNumber' => 'string', 'passportCountry' => 'string', 'jobTitle' => 'string', 'hasSignificantResponsability' => 'bool', 'ownershipPercentage' => 'float', 'phoneNumber' => 'string', 'email' => 'string', 'address' => '\Pymt_Vas\Dependencies\CyberSource\Model\BoardingBusinessInformationAddress'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -431,7 +431,7 @@ class Boardingv1registrationsOrganizationInformationOwners implements ArrayAcces
     }
     /**
      * Gets address
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsOrganizationInformationBusinessInformationAddress
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\BoardingBusinessInformationAddress
      */
     public function getAddress()
     {
@@ -439,7 +439,7 @@ class Boardingv1registrationsOrganizationInformationOwners implements ArrayAcces
     }
     /**
      * Sets address
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsOrganizationInformationBusinessInformationAddress $address
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\BoardingBusinessInformationAddress $address
      * @return $this
      */
     public function setAddress($address)

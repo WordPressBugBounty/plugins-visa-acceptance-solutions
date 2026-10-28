@@ -49,12 +49,12 @@ class Ucv1sessionsPaymentConfigurations implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['gOOGLEPAY' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsPaymentConfigurationsGOOGLEPAY', 'cLICKTOPAY' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsPaymentConfigurationsCLICKTOPAY', 'tMSTOKEN' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsPaymentConfigurationsTMSTOKEN'];
+    protected static $swaggerTypes = ['gOOGLEPAY' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsPaymentConfigurationsGOOGLEPAY', 'cLICKTOPAY' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsPaymentConfigurationsCLICKTOPAY', 'pAYPAL' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsPaymentConfigurationsPAYPAL', 'tMSTOKEN' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsPaymentConfigurationsTMSTOKEN'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['gOOGLEPAY' => null, 'cLICKTOPAY' => null, 'tMSTOKEN' => null];
+    protected static $swaggerFormats = ['gOOGLEPAY' => null, 'cLICKTOPAY' => null, 'pAYPAL' => null, 'tMSTOKEN' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -67,17 +67,17 @@ class Ucv1sessionsPaymentConfigurations implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['gOOGLEPAY' => 'GOOGLEPAY', 'cLICKTOPAY' => 'CLICKTOPAY', 'tMSTOKEN' => 'TMS_TOKEN'];
+    protected static $attributeMap = ['gOOGLEPAY' => 'GOOGLEPAY', 'cLICKTOPAY' => 'CLICKTOPAY', 'pAYPAL' => 'PAYPAL', 'tMSTOKEN' => 'TMS_TOKEN'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['gOOGLEPAY' => 'setGOOGLEPAY', 'cLICKTOPAY' => 'setCLICKTOPAY', 'tMSTOKEN' => 'setTMSTOKEN'];
+    protected static $setters = ['gOOGLEPAY' => 'setGOOGLEPAY', 'cLICKTOPAY' => 'setCLICKTOPAY', 'pAYPAL' => 'setPAYPAL', 'tMSTOKEN' => 'setTMSTOKEN'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['gOOGLEPAY' => 'getGOOGLEPAY', 'cLICKTOPAY' => 'getCLICKTOPAY', 'tMSTOKEN' => 'getTMSTOKEN'];
+    protected static $getters = ['gOOGLEPAY' => 'getGOOGLEPAY', 'cLICKTOPAY' => 'getCLICKTOPAY', 'pAYPAL' => 'getPAYPAL', 'tMSTOKEN' => 'getTMSTOKEN'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -103,6 +103,7 @@ class Ucv1sessionsPaymentConfigurations implements ArrayAccess
     {
         $this->container['gOOGLEPAY'] = isset($data['gOOGLEPAY']) ? $data['gOOGLEPAY'] : null;
         $this->container['cLICKTOPAY'] = isset($data['cLICKTOPAY']) ? $data['cLICKTOPAY'] : null;
+        $this->container['pAYPAL'] = isset($data['pAYPAL']) ? $data['pAYPAL'] : null;
         $this->container['tMSTOKEN'] = isset($data['tMSTOKEN']) ? $data['tMSTOKEN'] : null;
     }
     /**
@@ -159,6 +160,24 @@ class Ucv1sessionsPaymentConfigurations implements ArrayAccess
     public function setCLICKTOPAY($cLICKTOPAY)
     {
         $this->container['cLICKTOPAY'] = $cLICKTOPAY;
+        return $this;
+    }
+    /**
+     * Gets pAYPAL
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsPaymentConfigurationsPAYPAL
+     */
+    public function getPAYPAL()
+    {
+        return $this->container['pAYPAL'];
+    }
+    /**
+     * Sets pAYPAL
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsPaymentConfigurationsPAYPAL $pAYPAL
+     * @return $this
+     */
+    public function setPAYPAL($pAYPAL)
+    {
+        $this->container['pAYPAL'] = $pAYPAL;
         return $this;
     }
     /**

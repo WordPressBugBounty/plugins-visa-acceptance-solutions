@@ -32,6 +32,7 @@ use ArrayAccess;
  * Ptsv2paymentsidcapturesOrderInformationShippingDetails Class Doc Comment
  *
  * @category    Class
+ * @description Contains shipping details information for Klarna Advantage Plus Capture transactions.
  * @package     CyberSource
  * @author      Swagger Codegen team
  * @link        https://github.com/swagger-api/swagger-codegen
@@ -48,12 +49,12 @@ class Ptsv2paymentsidcapturesOrderInformationShippingDetails implements ArrayAcc
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['shipFromPostalCode' => 'string'];
+    protected static $swaggerTypes = ['shipFromPostalCode' => 'string', 'trackingNumber' => 'string', 'trackingUrl' => 'string', 'shippingCarrier' => 'string', 'estimatedDeliveryDate' => 'string', 'shippingMethod' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['shipFromPostalCode' => null];
+    protected static $swaggerFormats = ['shipFromPostalCode' => null, 'trackingNumber' => null, 'trackingUrl' => null, 'shippingCarrier' => null, 'estimatedDeliveryDate' => null, 'shippingMethod' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +67,17 @@ class Ptsv2paymentsidcapturesOrderInformationShippingDetails implements ArrayAcc
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['shipFromPostalCode' => 'shipFromPostalCode'];
+    protected static $attributeMap = ['shipFromPostalCode' => 'shipFromPostalCode', 'trackingNumber' => 'trackingNumber', 'trackingUrl' => 'trackingUrl', 'shippingCarrier' => 'shippingCarrier', 'estimatedDeliveryDate' => 'estimatedDeliveryDate', 'shippingMethod' => 'shippingMethod'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['shipFromPostalCode' => 'setShipFromPostalCode'];
+    protected static $setters = ['shipFromPostalCode' => 'setShipFromPostalCode', 'trackingNumber' => 'setTrackingNumber', 'trackingUrl' => 'setTrackingUrl', 'shippingCarrier' => 'setShippingCarrier', 'estimatedDeliveryDate' => 'setEstimatedDeliveryDate', 'shippingMethod' => 'setShippingMethod'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['shipFromPostalCode' => 'getShipFromPostalCode'];
+    protected static $getters = ['shipFromPostalCode' => 'getShipFromPostalCode', 'trackingNumber' => 'getTrackingNumber', 'trackingUrl' => 'getTrackingUrl', 'shippingCarrier' => 'getShippingCarrier', 'estimatedDeliveryDate' => 'getEstimatedDeliveryDate', 'shippingMethod' => 'getShippingMethod'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -101,6 +102,11 @@ class Ptsv2paymentsidcapturesOrderInformationShippingDetails implements ArrayAcc
     public function __construct(array $data = null)
     {
         $this->container['shipFromPostalCode'] = isset($data['shipFromPostalCode']) ? $data['shipFromPostalCode'] : null;
+        $this->container['trackingNumber'] = isset($data['trackingNumber']) ? $data['trackingNumber'] : null;
+        $this->container['trackingUrl'] = isset($data['trackingUrl']) ? $data['trackingUrl'] : null;
+        $this->container['shippingCarrier'] = isset($data['shippingCarrier']) ? $data['shippingCarrier'] : null;
+        $this->container['estimatedDeliveryDate'] = isset($data['estimatedDeliveryDate']) ? $data['estimatedDeliveryDate'] : null;
+        $this->container['shippingMethod'] = isset($data['shippingMethod']) ? $data['shippingMethod'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -138,6 +144,96 @@ class Ptsv2paymentsidcapturesOrderInformationShippingDetails implements ArrayAcc
     public function setShipFromPostalCode($shipFromPostalCode)
     {
         $this->container['shipFromPostalCode'] = $shipFromPostalCode;
+        return $this;
+    }
+    /**
+     * Gets trackingNumber
+     * @return string
+     */
+    public function getTrackingNumber()
+    {
+        return $this->container['trackingNumber'];
+    }
+    /**
+     * Sets trackingNumber
+     * @param string $trackingNumber Shipment tracking number provided by the merchant. Used to track the shipment of goods to the customer.
+     * @return $this
+     */
+    public function setTrackingNumber($trackingNumber)
+    {
+        $this->container['trackingNumber'] = $trackingNumber;
+        return $this;
+    }
+    /**
+     * Gets trackingUrl
+     * @return string
+     */
+    public function getTrackingUrl()
+    {
+        return $this->container['trackingUrl'];
+    }
+    /**
+     * Sets trackingUrl
+     * @param string $trackingUrl URL where the customer can track their shipment. Provides real-time tracking information for the delivery.
+     * @return $this
+     */
+    public function setTrackingUrl($trackingUrl)
+    {
+        $this->container['trackingUrl'] = $trackingUrl;
+        return $this;
+    }
+    /**
+     * Gets shippingCarrier
+     * @return string
+     */
+    public function getShippingCarrier()
+    {
+        return $this->container['shippingCarrier'];
+    }
+    /**
+     * Sets shippingCarrier
+     * @param string $shippingCarrier Name of the shipping carrier/company handling the delivery.
+     * @return $this
+     */
+    public function setShippingCarrier($shippingCarrier)
+    {
+        $this->container['shippingCarrier'] = $shippingCarrier;
+        return $this;
+    }
+    /**
+     * Gets estimatedDeliveryDate
+     * @return string
+     */
+    public function getEstimatedDeliveryDate()
+    {
+        return $this->container['estimatedDeliveryDate'];
+    }
+    /**
+     * Sets estimatedDeliveryDate
+     * @param string $estimatedDeliveryDate Estimated delivery date for the shipment provided by Merchant. Format: YYYYMMDD (e.g., 20251115 for November 15, 2025)
+     * @return $this
+     */
+    public function setEstimatedDeliveryDate($estimatedDeliveryDate)
+    {
+        $this->container['estimatedDeliveryDate'] = $estimatedDeliveryDate;
+        return $this;
+    }
+    /**
+     * Gets shippingMethod
+     * @return string
+     */
+    public function getShippingMethod()
+    {
+        return $this->container['shippingMethod'];
+    }
+    /**
+     * Sets shippingMethod
+     * @param string $shippingMethod Shipping method for the product. Possible values:   - `lowcost`: Lowest-cost service  - `sameday`: Courier or same-day service  - `oneday`: Next-day or overnight service  - `twoday`: Two-day service  - `threeday`: Three-day service  - `pickup`: Store pick-up  - `other`: Other shipping method  - `none`: No shipping method because product is a service or subscription  Klarna Advantage Plus additional values:  - `TO_DOOR`: Delivery to door  - `TO_CURB`: Delivery to curb  - `TO_MAILBOX`: Delivery to mailbox  - `PICKUP_BOX`: Pickup from box  - `PICKUP_POINT`: Pickup from point  - `PICKUP_STORE`: Pickup from store  - `PICKUP_WAREHOUSE`: Pickup from warehouse  - `DIGITAL_EMAIL`: Digital delivery via email  - `DIGITAL_DOWNLOAD`: Digital download  - `DIGITAL_OTHER`: Other digital delivery  - `PHYSICAL_OTHER`: Other physical delivery
+     * @return $this
+     */
+    public function setShippingMethod($shippingMethod)
+    {
+        $this->container['shippingMethod'] = $shippingMethod;
         return $this;
     }
     /**

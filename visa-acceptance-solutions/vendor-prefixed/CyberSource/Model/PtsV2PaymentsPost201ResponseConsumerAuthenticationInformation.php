@@ -48,12 +48,12 @@ class PtsV2PaymentsPost201ResponseConsumerAuthenticationInformation implements A
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['accessToken' => 'string', 'acsRenderingType' => 'string', 'acsTransactionId' => 'string', 'acsUrl' => 'string', 'authenticationPath' => 'string', 'authorizationPayload' => 'string', 'authenticationTransactionId' => 'string', 'cardholderMessage' => 'string', 'cavv' => 'string', 'cavvAlgorithm' => 'string', 'challengeCancelCode' => 'string', 'challengeRequired' => 'string', 'decoupledAuthenticationIndicator' => 'string', 'directoryServerErrorCode' => 'string', 'directoryServerErrorDescription' => 'string', 'ecommerceIndicator' => 'string', 'eci' => 'string', 'eciRaw' => 'string', 'effectiveAuthenticationType' => 'string', 'ivr' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseConsumerAuthenticationInformationIvr', 'strongAuthentication' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseConsumerAuthenticationInformationStrongAuthentication', 'networkScore' => 'string', 'pareq' => 'string', 'paresStatus' => 'string', 'proofXml' => 'string', 'proxyPan' => 'string', 'sdkTransactionId' => 'string', 'signedParesStatusReason' => 'string', 'specificationVersion' => 'string', 'stepUpUrl' => 'string', 'threeDSServerTransactionId' => 'string', 'ucafAuthenticationData' => 'string', 'ucafCollectionIndicator' => 'string', 'veresEnrolled' => 'string', 'whiteListStatusSource' => 'string', 'xid' => 'string', 'directoryServerTransactionId' => 'string', 'dataQualityIndicator' => 'string', 'authenticationResult' => 'string', 'authenticationStatusMsg' => 'string', 'indicator' => 'string', 'interactionCounter' => 'string', 'whiteListStatus' => 'string'];
+    protected static $swaggerTypes = ['accessToken' => 'string', 'acsRenderingType' => 'string', 'acsTransactionId' => 'string', 'acsUrl' => 'string', 'authenticationPath' => 'string', 'authorizationPayload' => 'string', 'authenticationTransactionId' => 'string', 'cardholderMessage' => 'string', 'cavv' => 'string', 'cavvAlgorithm' => 'string', 'challengeCancelCode' => 'string', 'challengeRequired' => 'string', 'decoupledAuthenticationIndicator' => 'string', 'directoryServerErrorCode' => 'string', 'directoryServerErrorDescription' => 'string', 'ecommerceIndicator' => 'string', 'eci' => 'string', 'eciRaw' => 'string', 'effectiveAuthenticationType' => 'string', 'ivr' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseConsumerAuthenticationInformationIvr', 'strongAuthentication' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseConsumerAuthenticationInformationStrongAuthentication', 'networkScore' => 'string', 'pareq' => 'string', 'paresStatus' => 'string', 'proofXml' => 'string', 'proxyPan' => 'string', 'sdkTransactionId' => 'string', 'signedParesStatusReason' => 'string', 'specificationVersion' => 'string', 'stepUpUrl' => 'string', 'threeDSServerTransactionId' => 'string', 'ucafAuthenticationData' => 'string', 'ucafCollectionIndicator' => 'string', 'veresEnrolled' => 'string', 'whiteListStatusSource' => 'string', 'xid' => 'string', 'directoryServerTransactionId' => 'string', 'dataQualityIndicator' => 'string', 'authenticationResult' => 'string', 'authenticationStatusMsg' => 'string', 'indicator' => 'string', 'interactionCounter' => 'string', 'whiteListStatus' => 'string', 'token' => 'string', 'acsReferenceNumber' => 'string', 'acsOperatorID' => 'string', 'idciScore' => 'int', 'idciDecision' => 'string', 'idciReasonCode1' => 'string', 'idciReasonCode2' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['accessToken' => null, 'acsRenderingType' => null, 'acsTransactionId' => null, 'acsUrl' => null, 'authenticationPath' => null, 'authorizationPayload' => null, 'authenticationTransactionId' => null, 'cardholderMessage' => null, 'cavv' => null, 'cavvAlgorithm' => null, 'challengeCancelCode' => null, 'challengeRequired' => null, 'decoupledAuthenticationIndicator' => null, 'directoryServerErrorCode' => null, 'directoryServerErrorDescription' => null, 'ecommerceIndicator' => null, 'eci' => null, 'eciRaw' => null, 'effectiveAuthenticationType' => null, 'ivr' => null, 'strongAuthentication' => null, 'networkScore' => null, 'pareq' => null, 'paresStatus' => null, 'proofXml' => null, 'proxyPan' => null, 'sdkTransactionId' => null, 'signedParesStatusReason' => null, 'specificationVersion' => null, 'stepUpUrl' => null, 'threeDSServerTransactionId' => null, 'ucafAuthenticationData' => null, 'ucafCollectionIndicator' => null, 'veresEnrolled' => null, 'whiteListStatusSource' => null, 'xid' => null, 'directoryServerTransactionId' => null, 'dataQualityIndicator' => null, 'authenticationResult' => null, 'authenticationStatusMsg' => null, 'indicator' => null, 'interactionCounter' => null, 'whiteListStatus' => null];
+    protected static $swaggerFormats = ['accessToken' => null, 'acsRenderingType' => null, 'acsTransactionId' => null, 'acsUrl' => null, 'authenticationPath' => null, 'authorizationPayload' => null, 'authenticationTransactionId' => null, 'cardholderMessage' => null, 'cavv' => null, 'cavvAlgorithm' => null, 'challengeCancelCode' => null, 'challengeRequired' => null, 'decoupledAuthenticationIndicator' => null, 'directoryServerErrorCode' => null, 'directoryServerErrorDescription' => null, 'ecommerceIndicator' => null, 'eci' => null, 'eciRaw' => null, 'effectiveAuthenticationType' => null, 'ivr' => null, 'strongAuthentication' => null, 'networkScore' => null, 'pareq' => null, 'paresStatus' => null, 'proofXml' => null, 'proxyPan' => null, 'sdkTransactionId' => null, 'signedParesStatusReason' => null, 'specificationVersion' => null, 'stepUpUrl' => null, 'threeDSServerTransactionId' => null, 'ucafAuthenticationData' => null, 'ucafCollectionIndicator' => null, 'veresEnrolled' => null, 'whiteListStatusSource' => null, 'xid' => null, 'directoryServerTransactionId' => null, 'dataQualityIndicator' => null, 'authenticationResult' => null, 'authenticationStatusMsg' => null, 'indicator' => null, 'interactionCounter' => null, 'whiteListStatus' => null, 'token' => null, 'acsReferenceNumber' => null, 'acsOperatorID' => null, 'idciScore' => null, 'idciDecision' => null, 'idciReasonCode1' => null, 'idciReasonCode2' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PtsV2PaymentsPost201ResponseConsumerAuthenticationInformation implements A
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['accessToken' => 'accessToken', 'acsRenderingType' => 'acsRenderingType', 'acsTransactionId' => 'acsTransactionId', 'acsUrl' => 'acsUrl', 'authenticationPath' => 'authenticationPath', 'authorizationPayload' => 'authorizationPayload', 'authenticationTransactionId' => 'authenticationTransactionId', 'cardholderMessage' => 'cardholderMessage', 'cavv' => 'cavv', 'cavvAlgorithm' => 'cavvAlgorithm', 'challengeCancelCode' => 'challengeCancelCode', 'challengeRequired' => 'challengeRequired', 'decoupledAuthenticationIndicator' => 'decoupledAuthenticationIndicator', 'directoryServerErrorCode' => 'directoryServerErrorCode', 'directoryServerErrorDescription' => 'directoryServerErrorDescription', 'ecommerceIndicator' => 'ecommerceIndicator', 'eci' => 'eci', 'eciRaw' => 'eciRaw', 'effectiveAuthenticationType' => 'effectiveAuthenticationType', 'ivr' => 'ivr', 'strongAuthentication' => 'strongAuthentication', 'networkScore' => 'networkScore', 'pareq' => 'pareq', 'paresStatus' => 'paresStatus', 'proofXml' => 'proofXml', 'proxyPan' => 'proxyPan', 'sdkTransactionId' => 'sdkTransactionId', 'signedParesStatusReason' => 'signedParesStatusReason', 'specificationVersion' => 'specificationVersion', 'stepUpUrl' => 'stepUpUrl', 'threeDSServerTransactionId' => 'threeDSServerTransactionId', 'ucafAuthenticationData' => 'ucafAuthenticationData', 'ucafCollectionIndicator' => 'ucafCollectionIndicator', 'veresEnrolled' => 'veresEnrolled', 'whiteListStatusSource' => 'whiteListStatusSource', 'xid' => 'xid', 'directoryServerTransactionId' => 'directoryServerTransactionId', 'dataQualityIndicator' => 'dataQualityIndicator', 'authenticationResult' => 'authenticationResult', 'authenticationStatusMsg' => 'authenticationStatusMsg', 'indicator' => 'indicator', 'interactionCounter' => 'interactionCounter', 'whiteListStatus' => 'whiteListStatus'];
+    protected static $attributeMap = ['accessToken' => 'accessToken', 'acsRenderingType' => 'acsRenderingType', 'acsTransactionId' => 'acsTransactionId', 'acsUrl' => 'acsUrl', 'authenticationPath' => 'authenticationPath', 'authorizationPayload' => 'authorizationPayload', 'authenticationTransactionId' => 'authenticationTransactionId', 'cardholderMessage' => 'cardholderMessage', 'cavv' => 'cavv', 'cavvAlgorithm' => 'cavvAlgorithm', 'challengeCancelCode' => 'challengeCancelCode', 'challengeRequired' => 'challengeRequired', 'decoupledAuthenticationIndicator' => 'decoupledAuthenticationIndicator', 'directoryServerErrorCode' => 'directoryServerErrorCode', 'directoryServerErrorDescription' => 'directoryServerErrorDescription', 'ecommerceIndicator' => 'ecommerceIndicator', 'eci' => 'eci', 'eciRaw' => 'eciRaw', 'effectiveAuthenticationType' => 'effectiveAuthenticationType', 'ivr' => 'ivr', 'strongAuthentication' => 'strongAuthentication', 'networkScore' => 'networkScore', 'pareq' => 'pareq', 'paresStatus' => 'paresStatus', 'proofXml' => 'proofXml', 'proxyPan' => 'proxyPan', 'sdkTransactionId' => 'sdkTransactionId', 'signedParesStatusReason' => 'signedParesStatusReason', 'specificationVersion' => 'specificationVersion', 'stepUpUrl' => 'stepUpUrl', 'threeDSServerTransactionId' => 'threeDSServerTransactionId', 'ucafAuthenticationData' => 'ucafAuthenticationData', 'ucafCollectionIndicator' => 'ucafCollectionIndicator', 'veresEnrolled' => 'veresEnrolled', 'whiteListStatusSource' => 'whiteListStatusSource', 'xid' => 'xid', 'directoryServerTransactionId' => 'directoryServerTransactionId', 'dataQualityIndicator' => 'dataQualityIndicator', 'authenticationResult' => 'authenticationResult', 'authenticationStatusMsg' => 'authenticationStatusMsg', 'indicator' => 'indicator', 'interactionCounter' => 'interactionCounter', 'whiteListStatus' => 'whiteListStatus', 'token' => 'token', 'acsReferenceNumber' => 'acsReferenceNumber', 'acsOperatorID' => 'acsOperatorID', 'idciScore' => 'idciScore', 'idciDecision' => 'idciDecision', 'idciReasonCode1' => 'idciReasonCode1', 'idciReasonCode2' => 'idciReasonCode2'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['accessToken' => 'setAccessToken', 'acsRenderingType' => 'setAcsRenderingType', 'acsTransactionId' => 'setAcsTransactionId', 'acsUrl' => 'setAcsUrl', 'authenticationPath' => 'setAuthenticationPath', 'authorizationPayload' => 'setAuthorizationPayload', 'authenticationTransactionId' => 'setAuthenticationTransactionId', 'cardholderMessage' => 'setCardholderMessage', 'cavv' => 'setCavv', 'cavvAlgorithm' => 'setCavvAlgorithm', 'challengeCancelCode' => 'setChallengeCancelCode', 'challengeRequired' => 'setChallengeRequired', 'decoupledAuthenticationIndicator' => 'setDecoupledAuthenticationIndicator', 'directoryServerErrorCode' => 'setDirectoryServerErrorCode', 'directoryServerErrorDescription' => 'setDirectoryServerErrorDescription', 'ecommerceIndicator' => 'setEcommerceIndicator', 'eci' => 'setEci', 'eciRaw' => 'setEciRaw', 'effectiveAuthenticationType' => 'setEffectiveAuthenticationType', 'ivr' => 'setIvr', 'strongAuthentication' => 'setStrongAuthentication', 'networkScore' => 'setNetworkScore', 'pareq' => 'setPareq', 'paresStatus' => 'setParesStatus', 'proofXml' => 'setProofXml', 'proxyPan' => 'setProxyPan', 'sdkTransactionId' => 'setSdkTransactionId', 'signedParesStatusReason' => 'setSignedParesStatusReason', 'specificationVersion' => 'setSpecificationVersion', 'stepUpUrl' => 'setStepUpUrl', 'threeDSServerTransactionId' => 'setThreeDSServerTransactionId', 'ucafAuthenticationData' => 'setUcafAuthenticationData', 'ucafCollectionIndicator' => 'setUcafCollectionIndicator', 'veresEnrolled' => 'setVeresEnrolled', 'whiteListStatusSource' => 'setWhiteListStatusSource', 'xid' => 'setXid', 'directoryServerTransactionId' => 'setDirectoryServerTransactionId', 'dataQualityIndicator' => 'setDataQualityIndicator', 'authenticationResult' => 'setAuthenticationResult', 'authenticationStatusMsg' => 'setAuthenticationStatusMsg', 'indicator' => 'setIndicator', 'interactionCounter' => 'setInteractionCounter', 'whiteListStatus' => 'setWhiteListStatus'];
+    protected static $setters = ['accessToken' => 'setAccessToken', 'acsRenderingType' => 'setAcsRenderingType', 'acsTransactionId' => 'setAcsTransactionId', 'acsUrl' => 'setAcsUrl', 'authenticationPath' => 'setAuthenticationPath', 'authorizationPayload' => 'setAuthorizationPayload', 'authenticationTransactionId' => 'setAuthenticationTransactionId', 'cardholderMessage' => 'setCardholderMessage', 'cavv' => 'setCavv', 'cavvAlgorithm' => 'setCavvAlgorithm', 'challengeCancelCode' => 'setChallengeCancelCode', 'challengeRequired' => 'setChallengeRequired', 'decoupledAuthenticationIndicator' => 'setDecoupledAuthenticationIndicator', 'directoryServerErrorCode' => 'setDirectoryServerErrorCode', 'directoryServerErrorDescription' => 'setDirectoryServerErrorDescription', 'ecommerceIndicator' => 'setEcommerceIndicator', 'eci' => 'setEci', 'eciRaw' => 'setEciRaw', 'effectiveAuthenticationType' => 'setEffectiveAuthenticationType', 'ivr' => 'setIvr', 'strongAuthentication' => 'setStrongAuthentication', 'networkScore' => 'setNetworkScore', 'pareq' => 'setPareq', 'paresStatus' => 'setParesStatus', 'proofXml' => 'setProofXml', 'proxyPan' => 'setProxyPan', 'sdkTransactionId' => 'setSdkTransactionId', 'signedParesStatusReason' => 'setSignedParesStatusReason', 'specificationVersion' => 'setSpecificationVersion', 'stepUpUrl' => 'setStepUpUrl', 'threeDSServerTransactionId' => 'setThreeDSServerTransactionId', 'ucafAuthenticationData' => 'setUcafAuthenticationData', 'ucafCollectionIndicator' => 'setUcafCollectionIndicator', 'veresEnrolled' => 'setVeresEnrolled', 'whiteListStatusSource' => 'setWhiteListStatusSource', 'xid' => 'setXid', 'directoryServerTransactionId' => 'setDirectoryServerTransactionId', 'dataQualityIndicator' => 'setDataQualityIndicator', 'authenticationResult' => 'setAuthenticationResult', 'authenticationStatusMsg' => 'setAuthenticationStatusMsg', 'indicator' => 'setIndicator', 'interactionCounter' => 'setInteractionCounter', 'whiteListStatus' => 'setWhiteListStatus', 'token' => 'setToken', 'acsReferenceNumber' => 'setAcsReferenceNumber', 'acsOperatorID' => 'setAcsOperatorID', 'idciScore' => 'setIdciScore', 'idciDecision' => 'setIdciDecision', 'idciReasonCode1' => 'setIdciReasonCode1', 'idciReasonCode2' => 'setIdciReasonCode2'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['accessToken' => 'getAccessToken', 'acsRenderingType' => 'getAcsRenderingType', 'acsTransactionId' => 'getAcsTransactionId', 'acsUrl' => 'getAcsUrl', 'authenticationPath' => 'getAuthenticationPath', 'authorizationPayload' => 'getAuthorizationPayload', 'authenticationTransactionId' => 'getAuthenticationTransactionId', 'cardholderMessage' => 'getCardholderMessage', 'cavv' => 'getCavv', 'cavvAlgorithm' => 'getCavvAlgorithm', 'challengeCancelCode' => 'getChallengeCancelCode', 'challengeRequired' => 'getChallengeRequired', 'decoupledAuthenticationIndicator' => 'getDecoupledAuthenticationIndicator', 'directoryServerErrorCode' => 'getDirectoryServerErrorCode', 'directoryServerErrorDescription' => 'getDirectoryServerErrorDescription', 'ecommerceIndicator' => 'getEcommerceIndicator', 'eci' => 'getEci', 'eciRaw' => 'getEciRaw', 'effectiveAuthenticationType' => 'getEffectiveAuthenticationType', 'ivr' => 'getIvr', 'strongAuthentication' => 'getStrongAuthentication', 'networkScore' => 'getNetworkScore', 'pareq' => 'getPareq', 'paresStatus' => 'getParesStatus', 'proofXml' => 'getProofXml', 'proxyPan' => 'getProxyPan', 'sdkTransactionId' => 'getSdkTransactionId', 'signedParesStatusReason' => 'getSignedParesStatusReason', 'specificationVersion' => 'getSpecificationVersion', 'stepUpUrl' => 'getStepUpUrl', 'threeDSServerTransactionId' => 'getThreeDSServerTransactionId', 'ucafAuthenticationData' => 'getUcafAuthenticationData', 'ucafCollectionIndicator' => 'getUcafCollectionIndicator', 'veresEnrolled' => 'getVeresEnrolled', 'whiteListStatusSource' => 'getWhiteListStatusSource', 'xid' => 'getXid', 'directoryServerTransactionId' => 'getDirectoryServerTransactionId', 'dataQualityIndicator' => 'getDataQualityIndicator', 'authenticationResult' => 'getAuthenticationResult', 'authenticationStatusMsg' => 'getAuthenticationStatusMsg', 'indicator' => 'getIndicator', 'interactionCounter' => 'getInteractionCounter', 'whiteListStatus' => 'getWhiteListStatus'];
+    protected static $getters = ['accessToken' => 'getAccessToken', 'acsRenderingType' => 'getAcsRenderingType', 'acsTransactionId' => 'getAcsTransactionId', 'acsUrl' => 'getAcsUrl', 'authenticationPath' => 'getAuthenticationPath', 'authorizationPayload' => 'getAuthorizationPayload', 'authenticationTransactionId' => 'getAuthenticationTransactionId', 'cardholderMessage' => 'getCardholderMessage', 'cavv' => 'getCavv', 'cavvAlgorithm' => 'getCavvAlgorithm', 'challengeCancelCode' => 'getChallengeCancelCode', 'challengeRequired' => 'getChallengeRequired', 'decoupledAuthenticationIndicator' => 'getDecoupledAuthenticationIndicator', 'directoryServerErrorCode' => 'getDirectoryServerErrorCode', 'directoryServerErrorDescription' => 'getDirectoryServerErrorDescription', 'ecommerceIndicator' => 'getEcommerceIndicator', 'eci' => 'getEci', 'eciRaw' => 'getEciRaw', 'effectiveAuthenticationType' => 'getEffectiveAuthenticationType', 'ivr' => 'getIvr', 'strongAuthentication' => 'getStrongAuthentication', 'networkScore' => 'getNetworkScore', 'pareq' => 'getPareq', 'paresStatus' => 'getParesStatus', 'proofXml' => 'getProofXml', 'proxyPan' => 'getProxyPan', 'sdkTransactionId' => 'getSdkTransactionId', 'signedParesStatusReason' => 'getSignedParesStatusReason', 'specificationVersion' => 'getSpecificationVersion', 'stepUpUrl' => 'getStepUpUrl', 'threeDSServerTransactionId' => 'getThreeDSServerTransactionId', 'ucafAuthenticationData' => 'getUcafAuthenticationData', 'ucafCollectionIndicator' => 'getUcafCollectionIndicator', 'veresEnrolled' => 'getVeresEnrolled', 'whiteListStatusSource' => 'getWhiteListStatusSource', 'xid' => 'getXid', 'directoryServerTransactionId' => 'getDirectoryServerTransactionId', 'dataQualityIndicator' => 'getDataQualityIndicator', 'authenticationResult' => 'getAuthenticationResult', 'authenticationStatusMsg' => 'getAuthenticationStatusMsg', 'indicator' => 'getIndicator', 'interactionCounter' => 'getInteractionCounter', 'whiteListStatus' => 'getWhiteListStatus', 'token' => 'getToken', 'acsReferenceNumber' => 'getAcsReferenceNumber', 'acsOperatorID' => 'getAcsOperatorID', 'idciScore' => 'getIdciScore', 'idciDecision' => 'getIdciDecision', 'idciReasonCode1' => 'getIdciReasonCode1', 'idciReasonCode2' => 'getIdciReasonCode2'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -143,6 +143,13 @@ class PtsV2PaymentsPost201ResponseConsumerAuthenticationInformation implements A
         $this->container['indicator'] = isset($data['indicator']) ? $data['indicator'] : null;
         $this->container['interactionCounter'] = isset($data['interactionCounter']) ? $data['interactionCounter'] : null;
         $this->container['whiteListStatus'] = isset($data['whiteListStatus']) ? $data['whiteListStatus'] : null;
+        $this->container['token'] = isset($data['token']) ? $data['token'] : null;
+        $this->container['acsReferenceNumber'] = isset($data['acsReferenceNumber']) ? $data['acsReferenceNumber'] : null;
+        $this->container['acsOperatorID'] = isset($data['acsOperatorID']) ? $data['acsOperatorID'] : null;
+        $this->container['idciScore'] = isset($data['idciScore']) ? $data['idciScore'] : null;
+        $this->container['idciDecision'] = isset($data['idciDecision']) ? $data['idciDecision'] : null;
+        $this->container['idciReasonCode1'] = isset($data['idciReasonCode1']) ? $data['idciReasonCode1'] : null;
+        $this->container['idciReasonCode2'] = isset($data['idciReasonCode2']) ? $data['idciReasonCode2'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -936,6 +943,132 @@ class PtsV2PaymentsPost201ResponseConsumerAuthenticationInformation implements A
     public function setWhiteListStatus($whiteListStatus)
     {
         $this->container['whiteListStatus'] = $whiteListStatus;
+        return $this;
+    }
+    /**
+     * Gets token
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->container['token'];
+    }
+    /**
+     * Sets token
+     * @param string $token 
+     * @return $this
+     */
+    public function setToken($token)
+    {
+        $this->container['token'] = $token;
+        return $this;
+    }
+    /**
+     * Gets acsReferenceNumber
+     * @return string
+     */
+    public function getAcsReferenceNumber()
+    {
+        return $this->container['acsReferenceNumber'];
+    }
+    /**
+     * Sets acsReferenceNumber
+     * @param string $acsReferenceNumber Unique identifier assigned by the EMVCo Secretariat upon Testing and Approval.
+     * @return $this
+     */
+    public function setAcsReferenceNumber($acsReferenceNumber)
+    {
+        $this->container['acsReferenceNumber'] = $acsReferenceNumber;
+        return $this;
+    }
+    /**
+     * Gets acsOperatorID
+     * @return string
+     */
+    public function getAcsOperatorID()
+    {
+        return $this->container['acsOperatorID'];
+    }
+    /**
+     * Sets acsOperatorID
+     * @param string $acsOperatorID Directory Server assigned ACS identifier.
+     * @return $this
+     */
+    public function setAcsOperatorID($acsOperatorID)
+    {
+        $this->container['acsOperatorID'] = $acsOperatorID;
+        return $this;
+    }
+    /**
+     * Gets idciScore
+     * @return int
+     */
+    public function getIdciScore()
+    {
+        return $this->container['idciScore'];
+    }
+    /**
+     * Sets idciScore
+     * @param int $idciScore Risk Assessment from Mastercard
+     * @return $this
+     */
+    public function setIdciScore($idciScore)
+    {
+        $this->container['idciScore'] = $idciScore;
+        return $this;
+    }
+    /**
+     * Gets idciDecision
+     * @return string
+     */
+    public function getIdciDecision()
+    {
+        return $this->container['idciDecision'];
+    }
+    /**
+     * Sets idciDecision
+     * @param string $idciDecision Decision on the Risk Assessment from Mastercard.
+     * @return $this
+     */
+    public function setIdciDecision($idciDecision)
+    {
+        $this->container['idciDecision'] = $idciDecision;
+        return $this;
+    }
+    /**
+     * Gets idciReasonCode1
+     * @return string
+     */
+    public function getIdciReasonCode1()
+    {
+        return $this->container['idciReasonCode1'];
+    }
+    /**
+     * Sets idciReasonCode1
+     * @param string $idciReasonCode1 ReasonCode from Mastercard
+     * @return $this
+     */
+    public function setIdciReasonCode1($idciReasonCode1)
+    {
+        $this->container['idciReasonCode1'] = $idciReasonCode1;
+        return $this;
+    }
+    /**
+     * Gets idciReasonCode2
+     * @return string
+     */
+    public function getIdciReasonCode2()
+    {
+        return $this->container['idciReasonCode2'];
+    }
+    /**
+     * Sets idciReasonCode2
+     * @param string $idciReasonCode2 ReasonCode from Mastercard
+     * @return $this
+     */
+    public function setIdciReasonCode2($idciReasonCode2)
+    {
+        $this->container['idciReasonCode2'] = $idciReasonCode2;
         return $this;
     }
     /**

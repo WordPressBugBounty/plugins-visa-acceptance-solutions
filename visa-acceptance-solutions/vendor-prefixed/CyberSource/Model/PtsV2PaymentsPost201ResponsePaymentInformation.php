@@ -48,7 +48,7 @@ class PtsV2PaymentsPost201ResponsePaymentInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['card' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentAccountInformationCard', 'tokenizedCard' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationTokenizedCard', 'tokenizedPaymentMethod' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationTokenizedPaymentMethod', 'accountFeatures' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationAccountFeatures', 'bank' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationBank', 'customer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationCustomer', 'paymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentInstrument', 'instrumentIdentifier' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationInstrumentIdentifier', 'shippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationShippingAddress', 'scheme' => 'string', 'bin' => 'string', 'accountType' => 'string', 'issuer' => 'string', 'binCountry' => 'string', 'eWallet' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationEWallet'];
+    protected static $swaggerTypes = ['card' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentAccountInformationCard', 'tokenizedCard' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentAccountInformationTokenizedCard', 'tokenizedPaymentMethod' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationTokenizedPaymentMethod', 'accountFeatures' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationAccountFeatures', 'bank' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationBank', 'customer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationCustomer', 'paymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentInstrument', 'instrumentIdentifier' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationInstrumentIdentifier', 'shippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationShippingAddress', 'scheme' => 'string', 'bin' => 'string', 'accountType' => 'string', 'issuer' => 'string', 'binCountry' => 'string', 'eWallet' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationEWallet'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -156,7 +156,7 @@ class PtsV2PaymentsPost201ResponsePaymentInformation implements ArrayAccess
     }
     /**
      * Gets tokenizedCard
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationTokenizedCard
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentAccountInformationTokenizedCard
      */
     public function getTokenizedCard()
     {
@@ -164,7 +164,7 @@ class PtsV2PaymentsPost201ResponsePaymentInformation implements ArrayAccess
     }
     /**
      * Sets tokenizedCard
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationTokenizedCard $tokenizedCard
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentAccountInformationTokenizedCard $tokenizedCard
      * @return $this
      */
     public function setTokenizedCard($tokenizedCard)

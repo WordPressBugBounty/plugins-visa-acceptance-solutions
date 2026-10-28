@@ -48,7 +48,7 @@ class InlineResponse2005IntegrationInformationTenantConfigurations implements Ar
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['solutionId' => 'string', 'tenantConfigurationId' => 'string', 'status' => 'string', 'submitTimeUtc' => '\DateTime', 'tenantInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsIntegrationInformationTenantInformation'];
+    protected static $swaggerTypes = ['solutionId' => 'string', 'tenantConfigurationId' => 'string', 'status' => 'string', 'submitTimeUtc' => '\DateTime', 'tenantInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\TenantInformation'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -200,7 +200,7 @@ class InlineResponse2005IntegrationInformationTenantConfigurations implements Ar
     }
     /**
      * Gets tenantInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsIntegrationInformationTenantInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TenantInformation
      */
     public function getTenantInformation()
     {
@@ -208,7 +208,7 @@ class InlineResponse2005IntegrationInformationTenantConfigurations implements Ar
     }
     /**
      * Sets tenantInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Boardingv1registrationsIntegrationInformationTenantInformation $tenantInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TenantInformation $tenantInformation
      * @return $this
      */
     public function setTenantInformation($tenantInformation)

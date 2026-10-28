@@ -48,7 +48,7 @@ class PaymentsProductsAlternativePaymentMethodsConfigurationInformationConfigura
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['merchantCategoryCode' => 'string', 'processors' => 'map[string,\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsAlternativePaymentMethodsConfigurationInformationConfigurationsProcessors]'];
+    protected static $swaggerTypes = ['merchantCategoryCode' => 'string', 'processors' => 'map[string,\Pymt_Vas\Dependencies\CyberSource\Model\AlternativePaymentsProcessorConfiguration]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -143,7 +143,7 @@ class PaymentsProductsAlternativePaymentMethodsConfigurationInformationConfigura
     }
     /**
      * Gets processors
-     * @return map[string,\Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsAlternativePaymentMethodsConfigurationInformationConfigurationsProcessors]
+     * @return map[string,\Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\AlternativePaymentsProcessorConfiguration]
      */
     public function getProcessors()
     {
@@ -151,7 +151,7 @@ class PaymentsProductsAlternativePaymentMethodsConfigurationInformationConfigura
     }
     /**
      * Sets processors
-     * @param map[string,\Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsAlternativePaymentMethodsConfigurationInformationConfigurationsProcessors] $processors This is a map. The allowed keys are below. Value should be an object containing a sole boolean property - enabled. <table>   <tr>     <td>klarna</td>   </tr>   <tr>     <td>payPal</td>   </tr>   <tr>     <td>alipay</td>   </tr>   <tr>     <td>bancontact</td>   </tr>   <tr>     <td>giropay</td>   </tr>   <tr>     <td>ideal</td>   </tr> </table>
+     * @param map[string,\Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\AlternativePaymentsProcessorConfiguration] $processors This is a map. The allowed keys are below. Value should be an object containing a sole boolean property - enabled. <table>   <tr>     <td>klarna</td>   </tr>   <tr>     <td>payPal</td>   </tr>   <tr>     <td>alipay</td>   </tr>   <tr>     <td>bancontact</td>   </tr>   <tr>     <td>giropay</td>   </tr>   <tr>     <td>ideal</td>   </tr> </table>
      * @return $this
      */
     public function setProcessors($processors)

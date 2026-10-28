@@ -119,7 +119,6 @@ trait Visa_Acceptance_Payment_Gateway_Includes_Trait {
 	 * @return array
 	 */
 	public function get_order_for_add_payment_method() {
-
 		$user        = get_userdata( get_current_user_id() );
 		$customer_id = ( $user && isset( $user->ID ) ) ? $user->ID : VISA_ACCEPTANCE_STRING_EMPTY;
 
@@ -144,7 +143,7 @@ trait Visa_Acceptance_Payment_Gateway_Includes_Trait {
 			$order = wc_get_order( $order );
 		}
 		if ( $order instanceof \WC_Order ) {
-			$prefix = VISA_ACCEPTANCE_SV_GATEWAY_ID === $order->get_payment_method() ? '_wc_' . VISA_ACCEPTANCE_SV_GATEWAY_ID . '_' : $this->get_order_meta_prefix_includes();
+			$prefix = VISA_ACCEPTANCE_SV_GATEWAY_ID === $order->get_payment_method() ? '_wc_' . VISA_ACCEPTANCE_SV_GATEWAY_ID . VISA_ACCEPTANCE_UNDERSCORE : $this->get_order_meta_prefix_includes();
 			if ( visa_acceptance_handle_hpos_compatibility() ) {
 				$order->update_meta_data( $prefix . $key, $value );
 				$order->save_meta_data();
@@ -224,4 +223,31 @@ trait Visa_Acceptance_Payment_Gateway_Includes_Trait {
 		}
 		return $response;
 	}
+	
+	/**
+	 * Detect whether a CyberSource API response body includes a successful ics_bill (capture) service.
+	 *
+	 * @param mixed $response_body Raw response body from the CyberSource API.
+	 * @return bool True if ics_bill with rCode=1 is present; false otherwise.
+	 */
+	protected function detect_ics_bill( $response_body ) {
+        if ( is_object( $response_body ) ) {
+            $response_body = json_decode(
+                wp_json_encode( $response_body ),
+                true
+            );
+        } elseif ( is_string( $response_body ) ) {
+            $response_body = json_decode( $response_body, true );
+        }
+        $applications = $response_body['applicationInformation']['applications'] ?? array();
+        foreach ( $applications as $app ) {
+            if (
+                ( $app['name'] ?? '' ) === 'ics_bill' &&
+                (string) ( $app['rCode'] ?? '' ) === '1'
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -48,7 +48,7 @@ class PostCustomerShippingAddressRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddressLinks', 'id' => 'string', 'default' => 'bool', 'shipTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddressShipTo', 'metadata' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddressMetadata'];
+    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddressLinks', 'id' => 'string', 'default' => 'bool', 'shipTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddressShipTo', 'metadata' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddressMetadata'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -128,7 +128,7 @@ class PostCustomerShippingAddressRequest implements ArrayAccess
     }
     /**
      * Gets links
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddressLinks
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddressLinks
      */
     public function getLinks()
     {
@@ -136,7 +136,7 @@ class PostCustomerShippingAddressRequest implements ArrayAccess
     }
     /**
      * Sets links
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddressLinks $links
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddressLinks $links
      * @return $this
      */
     public function setLinks($links)
@@ -182,7 +182,7 @@ class PostCustomerShippingAddressRequest implements ArrayAccess
     }
     /**
      * Gets shipTo
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddressShipTo
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddressShipTo
      */
     public function getShipTo()
     {
@@ -190,7 +190,7 @@ class PostCustomerShippingAddressRequest implements ArrayAccess
     }
     /**
      * Sets shipTo
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddressShipTo $shipTo
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddressShipTo $shipTo
      * @return $this
      */
     public function setShipTo($shipTo)
@@ -200,7 +200,7 @@ class PostCustomerShippingAddressRequest implements ArrayAccess
     }
     /**
      * Gets metadata
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddressMetadata
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddressMetadata
      */
     public function getMetadata()
     {
@@ -208,7 +208,7 @@ class PostCustomerShippingAddressRequest implements ArrayAccess
     }
     /**
      * Sets metadata
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddressMetadata $metadata
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddressMetadata $metadata
      * @return $this
      */
     public function setMetadata($metadata)

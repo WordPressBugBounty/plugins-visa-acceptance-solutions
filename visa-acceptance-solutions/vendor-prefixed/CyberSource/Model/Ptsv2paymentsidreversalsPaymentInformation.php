@@ -48,12 +48,12 @@ class Ptsv2paymentsidreversalsPaymentInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['paymentType' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsPaymentInformationPaymentType'];
+    protected static $swaggerTypes = ['paymentType' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsPaymentInformationPaymentType', 'merchantLimitedAcceptanceIndicator' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['paymentType' => null];
+    protected static $swaggerFormats = ['paymentType' => null, 'merchantLimitedAcceptanceIndicator' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2paymentsidreversalsPaymentInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['paymentType' => 'paymentType'];
+    protected static $attributeMap = ['paymentType' => 'paymentType', 'merchantLimitedAcceptanceIndicator' => 'merchantLimitedAcceptanceIndicator'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['paymentType' => 'setPaymentType'];
+    protected static $setters = ['paymentType' => 'setPaymentType', 'merchantLimitedAcceptanceIndicator' => 'setMerchantLimitedAcceptanceIndicator'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['paymentType' => 'getPaymentType'];
+    protected static $getters = ['paymentType' => 'getPaymentType', 'merchantLimitedAcceptanceIndicator' => 'getMerchantLimitedAcceptanceIndicator'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -101,6 +101,7 @@ class Ptsv2paymentsidreversalsPaymentInformation implements ArrayAccess
     public function __construct(array $data = null)
     {
         $this->container['paymentType'] = isset($data['paymentType']) ? $data['paymentType'] : null;
+        $this->container['merchantLimitedAcceptanceIndicator'] = isset($data['merchantLimitedAcceptanceIndicator']) ? $data['merchantLimitedAcceptanceIndicator'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -138,6 +139,24 @@ class Ptsv2paymentsidreversalsPaymentInformation implements ArrayAccess
     public function setPaymentType($paymentType)
     {
         $this->container['paymentType'] = $paymentType;
+        return $this;
+    }
+    /**
+     * Gets merchantLimitedAcceptanceIndicator
+     * @return string
+     */
+    public function getMerchantLimitedAcceptanceIndicator()
+    {
+        return $this->container['merchantLimitedAcceptanceIndicator'];
+    }
+    /**
+     * Sets merchantLimitedAcceptanceIndicator
+     * @param string $merchantLimitedAcceptanceIndicator Mastercard One Credential merchant limited acceptance indicator. Mastercard One Credential connects multiple Mastercard payment methods and allows cardhollers to access various options and set payment preferences.  This field indicates which Mastercard One Credential funding PAN acceptance brands should NOT be assigned for this transaction.  This field flows in ISO field 34, DSID 02 tag DB, mapped to Mastercard Data Element (DE) 48, Sub element 02, Subfield 01.  Possible values: - `C`: Do not assign a Mastercard One Credential funding PAN containing the Mastercard Credit Acceptance Brand for this transaction - `D`: Do not assign a Mastercard One Credential funding PAN containing the Debit Mastercard Acceptance Brand for this transaction - `M`: Do not assign a Mastercard One Credential funding PAN containing the Maestro Acceptance Brand for this transaction  This field is supported for Authorization reversal request.  #### Used by **Authorization Reversal Request** Optional field.
+     * @return $this
+     */
+    public function setMerchantLimitedAcceptanceIndicator($merchantLimitedAcceptanceIndicator)
+    {
+        $this->container['merchantLimitedAcceptanceIndicator'] = $merchantLimitedAcceptanceIndicator;
         return $this;
     }
     /**

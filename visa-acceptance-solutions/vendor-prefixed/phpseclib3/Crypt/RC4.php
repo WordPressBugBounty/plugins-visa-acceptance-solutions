@@ -50,17 +50,17 @@ use Pymt_Vas\Dependencies\phpseclib3\Crypt\Common\StreamCipher;
 class RC4 extends StreamCipher
 {
     /**
-     * @see \Pymt_Vas\Dependencies\phpseclib3\Crypt\RC4::_crypt()
+     * @see RC4::_crypt()
      */
     const ENCRYPT = 0;
     /**
-     * @see \Pymt_Vas\Dependencies\phpseclib3\Crypt\RC4::_crypt()
+     * @see RC4::_crypt()
      */
     const DECRYPT = 1;
     /**
      * Key Length (in bytes)
      *
-     * @see \Pymt_Vas\Dependencies\phpseclib3\Crypt\RC4::setKeyLength()
+     * @see RC4::setKeyLength()
      * @var int
      */
     protected $key_length = 128;

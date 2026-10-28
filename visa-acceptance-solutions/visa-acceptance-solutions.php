@@ -2,15 +2,14 @@
 /**
  * Plugin Name: Visa Acceptance Solutions
  * Description: Accept payments in WooCommerce with Visa Acceptance Solutions.
- * Version: 2.2.2
+ * Version: 3.0.0
  * Author: Visa Acceptance Solutions
  * Author URI: https://visaacceptance.com
  * Developer: Visa Acceptance Solutions
  * Requires Plugins: woocommerce
- * Requires at least: 6.9
- * Tested up to: 7.0
+ * Requires at least: 7.0
  * Requires PHP: 8.2.0
- * WC tested up to: 10.8.1
+ * WC tested up to: 11.2.1
  * WC requires at least: 10.3.7
  * Text Domain: visa-acceptance-solutions
  * Domain Path: /languages
@@ -30,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'VISA_ACCEPTANCE_PLUGIN_VERSION', '2.2.2' );
+define( 'VISA_ACCEPTANCE_PLUGIN_VERSION', '3.0.0' );
 
 /**
  * Fallback Plugin version.
@@ -46,11 +45,6 @@ define( 'VISA_ACCEPTANCE_WC_VERSION_EIGHT_SIX_ZERO', '8.6.0');
  * WC version from which pre delete filter available used to delete token.
  */
 define( 'VISA_ACCEPTANCE_WC_VERSION_EIGHT_ONE_ZERO', '8.1.0');
-
-/**
- * Payer Auth validation callback hearer to js.
- */
-define('VISA_ACCEPTANCE_CONTENT_TYPE_HEADER','Content-Type: text/html');
 
 /**
  * Name of the current plugin.
@@ -160,13 +154,6 @@ define( 'VISA_ACCEPTANCE_PLUGIN_DOMAIN', VISA_ACCEPTANCE_GATEWAY_ID_HYPHEN );
 define('VISA_ACCEPTANCE_GATEWAY_ID_UNDERSCORE', VISA_ACCEPTANCE_GATEWAY_ID . VISA_ACCEPTANCE_UNDERSCORE);
 
 /**
- * 
- * String payer auth response slug
- */
-
- define('VISA_ACCEPTANCE_PAYER_AUTH_RESPONSE_SLUG', VISA_ACCEPTANCE_GATEWAY_ID_UNDERSCORE.'payer_auth_response');
-
-/**
 *
 * Unified Checkout id constant.
 */
@@ -247,48 +234,13 @@ define('VISA_ACCEPTANCE_WOOCOMMERCE_CONSTANT', 'woocommerce');
 /**
  * Partner Solution ID.
  */
-define( 'VISA_ACCEPTANCE_SOLUTION_ID', 'TDVTYOLT');
-
-/**
- * Developer ID.
- */
-define( 'VISA_ACCEPTANCE_DEVELOPER_ID', '999' );
-
-/**
- *
- * Flex domain for Test Mode.
- */
-define( 'VISA_ACCEPTANCE_FLEX_TEST_DOMAIN', 'https://testflex.cybersource.com' );
+define( 'VISA_ACCEPTANCE_SOLUTION_ID', 'VVQC7VGM');
 
 /**
 *
 * Network error constant.
 */
 define('VISA_ACCEPTANCE_NETWORK_ERROR','NETWORK_ERROR');
-
-/**
- *
- * Flex domain for Production Mode.
- */
-define( 'VISA_ACCEPTANCE_FLEX_PROD_DOMAIN', 'https://flex.cybersource.com' );
-
-/**
- *
- * Flex Microform js library.
- */
-define( 'VISA_ACCEPTANCE_FLEX_LIBRARY', '/microform/bundle/v2/flex-microform.min.js' );
- 
-/**
- *
- * Flex Microform library for Test environment.
- */
-define( 'VISA_ACCEPTANCE_FLEX_TEST_LIBRARY', VISA_ACCEPTANCE_FLEX_TEST_DOMAIN . VISA_ACCEPTANCE_FLEX_LIBRARY );
- 
-/**
- *
- * Flex Microform library for Production environment.
- */
-define( 'VISA_ACCEPTANCE_FLEX_PROD_LIBRARY', VISA_ACCEPTANCE_FLEX_PROD_DOMAIN . VISA_ACCEPTANCE_FLEX_LIBRARY );
 
 /**
  *
@@ -312,7 +264,7 @@ define( 'VISA_ACCEPTANCE_ONLINE_METRIX','https://h.online-metrix.net/fp/tags');
  *
  * Used to set the priority parameter for add_action() method.
  */
-define( 'VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY', 10 );
+define( 'VISA_ACCEPTANCE_ACTION_HOOK_DEFAULT_PRIORITY', 11 );
 
 /**
  *
@@ -333,9 +285,9 @@ define('VISA_ACCEPTANCE_ENVIRONMENT_TEST', 'test');
 
 /**
  *
- * The decision manager toggle setting name Constant.
+ * The fraud webhook subscription toggle setting name Constant.
  */
-define('VISA_ACCEPTANCE_SETTING_ENABLE_DECISION_MANAGER', 'enable_decision_manager');
+define('VISA_ACCEPTANCE_SETTING_ENABLE_FRAUD_WEBHOOK', 'enable_fraud_webhook');
 
 /**
  *
@@ -351,17 +303,45 @@ define('VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE', 'charge');
 
 /**
  *
- * Sends through a request for funds to be "reserved" on the cardholder's credit card. 
- * A standard authorization is reserved for 2-5 days. 
- * Reservation times are determined by cardholder's bank.
+ * Sends through an authorization request to verify that the cardholder has sufficient funds available on their credit card. Funds are not captured until a separate capture request is sent.
  */
 define('VISA_ACCEPTANCE_TRANSACTION_TYPE_AUTHORIZATION', 'authorization');
+
+/**
+ *
+ * Complete Mandate type for auth + capture flow.
+ */
+define('VISA_ACCEPTANCE_COMPLETE_MANDATE_TYPE_CAPTURE', 'CAPTURE');
+
+/**
+ *
+ * Complete Mandate type for auth only flow.
+ */
+define('VISA_ACCEPTANCE_COMPLETE_MANDATE_TYPE_PREFER_AUTH', 'PREFER_AUTH');
+
+/**
+ *
+ * Complete Mandate  string.
+ */
+define('VISA_ACCEPTANCE_COMPLETE_MANDATE_STRING', 'Complete');
+
+/**
+ *
+ * APM string.
+ */
+define('VISA_ACCEPTANCE_APM_STRING', 'apm');
 
 /**
  *
  * 200 Status Code Constant.
  */
 define('VISA_ACCEPTANCE_TWO_ZERO_ZERO', 200);
+
+/**
+ *
+ * 200 Status Code Constant.
+ */
+define('VISA_ACCEPTANCE_THREE_ZERO_ZERO', 300);
 
 /**
  *
@@ -383,6 +363,12 @@ define('VISA_ACCEPTANCE_FOUR_ZERO_ONE', 401);
 
 /**
  *
+ * 403 Status Code Constant.
+ */
+define('VISA_ACCEPTANCE_FOUR_ZERO_THREE', 403);
+
+/**
+ *
  * 502 Status Code Constant.
  */
 define('VISA_ACCEPTANCE_FIVE_ZERO_TWO', 502);
@@ -401,15 +387,57 @@ define('VISA_ACCEPTANCE_FOUR_ZERO_ZERO', 400);
 
 /**
  *
+ * 500 Status Code Constant.
+ */
+define('VISA_ACCEPTANCE_FIVE_ZERO_ZERO', 500);
+
+/**
+ *
  * 404 Status Code Constant.
  */
 define('VISA_ACCEPTANCE_FOUR_ZERO_FOUR', 404);
 
 /**
  *
+ * 410 Status Code Constant.
+ */
+define('VISA_ACCEPTANCE_FOUR_TEN', 410);
+
+/**
+ *
  * Sca challange Code Constant.
  */
 define('VISA_ACCEPTANCE_SCA_CHALLANGE_CODE', '04');
+
+/**
+ *
+ * SCA Cookie: tracks whether a 3DS challenge retry is needed for the complete mandate flow (CC).
+ */
+define( 'VISA_ACCEPTANCE_COOKIE_USE_3DS_CHALLENGE', 'use3DSChallenge' );
+
+/**
+ *
+ * Constant for 3DS ExpressPay Challenge (SCA)
+ */
+define( 'VISA_ACCEPTANCE_COOKIE_USE_3DS_EP_CHALLENGE', 'use3DSChallengeEP' );
+
+/**
+ *
+ * Constant for 3DS TMS Challenge (SCA)
+ */
+define( 'VISA_ACCEPTANCE_COOKIE_USE_3DS_TMS_CHALLENGE', 'use3DSChallengeTMS' );
+
+/**
+ *
+ * Constant for SCA retry count
+ */
+define( 'VISA_ACCEPTANCE_COOKIE_SCA_COUNT', 'scaCount' );
+
+/**
+ *
+ * Constant for SCA error message
+ */
+define( 'VISA_ACCEPTANCE_COOKIE_ERROR_MSG', 'errorMsg' );
 
 /**
  *
@@ -446,6 +474,12 @@ define('VISA_ACCEPTANCE_SVG_EXTENSION', '.svg');
  *
  */
 define( 'VISA_ACCEPTANCE_VAL_ZERO_DOT_ZERO_ZERO', 0.00 );
+
+/**
+ *
+ * Dummy Amount Constant.
+ */
+define('VISA_ACCEPTANCE_PLACEHOLDER_AMOUNT', '0.01');
 
 /**
  * Integer value constant.
@@ -499,6 +533,12 @@ define( 'VISA_ACCEPTANCE_VAL_TEN', 10 );
  * Integer value constant.
  *
  */
+define( 'VISA_ACCEPTANCE_VAL_ELEVEN', 11 );
+
+/**
+ * Integer value constant.
+ *
+ */
 define( 'VISA_ACCEPTANCE_VAL_SIX_ZERO', 60 );
 
 /**
@@ -518,6 +558,7 @@ define( 'VISA_ACCEPTANCE_STRING_CUSTOMER_AUTHENTICATION_REQUIRED', 'CUSTOMER_AUT
  *
  */
 define( 'VISA_ACCEPTANCE_ERROR', 'error' );
+
 /**
  * string value constant.
  *
@@ -559,12 +600,6 @@ define('VISA_ACCEPTANCE_CHECK', 'CHECK');
  * VISA_ACCEPTANCE_PAYMENT_TYPE_CARD Constant.
  */
 define('VISA_ACCEPTANCE_PAYMENT_TYPE_CARD', 'CARD');
-
-/**
- *
- * eCheck Constant.
- */
-define('VISA_ACCEPTANCE_SETTING_ENABLE_ECHECK', 'enable_echeck');
 
 /**
  *
@@ -622,21 +657,87 @@ define('VISA_ACCEPTANCE_CLICKTOPAY', 'CLICKTOPAY');
 
 /**
  *
+ * PayPal Constant.
+ */
+define('VISA_ACCEPTANCE_PAYPAL', 'PAYPAL');
+ 
+/**
+ *
+ * Venmo Constant.
+ */
+define('VISA_ACCEPTANCE_VENMO', 'VENMO');
+ 
+/**
+ *
+ * Afterpay Constant.
+ */
+define('VISA_ACCEPTANCE_AFTERPAY', 'AFTERPAY');
+ 
+/**
+ * Refresh Payment Status Action.
+ */
+define('VISA_ACCEPTANCE_WC_REFRESH_STATUS_ACTION', 'wc_refresh_payment_status_action');
+
+/**
+ *
+ * iDEAL Constant.
+ */
+define('VISA_ACCEPTANCE_IDEAL', 'IDEAL');
+ 
+/**
+ *
+ * Multibanco Constant.
+ */
+define('VISA_ACCEPTANCE_MULTIBANCO', 'MULTIBANCO');
+ 
+/**
+ *
+ * Przelewy24 Constant.
+ */
+define('VISA_ACCEPTANCE_PRZELEWY24', 'PRZELEWY24');
+ 
+/**
+ *
+ * MyBank Constant.
+ */
+define('VISA_ACCEPTANCE_MYBANK', 'MYBANK');
+ 
+/**
+ *
+ * Dragonpay Constant.
+ */
+define('VISA_ACCEPTANCE_DRAGONPAY', 'DRAGONPAY');
+ 
+/**
+ *
+ * Bancontact Constant.
+ */
+define('VISA_ACCEPTANCE_BANCONTACT', 'BANCONTACT');
+ 
+/**
+ *
+ * Tink Pay by Bank Constant.
+ */
+define('VISA_ACCEPTANCE_TINKPAYBYBANK', 'TINKPAYBYBANK');
+ 
+/**
+ *
+ * Konbini Constant.
+ */
+define('VISA_ACCEPTANCE_KONBINI', 'KONBINI');
+ 
+
+/**
+ *
  * Zero Amount Constant.
  */
 define('VISA_ACCEPTANCE_ZERO_AMOUNT', '0.00');
 
 /**
  *
- * Dummy Amount Constant.
+ * Unified Checkout Client Version(Default).
  */
-define('VISA_ACCEPTANCE_PLACEHOLDER_AMOUNT', '0.01');
-
-/**
- *
- * Unified Checkout Client Version.
- */
-define('VISA_ACCEPTANCE_UC_CLIENT_VERSION', '0.34');
+define('VISA_ACCEPTANCE_UC_CLIENT_VERSION', VISA_ACCEPTANCE_STRING_EMPTY);
 
 /**
  *
@@ -685,6 +786,12 @@ define('VISA_ACCEPTANCE_UC_BILLING_TYPE', 'NONE');
  * Unified Checkout Billing Type Full.
  */
 define('VISA_ACCEPTANCE_UC_BILLING_TYPE_FULL', 'FULL');
+
+/**
+ *
+ * Unified Checkout Billing Type PARTIAL.
+ */
+define('VISA_ACCEPTANCE_UC_BILLING_TYPE_PARTIAL', 'PARTIAL');
 
 /**
  *
@@ -752,23 +859,18 @@ define('VISA_ACCEPTANCE_MARK_COMPLETED', 'mark_completed');
  */
 define('VISA_ACCEPTANCE_WC_ORDERS', 'wc-orders');
 
-/**
- *
- * admin.php String Constant.
- */
-define('VISA_ACCEPTANCE_ADMIN_PHP', 'admin.php');
-
-/**
- *
- * mark_ String Constant.
- */
-define('VISA_ACCEPTANCE_MARK_UNDERSCORE', 'mark_');
 
 /**
  *
  * Add payment method String Constant.
  */
 define('VISA_ACCEPTANCE_ADD_PAYMENT_METHOD', 'add_payment_method');
+
+/**
+ *
+ * Add card String Constant.
+ */
+define('VISA_ACCEPTANCE_ADD_CARD', 'ADD_CARD');
 
 /**
  *
@@ -846,7 +948,13 @@ define('VISA_ACCEPTANCE_CHARGE_CAPTURED', 'charge_captured');
 
 /**
  *
- * Charge captured String Constant.
+ * Merchant reference code String Constant.
+ */
+define('VISA_ACCEPTANCE_MERCHANT_REF_CODE', 'merchant_ref_code');
+
+/**
+ *
+ * Get transaction String Constant.
  */
 define('VISA_ACCEPTANCE_GET_TRANSACTION', 'get_transaction');
 
@@ -870,12 +978,6 @@ define('VISA_ACCEPTANCE_PARTIAL', 'partial');
 
 /**
  *
- * FlexForm String Constant.
- */
-define('VISA_ACCEPTANCE_FLEXFORM', 'flexForm');
-
-/**
- *
  * Update card String Constant.
  */
 define('VISA_ACCEPTANCE_UPDATECARD', 'updateCard');
@@ -885,6 +987,12 @@ define('VISA_ACCEPTANCE_UPDATECARD', 'updateCard');
  * Capture String Constant.
  */
 define('VISA_ACCEPTANCE_CAPTURE', 'capture');
+
+/**
+ *
+ * Capture String Constant.
+ */
+define('VISA_ACCEPTANCE_PARTIAL_CAPTURE', 'partial capture');
 
 /**
  *
@@ -927,12 +1035,6 @@ define('VISA_ACCEPTANCE_UNDERSCORE_VOID_FAILED', '_void_failed');
  * Auth amount String Constant.
  */
 define('VISA_ACCEPTANCE_AUTH_AMOUNT', 'auth_amount');
-
-/**
- *
- * Setup String Constant.
- */
-define( 'VISA_ACCEPTANCE_SETUP', 'Setup' );
 
 /**
  *
@@ -1047,6 +1149,151 @@ define('VISA_ACCEPTANCE_DECISION_SKIP', 'DECISION_SKIP');
 
 /**
  *
+ * Fraud webhook REST API namespace.
+ */
+define( 'VISA_ACCEPTANCE_NAMESPACE', 'visa-acceptance/v2' );
+ 
+/**
+ *
+ * Fraud webhook REST API route.
+ */
+define( 'VISA_ACCEPTANCE_FRAUD_WEBHOOK_ROUTE', '/fraud-webhook' );
+ 
+/**
+ *
+ * WordPress option key for storing the CyberSource fraud webhook subscription ID (Decision Manager).
+ */
+define( 'VISA_ACCEPTANCE_FRAUD_WEBHOOK_ID_OPTION', 'visa_acceptance_fraud_webhook_id' );
+ 
+/**
+ *
+ * WordPress option key for storing the CyberSource Fraud Management Essentials webhook subscription ID.
+ */
+define( 'VISA_ACCEPTANCE_FRAUD_WEBHOOK_FME_ID_OPTION', 'visa_acceptance_fraud_webhook_fme_id' );
+ 
+/**
+ *
+ * WordPress option key for storing the CyberSource fraud webhook HMAC signing secret.
+ */
+define( 'VISA_ACCEPTANCE_FRAUD_WEBHOOK_SECRET_OPTION', 'visa_acceptance_fraud_webhook_secret' );
+ 
+/**
+ *
+ * WordPress option key for storing the CyberSource fraud webhook signing key ID (from /kms/egress/v2/keys-sym).
+ */
+define( 'VISA_ACCEPTANCE_FRAUD_WEBHOOK_KEY_ID_OPTION', 'visa_acceptance_fraud_webhook_key_id' );
+ 
+/**
+ *
+ * WordPress option key for storing the random URL token used to secure the webhook endpoint.
+ */
+define( 'VISA_ACCEPTANCE_FRAUD_WEBHOOK_TOKEN_OPTION', 'visa_acceptance_fraud_webhook_token' );
+ 
+ 
+/**
+ *
+ * CyberSource notification subscriptions API resource path.
+ */
+define( 'VISA_ACCEPTANCE_NOTIFICATION_SUBSCRIPTIONS_PATH', '/notification-subscriptions/v2/webhooks' );
+ 
+/**
+ * UC webhook REST API route.
+ */
+define( 'VISA_ACCEPTANCE_UC_WEBHOOK_ROUTE', '/uc-webhook' );
+ 
+/**
+ * APM webhook REST API route.
+ */
+define( 'VISA_ACCEPTANCE_APM_WEBHOOK_ROUTE', '/apm-webhook' );
+ 
+/**
+ * CyberSource event type for APM payment updates (bank redirect / async payment completion).
+ */
+define( 'VISA_ACCEPTANCE_APM_WEBHOOK_EVENT', 'payments.payments.updated' );
+ 
+/**
+ * WordPress option key for storing the APM webhook subscription ID.
+ */
+define( 'VISA_ACCEPTANCE_APM_WEBHOOK_ID_OPTION', 'visa_acceptance_apm_webhook_id' );
+
+/**
+ * Network Tokens webhook REST route (appended to namespace).
+ */
+define( 'VISA_ACCEPTANCE_NETWORK_TOKENS_WEBHOOK_ROUTE', '/network-tokens-webhook' );
+ 
+/**
+ * WordPress option key for storing the Network Tokens webhook subscription ID.
+ */
+define( 'VISA_ACCEPTANCE_NETWORK_TOKENS_WEBHOOK_ID_OPTION', 'visa_acceptance_network_tokens_webhook_id' );
+ 
+/**
+ * WordPress option key for storing the asymmetric MLE key ID used to encrypt APM webhook payloads.
+ */
+define( 'VISA_ACCEPTANCE_APM_WEBHOOK_MLE_KEY_ID_OPTION', 'visa_acceptance_apm_webhook_mle_key_id' );
+ 
+/**
+ * WordPress option key for storing the RSA private key PEM used to decrypt APM webhook JWE payloads.
+ */
+define( 'VISA_ACCEPTANCE_APM_WEBHOOK_PRIVATE_KEY_OPTION', 'visa_acceptance_apm_webhook_private_key' );
+ 
+/**
+ * WordPress option key for storing the APM webhook HMAC shared-secret key (base64) for v-c-signature validation.
+ */
+define( 'VISA_ACCEPTANCE_APM_WEBHOOK_SIG_KEY_OPTION', 'visa_acceptance_apm_webhook_sig_key' );
+ 
+/**
+ * WordPress option key for storing the APM webhook HMAC key ID for v-c-signature validation.
+ */
+define( 'VISA_ACCEPTANCE_APM_WEBHOOK_SIG_KEY_ID_OPTION', 'visa_acceptance_apm_webhook_sig_key_id' );
+ 
+/**
+ * WordPress option key for storing the UC webhook subscription ID.
+ */
+define( 'VISA_ACCEPTANCE_UC_WEBHOOK_ID_OPTION', 'visa_acceptance_uc_webhook_id' );
+ 
+/**
+ * WordPress option key for storing the asymmetric MLE key ID (from /kms/egress/v2/keys-asym).
+ */
+define( 'VISA_ACCEPTANCE_UC_WEBHOOK_MLE_KEY_ID_OPTION', 'visa_acceptance_uc_webhook_mle_key_id' );
+ 
+/**
+ * WordPress option key for storing the RSA private key PEM used to decrypt UC webhook JWE payloads.
+ */
+define( 'VISA_ACCEPTANCE_UC_WEBHOOK_PRIVATE_KEY_OPTION', 'visa_acceptance_uc_webhook_private_key' );
+ 
+/**
+ * WordPress option key for storing the UC webhook HMAC shared-secret key (base64) for v-c-signature validation.
+ */
+define( 'VISA_ACCEPTANCE_UC_WEBHOOK_SIG_KEY_OPTION', 'visa_acceptance_uc_webhook_sig_key' );
+ 
+/**
+ * WordPress option key for storing the UC webhook HMAC key ID for v-c-signature validation.
+ */
+define( 'VISA_ACCEPTANCE_UC_WEBHOOK_SIG_KEY_ID_OPTION', 'visa_acceptance_uc_webhook_sig_key_id' );
+ 
+/**
+ * WordPress option key for storing the Network Tokens webhook subscription token (query parameter).
+ */
+define( 'VISA_ACCEPTANCE_NETWORK_TOKENS_WEBHOOK_TOKEN_OPTION', 'visa_acceptance_network_tokens_webhook_token' );
+ 
+/**
+ * WordPress option key for storing the Network Tokens webhook HMAC shared-secret key (base64).
+ */
+define( 'VISA_ACCEPTANCE_NETWORK_TOKENS_WEBHOOK_SIG_KEY_OPTION', 'visa_acceptance_network_tokens_webhook_sig_key' );
+ 
+/**
+ * WordPress option key for storing the Network Tokens webhook HMAC key ID.
+ */
+define( 'VISA_ACCEPTANCE_NETWORK_TOKENS_WEBHOOK_SIG_KEY_ID_OPTION', 'visa_acceptance_network_tokens_webhook_sig_key_id' );
+
+/**
+ *
+ * Order meta key flagging whether a DM-review order was a charge (sale) or auth-only.
+ */
+define( 'VISA_ACCEPTANCE_DM_REVIEW_IS_CHARGE_META', '_dm_review_is_charge' );
+
+/**
+ *
  * Token create String Constant.
  */
 define('VISA_ACCEPTANCE_TOKEN_CREATE', 'TOKEN_CREATE');
@@ -1068,30 +1315,6 @@ define('VISA_ACCEPTANCE_CARD_SETTLEMENT_SUCCEEDED', 'Card Settlement succeeded')
  * Is String Constant.
  */
 define('VISA_ACCEPTANCE_IS', 'is');
-
-/**
- *
- * Environment sale String Constant.
- */
-define('VISA_ACCEPTANCE_ENROLLMENT_CHARGE', 'Enrollment Charge');
-
-/**
- *
- * Environment authorization String Constant.
- */
-define('VISA_ACCEPTANCE_ENROLLMENT_AUTHORIZATION', 'Enrollment Authorization');
-
-/**
- *
- * Validation sale String Constant.
- */
-define('VISA_ACCEPTANCE_VALIDATION_CHARGE', 'Validation Charge');
-
-/**
- *
- * Validation authorization String Constant.
- */
-define('VISA_ACCEPTANCE_VALIDATION_AUTHORIZATION', 'Validation Authorization');
 
 /**
  *
@@ -1125,18 +1348,6 @@ define('VISA_ACCEPTANCE_RESERVED', 'REVERSED');
 
 /**
  *
- * _Payer auth String Constant.
- */
-define('VISA_ACCEPTANCE_UNDERSCORE_PAYER_AUTH', '_payer_auth');
-
-/**
- *
- * _Payer auth PARAM String Constant.
- */
-define('VISA_ACCEPTANCE_UC_PAYER_AUTH_PARAM', 'visa_acceptance_uc_payer_auth_param');
-
-/**
- *
  * Payment methods String Constant.
  */
 define('VISA_ACCEPTANCE_PAYMENT_METHODS', 'payment-methods');
@@ -1158,12 +1369,6 @@ define('VISA_ACCEPTANCE_INVALID_DATA', 'Invalid data');
  * sha256 String Constant.
  */
 define('VISA_ACCEPTANCE_ALGORITHM_SHA256', 'sha256'); 
-
-/**
- *
- * Mozilla/5.0 String Constant.
- */
-define('VISA_ACCEPTANCE_MOZILLA_FIVE_ZERO', 'Mozilla/5.0');
 
 /**
  *
@@ -1262,24 +1467,6 @@ define('VISA_ACCEPTANCE_SAVED_CARD_NORMAL', VISA_ACCEPTANCE_GATEWAY_ID . '_saved
 
 /**
  *
- * Payer Auth blocks string Constant.
- */
-define('VISA_ACCEPTANCE_PAYER_AUTH_BLOCKS', '#order_blocks_');
-
-/**
- *
- * Payer auth with tokenization string Constant.
- */
-define('VISA_ACCEPTANCE_PAYER_AUTH_WITH_TOKEN', '#order_bolcks_');
-
-/**
- *
- * Payer auth normal string Constant.
- */
-define('VISA_ACCEPTANCE_PAYER_AUTH_NORMAL', '#order_change_');
-
-/**
- *
  * WooCommerce Order Status after Settlement.
  */
 define( 'VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING', 'processing' );
@@ -1330,6 +1517,17 @@ define( 'VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_ACTIVE', 'active' );
  * Api Response (EBC) Authorized Status.
  */
 define( 'VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED', 'AUTHORIZED' );
+
+/**
+ *
+ * Trusted host for CyberSource-hosted UC client library redirects.
+ */
+define( 'VISA_ACCEPTANCE_TRUSTED_HOST_CYBERSOURCE', 'cybersource.com' );
+/**
+ *
+ * Trusted host for Visa-hosted UC client library redirects.
+ */
+define( 'VISA_ACCEPTANCE_TRUSTED_HOST_VISA', 'visa.com' );
 
 /**
  *
@@ -1486,12 +1684,6 @@ define('VISA_ACCEPTANCE_REASON_INVALID_ACCOUNT', 'INVALID_ACCOUNT');
  * Date time constant.
  */
 define('VISA_ACCEPTANCE_DATE_TIME', 'D, d M Y G:i:s ');
-
-/**
- *
- * GMT constant.
- */
-define('VISA_ACCEPTANCE_GMT', 'GMT');
 
 /**
  *

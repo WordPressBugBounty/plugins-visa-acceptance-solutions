@@ -48,12 +48,12 @@ class PtsV2PaymentsRefundPost201ResponseProcessorInformation implements ArrayAcc
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['approvalCode' => 'string', 'transactionId' => 'string', 'forwardedAcquirerCode' => 'string', 'merchantNumber' => 'string', 'responseCode' => 'string', 'achVerification' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessorInformationAchVerification', 'networkTransactionId' => 'string', 'settlementDate' => 'string', 'updateTimeUtc' => 'string', 'network' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessorInformationReversalNetwork', 'merchantAdvice' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsRefundPost201ResponseProcessorInformationMerchantAdvice'];
+    protected static $swaggerTypes = ['approvalCode' => 'string', 'transactionId' => 'string', 'forwardedAcquirerCode' => 'string', 'merchantNumber' => 'string', 'responseCode' => 'string', 'responseSourceCode' => 'string', 'achVerification' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessorInformationAchVerification', 'networkTransactionId' => 'string', 'settlementDate' => 'string', 'updateTimeUtc' => 'string', 'network' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessorInformationReversalNetwork', 'merchantAdvice' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsRefundPost201ResponseProcessorInformationMerchantAdvice'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['approvalCode' => null, 'transactionId' => null, 'forwardedAcquirerCode' => null, 'merchantNumber' => null, 'responseCode' => null, 'achVerification' => null, 'networkTransactionId' => null, 'settlementDate' => null, 'updateTimeUtc' => null, 'network' => null, 'merchantAdvice' => null];
+    protected static $swaggerFormats = ['approvalCode' => null, 'transactionId' => null, 'forwardedAcquirerCode' => null, 'merchantNumber' => null, 'responseCode' => null, 'responseSourceCode' => null, 'achVerification' => null, 'networkTransactionId' => null, 'settlementDate' => null, 'updateTimeUtc' => null, 'network' => null, 'merchantAdvice' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PtsV2PaymentsRefundPost201ResponseProcessorInformation implements ArrayAcc
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['approvalCode' => 'approvalCode', 'transactionId' => 'transactionId', 'forwardedAcquirerCode' => 'forwardedAcquirerCode', 'merchantNumber' => 'merchantNumber', 'responseCode' => 'responseCode', 'achVerification' => 'achVerification', 'networkTransactionId' => 'networkTransactionId', 'settlementDate' => 'settlementDate', 'updateTimeUtc' => 'updateTimeUtc', 'network' => 'network', 'merchantAdvice' => 'merchantAdvice'];
+    protected static $attributeMap = ['approvalCode' => 'approvalCode', 'transactionId' => 'transactionId', 'forwardedAcquirerCode' => 'forwardedAcquirerCode', 'merchantNumber' => 'merchantNumber', 'responseCode' => 'responseCode', 'responseSourceCode' => 'responseSourceCode', 'achVerification' => 'achVerification', 'networkTransactionId' => 'networkTransactionId', 'settlementDate' => 'settlementDate', 'updateTimeUtc' => 'updateTimeUtc', 'network' => 'network', 'merchantAdvice' => 'merchantAdvice'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['approvalCode' => 'setApprovalCode', 'transactionId' => 'setTransactionId', 'forwardedAcquirerCode' => 'setForwardedAcquirerCode', 'merchantNumber' => 'setMerchantNumber', 'responseCode' => 'setResponseCode', 'achVerification' => 'setAchVerification', 'networkTransactionId' => 'setNetworkTransactionId', 'settlementDate' => 'setSettlementDate', 'updateTimeUtc' => 'setUpdateTimeUtc', 'network' => 'setNetwork', 'merchantAdvice' => 'setMerchantAdvice'];
+    protected static $setters = ['approvalCode' => 'setApprovalCode', 'transactionId' => 'setTransactionId', 'forwardedAcquirerCode' => 'setForwardedAcquirerCode', 'merchantNumber' => 'setMerchantNumber', 'responseCode' => 'setResponseCode', 'responseSourceCode' => 'setResponseSourceCode', 'achVerification' => 'setAchVerification', 'networkTransactionId' => 'setNetworkTransactionId', 'settlementDate' => 'setSettlementDate', 'updateTimeUtc' => 'setUpdateTimeUtc', 'network' => 'setNetwork', 'merchantAdvice' => 'setMerchantAdvice'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['approvalCode' => 'getApprovalCode', 'transactionId' => 'getTransactionId', 'forwardedAcquirerCode' => 'getForwardedAcquirerCode', 'merchantNumber' => 'getMerchantNumber', 'responseCode' => 'getResponseCode', 'achVerification' => 'getAchVerification', 'networkTransactionId' => 'getNetworkTransactionId', 'settlementDate' => 'getSettlementDate', 'updateTimeUtc' => 'getUpdateTimeUtc', 'network' => 'getNetwork', 'merchantAdvice' => 'getMerchantAdvice'];
+    protected static $getters = ['approvalCode' => 'getApprovalCode', 'transactionId' => 'getTransactionId', 'forwardedAcquirerCode' => 'getForwardedAcquirerCode', 'merchantNumber' => 'getMerchantNumber', 'responseCode' => 'getResponseCode', 'responseSourceCode' => 'getResponseSourceCode', 'achVerification' => 'getAchVerification', 'networkTransactionId' => 'getNetworkTransactionId', 'settlementDate' => 'getSettlementDate', 'updateTimeUtc' => 'getUpdateTimeUtc', 'network' => 'getNetwork', 'merchantAdvice' => 'getMerchantAdvice'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -105,6 +105,7 @@ class PtsV2PaymentsRefundPost201ResponseProcessorInformation implements ArrayAcc
         $this->container['forwardedAcquirerCode'] = isset($data['forwardedAcquirerCode']) ? $data['forwardedAcquirerCode'] : null;
         $this->container['merchantNumber'] = isset($data['merchantNumber']) ? $data['merchantNumber'] : null;
         $this->container['responseCode'] = isset($data['responseCode']) ? $data['responseCode'] : null;
+        $this->container['responseSourceCode'] = isset($data['responseSourceCode']) ? $data['responseSourceCode'] : null;
         $this->container['achVerification'] = isset($data['achVerification']) ? $data['achVerification'] : null;
         $this->container['networkTransactionId'] = isset($data['networkTransactionId']) ? $data['networkTransactionId'] : null;
         $this->container['settlementDate'] = isset($data['settlementDate']) ? $data['settlementDate'] : null;
@@ -160,7 +161,7 @@ class PtsV2PaymentsRefundPost201ResponseProcessorInformation implements ArrayAcc
     }
     /**
      * Sets transactionId
-     * @param string $transactionId Processor transaction ID.  This value identifies the transaction on a host system. This value is supported only for Moneris. It contains this information:   - Terminal used to process the transaction  - Shift during which the transaction took place  - Batch number  - Transaction number within the batch  You must store this value. If you give the customer a receipt, display this value on the receipt.  Example For the value 66012345001069003:   - Terminal ID = 66012345  - Shift number = 001  - Batch number = 069  - Transaction number = 003
+     * @param string $transactionId Network transaction identifier (TID). You can use this value to identify a specific transaction when you are discussing the transaction with your processor. Not all processors provide this value.  Returned by the authorization service.  #### PIN debit Transaction identifier generated by the processor.  Returned by PIN debit credit.  #### GPX Processor transaction ID.  #### Cielo For Cielo, this value is the non-sequential unit (NSU) and is supported for all transactions. The value is generated by Cielo or the issuing bank.  #### Comercio Latino For Comercio Latino, this value is the proof of sale or non-sequential unit (NSU) number generated by the acquirers Cielo and Rede, or the issuing bank.  #### CyberSource through VisaNet and GPN For details about this value for CyberSource through VisaNet and GPN, see \"processorInformation.networkTransactionId\" in [REST API Fields](https://developer.cybersource.com/content/dam/docs/cybs/en-us/apifields/reference/all/rest/api-fields.pdf)  #### Moneris This value identifies the transaction on a host system. It contains the following information: - Terminal used to process the transaction - Shift during which the transaction took place - Batch number - Transaction number within the batch You must store this value. If you give the customer a receipt, display this value on the receipt.  **Example** For the value 66012345001069003: - Terminal ID = 66012345 - Shift number = 001 - Batch number = 069 - Transaction number = 003
      * @return $this
      */
     public function setTransactionId($transactionId)
@@ -220,6 +221,24 @@ class PtsV2PaymentsRefundPost201ResponseProcessorInformation implements ArrayAcc
     public function setResponseCode($responseCode)
     {
         $this->container['responseCode'] = $responseCode;
+        return $this;
+    }
+    /**
+     * Gets responseSourceCode
+     * @return string
+     */
+    public function getResponseSourceCode()
+    {
+        return $this->container['responseSourceCode'];
+    }
+    /**
+     * Sets responseSourceCode
+     * @param string $responseSourceCode This field is used by Visa only and contains the response source/reason code that identifies the source of the field 39 response decision. Use this field only for clearing with your acquirer.
+     * @return $this
+     */
+    public function setResponseSourceCode($responseSourceCode)
+    {
+        $this->container['responseSourceCode'] = $responseSourceCode;
         return $this;
     }
     /**

@@ -48,7 +48,7 @@ class CommerceSolutionsProductsAccountUpdaterConfigurationInformation implements
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['templateId' => 'string', 'configurations' => '\Pymt_Vas\Dependencies\CyberSource\Model\CommerceSolutionsProductsAccountUpdaterConfigurationInformationConfigurations'];
+    protected static $swaggerTypes = ['templateId' => 'string', 'configurations' => '\Pymt_Vas\Dependencies\CyberSource\Model\AccountUpdaterConfigurations'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -143,7 +143,7 @@ class CommerceSolutionsProductsAccountUpdaterConfigurationInformation implements
     }
     /**
      * Gets configurations
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\CommerceSolutionsProductsAccountUpdaterConfigurationInformationConfigurations
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\AccountUpdaterConfigurations
      */
     public function getConfigurations()
     {
@@ -151,7 +151,7 @@ class CommerceSolutionsProductsAccountUpdaterConfigurationInformation implements
     }
     /**
      * Sets configurations
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\CommerceSolutionsProductsAccountUpdaterConfigurationInformationConfigurations $configurations
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\AccountUpdaterConfigurations $configurations
      * @return $this
      */
     public function setConfigurations($configurations)

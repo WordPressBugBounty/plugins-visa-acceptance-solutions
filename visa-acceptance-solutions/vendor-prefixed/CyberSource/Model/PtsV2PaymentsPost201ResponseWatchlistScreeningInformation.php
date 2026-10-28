@@ -48,7 +48,7 @@ class PtsV2PaymentsPost201ResponseWatchlistScreeningInformation implements Array
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['ipCountryConfidence' => 'int', 'infoCodes' => 'string[]', 'watchList' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseWatchlistScreeningInformationWatchList'];
+    protected static $swaggerTypes = ['ipCountryConfidence' => 'int', 'infoCodes' => 'string[]', 'watchList' => '\Pymt_Vas\Dependencies\CyberSource\Model\ExportComplianceWatchList'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -162,7 +162,7 @@ class PtsV2PaymentsPost201ResponseWatchlistScreeningInformation implements Array
     }
     /**
      * Gets watchList
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseWatchlistScreeningInformationWatchList
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\ExportComplianceWatchList
      */
     public function getWatchList()
     {
@@ -170,7 +170,7 @@ class PtsV2PaymentsPost201ResponseWatchlistScreeningInformation implements Array
     }
     /**
      * Sets watchList
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseWatchlistScreeningInformationWatchList $watchList
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\ExportComplianceWatchList $watchList
      * @return $this
      */
     public function setWatchList($watchList)

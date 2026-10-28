@@ -375,7 +375,7 @@ class CustomerPaymentInstrumentApi
      * @param int $offset Starting record in zero-based dataset that should be returned as the first object in the array. Default is 0. (optional, default to 0)
      * @param int $limit The maximum number that can be returned in the array starting from the offset record in zero-based dataset. Default is 20, maximum is 100. (optional, default to 20)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
-     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentInstrumentList, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentInstrumentList1, HTTP status code, HTTP response headers (array of strings)
      */
     public function getCustomerPaymentInstrumentsList($customerId, $profileId = null, $offset = '0', $limit = '20')
     {
@@ -395,7 +395,7 @@ class CustomerPaymentInstrumentApi
      * @param int $offset Starting record in zero-based dataset that should be returned as the first object in the array. Default is 0. (optional, default to 0)
      * @param int $limit The maximum number that can be returned in the array starting from the offset record in zero-based dataset. Default is 20, maximum is 100. (optional, default to 20)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
-     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentInstrumentList, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentInstrumentList1, HTTP status code, HTTP response headers (array of strings)
      */
     public function getCustomerPaymentInstrumentsListWithHttpInfo($customerId, $profileId = null, $offset = '0', $limit = '20')
     {
@@ -464,18 +464,18 @@ class CustomerPaymentInstrumentApi
             }
             self::$logger->debug("Body Parameter :\n" . $printHttpBody);
         }
-        self::$logger->debug("Return Type : \\CyberSource\\Model\\PaymentInstrumentList");
+        self::$logger->debug("Return Type : \\CyberSource\\Model\\PaymentInstrumentList1");
         // Response MLE check
         $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getCustomerPaymentInstrumentsList,getCustomerPaymentInstrumentsListWithHttpInfo");
         // make the API Call
         try {
-            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'GET', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentInstrumentList', '/tms/v2/customers/{customerId}/payment-instruments', $isResponseMLEForAPI);
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'GET', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentInstrumentList1', '/tms/v2/customers/{customerId}/payment-instruments', $isResponseMLEForAPI);
             self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
-            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentInstrumentList', $httpHeader), $statusCode, $httpHeader];
+            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentInstrumentList1', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentInstrumentList', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentInstrumentList1', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 400:

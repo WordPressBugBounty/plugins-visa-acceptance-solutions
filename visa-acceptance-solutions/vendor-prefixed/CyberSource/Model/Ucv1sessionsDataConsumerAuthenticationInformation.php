@@ -48,12 +48,12 @@ class Ucv1sessionsDataConsumerAuthenticationInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['challengeCode' => 'string', 'messageCategory' => 'string', 'acsWindowSize' => 'string'];
+    protected static $swaggerTypes = ['challengeCode' => 'string', 'messageCategory' => 'string', 'acsWindowSize' => 'string', 'productCode' => 'string', 'languagePreference' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['challengeCode' => null, 'messageCategory' => null, 'acsWindowSize' => null];
+    protected static $swaggerFormats = ['challengeCode' => null, 'messageCategory' => null, 'acsWindowSize' => null, 'productCode' => null, 'languagePreference' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ucv1sessionsDataConsumerAuthenticationInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['challengeCode' => 'challengeCode', 'messageCategory' => 'messageCategory', 'acsWindowSize' => 'acsWindowSize'];
+    protected static $attributeMap = ['challengeCode' => 'challengeCode', 'messageCategory' => 'messageCategory', 'acsWindowSize' => 'acsWindowSize', 'productCode' => 'productCode', 'languagePreference' => 'languagePreference'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['challengeCode' => 'setChallengeCode', 'messageCategory' => 'setMessageCategory', 'acsWindowSize' => 'setAcsWindowSize'];
+    protected static $setters = ['challengeCode' => 'setChallengeCode', 'messageCategory' => 'setMessageCategory', 'acsWindowSize' => 'setAcsWindowSize', 'productCode' => 'setProductCode', 'languagePreference' => 'setLanguagePreference'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['challengeCode' => 'getChallengeCode', 'messageCategory' => 'getMessageCategory', 'acsWindowSize' => 'getAcsWindowSize'];
+    protected static $getters = ['challengeCode' => 'getChallengeCode', 'messageCategory' => 'getMessageCategory', 'acsWindowSize' => 'getAcsWindowSize', 'productCode' => 'getProductCode', 'languagePreference' => 'getLanguagePreference'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -103,6 +103,8 @@ class Ucv1sessionsDataConsumerAuthenticationInformation implements ArrayAccess
         $this->container['challengeCode'] = isset($data['challengeCode']) ? $data['challengeCode'] : null;
         $this->container['messageCategory'] = isset($data['messageCategory']) ? $data['messageCategory'] : null;
         $this->container['acsWindowSize'] = isset($data['acsWindowSize']) ? $data['acsWindowSize'] : null;
+        $this->container['productCode'] = isset($data['productCode']) ? $data['productCode'] : null;
+        $this->container['languagePreference'] = isset($data['languagePreference']) ? $data['languagePreference'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -176,6 +178,42 @@ class Ucv1sessionsDataConsumerAuthenticationInformation implements ArrayAccess
     public function setAcsWindowSize($acsWindowSize)
     {
         $this->container['acsWindowSize'] = $acsWindowSize;
+        return $this;
+    }
+    /**
+     * Gets productCode
+     * @return string
+     */
+    public function getProductCode()
+    {
+        return $this->container['productCode'];
+    }
+    /**
+     * Sets productCode
+     * @param string $productCode Specifies the product code, which designates the type of transaction.<br><br>  Specify one of the following values for this field:  - AIR: Airline purchase  Important Required for American Express SafeKey (U.S.).  - ACC: Accommodation Rental  - ACF: Account funding  - CHA: Check acceptance  - DIG: Digital Goods  - DSP: Cash Dispensing  - GAS: Fuel  - GEN: General Retail  - LUX: Luxury Retail  - PAL: Prepaid activation and load  - PHY: Goods or services purchase  - QCT: Quasi-cash transaction  - REN: Car Rental  - RES: Restaurant  - SVC: Services  - TBD: Other  - TRA: Travel<br>  **Important** Required for Visa Secure transactions in Brazil. Do not use this request field for any other types of transactions.
+     * @return $this
+     */
+    public function setProductCode($productCode)
+    {
+        $this->container['productCode'] = $productCode;
+        return $this;
+    }
+    /**
+     * Gets languagePreference
+     * @return string
+     */
+    public function getLanguagePreference()
+    {
+        return $this->container['languagePreference'];
+    }
+    /**
+     * Sets languagePreference
+     * @param string $languagePreference Preferred language to be used for cardholder authentication and challenge experiences (subject to issuer/ACS support).
+     * @return $this
+     */
+    public function setLanguagePreference($languagePreference)
+    {
+        $this->container['languagePreference'] = $languagePreference;
         return $this;
     }
     /**

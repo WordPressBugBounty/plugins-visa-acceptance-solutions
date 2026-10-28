@@ -48,12 +48,12 @@ class Ptsv2billingagreementsidProcessingInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['commerceIndicator' => 'string', 'actionList' => 'string[]'];
+    protected static $swaggerTypes = ['commerceIndicator' => 'string', 'paymentCompletionTimeout' => 'string', 'actionList' => 'string[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['commerceIndicator' => null, 'actionList' => null];
+    protected static $swaggerFormats = ['commerceIndicator' => null, 'paymentCompletionTimeout' => null, 'actionList' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2billingagreementsidProcessingInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['commerceIndicator' => 'commerceIndicator', 'actionList' => 'actionList'];
+    protected static $attributeMap = ['commerceIndicator' => 'commerceIndicator', 'paymentCompletionTimeout' => 'paymentCompletionTimeout', 'actionList' => 'actionList'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['commerceIndicator' => 'setCommerceIndicator', 'actionList' => 'setActionList'];
+    protected static $setters = ['commerceIndicator' => 'setCommerceIndicator', 'paymentCompletionTimeout' => 'setPaymentCompletionTimeout', 'actionList' => 'setActionList'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['commerceIndicator' => 'getCommerceIndicator', 'actionList' => 'getActionList'];
+    protected static $getters = ['commerceIndicator' => 'getCommerceIndicator', 'paymentCompletionTimeout' => 'getPaymentCompletionTimeout', 'actionList' => 'getActionList'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -101,6 +101,7 @@ class Ptsv2billingagreementsidProcessingInformation implements ArrayAccess
     public function __construct(array $data = null)
     {
         $this->container['commerceIndicator'] = isset($data['commerceIndicator']) ? $data['commerceIndicator'] : null;
+        $this->container['paymentCompletionTimeout'] = isset($data['paymentCompletionTimeout']) ? $data['paymentCompletionTimeout'] : null;
         $this->container['actionList'] = isset($data['actionList']) ? $data['actionList'] : null;
     }
     /**
@@ -139,6 +140,24 @@ class Ptsv2billingagreementsidProcessingInformation implements ArrayAccess
     public function setCommerceIndicator($commerceIndicator)
     {
         $this->container['commerceIndicator'] = $commerceIndicator;
+        return $this;
+    }
+    /**
+     * Gets paymentCompletionTimeout
+     * @return string
+     */
+    public function getPaymentCompletionTimeout()
+    {
+        return $this->container['paymentCompletionTimeout'];
+    }
+    /**
+     * Sets paymentCompletionTimeout
+     * @param string $paymentCompletionTimeout Period after which an authorization request to the consumer expires due to inactivity. Value in seconds (e.g., 86400 for one day).
+     * @return $this
+     */
+    public function setPaymentCompletionTimeout($paymentCompletionTimeout)
+    {
+        $this->container['paymentCompletionTimeout'] = $paymentCompletionTimeout;
         return $this;
     }
     /**

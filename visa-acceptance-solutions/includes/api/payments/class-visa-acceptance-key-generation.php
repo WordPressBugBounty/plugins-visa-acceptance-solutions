@@ -20,10 +20,8 @@ require_once __DIR__ . '/../class-visa-acceptance-request.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-key-generation-request.php';
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-payment-adapter.php';
 
-use Pymt_Vas\Dependencies\CyberSource\Api\UnifiedCheckoutCaptureContextApi;
-use Pymt_Vas\Dependencies\CyberSource\Api\MicroformIntegrationApi;
-use Pymt_Vas\Dependencies\CyberSource\Model\GenerateUnifiedCheckoutCaptureContextRequest;
-use Pymt_Vas\Dependencies\CyberSource\Model\GenerateCaptureContextRequest;
+use Pymt_Vas\Dependencies\CyberSource\Api\UnifiedCheckoutV1CaptureContextApi;
+use Pymt_Vas\Dependencies\CyberSource\Model\GenerateUnifiedCheckoutV1CaptureContextRequest;
 
 /**
  * Visa Acceptance Key Generation Request Class.
@@ -53,8 +51,8 @@ class Visa_Acceptance_Key_Generation extends Visa_Acceptance_Request {
 	 * @param bool  $is_ep Whether it's Express Pay.
 	 * @param int   $product_id The product ID (optional).
 	 * @param int   $quantity The product quantity (optional).
-	 * @param array $grouped_items Array of grouped product items with product IDs and quantities (optional).
-	 * @param float $switch_amount Custom amount to use (optional, for subscription switches).
+	 * @param array $grouped_items The grouped items (optional).
+	 * @param float $switch_amount The switch amount (optional).
 	 * @return array
 	 */
 	public function get_unified_checkout_capture_context($is_ep = false, $product_id = null, $quantity = null, $grouped_items = array(), $switch_amount = null ) {
@@ -65,8 +63,15 @@ class Visa_Acceptance_Key_Generation extends Visa_Acceptance_Request {
 		$payment_gateway_unified_checkout 	= new Visa_Acceptance_Payment_Gateway_Unified_Checkout();
 		$subscription_active              	= $payment_gateway_unified_checkout->is_wc_subscriptions_activated();
 		$payment_adapter 					= new Visa_Acceptance_Payment_Adapter( $this->gateway );
-        $api_client 						= $payment_adapter->get_api_client(true);
-		$capture_context_api 				= new UnifiedCheckoutCaptureContextApi( $api_client );
+        
+        // Try JWT first (default), fallback to HTTP Signature if sessions endpoint doesn't support JWT.
+        try {
+            $api_client = $payment_adapter->get_api_client();
+        } catch ( \Exception $e ) {
+            $this->gateway->add_logs_data( array( 'Request MLE Configuration Error' => $e->getMessage() ), false, $log_header, true );
+            return $response;
+        }
+		$capture_context_api 				= new UnifiedCheckoutV1CaptureContextApi( $api_client );
 
 		if ( is_add_payment_method_page() || ( $subscription_active && WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment ) ) {
 			  if ( $is_ep && ($subscription_active && WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment )) {
@@ -92,9 +97,10 @@ class Visa_Acceptance_Key_Generation extends Visa_Acceptance_Request {
 					}
 				}
 			}
-			if ( ( VISA_ACCEPTANCE_ZERO_AMOUNT === (string) $request['orderInformation']['amountDetails']['totalAmount'] ) && WC_Subscriptions_Cart::cart_contains_subscription() && ! is_product() && ! $is_cart_switch ) {
+			$total_amount = isset( $request['orderInformation']['amountDetails']['totalAmount'] ) ? (string) $request['orderInformation']['amountDetails']['totalAmount'] : null;
+			if ( null !== $total_amount && ( VISA_ACCEPTANCE_ZERO_AMOUNT === $total_amount ) && ($subscription_active && WC_Subscriptions_Cart::cart_contains_subscription()) && ! is_product() && ! $is_cart_switch ) {
 				$request = $is_ep ? $key_generation_request->get_digital_zero_uc_request() : $key_generation_request->get_zero_uc_request();
-			} elseif ( VISA_ACCEPTANCE_ZERO_AMOUNT >= (string) $request['orderInformation']['amountDetails']['totalAmount'] ) {
+			} elseif ( null !== $total_amount && VISA_ACCEPTANCE_ZERO_AMOUNT >= $total_amount ) {
 				// For express pay on product page with zero amount, use digital zero request (placeholder).
 				if ( $is_ep && is_product() ) {
 					$request = $key_generation_request->get_digital_zero_uc_request();
@@ -105,90 +111,139 @@ class Visa_Acceptance_Key_Generation extends Visa_Acceptance_Request {
 			}
 		}
 		if ( $do_service_call ) {
+		$capture_request = null;
 		try {
-			$capture_request = new GenerateUnifiedCheckoutCaptureContextRequest( $request );
-			if ( ! empty( $capture_request ) ) {
-				$this->gateway->add_logs_data( $capture_request, true, $log_header );
-				$response = $capture_context_api->generateUnifiedCheckoutCaptureContext( $capture_request );
-				$this->gateway->add_logs_service_response( $response[VISA_ACCEPTANCE_VAL_ZERO],$response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
-				$return_array = array(
+				$capture_request = new GenerateUnifiedCheckoutV1CaptureContextRequest( $request );
+				if ( ! empty( $capture_request ) ) {
+					$log_data = \Pymt_Vas\Dependencies\CyberSource\ObjectSerializer::sanitizeForSerialization( $capture_request );
+					$this->gateway->add_logs_data( $log_data, true, $log_header );
+					$response = $capture_context_api->generateUnifiedCheckoutV1CaptureContext( $capture_request );
+					$response_body_raw = $response[VISA_ACCEPTANCE_VAL_ZERO];
+					$settings = $this->gateway->get_config_settings();
+					$enable_response_mle = isset( $settings['enable_response_mle'] ) && ( VISA_ACCEPTANCE_YES === $settings['enable_response_mle'] );
+					if ( ! $enable_response_mle ) {
+						$this->gateway->add_logs_service_response(
+							$response_body_raw,
+							$response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID],
+							true,
+							$log_header
+						);
+					}
+					
+					// Decrypt MLE response if needed.
+					$response_body = $this->decrypt_mle_response( $response_body_raw, $payment_adapter, $log_header );
+					
+					// Log decrypted response if it was encrypted.
+					if ( $response_body !== $response_body_raw ) {
+						$this->gateway->add_logs_service_response( 
+							$response_body, 
+							$response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], 
+							true, 
+							$log_header 
+						);
+					}
+					$return_array = array(
 					'http_code' => $response[VISA_ACCEPTANCE_VAL_ONE],
-					'body'      => $response[VISA_ACCEPTANCE_VAL_ZERO],
-				);
+					'body'      => $response_body,
+					);
 				return $return_array;
-			}
+				} 
 			} catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
 				$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, $log_header );
+			} catch ( \Pymt_Vas\Dependencies\CyberSource\Authentication\Util\MLEException $e ) {
+				// Catch MLE-related errors (invalid credentials, certificate issues).
+				$this->gateway->add_logs_data( 
+					array( 'MLE Exception' => $e->getMessage() ), 
+					false, 
+					$log_header, 
+					true 
+				);
+			} catch ( \Exception $e ) {
+				$this->gateway->add_logs_data( 
+					array( 'Exception' => $e->getMessage() ), 
+					false, 
+					$log_header, 
+					true 
+				);
 			}	
 		}
 	}
 
 	/**
-	 * Generate Flex microform capture context using CyberSource SDK
-	 * @return array
+	 * Fetches a TMS-token-scoped Capture Context for a single saved payment instrument.
+	 *
+	 * @param string $payment_instrument_id The CyberSource payment instrument ID.
+	 * @param bool  $is_echeck Whether the payment instrument is an eCheck instrument.
+	 * @return array { http_code: int, body: string|array }
 	 */
-	public function get_flex_microform_capture_context() {
-		$response = array();
-		$log_header = 'Flex Microform Capture Context';
-		$settings = $this->gateway->get_config_settings();
+	public function get_tms_token_capture_context( $payment_instrument_id, $is_echeck = false ) {
+		$log_header              = 'TMS Token Capture Context';
+		$key_generation_request  = new Visa_Acceptance_Key_Generation_Request( $this->gateway );
+		$payment_adapter         = new Visa_Acceptance_Payment_Adapter( $this->gateway );
 		
-		// Configure merchant settings.
-		$payment_adapter 	= new Visa_Acceptance_Payment_Adapter( $this->gateway );
-        $api_client 		= $payment_adapter->get_api_client(true);
-		$microform_api = new MicroformIntegrationApi($api_client);
-
+		// Try JWT first, fallback to HTTP Signature if sessions endpoint doesn't support JWT.
 		try {
-			// Get website URL for target origins.
-			$site_url = get_site_url();
-			$parsed_url = wp_parse_url($site_url);
-			$target_origin = $parsed_url['scheme'] . '://' . $parsed_url['host'];
-			if (isset($parsed_url['port'])) {
-				$target_origin .= ':' . $parsed_url['port'];
+            $api_client = $payment_adapter->get_api_client();
+        } catch ( \Exception $e ) {
+            $this->gateway->add_logs_data( array( 'Request MLE Configuration Error' => $e->getMessage() ), false, $log_header, true );
+            return $response;
+        }
+		$capture_context_api     = new UnifiedCheckoutV1CaptureContextApi( $api_client );
+		$capture_request         = null;
+		try {
+			$request         = $key_generation_request->get_tms_token_uc_request( $payment_instrument_id, $is_echeck );
+			$capture_request = new GenerateUnifiedCheckoutV1CaptureContextRequest( $request );
+			$log_data        = \Pymt_Vas\Dependencies\CyberSource\ObjectSerializer::sanitizeForSerialization( $capture_request );
+			$this->gateway->add_logs_data( $log_data, true, $log_header );
+			$response = $capture_context_api->generateUnifiedCheckoutV1CaptureContext( $capture_request );
+			$response_body_raw = $response[ VISA_ACCEPTANCE_VAL_ZERO ];
+			// Only log raw response if response MLE is disabled.
+			$settings = $this->gateway->get_config_settings();
+			$enable_response_mle = isset( $settings['enable_response_mle'] ) && ( VISA_ACCEPTANCE_YES === $settings['enable_response_mle'] );
+			if ( ! $enable_response_mle ) {
+				$this->gateway->add_logs_service_response(
+					$response_body_raw,
+					$response[ VISA_ACCEPTANCE_VAL_TWO ][ VISA_ACCEPTANCE_V_C_CORRELATION_ID ] ?? VISA_ACCEPTANCE_STRING_EMPTY,
+					true,
+					$log_header
+				);
 			}
 			
-			// Get allowed card networks from settings.
-			$allowed_card_networks = array('VISA', 'MASTERCARD', 'AMEX'); // Default.
-			if (!empty($settings['card_types']) && is_array($settings['card_types'])) {
-				$allowed_card_networks = array_map('strtoupper', $settings['card_types']);
+			// Decrypt MLE response if needed.
+			$response_body = $this->decrypt_mle_response( $response_body_raw, $payment_adapter, $log_header );
+			
+			// Log decrypted response if it was encrypted.
+			if ( $response_body !== $response_body_raw ) {
+				$this->gateway->add_logs_service_response( 
+					$response_body, 
+					$response[ VISA_ACCEPTANCE_VAL_TWO ][ VISA_ACCEPTANCE_V_C_CORRELATION_ID ] ?? VISA_ACCEPTANCE_STRING_EMPTY, 
+					true, 
+					$log_header 
+				);
 			}
 			
-			// Create request with Flex parameters.
-			$request_data = array(
-				'clientVersion' => 'v2',
-				'targetOrigins' => array($target_origin),
-				'allowedCardNetworks' => $allowed_card_networks,
-				'allowedPaymentTypes' => array(VISA_ACCEPTANCE_PAYMENT_TYPE_CARD)
+			return array(
+				'http_code' => $response[ VISA_ACCEPTANCE_VAL_ONE ],
+				'body'      => $response_body,
 			);
-			
-			$capture_request = new GenerateCaptureContextRequest($request_data);
-			
-			if (!empty($capture_request)) {
-				$this->gateway->add_logs_data($capture_request, true, $log_header);
-				
-				// Make the API call.
-				$response = $microform_api->generateCaptureContext($capture_request);
-				
-				// Extract correlation ID safely from headers.
-				$correlation_id = VISA_ACCEPTANCE_NOT_APPLICABLE;
-				if (isset($response[VISA_ACCEPTANCE_VAL_TWO]) && is_array($response[VISA_ACCEPTANCE_VAL_TWO]) && isset($response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID])) {
-					$correlation_id = $response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID];
-					if (is_array($correlation_id)) {
-						$correlation_id = $correlation_id[VISA_ACCEPTANCE_VAL_ZERO] ?? VISA_ACCEPTANCE_NOT_APPLICABLE;
-					}
-				}
-				
-				$this->gateway->add_logs_service_response($response[VISA_ACCEPTANCE_VAL_ZERO], $correlation_id, true, $log_header
-				);
-				
-				$return_array = array(
-					'http_code' => $response[VISA_ACCEPTANCE_VAL_ONE],
-					'body' => $response[VISA_ACCEPTANCE_VAL_ZERO]
-				);
-				
-				return $return_array;
-			}
-		} catch (\Pymt_Vas\Dependencies\CyberSource\ApiException $e) {
+		} catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
 			$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, $log_header );
+		} catch ( \Pymt_Vas\Dependencies\CyberSource\Authentication\Util\MLEException $e ) {
+			// Catch MLE-related errors (invalid credentials, certificate issues).
+			$this->gateway->add_logs_data( 
+				array( 'MLE Exception' => $e->getMessage() ), 
+				false, 
+				$log_header, 
+				true 
+			);
+		} catch ( \Exception $e ) {
+			// Catch any other exceptions.
+			$this->gateway->add_logs_data( 
+				array( 'Exception' => $e->getMessage() ), 
+				false, 
+				$log_header, 
+				true 
+			);
 		}
 	}
 }

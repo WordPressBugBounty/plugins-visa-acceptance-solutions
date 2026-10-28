@@ -48,7 +48,7 @@ class Upv1capturecontextsDataOrderInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['amountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationAmountDetails', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationBillTo', 'shipTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationShipTo', 'lineItems' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItems', 'invoiceDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationInvoiceDetails'];
+    protected static $swaggerTypes = ['amountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationAmountDetails', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationBillTo', 'shipTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationShipTo', 'lineItems' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItems[]', 'invoiceDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationInvoiceDetails'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -182,7 +182,7 @@ class Upv1capturecontextsDataOrderInformation implements ArrayAccess
     }
     /**
      * Gets lineItems
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItems
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItems[]
      */
     public function getLineItems()
     {
@@ -190,7 +190,7 @@ class Upv1capturecontextsDataOrderInformation implements ArrayAccess
     }
     /**
      * Sets lineItems
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItems $lineItems
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItems[] $lineItems
      * @return $this
      */
     public function setLineItems($lineItems)

@@ -54,6 +54,11 @@ class Visa_Acceptance_Refund_Response extends Visa_Acceptance_Response {
 	 * @return boolean
 	 */
 	public function is_transaction_approved( $payment_response, $status ) {
-		return ( VISA_ACCEPTANCE_TWO_ZERO_ONE === (int) $payment_response['http_code'] && strtoupper( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PENDING ) === $status ) ? true : false;
-	}
+        // Card refunds return 'PENDING'; PayPal/APM refunds return 'REFUNDED'. Both are success.
+        $approved_statuses = array(
+            strtoupper( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PENDING ),
+            strtoupper( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_REFUNDED ),
+        );
+        return ( VISA_ACCEPTANCE_TWO_ZERO_ONE === (int) $payment_response['http_code'] && in_array( $status, $approved_statuses, true ) );
+    }
 }

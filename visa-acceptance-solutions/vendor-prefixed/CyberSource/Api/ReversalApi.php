@@ -133,11 +133,11 @@ class ReversalApi
         $queryParams = [];
         $headerParams = [];
         $formParams = [];
-        $_header_accept = $this->apiClient->selectHeaderAccept(['application/hal+json;charset=utf-8']);
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/hal+json']);
         if (!is_null($_header_accept)) {
             $headerParams['Accept'] = $_header_accept;
         }
-        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json;charset=utf-8']);
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json', 'application/json; charset=utf-8']);
         // path params
         if ($id !== null) {
             $resourcePath = str_replace("{" . "id" . "}", $this->apiClient->getSerializer()->toPathValue($id), $resourcePath);
@@ -244,11 +244,11 @@ class ReversalApi
         $queryParams = [];
         $headerParams = [];
         $formParams = [];
-        $_header_accept = $this->apiClient->selectHeaderAccept(['application/hal+json;charset=utf-8']);
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/hal+json']);
         if (!is_null($_header_accept)) {
             $headerParams['Accept'] = $_header_accept;
         }
-        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json;charset=utf-8']);
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json', 'application/json; charset=utf-8']);
         // body params
         $_tempBody = null;
         if (isset($mitReversalRequest)) {

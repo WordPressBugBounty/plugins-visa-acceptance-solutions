@@ -49,12 +49,12 @@ class Invoicingv2invoicesidInvoiceInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['description' => 'string', 'dueDate' => '\DateTime', 'expirationDate' => '\DateTime', 'sendImmediately' => 'bool', 'allowPartialPayments' => 'bool', 'deliveryMode' => 'string'];
+    protected static $swaggerTypes = ['transactionReferenceNumber' => 'string', 'description' => 'string', 'dueDate' => '\DateTime', 'expirationDate' => '\DateTime', 'sendImmediately' => 'bool', 'allowPartialPayments' => 'bool', 'deliveryMode' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['description' => null, 'dueDate' => 'date', 'expirationDate' => 'date', 'sendImmediately' => null, 'allowPartialPayments' => null, 'deliveryMode' => null];
+    protected static $swaggerFormats = ['transactionReferenceNumber' => null, 'description' => null, 'dueDate' => 'date', 'expirationDate' => 'date', 'sendImmediately' => null, 'allowPartialPayments' => null, 'deliveryMode' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -67,17 +67,17 @@ class Invoicingv2invoicesidInvoiceInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['description' => 'description', 'dueDate' => 'dueDate', 'expirationDate' => 'expirationDate', 'sendImmediately' => 'sendImmediately', 'allowPartialPayments' => 'allowPartialPayments', 'deliveryMode' => 'deliveryMode'];
+    protected static $attributeMap = ['transactionReferenceNumber' => 'transactionReferenceNumber', 'description' => 'description', 'dueDate' => 'dueDate', 'expirationDate' => 'expirationDate', 'sendImmediately' => 'sendImmediately', 'allowPartialPayments' => 'allowPartialPayments', 'deliveryMode' => 'deliveryMode'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['description' => 'setDescription', 'dueDate' => 'setDueDate', 'expirationDate' => 'setExpirationDate', 'sendImmediately' => 'setSendImmediately', 'allowPartialPayments' => 'setAllowPartialPayments', 'deliveryMode' => 'setDeliveryMode'];
+    protected static $setters = ['transactionReferenceNumber' => 'setTransactionReferenceNumber', 'description' => 'setDescription', 'dueDate' => 'setDueDate', 'expirationDate' => 'setExpirationDate', 'sendImmediately' => 'setSendImmediately', 'allowPartialPayments' => 'setAllowPartialPayments', 'deliveryMode' => 'setDeliveryMode'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['description' => 'getDescription', 'dueDate' => 'getDueDate', 'expirationDate' => 'getExpirationDate', 'sendImmediately' => 'getSendImmediately', 'allowPartialPayments' => 'getAllowPartialPayments', 'deliveryMode' => 'getDeliveryMode'];
+    protected static $getters = ['transactionReferenceNumber' => 'getTransactionReferenceNumber', 'description' => 'getDescription', 'dueDate' => 'getDueDate', 'expirationDate' => 'getExpirationDate', 'sendImmediately' => 'getSendImmediately', 'allowPartialPayments' => 'getAllowPartialPayments', 'deliveryMode' => 'getDeliveryMode'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -101,6 +101,7 @@ class Invoicingv2invoicesidInvoiceInformation implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
+        $this->container['transactionReferenceNumber'] = isset($data['transactionReferenceNumber']) ? $data['transactionReferenceNumber'] : null;
         $this->container['description'] = isset($data['description']) ? $data['description'] : null;
         $this->container['dueDate'] = isset($data['dueDate']) ? $data['dueDate'] : null;
         $this->container['expirationDate'] = isset($data['expirationDate']) ? $data['expirationDate'] : null;
@@ -141,6 +142,24 @@ class Invoicingv2invoicesidInvoiceInformation implements ArrayAccess
         return true;
     }
     /**
+     * Gets transactionReferenceNumber
+     * @return string
+     */
+    public function getTransactionReferenceNumber()
+    {
+        return $this->container['transactionReferenceNumber'];
+    }
+    /**
+     * Sets transactionReferenceNumber
+     * @param string $transactionReferenceNumber The transaction reference number (TRN) is a identifier assigned to each payment transaction that allows merchants, customers, and payment processors to track and reference specific transactions throughout their lifecycle.  When provided, this value is passed to the payment processor as the reconciliation ID for the payment. For invoices this is typically the invoice number, and for purchase or donation links it is typically the link identifier.  Only letters and numbers are allowed; spaces and other special characters are not permitted.
+     * @return $this
+     */
+    public function setTransactionReferenceNumber($transactionReferenceNumber)
+    {
+        $this->container['transactionReferenceNumber'] = $transactionReferenceNumber;
+        return $this;
+    }
+    /**
      * Gets description
      * @return string
      */
@@ -168,7 +187,7 @@ class Invoicingv2invoicesidInvoiceInformation implements ArrayAccess
     }
     /**
      * Sets dueDate
-     * @param \DateTime $dueDate The invoice due date. This field is required for creating an invoice. Format: `YYYY-MM-DD`, where `YYYY` = year, `MM` = month, and `DD` = day
+     * @param \DateTime $dueDate The invoice due date. This field is required for creating an invoice. Format: `YYYY-MM-DD`, where `YYYY` = year, `MM` = month, and `DD` = day.  The invoice link automatically expires 12 months after the due date.
      * @return $this
      */
     public function setDueDate($dueDate)
@@ -186,7 +205,7 @@ class Invoicingv2invoicesidInvoiceInformation implements ArrayAccess
     }
     /**
      * Sets expirationDate
-     * @param \DateTime $expirationDate Define an expiration date for the link.  Format: `YYYY-MM-DD`, where `YYYY` = year, `MM` = month, and `DD` = day
+     * @param \DateTime $expirationDate Define an expiration date for the link.  The date must be today or in the future.  Format: `YYYY-MM-DD`, where `YYYY` = year, `MM` = month, and `DD` = day.  The invoice link automatically expires 12 months after the due date.
      * @return $this
      */
     public function setExpirationDate($expirationDate)

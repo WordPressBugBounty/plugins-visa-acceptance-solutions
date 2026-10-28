@@ -187,7 +187,7 @@ abstract class Engine implements \JsonSerializable
      */
     public static function setModExpEngine($engine)
     {
-        $fqengine = '\phpseclib3\Math\BigInteger\Engines\\' . static::ENGINE_DIR . '\\' . $engine;
+        $fqengine = '\Pymt_Vas\Dependencies\phpseclib3\Math\BigInteger\Engines\\' . static::ENGINE_DIR . '\\' . $engine;
         if (!class_exists($fqengine) || !method_exists($fqengine, 'isValidEngine')) {
             throw new \InvalidArgumentException("{$engine} is not a valid engine");
         }

@@ -78,15 +78,23 @@ abstract class Visa_Acceptance_Request {
 			'status'             					=> null,
 			'amount'            					=> null,
 			'currency'          					=> null,
+			'credit_auth_code'   					=> null,
 			'credit_auth_response' 					=> null,
 			'credit_auth_network_transaction_id' 	=> null,
 			'transaction_id'    					=> null,
+			'request_id'                            => null,
+			'processor_transaction_id'              => null,
+			'merchant_ref_code'                     => null,
 			'reason'            					=> null,
 			'message'           					=> null,
 			'cardholderMessage' 					=> null,
 			'httpcode'          					=> null,
+			'reconciliation_id'                     => null,
+			'submit_time'                           => null,
+			'auth_method'                            => null,
 		);
-		$json           = json_decode( $response );
+		$response_str   = is_string( $response ) ? $response : (string) $response;
+        $json           = json_decode( $response_str );
 		//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		if ( ! ( empty( $json->status ) ) ) {
 			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
@@ -96,6 +104,22 @@ abstract class Visa_Acceptance_Request {
 		if ( ! ( empty( $json->id ) ) ) {
 			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			$response_array['transaction_id'] = $json->id;
+			$response_array['request_id']     = $json->id;
+		}
+		//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		if ( ! ( empty( $json->clientReferenceInformation->code ) ) ) {
+			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			$response_array['merchant_ref_code'] = $json->clientReferenceInformation->code;
+		}
+		//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+        if ( ! ( empty( $json->reconciliationId ) ) ) {
+            //phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+            $response_array['reconciliation_id'] = $json->reconciliationId;
+        }
+		//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		if ( ! ( empty( $json->submitTimeUtc ) ) ) {
+			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			$response_array['submit_time'] = $json->submitTimeUtc;
 		}
 		// Refund response fields added for online refunds.
 		//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
@@ -111,6 +135,10 @@ abstract class Visa_Acceptance_Request {
 			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			if ( ! empty( $json->processorInformation->networkTransactionId ) ) {
 				$response_array['credit_auth_network_transaction_id'] = $json->processorInformation->networkTransactionId; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			}
+			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			if ( ! empty( $json->processorInformation->transactionId ) ) {
+				$response_array['processor_transaction_id'] = $json->processorInformation->transactionId; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			}
 		}
 		//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
@@ -130,6 +158,18 @@ abstract class Visa_Acceptance_Request {
 		if ( ! ( empty( $json->consumerAuthenticationInformation->cardholderMessage ) ) ) {
 			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			$response_array['cardholderMessage'] = $json->consumerAuthenticationInformation->cardholderMessage;
+		}
+		// Build auth method label (ECI + authentication indicator) when 3DS/consumer auth data is present.
+		//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		if ( ! empty( $json->consumerAuthenticationInformation->eci ) ) {
+			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			$auth_method = 'ECI ' . $json->consumerAuthenticationInformation->eci;
+			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			if ( ! empty( $json->consumerAuthenticationInformation->authenticationResult ) ) {
+				//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+				$auth_method .= ' (' . $json->consumerAuthenticationInformation->authenticationResult . ')';
+			}
+			$response_array['auth_method'] = $auth_method;
 		}
 		if ( VISA_ACCEPTANCE_TWO_ZERO_ONE === (int) $http_code ) {
 			if ( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED === $service || VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED_RISK_DECLINED === $service || VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED_PENDING_REVIEW === $service || VISA_ACCEPTANCE_API_RESPONSE_ECHECK_STATUS === $service || VISA_ACCEPTANCE_API_RESPONSE_ECHECK_DM_STATUS === $service || VISA_ACCEPTANCE_API_RESPONSE_STATUS_TRANSMITTED === $service ) {
@@ -176,7 +216,6 @@ abstract class Visa_Acceptance_Request {
 			//phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			$response_array['message'] = isset( $json->errorInformation->message ) ? $json->errorInformation->message : null;
 		}
-
 		return $response_array;
 	}
 
@@ -193,6 +232,10 @@ abstract class Visa_Acceptance_Request {
         $this->update_order_meta( $order, VISA_ACCEPTANCE_CAPTURE_TOTAL, $total_captured );
         $this->update_order_meta( $order, VISA_ACCEPTANCE_CHARGE_CAPTURED, VISA_ACCEPTANCE_YES );
         $this->add_order_meta( $order, VISA_ACCEPTANCE_UNDERSCORE_PAYMENT_METHOD, $order->get_payment_method() );
+        // Persist the original merchant reference code so later capture/refund/reversal calls reuse it instead of the order ID.
+        if ( ! empty( $payment_response_array['merchant_ref_code'] ) && VISA_ACCEPTANCE_STRING_EMPTY === (string) $this->get_order_meta( $order, VISA_ACCEPTANCE_MERCHANT_REF_CODE ) ) {
+            $this->add_order_meta( $order, VISA_ACCEPTANCE_MERCHANT_REF_CODE, $payment_response_array['merchant_ref_code'], true );
+        }
         // add capture transaction ID.
         if ( $payment_response_array && $payment_response_array['transaction_id'] ) {
             $this->update_order_meta( $order, VISA_ACCEPTANCE_CAPTURE_TRANSACTION_ID, $payment_response_array['transaction_id'] );
@@ -220,8 +263,10 @@ abstract class Visa_Acceptance_Request {
 	public function add_transaction_data( $order, $payment_response_array ) {
         if ( $payment_response_array['transaction_id'] ) {
             $this->update_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_ID, $payment_response_array['transaction_id'] );
-            $this->add_order_meta( $order, VISA_ACCEPTANCE_UNDERSCORE_PAYMENT_METHOD, $order->get_payment_method() );
- 
+            $this->add_order_meta( $order, VISA_ACCEPTANCE_UNDERSCORE_PAYMENT_METHOD, $order->get_payment_method() );            // Persist the original merchant reference code so later capture/refund/reversal calls reuse it instead of the order ID.
+            if ( ! empty( $payment_response_array['merchant_ref_code'] ) && VISA_ACCEPTANCE_STRING_EMPTY === (string) $this->get_order_meta( $order, VISA_ACCEPTANCE_MERCHANT_REF_CODE ) ) {
+                $this->add_order_meta( $order, VISA_ACCEPTANCE_MERCHANT_REF_CODE, $payment_response_array['merchant_ref_code'], true );
+            } 
             $order->set_transaction_id( $payment_response_array['transaction_id'] );
             // Add credit authorization fields.
             if ( ! empty( $payment_response_array['credit_auth_code'] ) ) {
@@ -258,11 +303,13 @@ abstract class Visa_Acceptance_Request {
 			$this->add_order_meta( $order, VISA_ACCEPTANCE_UNDERSCORE_PAYMENT_METHOD, $order->get_payment_method() );
 			$this->update_order_meta( $order, VISA_ACCEPTANCE_UNDERSCORE_PAYMENT_STATUS, $payment_response_array['status'] );
 
-			// Added Data for Payment Acceptance Service.
-			$settings = $this->gateway->settings;
+			// Added Data for Payment Acceptance Service (deprecated: auth vs charge now determined from response).
 			$order->set_transaction_id( $payment_response_array['transaction_id'] );
-			$this->update_order_meta( $order, VISA_ACCEPTANCE_PAYMENT_ACCEPTANCE_SERVICE, $settings['transaction_type'] );
 
+		}
+		// Persist the original merchant reference code so later capture/refund/reversal calls reuse it instead of the order ID.
+		if ( ! empty( $payment_response_array['merchant_ref_code'] ) && VISA_ACCEPTANCE_STRING_EMPTY === (string) $this->get_order_meta( $order, VISA_ACCEPTANCE_MERCHANT_REF_CODE ) ) {
+			$this->add_order_meta( $order, VISA_ACCEPTANCE_MERCHANT_REF_CODE, $payment_response_array['merchant_ref_code'], true );
 		}
 		$amount = $payment_response_array['amount'] ? $payment_response_array['amount'] : $order->get_total();
 		if ( $amount ) {
@@ -325,10 +372,9 @@ abstract class Visa_Acceptance_Request {
 	 * Gets cybersource billing information.
 	 *
 	 * @param mixed $order Order object.
-	 * @param bool  $payer_auth_transaction Whether it's a payer auth transaction.
 	 * @return array
 	 */
-	public function get_cybersource_billing_information( $order, $payer_auth_transaction = false ) {
+	public function get_cybersource_billing_information( $order ) {
 		$country = $order->get_billing_country();
 		$state   = $order->get_billing_state();
 
@@ -343,7 +389,7 @@ abstract class Visa_Acceptance_Request {
 			'phoneNumber' => $order->get_billing_phone(),
 		);
 
-		if ( ! $payer_auth_transaction || in_array( $country, array( 'US', 'CA', 'CN' ), true ) ) {
+		if ( in_array( $country, array( 'US', 'CA', 'CN' ), true ) ) {
 			$bill_to['administrativeArea'] = $state;
 		}
 
@@ -370,16 +416,17 @@ abstract class Visa_Acceptance_Request {
 				'phoneNumber'        => $order_billing['billing']['phone'],
 				'email'              => $order_billing['billing']['email'],
 			);
+			// Filter out empty values to avoid sending invalid data.
+			$bill_to_information = array_filter( $bill_to_information, function( $v ) { return ! empty( $v ); } );
 			return $bill_to_information;
 	}
 
 	/**
 	 * Gets cybersource shipping information.
 	 * @param mixed $order  Order.
-	 * @param bool  $payer_auth_transaction whether it's a payer auth transaction.
 	 * @return array
 	 */
-	public function get_cybersource_shipping_information( $order, $payer_auth_transaction = false ) {
+	public function get_cybersource_shipping_information( $order ) {
 		$country = $order->get_shipping_country();
 		$state   = $order->get_shipping_state();
 
@@ -395,7 +442,7 @@ abstract class Visa_Acceptance_Request {
 			'email'       => $order->get_billing_email(),
 		);
 
-		if ( ! $payer_auth_transaction || in_array( $country, array( 'US', 'CA', 'CN' ), true ) ) {
+		if ( in_array( $country, array( 'US', 'CA', 'CN' ), true ) ) {
 			$ship_to['administrativeArea'] = $state;
 		}
 
@@ -710,9 +757,7 @@ abstract class Visa_Acceptance_Request {
 	}
 
 	/**
-	 * Truncates a given $text after a given $length if string is longer than
-	 * $length. The last characters will be replaced with the $omission string
-	 * for a total length not exceeding $length
+	 * Truncates a string to a specified length, taking into account multibyte characters if the mbstring extension is available.
 	 *
 	 * @param string $text text to truncate.
 	 * @param int    $length total desired length of string, including omission.
@@ -749,10 +794,7 @@ abstract class Visa_Acceptance_Request {
 	}
 
 	/**
-	 * Returns a string with all non-ASCII characters removed. This is useful
-	 * for any string functions that expect only ASCII chars and can't
-	 * safely handle UTF-8. Note this only allows ASCII chars in the range
-	 * 33-126 (newlines/carriage returns are stripped)
+	 * Converts a string to ASCII by stripping out low and high ASCII characters.
 	 *
 	 * @param string $text string to make ASCII.
 	 * @return string
@@ -787,5 +829,81 @@ abstract class Visa_Acceptance_Request {
 	 */
 	public function get_echeck_bank_transfer_options(): array {
 		return array( 'bankTransferOptions' => array( 'secCode' => VISA_ACCEPTANCE_ECHECK_SEC_CODE_WEB ) );
+	}
+
+	/**
+	 * Gets the client IP address from the server variables.
+	 *
+	 * @return string Client IP address or empty string if not found.
+	 */
+	protected function get_client_ip_address() {
+		$ip_keys = array(
+			'HTTP_CLIENT_IP',
+			'HTTP_X_FORWARDED_FOR',
+			'HTTP_X_FORWARDED',
+			'HTTP_X_CLUSTER_CLIENT_IP',
+			'HTTP_FORWARDED_FOR',
+			'HTTP_FORWARDED',
+			'REMOTE_ADDR',
+		);
+
+		foreach ( $ip_keys as $key ) {
+			if ( array_key_exists( $key, $_SERVER ) === true ) {
+				$ip = sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) );
+				if ( ! empty( $ip ) ) {
+					// Handle comma-separated IPs (X-Forwarded-For can contain multiple IPs).
+					if ( strpos( $ip, ',' ) !== false ) {
+						$ip = trim( explode( ',', $ip )[VISA_ACCEPTANCE_VAL_ZERO] );
+					}
+					
+					// Validate IP address.
+					if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
+						return $ip;
+					}
+				}
+			}
+		}
+
+		// Fallback to REMOTE_ADDR even if it's a private IP.
+		return isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY;
+	}
+
+	/**
+	 * Decrypt MLE encrypted response.
+	 *
+	 * @param string $response_body The response body from API.
+	 * @param Visa_Acceptance_Payment_Adapter $payment_adapter Payment adapter instance.
+	 * @param string $log_header Log header for debugging.
+	 * @return string Decrypted response or original if not encrypted.
+	 */
+	protected function decrypt_mle_response( $response_body, $payment_adapter, $log_header ) {
+		// Check if response is encrypted.
+		$decoded = is_string( $response_body ) ? json_decode( $response_body, true ) : null;
+		
+		if ( ! is_array( $decoded ) || ! isset( $decoded['encryptedResponse'] ) ) {
+			return $response_body;
+		}
+
+		try {
+			// Get merchant configuration with Response MLE settings.
+			$merchant_config = $payment_adapter->get_merchant_configuration( false, null );
+			
+			// Decrypt using MLE Utility.
+			$decrypted = \Pymt_Vas\Dependencies\CyberSource\Authentication\Util\MLEUtility::decryptMleResponsePayload(
+				$merchant_config[VISA_ACCEPTANCE_VAL_ONE],
+				$response_body
+			);
+			return $decrypted;
+		} catch ( \Exception $e ) {
+			$this->gateway->add_logs_data( 
+				array( 
+					'Response MLE Decryption' => 'FAILED',
+					'Error Message' => $e->getMessage()
+				), 
+				true, 
+				$log_header 
+			);
+			return $response_body;
+		}
 	}
 }

@@ -48,12 +48,12 @@ class MitReversalRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsClientReferenceInformation', 'reversalInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsReversalInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsProcessingInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsOrderInformation', 'pointOfSaleInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsPointOfSaleInformation', 'processorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2reversalsProcessorInformation'];
+    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsClientReferenceInformation', 'reversalInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsReversalInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsProcessingInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsOrderInformation', 'pointOfSaleInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsPointOfSaleInformation', 'deviceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsDeviceInformation', 'processorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2reversalsProcessorInformation'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['clientReferenceInformation' => null, 'reversalInformation' => null, 'processingInformation' => null, 'orderInformation' => null, 'pointOfSaleInformation' => null, 'processorInformation' => null];
+    protected static $swaggerFormats = ['clientReferenceInformation' => null, 'reversalInformation' => null, 'processingInformation' => null, 'orderInformation' => null, 'pointOfSaleInformation' => null, 'deviceInformation' => null, 'processorInformation' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class MitReversalRequest implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['clientReferenceInformation' => 'clientReferenceInformation', 'reversalInformation' => 'reversalInformation', 'processingInformation' => 'processingInformation', 'orderInformation' => 'orderInformation', 'pointOfSaleInformation' => 'pointOfSaleInformation', 'processorInformation' => 'processorInformation'];
+    protected static $attributeMap = ['clientReferenceInformation' => 'clientReferenceInformation', 'reversalInformation' => 'reversalInformation', 'processingInformation' => 'processingInformation', 'orderInformation' => 'orderInformation', 'pointOfSaleInformation' => 'pointOfSaleInformation', 'deviceInformation' => 'deviceInformation', 'processorInformation' => 'processorInformation'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['clientReferenceInformation' => 'setClientReferenceInformation', 'reversalInformation' => 'setReversalInformation', 'processingInformation' => 'setProcessingInformation', 'orderInformation' => 'setOrderInformation', 'pointOfSaleInformation' => 'setPointOfSaleInformation', 'processorInformation' => 'setProcessorInformation'];
+    protected static $setters = ['clientReferenceInformation' => 'setClientReferenceInformation', 'reversalInformation' => 'setReversalInformation', 'processingInformation' => 'setProcessingInformation', 'orderInformation' => 'setOrderInformation', 'pointOfSaleInformation' => 'setPointOfSaleInformation', 'deviceInformation' => 'setDeviceInformation', 'processorInformation' => 'setProcessorInformation'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['clientReferenceInformation' => 'getClientReferenceInformation', 'reversalInformation' => 'getReversalInformation', 'processingInformation' => 'getProcessingInformation', 'orderInformation' => 'getOrderInformation', 'pointOfSaleInformation' => 'getPointOfSaleInformation', 'processorInformation' => 'getProcessorInformation'];
+    protected static $getters = ['clientReferenceInformation' => 'getClientReferenceInformation', 'reversalInformation' => 'getReversalInformation', 'processingInformation' => 'getProcessingInformation', 'orderInformation' => 'getOrderInformation', 'pointOfSaleInformation' => 'getPointOfSaleInformation', 'deviceInformation' => 'getDeviceInformation', 'processorInformation' => 'getProcessorInformation'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -105,6 +105,7 @@ class MitReversalRequest implements ArrayAccess
         $this->container['processingInformation'] = isset($data['processingInformation']) ? $data['processingInformation'] : null;
         $this->container['orderInformation'] = isset($data['orderInformation']) ? $data['orderInformation'] : null;
         $this->container['pointOfSaleInformation'] = isset($data['pointOfSaleInformation']) ? $data['pointOfSaleInformation'] : null;
+        $this->container['deviceInformation'] = isset($data['deviceInformation']) ? $data['deviceInformation'] : null;
         $this->container['processorInformation'] = isset($data['processorInformation']) ? $data['processorInformation'] : null;
     }
     /**
@@ -215,6 +216,24 @@ class MitReversalRequest implements ArrayAccess
     public function setPointOfSaleInformation($pointOfSaleInformation)
     {
         $this->container['pointOfSaleInformation'] = $pointOfSaleInformation;
+        return $this;
+    }
+    /**
+     * Gets deviceInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsDeviceInformation
+     */
+    public function getDeviceInformation()
+    {
+        return $this->container['deviceInformation'];
+    }
+    /**
+     * Sets deviceInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsDeviceInformation $deviceInformation
+     * @return $this
+     */
+    public function setDeviceInformation($deviceInformation)
+    {
+        $this->container['deviceInformation'] = $deviceInformation;
         return $this;
     }
     /**

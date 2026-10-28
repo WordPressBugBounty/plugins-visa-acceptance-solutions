@@ -48,12 +48,12 @@ class AccountValidationsRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsClientReferenceInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsProcessingInformation', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsPaymentInformation'];
+    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsClientReferenceInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsProcessingInformation', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsPaymentInformation', 'tokenInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsTokenInformation'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['clientReferenceInformation' => null, 'processingInformation' => null, 'paymentInformation' => null];
+    protected static $swaggerFormats = ['clientReferenceInformation' => null, 'processingInformation' => null, 'paymentInformation' => null, 'tokenInformation' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class AccountValidationsRequest implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['clientReferenceInformation' => 'clientReferenceInformation', 'processingInformation' => 'processingInformation', 'paymentInformation' => 'paymentInformation'];
+    protected static $attributeMap = ['clientReferenceInformation' => 'clientReferenceInformation', 'processingInformation' => 'processingInformation', 'paymentInformation' => 'paymentInformation', 'tokenInformation' => 'tokenInformation'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['clientReferenceInformation' => 'setClientReferenceInformation', 'processingInformation' => 'setProcessingInformation', 'paymentInformation' => 'setPaymentInformation'];
+    protected static $setters = ['clientReferenceInformation' => 'setClientReferenceInformation', 'processingInformation' => 'setProcessingInformation', 'paymentInformation' => 'setPaymentInformation', 'tokenInformation' => 'setTokenInformation'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['clientReferenceInformation' => 'getClientReferenceInformation', 'processingInformation' => 'getProcessingInformation', 'paymentInformation' => 'getPaymentInformation'];
+    protected static $getters = ['clientReferenceInformation' => 'getClientReferenceInformation', 'processingInformation' => 'getProcessingInformation', 'paymentInformation' => 'getPaymentInformation', 'tokenInformation' => 'getTokenInformation'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -103,6 +103,7 @@ class AccountValidationsRequest implements ArrayAccess
         $this->container['clientReferenceInformation'] = isset($data['clientReferenceInformation']) ? $data['clientReferenceInformation'] : null;
         $this->container['processingInformation'] = isset($data['processingInformation']) ? $data['processingInformation'] : null;
         $this->container['paymentInformation'] = isset($data['paymentInformation']) ? $data['paymentInformation'] : null;
+        $this->container['tokenInformation'] = isset($data['tokenInformation']) ? $data['tokenInformation'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -188,6 +189,24 @@ class AccountValidationsRequest implements ArrayAccess
     public function setPaymentInformation($paymentInformation)
     {
         $this->container['paymentInformation'] = $paymentInformation;
+        return $this;
+    }
+    /**
+     * Gets tokenInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsTokenInformation
+     */
+    public function getTokenInformation()
+    {
+        return $this->container['tokenInformation'];
+    }
+    /**
+     * Sets tokenInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsTokenInformation $tokenInformation
+     * @return $this
+     */
+    public function setTokenInformation($tokenInformation)
+    {
+        $this->container['tokenInformation'] = $tokenInformation;
         return $this;
     }
     /**

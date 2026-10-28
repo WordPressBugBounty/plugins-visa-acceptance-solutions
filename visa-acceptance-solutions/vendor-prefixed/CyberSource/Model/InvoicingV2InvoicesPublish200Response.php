@@ -48,12 +48,12 @@ class InvoicingV2InvoicesPublish200Response implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesAllGet200ResponseLinks', 'id' => 'string', 'submitTimeUtc' => 'string', 'status' => 'string', 'customerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Invoicingv2invoicesCustomerInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Invoicingv2invoicesProcessingInformation', 'invoiceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesPost201ResponseInvoiceInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesPost201ResponseOrderInformation'];
+    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesAllGet200ResponseLinks', 'id' => 'string', 'submitTimeUtc' => 'string', 'status' => 'string', 'customerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Invoicingv2invoicesCustomerInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Invoicingv2invoicesProcessingInformation', 'invoiceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesPost201ResponseInvoiceInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesPost201ResponseOrderInformation', 'merchantDefinedFieldValuesWithDefinition' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesPost201ResponseMerchantDefinedFieldValuesWithDefinition[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['links' => null, 'id' => null, 'submitTimeUtc' => null, 'status' => null, 'customerInformation' => null, 'processingInformation' => null, 'invoiceInformation' => null, 'orderInformation' => null];
+    protected static $swaggerFormats = ['links' => null, 'id' => null, 'submitTimeUtc' => null, 'status' => null, 'customerInformation' => null, 'processingInformation' => null, 'invoiceInformation' => null, 'orderInformation' => null, 'merchantDefinedFieldValuesWithDefinition' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class InvoicingV2InvoicesPublish200Response implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['links' => '_links', 'id' => 'id', 'submitTimeUtc' => 'submitTimeUtc', 'status' => 'status', 'customerInformation' => 'customerInformation', 'processingInformation' => 'processingInformation', 'invoiceInformation' => 'invoiceInformation', 'orderInformation' => 'orderInformation'];
+    protected static $attributeMap = ['links' => '_links', 'id' => 'id', 'submitTimeUtc' => 'submitTimeUtc', 'status' => 'status', 'customerInformation' => 'customerInformation', 'processingInformation' => 'processingInformation', 'invoiceInformation' => 'invoiceInformation', 'orderInformation' => 'orderInformation', 'merchantDefinedFieldValuesWithDefinition' => 'merchantDefinedFieldValuesWithDefinition'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['links' => 'setLinks', 'id' => 'setId', 'submitTimeUtc' => 'setSubmitTimeUtc', 'status' => 'setStatus', 'customerInformation' => 'setCustomerInformation', 'processingInformation' => 'setProcessingInformation', 'invoiceInformation' => 'setInvoiceInformation', 'orderInformation' => 'setOrderInformation'];
+    protected static $setters = ['links' => 'setLinks', 'id' => 'setId', 'submitTimeUtc' => 'setSubmitTimeUtc', 'status' => 'setStatus', 'customerInformation' => 'setCustomerInformation', 'processingInformation' => 'setProcessingInformation', 'invoiceInformation' => 'setInvoiceInformation', 'orderInformation' => 'setOrderInformation', 'merchantDefinedFieldValuesWithDefinition' => 'setMerchantDefinedFieldValuesWithDefinition'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['links' => 'getLinks', 'id' => 'getId', 'submitTimeUtc' => 'getSubmitTimeUtc', 'status' => 'getStatus', 'customerInformation' => 'getCustomerInformation', 'processingInformation' => 'getProcessingInformation', 'invoiceInformation' => 'getInvoiceInformation', 'orderInformation' => 'getOrderInformation'];
+    protected static $getters = ['links' => 'getLinks', 'id' => 'getId', 'submitTimeUtc' => 'getSubmitTimeUtc', 'status' => 'getStatus', 'customerInformation' => 'getCustomerInformation', 'processingInformation' => 'getProcessingInformation', 'invoiceInformation' => 'getInvoiceInformation', 'orderInformation' => 'getOrderInformation', 'merchantDefinedFieldValuesWithDefinition' => 'getMerchantDefinedFieldValuesWithDefinition'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -108,6 +108,7 @@ class InvoicingV2InvoicesPublish200Response implements ArrayAccess
         $this->container['processingInformation'] = isset($data['processingInformation']) ? $data['processingInformation'] : null;
         $this->container['invoiceInformation'] = isset($data['invoiceInformation']) ? $data['invoiceInformation'] : null;
         $this->container['orderInformation'] = isset($data['orderInformation']) ? $data['orderInformation'] : null;
+        $this->container['merchantDefinedFieldValuesWithDefinition'] = isset($data['merchantDefinedFieldValuesWithDefinition']) ? $data['merchantDefinedFieldValuesWithDefinition'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -271,6 +272,24 @@ class InvoicingV2InvoicesPublish200Response implements ArrayAccess
     public function setOrderInformation($orderInformation)
     {
         $this->container['orderInformation'] = $orderInformation;
+        return $this;
+    }
+    /**
+     * Gets merchantDefinedFieldValuesWithDefinition
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesPost201ResponseMerchantDefinedFieldValuesWithDefinition[]
+     */
+    public function getMerchantDefinedFieldValuesWithDefinition()
+    {
+        return $this->container['merchantDefinedFieldValuesWithDefinition'];
+    }
+    /**
+     * Sets merchantDefinedFieldValuesWithDefinition
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesPost201ResponseMerchantDefinedFieldValuesWithDefinition[] $merchantDefinedFieldValuesWithDefinition
+     * @return $this
+     */
+    public function setMerchantDefinedFieldValuesWithDefinition($merchantDefinedFieldValuesWithDefinition)
+    {
+        $this->container['merchantDefinedFieldValuesWithDefinition'] = $merchantDefinedFieldValuesWithDefinition;
         return $this;
     }
     /**

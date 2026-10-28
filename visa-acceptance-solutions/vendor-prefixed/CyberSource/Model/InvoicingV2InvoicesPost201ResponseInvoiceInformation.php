@@ -49,12 +49,12 @@ class InvoicingV2InvoicesPost201ResponseInvoiceInformation implements ArrayAcces
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['invoiceNumber' => 'string', 'description' => 'string', 'dueDate' => '\DateTime', 'expirationDate' => '\DateTime', 'allowPartialPayments' => 'bool', 'paymentLink' => 'string', 'deliveryMode' => 'string', 'customLabels' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesPost201ResponseInvoiceInformationCustomLabels[]'];
+    protected static $swaggerTypes = ['invoiceNumber' => 'string', 'transactionReferenceNumber' => 'string', 'description' => 'string', 'dueDate' => '\DateTime', 'expirationDate' => '\DateTime', 'allowPartialPayments' => 'bool', 'paymentLink' => 'string', 'deliveryMode' => 'string', 'customLabels' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesPost201ResponseInvoiceInformationCustomLabels[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['invoiceNumber' => null, 'description' => null, 'dueDate' => 'date', 'expirationDate' => 'date', 'allowPartialPayments' => null, 'paymentLink' => null, 'deliveryMode' => null, 'customLabels' => null];
+    protected static $swaggerFormats = ['invoiceNumber' => null, 'transactionReferenceNumber' => null, 'description' => null, 'dueDate' => 'date', 'expirationDate' => 'date', 'allowPartialPayments' => null, 'paymentLink' => null, 'deliveryMode' => null, 'customLabels' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -67,17 +67,17 @@ class InvoicingV2InvoicesPost201ResponseInvoiceInformation implements ArrayAcces
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['invoiceNumber' => 'invoiceNumber', 'description' => 'description', 'dueDate' => 'dueDate', 'expirationDate' => 'expirationDate', 'allowPartialPayments' => 'allowPartialPayments', 'paymentLink' => 'paymentLink', 'deliveryMode' => 'deliveryMode', 'customLabels' => 'customLabels'];
+    protected static $attributeMap = ['invoiceNumber' => 'invoiceNumber', 'transactionReferenceNumber' => 'transactionReferenceNumber', 'description' => 'description', 'dueDate' => 'dueDate', 'expirationDate' => 'expirationDate', 'allowPartialPayments' => 'allowPartialPayments', 'paymentLink' => 'paymentLink', 'deliveryMode' => 'deliveryMode', 'customLabels' => 'customLabels'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['invoiceNumber' => 'setInvoiceNumber', 'description' => 'setDescription', 'dueDate' => 'setDueDate', 'expirationDate' => 'setExpirationDate', 'allowPartialPayments' => 'setAllowPartialPayments', 'paymentLink' => 'setPaymentLink', 'deliveryMode' => 'setDeliveryMode', 'customLabels' => 'setCustomLabels'];
+    protected static $setters = ['invoiceNumber' => 'setInvoiceNumber', 'transactionReferenceNumber' => 'setTransactionReferenceNumber', 'description' => 'setDescription', 'dueDate' => 'setDueDate', 'expirationDate' => 'setExpirationDate', 'allowPartialPayments' => 'setAllowPartialPayments', 'paymentLink' => 'setPaymentLink', 'deliveryMode' => 'setDeliveryMode', 'customLabels' => 'setCustomLabels'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['invoiceNumber' => 'getInvoiceNumber', 'description' => 'getDescription', 'dueDate' => 'getDueDate', 'expirationDate' => 'getExpirationDate', 'allowPartialPayments' => 'getAllowPartialPayments', 'paymentLink' => 'getPaymentLink', 'deliveryMode' => 'getDeliveryMode', 'customLabels' => 'getCustomLabels'];
+    protected static $getters = ['invoiceNumber' => 'getInvoiceNumber', 'transactionReferenceNumber' => 'getTransactionReferenceNumber', 'description' => 'getDescription', 'dueDate' => 'getDueDate', 'expirationDate' => 'getExpirationDate', 'allowPartialPayments' => 'getAllowPartialPayments', 'paymentLink' => 'getPaymentLink', 'deliveryMode' => 'getDeliveryMode', 'customLabels' => 'getCustomLabels'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -102,6 +102,7 @@ class InvoicingV2InvoicesPost201ResponseInvoiceInformation implements ArrayAcces
     public function __construct(array $data = null)
     {
         $this->container['invoiceNumber'] = isset($data['invoiceNumber']) ? $data['invoiceNumber'] : null;
+        $this->container['transactionReferenceNumber'] = isset($data['transactionReferenceNumber']) ? $data['transactionReferenceNumber'] : null;
         $this->container['description'] = isset($data['description']) ? $data['description'] : null;
         $this->container['dueDate'] = isset($data['dueDate']) ? $data['dueDate'] : null;
         $this->container['expirationDate'] = isset($data['expirationDate']) ? $data['expirationDate'] : null;
@@ -149,6 +150,24 @@ class InvoicingV2InvoicesPost201ResponseInvoiceInformation implements ArrayAcces
         return $this;
     }
     /**
+     * Gets transactionReferenceNumber
+     * @return string
+     */
+    public function getTransactionReferenceNumber()
+    {
+        return $this->container['transactionReferenceNumber'];
+    }
+    /**
+     * Sets transactionReferenceNumber
+     * @param string $transactionReferenceNumber The transaction reference number (TRN) is a identifier assigned to each payment transaction that allows merchants, customers, and payment processors to track and reference specific transactions throughout their lifecycle.  When provided, this value is passed to the payment processor as the reconciliation ID for the payment. For invoices this is typically the invoice number, and for purchase or donation links it is typically the link identifier.  Only letters and numbers are allowed; spaces and other special characters are not permitted.
+     * @return $this
+     */
+    public function setTransactionReferenceNumber($transactionReferenceNumber)
+    {
+        $this->container['transactionReferenceNumber'] = $transactionReferenceNumber;
+        return $this;
+    }
+    /**
      * Gets description
      * @return string
      */
@@ -176,7 +195,7 @@ class InvoicingV2InvoicesPost201ResponseInvoiceInformation implements ArrayAcces
     }
     /**
      * Sets dueDate
-     * @param \DateTime $dueDate The invoice due date. This field is required for creating an invoice. Format: `YYYY-MM-DD`, where `YYYY` = year, `MM` = month, and `DD` = day
+     * @param \DateTime $dueDate The invoice due date. This field is required for creating an invoice. Format: `YYYY-MM-DD`, where `YYYY` = year, `MM` = month, and `DD` = day.  The invoice link automatically expires 12 months after the due date.
      * @return $this
      */
     public function setDueDate($dueDate)
@@ -194,7 +213,7 @@ class InvoicingV2InvoicesPost201ResponseInvoiceInformation implements ArrayAcces
     }
     /**
      * Sets expirationDate
-     * @param \DateTime $expirationDate Define an expiration date for the link.  Format: `YYYY-MM-DD`, where `YYYY` = year, `MM` = month, and `DD` = day
+     * @param \DateTime $expirationDate Define an expiration date for the link.  The date must be today or in the future.  Format: `YYYY-MM-DD`, where `YYYY` = year, `MM` = month, and `DD` = day.  The invoice link automatically expires 12 months after the due date.
      * @return $this
      */
     public function setExpirationDate($expirationDate)

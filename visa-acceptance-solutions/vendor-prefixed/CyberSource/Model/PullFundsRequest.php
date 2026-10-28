@@ -48,12 +48,12 @@ class PullFundsRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferClientReferenceInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferOrderInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferProcessingInformation', 'recipientInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferRecipientInformation', 'senderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferSenderInformation', 'aggregatorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferAggregatorInformation', 'merchantInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferMerchantInformation'];
+    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferClientReferenceInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferOrderInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferProcessingInformation', 'recipientInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferRecipientInformation', 'senderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferSenderInformation', 'buyerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferBuyerInformation', 'aggregatorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferAggregatorInformation', 'merchantInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferMerchantInformation'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['clientReferenceInformation' => null, 'orderInformation' => null, 'processingInformation' => null, 'recipientInformation' => null, 'senderInformation' => null, 'aggregatorInformation' => null, 'merchantInformation' => null];
+    protected static $swaggerFormats = ['clientReferenceInformation' => null, 'orderInformation' => null, 'processingInformation' => null, 'recipientInformation' => null, 'senderInformation' => null, 'buyerInformation' => null, 'aggregatorInformation' => null, 'merchantInformation' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PullFundsRequest implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['clientReferenceInformation' => 'clientReferenceInformation', 'orderInformation' => 'orderInformation', 'processingInformation' => 'processingInformation', 'recipientInformation' => 'recipientInformation', 'senderInformation' => 'senderInformation', 'aggregatorInformation' => 'aggregatorInformation', 'merchantInformation' => 'merchantInformation'];
+    protected static $attributeMap = ['clientReferenceInformation' => 'clientReferenceInformation', 'orderInformation' => 'orderInformation', 'processingInformation' => 'processingInformation', 'recipientInformation' => 'recipientInformation', 'senderInformation' => 'senderInformation', 'buyerInformation' => 'buyerInformation', 'aggregatorInformation' => 'aggregatorInformation', 'merchantInformation' => 'merchantInformation'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['clientReferenceInformation' => 'setClientReferenceInformation', 'orderInformation' => 'setOrderInformation', 'processingInformation' => 'setProcessingInformation', 'recipientInformation' => 'setRecipientInformation', 'senderInformation' => 'setSenderInformation', 'aggregatorInformation' => 'setAggregatorInformation', 'merchantInformation' => 'setMerchantInformation'];
+    protected static $setters = ['clientReferenceInformation' => 'setClientReferenceInformation', 'orderInformation' => 'setOrderInformation', 'processingInformation' => 'setProcessingInformation', 'recipientInformation' => 'setRecipientInformation', 'senderInformation' => 'setSenderInformation', 'buyerInformation' => 'setBuyerInformation', 'aggregatorInformation' => 'setAggregatorInformation', 'merchantInformation' => 'setMerchantInformation'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['clientReferenceInformation' => 'getClientReferenceInformation', 'orderInformation' => 'getOrderInformation', 'processingInformation' => 'getProcessingInformation', 'recipientInformation' => 'getRecipientInformation', 'senderInformation' => 'getSenderInformation', 'aggregatorInformation' => 'getAggregatorInformation', 'merchantInformation' => 'getMerchantInformation'];
+    protected static $getters = ['clientReferenceInformation' => 'getClientReferenceInformation', 'orderInformation' => 'getOrderInformation', 'processingInformation' => 'getProcessingInformation', 'recipientInformation' => 'getRecipientInformation', 'senderInformation' => 'getSenderInformation', 'buyerInformation' => 'getBuyerInformation', 'aggregatorInformation' => 'getAggregatorInformation', 'merchantInformation' => 'getMerchantInformation'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -105,6 +105,7 @@ class PullFundsRequest implements ArrayAccess
         $this->container['processingInformation'] = isset($data['processingInformation']) ? $data['processingInformation'] : null;
         $this->container['recipientInformation'] = isset($data['recipientInformation']) ? $data['recipientInformation'] : null;
         $this->container['senderInformation'] = isset($data['senderInformation']) ? $data['senderInformation'] : null;
+        $this->container['buyerInformation'] = isset($data['buyerInformation']) ? $data['buyerInformation'] : null;
         $this->container['aggregatorInformation'] = isset($data['aggregatorInformation']) ? $data['aggregatorInformation'] : null;
         $this->container['merchantInformation'] = isset($data['merchantInformation']) ? $data['merchantInformation'] : null;
     }
@@ -216,6 +217,24 @@ class PullFundsRequest implements ArrayAccess
     public function setSenderInformation($senderInformation)
     {
         $this->container['senderInformation'] = $senderInformation;
+        return $this;
+    }
+    /**
+     * Gets buyerInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferBuyerInformation
+     */
+    public function getBuyerInformation()
+    {
+        return $this->container['buyerInformation'];
+    }
+    /**
+     * Sets buyerInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv1pullfundstransferBuyerInformation $buyerInformation
+     * @return $this
+     */
+    public function setBuyerInformation($buyerInformation)
+    {
+        $this->container['buyerInformation'] = $buyerInformation;
         return $this;
     }
     /**

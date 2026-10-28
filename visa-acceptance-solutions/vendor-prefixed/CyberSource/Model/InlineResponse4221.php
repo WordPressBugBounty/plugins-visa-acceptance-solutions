@@ -48,7 +48,7 @@ class InlineResponse4221 implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['submitTimeUtc' => '\DateTime', 'status' => 'string', 'reason' => 'string', 'message' => 'string', 'details' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4007Details[]'];
+    protected static $swaggerTypes = ['submitTimeUtc' => '\DateTime', 'status' => 'string', 'reason' => 'string', 'message' => 'string', 'details' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse40011Details[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -200,7 +200,7 @@ class InlineResponse4221 implements ArrayAccess
     }
     /**
      * Gets details
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4007Details[]
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse40011Details[]
      */
     public function getDetails()
     {
@@ -208,7 +208,7 @@ class InlineResponse4221 implements ArrayAccess
     }
     /**
      * Sets details
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4007Details[] $details
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse40011Details[] $details
      * @return $this
      */
     public function setDetails($details)

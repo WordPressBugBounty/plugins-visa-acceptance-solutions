@@ -48,12 +48,12 @@ class Ptsv2paymentsSenderInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['firstName' => 'string', 'middleName' => 'string', 'lastName' => 'string', 'address1' => 'string', 'locality' => 'string', 'administrativeArea' => 'string', 'countryCode' => 'string', 'aliasName' => 'string', 'referenceNumber' => 'string', 'account' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsSenderInformationAccount', 'postalCode' => 'string'];
+    protected static $swaggerTypes = ['firstName' => 'string', 'middleName' => 'string', 'lastName' => 'string', 'address1' => 'string', 'locality' => 'string', 'administrativeArea' => 'string', 'countryCode' => 'string', 'aliasName' => 'string', 'referenceNumber' => 'string', 'account' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsSenderInformationAccount', 'postalCode' => 'string', 'taxIdNumber' => 'float'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['firstName' => null, 'middleName' => null, 'lastName' => null, 'address1' => null, 'locality' => null, 'administrativeArea' => null, 'countryCode' => null, 'aliasName' => null, 'referenceNumber' => null, 'account' => null, 'postalCode' => null];
+    protected static $swaggerFormats = ['firstName' => null, 'middleName' => null, 'lastName' => null, 'address1' => null, 'locality' => null, 'administrativeArea' => null, 'countryCode' => null, 'aliasName' => null, 'referenceNumber' => null, 'account' => null, 'postalCode' => null, 'taxIdNumber' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2paymentsSenderInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['firstName' => 'firstName', 'middleName' => 'middleName', 'lastName' => 'lastName', 'address1' => 'address1', 'locality' => 'locality', 'administrativeArea' => 'administrativeArea', 'countryCode' => 'countryCode', 'aliasName' => 'aliasName', 'referenceNumber' => 'referenceNumber', 'account' => 'account', 'postalCode' => 'postalCode'];
+    protected static $attributeMap = ['firstName' => 'firstName', 'middleName' => 'middleName', 'lastName' => 'lastName', 'address1' => 'address1', 'locality' => 'locality', 'administrativeArea' => 'administrativeArea', 'countryCode' => 'countryCode', 'aliasName' => 'aliasName', 'referenceNumber' => 'referenceNumber', 'account' => 'account', 'postalCode' => 'postalCode', 'taxIdNumber' => 'taxIdNumber'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['firstName' => 'setFirstName', 'middleName' => 'setMiddleName', 'lastName' => 'setLastName', 'address1' => 'setAddress1', 'locality' => 'setLocality', 'administrativeArea' => 'setAdministrativeArea', 'countryCode' => 'setCountryCode', 'aliasName' => 'setAliasName', 'referenceNumber' => 'setReferenceNumber', 'account' => 'setAccount', 'postalCode' => 'setPostalCode'];
+    protected static $setters = ['firstName' => 'setFirstName', 'middleName' => 'setMiddleName', 'lastName' => 'setLastName', 'address1' => 'setAddress1', 'locality' => 'setLocality', 'administrativeArea' => 'setAdministrativeArea', 'countryCode' => 'setCountryCode', 'aliasName' => 'setAliasName', 'referenceNumber' => 'setReferenceNumber', 'account' => 'setAccount', 'postalCode' => 'setPostalCode', 'taxIdNumber' => 'setTaxIdNumber'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['firstName' => 'getFirstName', 'middleName' => 'getMiddleName', 'lastName' => 'getLastName', 'address1' => 'getAddress1', 'locality' => 'getLocality', 'administrativeArea' => 'getAdministrativeArea', 'countryCode' => 'getCountryCode', 'aliasName' => 'getAliasName', 'referenceNumber' => 'getReferenceNumber', 'account' => 'getAccount', 'postalCode' => 'getPostalCode'];
+    protected static $getters = ['firstName' => 'getFirstName', 'middleName' => 'getMiddleName', 'lastName' => 'getLastName', 'address1' => 'getAddress1', 'locality' => 'getLocality', 'administrativeArea' => 'getAdministrativeArea', 'countryCode' => 'getCountryCode', 'aliasName' => 'getAliasName', 'referenceNumber' => 'getReferenceNumber', 'account' => 'getAccount', 'postalCode' => 'getPostalCode', 'taxIdNumber' => 'getTaxIdNumber'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -111,6 +111,7 @@ class Ptsv2paymentsSenderInformation implements ArrayAccess
         $this->container['referenceNumber'] = isset($data['referenceNumber']) ? $data['referenceNumber'] : null;
         $this->container['account'] = isset($data['account']) ? $data['account'] : null;
         $this->container['postalCode'] = isset($data['postalCode']) ? $data['postalCode'] : null;
+        $this->container['taxIdNumber'] = isset($data['taxIdNumber']) ? $data['taxIdNumber'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -328,6 +329,24 @@ class Ptsv2paymentsSenderInformation implements ArrayAccess
     public function setPostalCode($postalCode)
     {
         $this->container['postalCode'] = $postalCode;
+        return $this;
+    }
+    /**
+     * Gets taxIdNumber
+     * @return float
+     */
+    public function getTaxIdNumber()
+    {
+        return $this->container['taxIdNumber'];
+    }
+    /**
+     * Sets taxIdNumber
+     * @param float $taxIdNumber CPF or CNPJ of the cash-in recipient. \"Cadastro de Pessoas Físicas\", which translates to the \"Natural Persons Register.\" It is the individual taxpayer registry identification number in Brazil, similar to a Social Security Number (SSN) in the United States or a National Insurance Number in the UK.
+     * @return $this
+     */
+    public function setTaxIdNumber($taxIdNumber)
+    {
+        $this->container['taxIdNumber'] = $taxIdNumber;
         return $this;
     }
     /**

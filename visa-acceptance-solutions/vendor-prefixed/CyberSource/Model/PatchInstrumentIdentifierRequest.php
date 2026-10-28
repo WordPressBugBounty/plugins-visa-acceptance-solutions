@@ -48,7 +48,7 @@ class PatchInstrumentIdentifierRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierLinks', 'id' => 'string', 'object' => 'string', 'state' => 'string', 'type' => 'string', 'source' => 'string', 'tokenProvisioningInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsTokenInformationTokenProvisioningInformation', 'card' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierCard', 'pointOfSaleInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierPointOfSaleInformation', 'bankAccount' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierBankAccount', 'tokenizedCard' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCard', 'issuer' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierIssuer', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierProcessingInformation', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierBillTo', 'metadata' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierMetadata', 'embedded' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierEmbedded'];
+    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierLinks', 'id' => 'string', 'object' => 'string', 'state' => 'string', 'type' => 'string', 'source' => 'string', 'tokenProvisioningInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsTokenInformationTokenProvisioningInformation', 'card' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierCard', 'pointOfSaleInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsPointOfSaleInformation', 'bankAccount' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierBankAccount', 'tokenizedCard' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCard', 'issuer' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierIssuer', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierProcessingInformation', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierBillTo', 'metadata' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierMetadata', 'embedded' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierEmbedded'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -283,7 +283,7 @@ class PatchInstrumentIdentifierRequest implements ArrayAccess
     }
     /**
      * Gets pointOfSaleInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierPointOfSaleInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TmsPointOfSaleInformation
      */
     public function getPointOfSaleInformation()
     {
@@ -291,7 +291,7 @@ class PatchInstrumentIdentifierRequest implements ArrayAccess
     }
     /**
      * Sets pointOfSaleInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TmsEmbeddedInstrumentIdentifierPointOfSaleInformation $pointOfSaleInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TmsPointOfSaleInformation $pointOfSaleInformation
      * @return $this
      */
     public function setPointOfSaleInformation($pointOfSaleInformation)

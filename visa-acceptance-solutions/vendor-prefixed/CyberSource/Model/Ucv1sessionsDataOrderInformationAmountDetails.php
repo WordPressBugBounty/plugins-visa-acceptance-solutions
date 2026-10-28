@@ -48,12 +48,12 @@ class Ucv1sessionsDataOrderInformationAmountDetails implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['totalAmount' => 'string', 'currency' => 'string', 'surcharge' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationAmountDetailsSurcharge', 'discountAmount' => 'string', 'subTotalAmount' => 'string', 'serviceFeeAmount' => 'string', 'taxAmount' => 'string', 'taxDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationAmountDetailsTaxDetails[]'];
+    protected static $swaggerTypes = ['totalAmount' => 'string', 'freightAmount' => 'string', 'dutyAmount' => 'string', 'discountAmount' => 'string', 'taxAppliedAfterDiscount' => 'string', 'taxAppliedLevel' => 'string', 'currency' => 'string', 'surcharge' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationAmountDetailsSurcharge', 'subTotalAmount' => 'string', 'serviceFeeAmount' => 'string', 'taxAmount' => 'string', 'taxDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationAmountDetailsTaxDetails[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['totalAmount' => null, 'currency' => null, 'surcharge' => null, 'discountAmount' => null, 'subTotalAmount' => null, 'serviceFeeAmount' => null, 'taxAmount' => null, 'taxDetails' => null];
+    protected static $swaggerFormats = ['totalAmount' => null, 'freightAmount' => null, 'dutyAmount' => null, 'discountAmount' => null, 'taxAppliedAfterDiscount' => null, 'taxAppliedLevel' => null, 'currency' => null, 'surcharge' => null, 'subTotalAmount' => null, 'serviceFeeAmount' => null, 'taxAmount' => null, 'taxDetails' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ucv1sessionsDataOrderInformationAmountDetails implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['totalAmount' => 'totalAmount', 'currency' => 'currency', 'surcharge' => 'surcharge', 'discountAmount' => 'discountAmount', 'subTotalAmount' => 'subTotalAmount', 'serviceFeeAmount' => 'serviceFeeAmount', 'taxAmount' => 'taxAmount', 'taxDetails' => 'taxDetails'];
+    protected static $attributeMap = ['totalAmount' => 'totalAmount', 'freightAmount' => 'freightAmount', 'dutyAmount' => 'dutyAmount', 'discountAmount' => 'discountAmount', 'taxAppliedAfterDiscount' => 'taxAppliedAfterDiscount', 'taxAppliedLevel' => 'taxAppliedLevel', 'currency' => 'currency', 'surcharge' => 'surcharge', 'subTotalAmount' => 'subTotalAmount', 'serviceFeeAmount' => 'serviceFeeAmount', 'taxAmount' => 'taxAmount', 'taxDetails' => 'taxDetails'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['totalAmount' => 'setTotalAmount', 'currency' => 'setCurrency', 'surcharge' => 'setSurcharge', 'discountAmount' => 'setDiscountAmount', 'subTotalAmount' => 'setSubTotalAmount', 'serviceFeeAmount' => 'setServiceFeeAmount', 'taxAmount' => 'setTaxAmount', 'taxDetails' => 'setTaxDetails'];
+    protected static $setters = ['totalAmount' => 'setTotalAmount', 'freightAmount' => 'setFreightAmount', 'dutyAmount' => 'setDutyAmount', 'discountAmount' => 'setDiscountAmount', 'taxAppliedAfterDiscount' => 'setTaxAppliedAfterDiscount', 'taxAppliedLevel' => 'setTaxAppliedLevel', 'currency' => 'setCurrency', 'surcharge' => 'setSurcharge', 'subTotalAmount' => 'setSubTotalAmount', 'serviceFeeAmount' => 'setServiceFeeAmount', 'taxAmount' => 'setTaxAmount', 'taxDetails' => 'setTaxDetails'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['totalAmount' => 'getTotalAmount', 'currency' => 'getCurrency', 'surcharge' => 'getSurcharge', 'discountAmount' => 'getDiscountAmount', 'subTotalAmount' => 'getSubTotalAmount', 'serviceFeeAmount' => 'getServiceFeeAmount', 'taxAmount' => 'getTaxAmount', 'taxDetails' => 'getTaxDetails'];
+    protected static $getters = ['totalAmount' => 'getTotalAmount', 'freightAmount' => 'getFreightAmount', 'dutyAmount' => 'getDutyAmount', 'discountAmount' => 'getDiscountAmount', 'taxAppliedAfterDiscount' => 'getTaxAppliedAfterDiscount', 'taxAppliedLevel' => 'getTaxAppliedLevel', 'currency' => 'getCurrency', 'surcharge' => 'getSurcharge', 'subTotalAmount' => 'getSubTotalAmount', 'serviceFeeAmount' => 'getServiceFeeAmount', 'taxAmount' => 'getTaxAmount', 'taxDetails' => 'getTaxDetails'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -101,9 +101,13 @@ class Ucv1sessionsDataOrderInformationAmountDetails implements ArrayAccess
     public function __construct(array $data = null)
     {
         $this->container['totalAmount'] = isset($data['totalAmount']) ? $data['totalAmount'] : null;
+        $this->container['freightAmount'] = isset($data['freightAmount']) ? $data['freightAmount'] : null;
+        $this->container['dutyAmount'] = isset($data['dutyAmount']) ? $data['dutyAmount'] : null;
+        $this->container['discountAmount'] = isset($data['discountAmount']) ? $data['discountAmount'] : null;
+        $this->container['taxAppliedAfterDiscount'] = isset($data['taxAppliedAfterDiscount']) ? $data['taxAppliedAfterDiscount'] : null;
+        $this->container['taxAppliedLevel'] = isset($data['taxAppliedLevel']) ? $data['taxAppliedLevel'] : null;
         $this->container['currency'] = isset($data['currency']) ? $data['currency'] : null;
         $this->container['surcharge'] = isset($data['surcharge']) ? $data['surcharge'] : null;
-        $this->container['discountAmount'] = isset($data['discountAmount']) ? $data['discountAmount'] : null;
         $this->container['subTotalAmount'] = isset($data['subTotalAmount']) ? $data['subTotalAmount'] : null;
         $this->container['serviceFeeAmount'] = isset($data['serviceFeeAmount']) ? $data['serviceFeeAmount'] : null;
         $this->container['taxAmount'] = isset($data['taxAmount']) ? $data['taxAmount'] : null;
@@ -148,6 +152,96 @@ class Ucv1sessionsDataOrderInformationAmountDetails implements ArrayAccess
         return $this;
     }
     /**
+     * Gets freightAmount
+     * @return string
+     */
+    public function getFreightAmount()
+    {
+        return $this->container['freightAmount'];
+    }
+    /**
+     * Sets freightAmount
+     * @param string $freightAmount Total freight or shipping and handling charges for the order.  When you include this field in your request, you must also include the **totalAmount** field.
+     * @return $this
+     */
+    public function setFreightAmount($freightAmount)
+    {
+        $this->container['freightAmount'] = $freightAmount;
+        return $this;
+    }
+    /**
+     * Gets dutyAmount
+     * @return string
+     */
+    public function getDutyAmount()
+    {
+        return $this->container['dutyAmount'];
+    }
+    /**
+     * Sets dutyAmount
+     * @param string $dutyAmount Total charges for any import or export duties included in the order.
+     * @return $this
+     */
+    public function setDutyAmount($dutyAmount)
+    {
+        $this->container['dutyAmount'] = $dutyAmount;
+        return $this;
+    }
+    /**
+     * Gets discountAmount
+     * @return string
+     */
+    public function getDiscountAmount()
+    {
+        return $this->container['discountAmount'];
+    }
+    /**
+     * Sets discountAmount
+     * @param string $discountAmount Total discount amount applied to the order.
+     * @return $this
+     */
+    public function setDiscountAmount($discountAmount)
+    {
+        $this->container['discountAmount'] = $discountAmount;
+        return $this;
+    }
+    /**
+     * Gets taxAppliedAfterDiscount
+     * @return string
+     */
+    public function getTaxAppliedAfterDiscount()
+    {
+        return $this->container['taxAppliedAfterDiscount'];
+    }
+    /**
+     * Sets taxAppliedAfterDiscount
+     * @param string $taxAppliedAfterDiscount Flag that indicates how the merchant manages discounts.  Possible values:   - **0**: no invoice level discount included  - **1**: tax calculated on the postdiscount invoice total  - **2**: tax calculated on the prediscount invoice total
+     * @return $this
+     */
+    public function setTaxAppliedAfterDiscount($taxAppliedAfterDiscount)
+    {
+        $this->container['taxAppliedAfterDiscount'] = $taxAppliedAfterDiscount;
+        return $this;
+    }
+    /**
+     * Gets taxAppliedLevel
+     * @return string
+     */
+    public function getTaxAppliedLevel()
+    {
+        return $this->container['taxAppliedLevel'];
+    }
+    /**
+     * Sets taxAppliedLevel
+     * @param string $taxAppliedLevel Flag that indicates how you calculate tax.  Possible values:   - **0**: net prices with tax calculated at line item level  - **1**: net prices with tax calculated at invoice level  - **2**: gross prices with tax provided at line item level  - **3**: gross prices with tax provided at invoice level  - **4**: no tax applies on the invoice for the transaction
+     * @return $this
+     */
+    public function setTaxAppliedLevel($taxAppliedLevel)
+    {
+        $this->container['taxAppliedLevel'] = $taxAppliedLevel;
+        return $this;
+    }
+    /**
      * Gets currency
      * @return string
      */
@@ -181,24 +275,6 @@ class Ucv1sessionsDataOrderInformationAmountDetails implements ArrayAccess
     public function setSurcharge($surcharge)
     {
         $this->container['surcharge'] = $surcharge;
-        return $this;
-    }
-    /**
-     * Gets discountAmount
-     * @return string
-     */
-    public function getDiscountAmount()
-    {
-        return $this->container['discountAmount'];
-    }
-    /**
-     * Sets discountAmount
-     * @param string $discountAmount This field defines the discount amount applicable to the order.
-     * @return $this
-     */
-    public function setDiscountAmount($discountAmount)
-    {
-        $this->container['discountAmount'] = $discountAmount;
         return $this;
     }
     /**

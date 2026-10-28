@@ -48,12 +48,12 @@ class InlineResponse2013 implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['id' => 'string', 'submitTimeUtc' => 'string', 'status' => 'string', 'paymentAccountInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsBinLookupPaymentAccountInformation', 'issuerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsBinLookupIssuerInformation', 'payoutInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013PayoutInformation'];
+    protected static $swaggerTypes = ['id' => 'string', 'status' => 'string', 'submitTimeStampUtc' => 'string', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013OrderInformation', 'errorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013ErrorInformation', 'processorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013ProcessorInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013ProcessingInformation'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['id' => null, 'submitTimeUtc' => null, 'status' => null, 'paymentAccountInformation' => null, 'issuerInformation' => null, 'payoutInformation' => null];
+    protected static $swaggerFormats = ['id' => null, 'status' => null, 'submitTimeStampUtc' => null, 'orderInformation' => null, 'errorInformation' => null, 'processorInformation' => null, 'processingInformation' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class InlineResponse2013 implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['id' => 'id', 'submitTimeUtc' => 'submitTimeUtc', 'status' => 'status', 'paymentAccountInformation' => 'paymentAccountInformation', 'issuerInformation' => 'issuerInformation', 'payoutInformation' => 'payoutInformation'];
+    protected static $attributeMap = ['id' => 'id', 'status' => 'status', 'submitTimeStampUtc' => 'submitTimeStampUtc', 'orderInformation' => 'orderInformation', 'errorInformation' => 'errorInformation', 'processorInformation' => 'processorInformation', 'processingInformation' => 'processingInformation'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['id' => 'setId', 'submitTimeUtc' => 'setSubmitTimeUtc', 'status' => 'setStatus', 'paymentAccountInformation' => 'setPaymentAccountInformation', 'issuerInformation' => 'setIssuerInformation', 'payoutInformation' => 'setPayoutInformation'];
+    protected static $setters = ['id' => 'setId', 'status' => 'setStatus', 'submitTimeStampUtc' => 'setSubmitTimeStampUtc', 'orderInformation' => 'setOrderInformation', 'errorInformation' => 'setErrorInformation', 'processorInformation' => 'setProcessorInformation', 'processingInformation' => 'setProcessingInformation'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['id' => 'getId', 'submitTimeUtc' => 'getSubmitTimeUtc', 'status' => 'getStatus', 'paymentAccountInformation' => 'getPaymentAccountInformation', 'issuerInformation' => 'getIssuerInformation', 'payoutInformation' => 'getPayoutInformation'];
+    protected static $getters = ['id' => 'getId', 'status' => 'getStatus', 'submitTimeStampUtc' => 'getSubmitTimeStampUtc', 'orderInformation' => 'getOrderInformation', 'errorInformation' => 'getErrorInformation', 'processorInformation' => 'getProcessorInformation', 'processingInformation' => 'getProcessingInformation'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -101,11 +101,12 @@ class InlineResponse2013 implements ArrayAccess
     public function __construct(array $data = null)
     {
         $this->container['id'] = isset($data['id']) ? $data['id'] : null;
-        $this->container['submitTimeUtc'] = isset($data['submitTimeUtc']) ? $data['submitTimeUtc'] : null;
         $this->container['status'] = isset($data['status']) ? $data['status'] : null;
-        $this->container['paymentAccountInformation'] = isset($data['paymentAccountInformation']) ? $data['paymentAccountInformation'] : null;
-        $this->container['issuerInformation'] = isset($data['issuerInformation']) ? $data['issuerInformation'] : null;
-        $this->container['payoutInformation'] = isset($data['payoutInformation']) ? $data['payoutInformation'] : null;
+        $this->container['submitTimeStampUtc'] = isset($data['submitTimeStampUtc']) ? $data['submitTimeStampUtc'] : null;
+        $this->container['orderInformation'] = isset($data['orderInformation']) ? $data['orderInformation'] : null;
+        $this->container['errorInformation'] = isset($data['errorInformation']) ? $data['errorInformation'] : null;
+        $this->container['processorInformation'] = isset($data['processorInformation']) ? $data['processorInformation'] : null;
+        $this->container['processingInformation'] = isset($data['processingInformation']) ? $data['processingInformation'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -137,30 +138,12 @@ class InlineResponse2013 implements ArrayAccess
     }
     /**
      * Sets id
-     * @param string $id An unique identification number generated by Cybersource to identify the submitted request. Returned by all services. It is also appended to the endpoint of the resource. On incremental authorizations, this value with be the same as the identification number returned in the original authorization response.
+     * @param string $id A unique identification number to identify the submitted request. It is also appended to the endpoint of the resource.
      * @return $this
      */
     public function setId($id)
     {
         $this->container['id'] = $id;
-        return $this;
-    }
-    /**
-     * Gets submitTimeUtc
-     * @return string
-     */
-    public function getSubmitTimeUtc()
-    {
-        return $this->container['submitTimeUtc'];
-    }
-    /**
-     * Sets submitTimeUtc
-     * @param string $submitTimeUtc Time of request in UTC. Format: `YYYY-MM-DDThh:mm:ssZ` **Example** `2016-08-11T22:47:57Z` equals August 11, 2016, at 22:47:57 (10:47:57 p.m.). The `T` separates the date and the time. The `Z` indicates UTC.  Returned by Cybersource for all services.
-     * @return $this
-     */
-    public function setSubmitTimeUtc($submitTimeUtc)
-    {
-        $this->container['submitTimeUtc'] = $submitTimeUtc;
         return $this;
     }
     /**
@@ -173,7 +156,7 @@ class InlineResponse2013 implements ArrayAccess
     }
     /**
      * Sets status
-     * @param string $status The status of the submitted transaction.  Possible values:  - COMPLETED  - MULTIPLE  - NO MATCH
+     * @param string $status The status of the submitted transaction.  Possible values: - `COMPLETED` - `INVALID_REQUEST` - `SERVER_ERROR`
      * @return $this
      */
     public function setStatus($status)
@@ -182,57 +165,93 @@ class InlineResponse2013 implements ArrayAccess
         return $this;
     }
     /**
-     * Gets paymentAccountInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TmsBinLookupPaymentAccountInformation
+     * Gets submitTimeStampUtc
+     * @return string
      */
-    public function getPaymentAccountInformation()
+    public function getSubmitTimeStampUtc()
     {
-        return $this->container['paymentAccountInformation'];
+        return $this->container['submitTimeStampUtc'];
     }
     /**
-     * Sets paymentAccountInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TmsBinLookupPaymentAccountInformation $paymentAccountInformation
+     * Sets submitTimeStampUtc
+     * @param string $submitTimeStampUtc Time of request in UTC. Format: `YYYY-MM-DD'T'HH:mm:ssZ`  Example: `2016-08-11T22:47:57Z` equals August 11, 2016, at 22:47:57 (10:47:57 p.m.). The T separates the date and the time. The Z indicates UTC.
      * @return $this
      */
-    public function setPaymentAccountInformation($paymentAccountInformation)
+    public function setSubmitTimeStampUtc($submitTimeStampUtc)
     {
-        $this->container['paymentAccountInformation'] = $paymentAccountInformation;
+        $this->container['submitTimeStampUtc'] = $submitTimeStampUtc;
         return $this;
     }
     /**
-     * Gets issuerInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TmsBinLookupIssuerInformation
+     * Gets orderInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013OrderInformation
      */
-    public function getIssuerInformation()
+    public function getOrderInformation()
     {
-        return $this->container['issuerInformation'];
+        return $this->container['orderInformation'];
     }
     /**
-     * Sets issuerInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TmsBinLookupIssuerInformation $issuerInformation
+     * Sets orderInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013OrderInformation $orderInformation
      * @return $this
      */
-    public function setIssuerInformation($issuerInformation)
+    public function setOrderInformation($orderInformation)
     {
-        $this->container['issuerInformation'] = $issuerInformation;
+        $this->container['orderInformation'] = $orderInformation;
         return $this;
     }
     /**
-     * Gets payoutInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013PayoutInformation
+     * Gets errorInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013ErrorInformation
      */
-    public function getPayoutInformation()
+    public function getErrorInformation()
     {
-        return $this->container['payoutInformation'];
+        return $this->container['errorInformation'];
     }
     /**
-     * Sets payoutInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013PayoutInformation $payoutInformation
+     * Sets errorInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013ErrorInformation $errorInformation
      * @return $this
      */
-    public function setPayoutInformation($payoutInformation)
+    public function setErrorInformation($errorInformation)
     {
-        $this->container['payoutInformation'] = $payoutInformation;
+        $this->container['errorInformation'] = $errorInformation;
+        return $this;
+    }
+    /**
+     * Gets processorInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013ProcessorInformation
+     */
+    public function getProcessorInformation()
+    {
+        return $this->container['processorInformation'];
+    }
+    /**
+     * Sets processorInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013ProcessorInformation $processorInformation
+     * @return $this
+     */
+    public function setProcessorInformation($processorInformation)
+    {
+        $this->container['processorInformation'] = $processorInformation;
+        return $this;
+    }
+    /**
+     * Gets processingInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013ProcessingInformation
+     */
+    public function getProcessingInformation()
+    {
+        return $this->container['processingInformation'];
+    }
+    /**
+     * Sets processingInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013ProcessingInformation $processingInformation
+     * @return $this
+     */
+    public function setProcessingInformation($processingInformation)
+    {
+        $this->container['processingInformation'] = $processingInformation;
         return $this;
     }
     /**

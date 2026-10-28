@@ -49,7 +49,7 @@ class GetSubscriptionResponse1PaymentInstrument implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['id' => 'string', 'bankAccount' => '\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionResponse1PaymentInstrumentBankAccount', 'card' => '\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionResponse1PaymentInstrumentCard', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentBillTo', 'buyerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionResponse1PaymentInstrumentBuyerInformation'];
+    protected static $swaggerTypes = ['id' => 'string', 'bankAccount' => '\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionResponse1PaymentInstrumentBankAccount', 'card' => '\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionResponse1PaymentInstrumentCard', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentBillTo', 'buyerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\FollowOnTransactionBuyerInformation'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -183,7 +183,7 @@ class GetSubscriptionResponse1PaymentInstrument implements ArrayAccess
     }
     /**
      * Gets billTo
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentBillTo
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentBillTo
      */
     public function getBillTo()
     {
@@ -191,7 +191,7 @@ class GetSubscriptionResponse1PaymentInstrument implements ArrayAccess
     }
     /**
      * Sets billTo
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentBillTo $billTo
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentBillTo $billTo
      * @return $this
      */
     public function setBillTo($billTo)
@@ -201,7 +201,7 @@ class GetSubscriptionResponse1PaymentInstrument implements ArrayAccess
     }
     /**
      * Gets buyerInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionResponse1PaymentInstrumentBuyerInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\FollowOnTransactionBuyerInformation
      */
     public function getBuyerInformation()
     {
@@ -209,7 +209,7 @@ class GetSubscriptionResponse1PaymentInstrument implements ArrayAccess
     }
     /**
      * Sets buyerInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\GetSubscriptionResponse1PaymentInstrumentBuyerInformation $buyerInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\FollowOnTransactionBuyerInformation $buyerInformation
      * @return $this
      */
     public function setBuyerInformation($buyerInformation)

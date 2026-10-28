@@ -48,12 +48,12 @@ class PtsV2CreateBillingAgreementPost201ResponseAgreementInformation implements 
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['id' => 'string', 'dateSigned' => 'string', 'dateCreated' => 'string', 'encodedHtml' => 'string', 'encodedHtmlPopup' => 'string', 'url' => 'string'];
+    protected static $swaggerTypes = ['id' => 'string', 'dateSigned' => 'string', 'dateCreated' => 'string', 'type' => 'string', 'frequency' => 'string', 'occurrencesPerPeriod' => 'int', 'startDate' => 'string', 'endDate' => 'string', 'encodedHtml' => 'string', 'encodedHtmlPopup' => 'string', 'url' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['id' => null, 'dateSigned' => null, 'dateCreated' => null, 'encodedHtml' => null, 'encodedHtmlPopup' => null, 'url' => null];
+    protected static $swaggerFormats = ['id' => null, 'dateSigned' => null, 'dateCreated' => null, 'type' => null, 'frequency' => null, 'occurrencesPerPeriod' => null, 'startDate' => null, 'endDate' => null, 'encodedHtml' => null, 'encodedHtmlPopup' => null, 'url' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PtsV2CreateBillingAgreementPost201ResponseAgreementInformation implements 
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['id' => 'id', 'dateSigned' => 'dateSigned', 'dateCreated' => 'dateCreated', 'encodedHtml' => 'encodedHtml', 'encodedHtmlPopup' => 'encodedHtmlPopup', 'url' => 'url'];
+    protected static $attributeMap = ['id' => 'id', 'dateSigned' => 'dateSigned', 'dateCreated' => 'dateCreated', 'type' => 'type', 'frequency' => 'frequency', 'occurrencesPerPeriod' => 'occurrencesPerPeriod', 'startDate' => 'startDate', 'endDate' => 'endDate', 'encodedHtml' => 'encodedHtml', 'encodedHtmlPopup' => 'encodedHtmlPopup', 'url' => 'url'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['id' => 'setId', 'dateSigned' => 'setDateSigned', 'dateCreated' => 'setDateCreated', 'encodedHtml' => 'setEncodedHtml', 'encodedHtmlPopup' => 'setEncodedHtmlPopup', 'url' => 'setUrl'];
+    protected static $setters = ['id' => 'setId', 'dateSigned' => 'setDateSigned', 'dateCreated' => 'setDateCreated', 'type' => 'setType', 'frequency' => 'setFrequency', 'occurrencesPerPeriod' => 'setOccurrencesPerPeriod', 'startDate' => 'setStartDate', 'endDate' => 'setEndDate', 'encodedHtml' => 'setEncodedHtml', 'encodedHtmlPopup' => 'setEncodedHtmlPopup', 'url' => 'setUrl'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['id' => 'getId', 'dateSigned' => 'getDateSigned', 'dateCreated' => 'getDateCreated', 'encodedHtml' => 'getEncodedHtml', 'encodedHtmlPopup' => 'getEncodedHtmlPopup', 'url' => 'getUrl'];
+    protected static $getters = ['id' => 'getId', 'dateSigned' => 'getDateSigned', 'dateCreated' => 'getDateCreated', 'type' => 'getType', 'frequency' => 'getFrequency', 'occurrencesPerPeriod' => 'getOccurrencesPerPeriod', 'startDate' => 'getStartDate', 'endDate' => 'getEndDate', 'encodedHtml' => 'getEncodedHtml', 'encodedHtmlPopup' => 'getEncodedHtmlPopup', 'url' => 'getUrl'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -103,6 +103,11 @@ class PtsV2CreateBillingAgreementPost201ResponseAgreementInformation implements 
         $this->container['id'] = isset($data['id']) ? $data['id'] : null;
         $this->container['dateSigned'] = isset($data['dateSigned']) ? $data['dateSigned'] : null;
         $this->container['dateCreated'] = isset($data['dateCreated']) ? $data['dateCreated'] : null;
+        $this->container['type'] = isset($data['type']) ? $data['type'] : null;
+        $this->container['frequency'] = isset($data['frequency']) ? $data['frequency'] : null;
+        $this->container['occurrencesPerPeriod'] = isset($data['occurrencesPerPeriod']) ? $data['occurrencesPerPeriod'] : null;
+        $this->container['startDate'] = isset($data['startDate']) ? $data['startDate'] : null;
+        $this->container['endDate'] = isset($data['endDate']) ? $data['endDate'] : null;
         $this->container['encodedHtml'] = isset($data['encodedHtml']) ? $data['encodedHtml'] : null;
         $this->container['encodedHtmlPopup'] = isset($data['encodedHtmlPopup']) ? $data['encodedHtmlPopup'] : null;
         $this->container['url'] = isset($data['url']) ? $data['url'] : null;
@@ -179,6 +184,96 @@ class PtsV2CreateBillingAgreementPost201ResponseAgreementInformation implements 
     public function setDateCreated($dateCreated)
     {
         $this->container['dateCreated'] = $dateCreated;
+        return $this;
+    }
+    /**
+     * Gets type
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->container['type'];
+    }
+    /**
+     * Sets type
+     * @param string $type Identifies the type of schedule as either recurring, one-off, split or usage.  Possible values: - recurring - oneoff - split - usage
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->container['type'] = $type;
+        return $this;
+    }
+    /**
+     * Gets frequency
+     * @return string
+     */
+    public function getFrequency()
+    {
+        return $this->container['frequency'];
+    }
+    /**
+     * Sets frequency
+     * @param string $frequency Regularity with which the event occurs.  Possible values: - annual - monthly - quarterly - semiannual - weekly - daily - adhoc - intraday - fortnightly
+     * @return $this
+     */
+    public function setFrequency($frequency)
+    {
+        $this->container['frequency'] = $frequency;
+        return $this;
+    }
+    /**
+     * Gets occurrencesPerPeriod
+     * @return int
+     */
+    public function getOccurrencesPerPeriod()
+    {
+        return $this->container['occurrencesPerPeriod'];
+    }
+    /**
+     * Sets occurrencesPerPeriod
+     * @param int $occurrencesPerPeriod Number of occurrences during the specified period.
+     * @return $this
+     */
+    public function setOccurrencesPerPeriod($occurrencesPerPeriod)
+    {
+        $this->container['occurrencesPerPeriod'] = $occurrencesPerPeriod;
+        return $this;
+    }
+    /**
+     * Gets startDate
+     * @return string
+     */
+    public function getStartDate()
+    {
+        return $this->container['startDate'];
+    }
+    /**
+     * Sets startDate
+     * @param string $startDate Start date of the schedule.  Format YYYYMMdd
+     * @return $this
+     */
+    public function setStartDate($startDate)
+    {
+        $this->container['startDate'] = $startDate;
+        return $this;
+    }
+    /**
+     * Gets endDate
+     * @return string
+     */
+    public function getEndDate()
+    {
+        return $this->container['endDate'];
+    }
+    /**
+     * Sets endDate
+     * @param string $endDate End date of the schedule.  Format YYYYMMdd
+     * @return $this
+     */
+    public function setEndDate($endDate)
+    {
+        $this->container['endDate'] = $endDate;
         return $this;
     }
     /**

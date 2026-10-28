@@ -49,7 +49,7 @@ class Tmsv2tokenizeTokenInformationCustomerEmbedded implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['defaultPaymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrument', 'defaultShippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddress'];
+    protected static $swaggerTypes = ['defaultPaymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrument', 'defaultShippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddress'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -126,7 +126,7 @@ class Tmsv2tokenizeTokenInformationCustomerEmbedded implements ArrayAccess
     }
     /**
      * Gets defaultPaymentInstrument
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrument
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrument
      */
     public function getDefaultPaymentInstrument()
     {
@@ -134,7 +134,7 @@ class Tmsv2tokenizeTokenInformationCustomerEmbedded implements ArrayAccess
     }
     /**
      * Sets defaultPaymentInstrument
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrument $defaultPaymentInstrument
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrument $defaultPaymentInstrument
      * @return $this
      */
     public function setDefaultPaymentInstrument($defaultPaymentInstrument)
@@ -144,7 +144,7 @@ class Tmsv2tokenizeTokenInformationCustomerEmbedded implements ArrayAccess
     }
     /**
      * Gets defaultShippingAddress
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddress
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddress
      */
     public function getDefaultShippingAddress()
     {
@@ -152,7 +152,7 @@ class Tmsv2tokenizeTokenInformationCustomerEmbedded implements ArrayAccess
     }
     /**
      * Sets defaultShippingAddress
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddress $defaultShippingAddress
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddress $defaultShippingAddress
      * @return $this
      */
     public function setDefaultShippingAddress($defaultShippingAddress)

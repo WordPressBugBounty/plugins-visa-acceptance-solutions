@@ -48,12 +48,12 @@ class Ptsv2paymentsAggregatorInformationSubMerchant implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['cardAcceptorId' => 'string', 'id' => 'string', 'name' => 'string', 'address1' => 'string', 'locality' => 'string', 'administrativeArea' => 'string', 'region' => 'string', 'postalCode' => 'string', 'country' => 'string', 'email' => 'string', 'phoneNumber' => 'string'];
+    protected static $swaggerTypes = ['cardAcceptorId' => 'string', 'id' => 'string', 'name' => 'string', 'address1' => 'string', 'locality' => 'string', 'administrativeArea' => 'string', 'region' => 'string', 'postalCode' => 'string', 'country' => 'string', 'email' => 'string', 'phoneNumber' => 'string', 'merchantCategoryCode' => 'float'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['cardAcceptorId' => null, 'id' => null, 'name' => null, 'address1' => null, 'locality' => null, 'administrativeArea' => null, 'region' => null, 'postalCode' => null, 'country' => null, 'email' => null, 'phoneNumber' => null];
+    protected static $swaggerFormats = ['cardAcceptorId' => null, 'id' => null, 'name' => null, 'address1' => null, 'locality' => null, 'administrativeArea' => null, 'region' => null, 'postalCode' => null, 'country' => null, 'email' => null, 'phoneNumber' => null, 'merchantCategoryCode' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2paymentsAggregatorInformationSubMerchant implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['cardAcceptorId' => 'cardAcceptorId', 'id' => 'id', 'name' => 'name', 'address1' => 'address1', 'locality' => 'locality', 'administrativeArea' => 'administrativeArea', 'region' => 'region', 'postalCode' => 'postalCode', 'country' => 'country', 'email' => 'email', 'phoneNumber' => 'phoneNumber'];
+    protected static $attributeMap = ['cardAcceptorId' => 'cardAcceptorId', 'id' => 'id', 'name' => 'name', 'address1' => 'address1', 'locality' => 'locality', 'administrativeArea' => 'administrativeArea', 'region' => 'region', 'postalCode' => 'postalCode', 'country' => 'country', 'email' => 'email', 'phoneNumber' => 'phoneNumber', 'merchantCategoryCode' => 'merchantCategoryCode'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['cardAcceptorId' => 'setCardAcceptorId', 'id' => 'setId', 'name' => 'setName', 'address1' => 'setAddress1', 'locality' => 'setLocality', 'administrativeArea' => 'setAdministrativeArea', 'region' => 'setRegion', 'postalCode' => 'setPostalCode', 'country' => 'setCountry', 'email' => 'setEmail', 'phoneNumber' => 'setPhoneNumber'];
+    protected static $setters = ['cardAcceptorId' => 'setCardAcceptorId', 'id' => 'setId', 'name' => 'setName', 'address1' => 'setAddress1', 'locality' => 'setLocality', 'administrativeArea' => 'setAdministrativeArea', 'region' => 'setRegion', 'postalCode' => 'setPostalCode', 'country' => 'setCountry', 'email' => 'setEmail', 'phoneNumber' => 'setPhoneNumber', 'merchantCategoryCode' => 'setMerchantCategoryCode'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['cardAcceptorId' => 'getCardAcceptorId', 'id' => 'getId', 'name' => 'getName', 'address1' => 'getAddress1', 'locality' => 'getLocality', 'administrativeArea' => 'getAdministrativeArea', 'region' => 'getRegion', 'postalCode' => 'getPostalCode', 'country' => 'getCountry', 'email' => 'getEmail', 'phoneNumber' => 'getPhoneNumber'];
+    protected static $getters = ['cardAcceptorId' => 'getCardAcceptorId', 'id' => 'getId', 'name' => 'getName', 'address1' => 'getAddress1', 'locality' => 'getLocality', 'administrativeArea' => 'getAdministrativeArea', 'region' => 'getRegion', 'postalCode' => 'getPostalCode', 'country' => 'getCountry', 'email' => 'getEmail', 'phoneNumber' => 'getPhoneNumber', 'merchantCategoryCode' => 'getMerchantCategoryCode'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -111,6 +111,7 @@ class Ptsv2paymentsAggregatorInformationSubMerchant implements ArrayAccess
         $this->container['country'] = isset($data['country']) ? $data['country'] : null;
         $this->container['email'] = isset($data['email']) ? $data['email'] : null;
         $this->container['phoneNumber'] = isset($data['phoneNumber']) ? $data['phoneNumber'] : null;
+        $this->container['merchantCategoryCode'] = isset($data['merchantCategoryCode']) ? $data['merchantCategoryCode'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -328,6 +329,24 @@ class Ptsv2paymentsAggregatorInformationSubMerchant implements ArrayAccess
     public function setPhoneNumber($phoneNumber)
     {
         $this->container['phoneNumber'] = $phoneNumber;
+        return $this;
+    }
+    /**
+     * Gets merchantCategoryCode
+     * @return float
+     */
+    public function getMerchantCategoryCode()
+    {
+        return $this->container['merchantCategoryCode'];
+    }
+    /**
+     * Sets merchantCategoryCode
+     * @param float $merchantCategoryCode
+     * @return $this
+     */
+    public function setMerchantCategoryCode($merchantCategoryCode)
+    {
+        $this->container['merchantCategoryCode'] = $merchantCategoryCode;
         return $this;
     }
     /**

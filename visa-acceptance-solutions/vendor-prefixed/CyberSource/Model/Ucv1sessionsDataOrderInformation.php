@@ -48,12 +48,12 @@ class Ucv1sessionsDataOrderInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['amountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationAmountDetails', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationBillTo', 'shipTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationShipTo', 'lineItems' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItems[]', 'invoiceDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationInvoiceDetails'];
+    protected static $swaggerTypes = ['amountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationAmountDetails', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationBillTo', 'shipTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationShipTo', 'lineItems' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationLineItems[]', 'invoiceDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationInvoiceDetails', 'shippingDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationShippingDetails'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['amountDetails' => null, 'billTo' => null, 'shipTo' => null, 'lineItems' => null, 'invoiceDetails' => null];
+    protected static $swaggerFormats = ['amountDetails' => null, 'billTo' => null, 'shipTo' => null, 'lineItems' => null, 'invoiceDetails' => null, 'shippingDetails' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ucv1sessionsDataOrderInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['amountDetails' => 'amountDetails', 'billTo' => 'billTo', 'shipTo' => 'shipTo', 'lineItems' => 'lineItems', 'invoiceDetails' => 'invoiceDetails'];
+    protected static $attributeMap = ['amountDetails' => 'amountDetails', 'billTo' => 'billTo', 'shipTo' => 'shipTo', 'lineItems' => 'lineItems', 'invoiceDetails' => 'invoiceDetails', 'shippingDetails' => 'shippingDetails'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['amountDetails' => 'setAmountDetails', 'billTo' => 'setBillTo', 'shipTo' => 'setShipTo', 'lineItems' => 'setLineItems', 'invoiceDetails' => 'setInvoiceDetails'];
+    protected static $setters = ['amountDetails' => 'setAmountDetails', 'billTo' => 'setBillTo', 'shipTo' => 'setShipTo', 'lineItems' => 'setLineItems', 'invoiceDetails' => 'setInvoiceDetails', 'shippingDetails' => 'setShippingDetails'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['amountDetails' => 'getAmountDetails', 'billTo' => 'getBillTo', 'shipTo' => 'getShipTo', 'lineItems' => 'getLineItems', 'invoiceDetails' => 'getInvoiceDetails'];
+    protected static $getters = ['amountDetails' => 'getAmountDetails', 'billTo' => 'getBillTo', 'shipTo' => 'getShipTo', 'lineItems' => 'getLineItems', 'invoiceDetails' => 'getInvoiceDetails', 'shippingDetails' => 'getShippingDetails'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -105,6 +105,7 @@ class Ucv1sessionsDataOrderInformation implements ArrayAccess
         $this->container['shipTo'] = isset($data['shipTo']) ? $data['shipTo'] : null;
         $this->container['lineItems'] = isset($data['lineItems']) ? $data['lineItems'] : null;
         $this->container['invoiceDetails'] = isset($data['invoiceDetails']) ? $data['invoiceDetails'] : null;
+        $this->container['shippingDetails'] = isset($data['shippingDetails']) ? $data['shippingDetails'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -164,7 +165,7 @@ class Ucv1sessionsDataOrderInformation implements ArrayAccess
     }
     /**
      * Gets shipTo
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationShipTo
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationShipTo
      */
     public function getShipTo()
     {
@@ -172,7 +173,7 @@ class Ucv1sessionsDataOrderInformation implements ArrayAccess
     }
     /**
      * Sets shipTo
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationShipTo $shipTo
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationShipTo $shipTo
      * @return $this
      */
     public function setShipTo($shipTo)
@@ -182,7 +183,7 @@ class Ucv1sessionsDataOrderInformation implements ArrayAccess
     }
     /**
      * Gets lineItems
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItems[]
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationLineItems[]
      */
     public function getLineItems()
     {
@@ -190,7 +191,7 @@ class Ucv1sessionsDataOrderInformation implements ArrayAccess
     }
     /**
      * Sets lineItems
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationLineItems[] $lineItems
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationLineItems[] $lineItems
      * @return $this
      */
     public function setLineItems($lineItems)
@@ -200,7 +201,7 @@ class Ucv1sessionsDataOrderInformation implements ArrayAccess
     }
     /**
      * Gets invoiceDetails
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationInvoiceDetails
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationInvoiceDetails
      */
     public function getInvoiceDetails()
     {
@@ -208,12 +209,30 @@ class Ucv1sessionsDataOrderInformation implements ArrayAccess
     }
     /**
      * Sets invoiceDetails
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataOrderInformationInvoiceDetails $invoiceDetails
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationInvoiceDetails $invoiceDetails
      * @return $this
      */
     public function setInvoiceDetails($invoiceDetails)
     {
         $this->container['invoiceDetails'] = $invoiceDetails;
+        return $this;
+    }
+    /**
+     * Gets shippingDetails
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationShippingDetails
+     */
+    public function getShippingDetails()
+    {
+        return $this->container['shippingDetails'];
+    }
+    /**
+     * Sets shippingDetails
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsDataOrderInformationShippingDetails $shippingDetails
+     * @return $this
+     */
+    public function setShippingDetails($shippingDetails)
+    {
+        $this->container['shippingDetails'] = $shippingDetails;
         return $this;
     }
     /**

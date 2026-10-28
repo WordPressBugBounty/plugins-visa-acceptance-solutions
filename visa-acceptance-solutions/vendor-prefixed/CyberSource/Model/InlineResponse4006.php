@@ -32,7 +32,6 @@ use ArrayAccess;
  * InlineResponse4006 Class Doc Comment
  *
  * @category    Class
- * @description Error Bean
  * @package     CyberSource
  * @author      Swagger Codegen team
  * @link        https://github.com/swagger-api/swagger-codegen
@@ -49,12 +48,12 @@ class InlineResponse4006 implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['code' => 'string', 'message' => 'string', 'localizationKey' => 'string', 'correlationId' => 'string', 'detail' => 'string', 'fields' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4006Fields[]'];
+    protected static $swaggerTypes = ['submitTimeUtc' => 'string', 'status' => 'string', 'reason' => 'string', 'message' => 'string', 'details' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseErrorInformationDetails[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['code' => null, 'message' => null, 'localizationKey' => null, 'correlationId' => null, 'detail' => null, 'fields' => null];
+    protected static $swaggerFormats = ['submitTimeUtc' => null, 'status' => null, 'reason' => null, 'message' => null, 'details' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -67,17 +66,17 @@ class InlineResponse4006 implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['code' => 'code', 'message' => 'message', 'localizationKey' => 'localizationKey', 'correlationId' => 'correlationId', 'detail' => 'detail', 'fields' => 'fields'];
+    protected static $attributeMap = ['submitTimeUtc' => 'submitTimeUtc', 'status' => 'status', 'reason' => 'reason', 'message' => 'message', 'details' => 'details'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['code' => 'setCode', 'message' => 'setMessage', 'localizationKey' => 'setLocalizationKey', 'correlationId' => 'setCorrelationId', 'detail' => 'setDetail', 'fields' => 'setFields'];
+    protected static $setters = ['submitTimeUtc' => 'setSubmitTimeUtc', 'status' => 'setStatus', 'reason' => 'setReason', 'message' => 'setMessage', 'details' => 'setDetails'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['code' => 'getCode', 'message' => 'getMessage', 'localizationKey' => 'getLocalizationKey', 'correlationId' => 'getCorrelationId', 'detail' => 'getDetail', 'fields' => 'getFields'];
+    protected static $getters = ['submitTimeUtc' => 'getSubmitTimeUtc', 'status' => 'getStatus', 'reason' => 'getReason', 'message' => 'getMessage', 'details' => 'getDetails'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -101,12 +100,11 @@ class InlineResponse4006 implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['code'] = isset($data['code']) ? $data['code'] : null;
+        $this->container['submitTimeUtc'] = isset($data['submitTimeUtc']) ? $data['submitTimeUtc'] : null;
+        $this->container['status'] = isset($data['status']) ? $data['status'] : null;
+        $this->container['reason'] = isset($data['reason']) ? $data['reason'] : null;
         $this->container['message'] = isset($data['message']) ? $data['message'] : null;
-        $this->container['localizationKey'] = isset($data['localizationKey']) ? $data['localizationKey'] : null;
-        $this->container['correlationId'] = isset($data['correlationId']) ? $data['correlationId'] : null;
-        $this->container['detail'] = isset($data['detail']) ? $data['detail'] : null;
-        $this->container['fields'] = isset($data['fields']) ? $data['fields'] : null;
+        $this->container['details'] = isset($data['details']) ? $data['details'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -116,12 +114,6 @@ class InlineResponse4006 implements ArrayAccess
     public function listInvalidProperties()
     {
         $invalid_properties = [];
-        if ($this->container['code'] === null) {
-            $invalid_properties[] = "'code' can't be null";
-        }
-        if ($this->container['message'] === null) {
-            $invalid_properties[] = "'message' can't be null";
-        }
         return $invalid_properties;
     }
     /**
@@ -132,30 +124,60 @@ class InlineResponse4006 implements ArrayAccess
      */
     public function valid()
     {
-        if ($this->container['code'] === null) {
-            return false;
-        }
-        if ($this->container['message'] === null) {
-            return false;
-        }
         return true;
     }
     /**
-     * Gets code
+     * Gets submitTimeUtc
      * @return string
      */
-    public function getCode()
+    public function getSubmitTimeUtc()
     {
-        return $this->container['code'];
+        return $this->container['submitTimeUtc'];
     }
     /**
-     * Sets code
-     * @param string $code Error code
+     * Sets submitTimeUtc
+     * @param string $submitTimeUtc Time of request in UTC. Format: `YYYY-MM-DDThh:mm:ssZ` **Example** `2016-08-11T22:47:57Z` equals August 11, 2016, at 22:47:57 (10:47:57 p.m.). The `T` separates the date and the time. The `Z` indicates UTC.  Returned by Cybersource for all services.
      * @return $this
      */
-    public function setCode($code)
+    public function setSubmitTimeUtc($submitTimeUtc)
     {
-        $this->container['code'] = $code;
+        $this->container['submitTimeUtc'] = $submitTimeUtc;
+        return $this;
+    }
+    /**
+     * Gets status
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->container['status'];
+    }
+    /**
+     * Sets status
+     * @param string $status The status of the submitted transaction.  Possible values:  - INVALID_REQUEST
+     * @return $this
+     */
+    public function setStatus($status)
+    {
+        $this->container['status'] = $status;
+        return $this;
+    }
+    /**
+     * Gets reason
+     * @return string
+     */
+    public function getReason()
+    {
+        return $this->container['reason'];
+    }
+    /**
+     * Sets reason
+     * @param string $reason The reason of the status.  Possible values:  - MISSING_FIELD  - INVALID_DATA  - DUPLICATE_REQUEST  - INVALID_CARD  - CARD_TYPE_NOT_ACCEPTED  - INVALID_MERCHANT_CONFIGURATION  - PROCESSOR_UNAVAILABLE  - INVALID_CARD_TYPE
+     * @return $this
+     */
+    public function setReason($reason)
+    {
+        $this->container['reason'] = $reason;
         return $this;
     }
     /**
@@ -168,7 +190,7 @@ class InlineResponse4006 implements ArrayAccess
     }
     /**
      * Sets message
-     * @param string $message Error message
+     * @param string $message The detail message related to the status and reason listed above.
      * @return $this
      */
     public function setMessage($message)
@@ -177,75 +199,21 @@ class InlineResponse4006 implements ArrayAccess
         return $this;
     }
     /**
-     * Gets localizationKey
-     * @return string
+     * Gets details
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseErrorInformationDetails[]
      */
-    public function getLocalizationKey()
+    public function getDetails()
     {
-        return $this->container['localizationKey'];
+        return $this->container['details'];
     }
     /**
-     * Sets localizationKey
-     * @param string $localizationKey Localization Key Name
+     * Sets details
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseErrorInformationDetails[] $details
      * @return $this
      */
-    public function setLocalizationKey($localizationKey)
+    public function setDetails($details)
     {
-        $this->container['localizationKey'] = $localizationKey;
-        return $this;
-    }
-    /**
-     * Gets correlationId
-     * @return string
-     */
-    public function getCorrelationId()
-    {
-        return $this->container['correlationId'];
-    }
-    /**
-     * Sets correlationId
-     * @param string $correlationId Correlation Id
-     * @return $this
-     */
-    public function setCorrelationId($correlationId)
-    {
-        $this->container['correlationId'] = $correlationId;
-        return $this;
-    }
-    /**
-     * Gets detail
-     * @return string
-     */
-    public function getDetail()
-    {
-        return $this->container['detail'];
-    }
-    /**
-     * Sets detail
-     * @param string $detail Error Detail
-     * @return $this
-     */
-    public function setDetail($detail)
-    {
-        $this->container['detail'] = $detail;
-        return $this;
-    }
-    /**
-     * Gets fields
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4006Fields[]
-     */
-    public function getFields()
-    {
-        return $this->container['fields'];
-    }
-    /**
-     * Sets fields
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4006Fields[] $fields Error fields List
-     * @return $this
-     */
-    public function setFields($fields)
-    {
-        $this->container['fields'] = $fields;
+        $this->container['details'] = $details;
         return $this;
     }
     /**

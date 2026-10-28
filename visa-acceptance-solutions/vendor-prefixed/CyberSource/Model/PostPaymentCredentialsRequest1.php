@@ -48,7 +48,7 @@ class PostPaymentCredentialsRequest1 implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['paymentCredentialType' => 'string', 'transactionType' => 'string', 'clientCorrelationId' => 'string', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv3tokenstokenIdpaymentcredentialsOrderInformation', 'merchantInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv3tokenstokenIdpaymentcredentialsMerchantInformation', 'deviceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv3tokenstokenIdpaymentcredentialsDeviceInformation', 'authenticatedIdentities' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv3tokenstokenIdpaymentcredentialsAuthenticatedIdentities[]'];
+    protected static $swaggerTypes = ['paymentCredentialType' => 'string', 'transactionType' => 'string', 'clientCorrelationId' => 'string', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv3tokenstokenIdpaymentcredentialsOrderInformation', 'merchantInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsMerchantInformation', 'deviceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv3tokenstokenIdpaymentcredentialsDeviceInformation', 'authenticatedIdentities' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv3tokenstokenIdpaymentcredentialsAuthenticatedIdentities[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -202,7 +202,7 @@ class PostPaymentCredentialsRequest1 implements ArrayAccess
     }
     /**
      * Gets merchantInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv3tokenstokenIdpaymentcredentialsMerchantInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TmsMerchantInformation
      */
     public function getMerchantInformation()
     {
@@ -210,7 +210,7 @@ class PostPaymentCredentialsRequest1 implements ArrayAccess
     }
     /**
      * Sets merchantInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv3tokenstokenIdpaymentcredentialsMerchantInformation $merchantInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TmsMerchantInformation $merchantInformation
      * @return $this
      */
     public function setMerchantInformation($merchantInformation)

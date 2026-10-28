@@ -179,7 +179,7 @@ class TssV2TransactionsGet200ResponseProcessingInformation implements ArrayAcces
     }
     /**
      * Sets paymentSolution
-     * @param string $paymentSolution Type of digital payment solution for the transaction.
+     * @param string $paymentSolution Type of digital payment solution for the transaction.  Note: After the upcoming service update, this field will return the applicable payment solution code for supported digital wallet transactions.
      * @return $this
      */
     public function setPaymentSolution($paymentSolution)

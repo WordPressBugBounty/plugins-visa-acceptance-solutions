@@ -32,7 +32,6 @@ remove_action( 'plugins_loaded', 'visa_acceptance_extension_initialize', VISA_AC
 remove_action( 'woocommerce_blocks_loaded', 'visa_acceptance_block_support_for_gateway');
 remove_action( 'woocommerce_update_options_payment_gateways_', 'process_admin_options');
 remove_action( 'init', 'schedule_order_updates');
-remove_action( 'wc_payment_gateway_update_orders', 'handle_order_updates');
 remove_action( 'woocommerce_order_status_changed', 'prevent_order_status_change', 10, 4 );
 remove_action( 'handle_bulk_actions-edit-shop_order', 'prevent_bulk_action', 10, 3 );
 remove_action( 'admin_init', 'prevent_bulk_action_hpos', 10, 3 );
@@ -45,16 +44,6 @@ remove_action( 'wp_enqueue_scripts', 'enqueue_scripts' );
 remove_action( 'woocommerce_account_payment_methods_column_title', 'uc_add_payment_method_title' );
 remove_action( 'woocommerce_account_payment_methods_column_details', 'uc_add_payment_method_details' );
 remove_action( 'woocommerce_account_payment_methods_column_default', 'uc_add_payment_method_default' );
-remove_action( 'wp_ajax_wc_call_uc_payer_auth_setup_action', 'call_setup_action' );
-remove_action( 'wp_ajax_wc_call_uc_payer_auth_enrollment_action', 'call_enrollment_action' );
-remove_action( 'wp_ajax_wc_call_uc_payer_auth_validation_action', 'call_validation_action' );
-remove_action( 'wp_ajax_nopriv_wc_call_uc_payer_auth_setup_action', 'call_setup_action' );
-remove_action( 'wp_ajax_nopriv_wc_call_uc_payer_auth_enrollment_action', 'call_enrollment_action' );
-remove_action( 'wp_ajax_nopriv_wc_call_uc_payer_auth_validation_action', 'call_validation_action' );
-remove_action( 'rest_api_init', 'payment_gateway_register_endpoint' );
-remove_action( 'wp_ajax_wc_call_uc_payer_auth_error_handler', 'call_error_handler' );
-remove_action( 'wp_ajax_nopriv_wc_call_uc_payer_auth_error_handler', 'call_error_handler' );
-
 remove_filter( 'woocommerce_pre_delete_data', 'wp_kama_woocommerce_pre_delete_object_type_filter', 10);
 remove_filter( 'woocommerce_payment_token_set_default', 'wp_kama_woocommerce_set_default', 10);
 remove_filter( 'woocommerce_account_payment_methods_columns', 'uc_add_payment_methods_columns' );
@@ -64,11 +53,18 @@ remove_filter( 'woocommerce_order_fully_refunded_status', 'cancel_voided_order',
 
 global $wpdb;
 
+ 
+// Properly prepare LIKE query with wildcards inside the placeholder.
+$visa_acceptance_like_pattern = '%' . $wpdb->esc_like( VISA_ACCEPTANCE_ACTION_SCHEDULER_ID ) . '%';
+ 
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-$wpdb->query( $wpdb->prepare(
-	 "DELETE FROM $wpdb->actionscheduler_actions WHERE args LIKE %s",
-	"%" . VISA_ACCEPTANCE_ACTION_SCHEDULER_ID . "%"
-));
+$wpdb->query(
+    $wpdb->prepare(
+        "DELETE FROM $wpdb->actionscheduler_actions WHERE args LIKE %s",
+        $visa_acceptance_like_pattern
+    )
+);
+ 
 
 delete_option(VISA_ACCEPTANCE_WOOCOMMERCE_UNDERSCORE. VISA_ACCEPTANCE_UC_ID . VISA_ACCEPTANCE_UNDERSCORE_SETTINGS);
 

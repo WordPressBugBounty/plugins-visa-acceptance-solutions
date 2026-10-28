@@ -49,12 +49,12 @@ class PblPaymentLinksPost201ResponsePurchaseInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['purchaseNumber' => 'string', 'createdDate' => 'string', 'paymentLink' => 'string'];
+    protected static $swaggerTypes = ['purchaseNumber' => 'string', 'transactionReferenceNumber' => 'string', 'expirationDate' => '\DateTime', 'expirationAmount' => 'string', 'expirationQuantity' => 'string', 'createdDate' => 'string', 'paymentLink' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['purchaseNumber' => null, 'createdDate' => null, 'paymentLink' => null];
+    protected static $swaggerFormats = ['purchaseNumber' => null, 'transactionReferenceNumber' => null, 'expirationDate' => 'date', 'expirationAmount' => null, 'expirationQuantity' => null, 'createdDate' => null, 'paymentLink' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -67,17 +67,17 @@ class PblPaymentLinksPost201ResponsePurchaseInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['purchaseNumber' => 'purchaseNumber', 'createdDate' => 'createdDate', 'paymentLink' => 'paymentLink'];
+    protected static $attributeMap = ['purchaseNumber' => 'purchaseNumber', 'transactionReferenceNumber' => 'transactionReferenceNumber', 'expirationDate' => 'expirationDate', 'expirationAmount' => 'expirationAmount', 'expirationQuantity' => 'expirationQuantity', 'createdDate' => 'createdDate', 'paymentLink' => 'paymentLink'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['purchaseNumber' => 'setPurchaseNumber', 'createdDate' => 'setCreatedDate', 'paymentLink' => 'setPaymentLink'];
+    protected static $setters = ['purchaseNumber' => 'setPurchaseNumber', 'transactionReferenceNumber' => 'setTransactionReferenceNumber', 'expirationDate' => 'setExpirationDate', 'expirationAmount' => 'setExpirationAmount', 'expirationQuantity' => 'setExpirationQuantity', 'createdDate' => 'setCreatedDate', 'paymentLink' => 'setPaymentLink'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['purchaseNumber' => 'getPurchaseNumber', 'createdDate' => 'getCreatedDate', 'paymentLink' => 'getPaymentLink'];
+    protected static $getters = ['purchaseNumber' => 'getPurchaseNumber', 'transactionReferenceNumber' => 'getTransactionReferenceNumber', 'expirationDate' => 'getExpirationDate', 'expirationAmount' => 'getExpirationAmount', 'expirationQuantity' => 'getExpirationQuantity', 'createdDate' => 'getCreatedDate', 'paymentLink' => 'getPaymentLink'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -102,6 +102,10 @@ class PblPaymentLinksPost201ResponsePurchaseInformation implements ArrayAccess
     public function __construct(array $data = null)
     {
         $this->container['purchaseNumber'] = isset($data['purchaseNumber']) ? $data['purchaseNumber'] : null;
+        $this->container['transactionReferenceNumber'] = isset($data['transactionReferenceNumber']) ? $data['transactionReferenceNumber'] : null;
+        $this->container['expirationDate'] = isset($data['expirationDate']) ? $data['expirationDate'] : null;
+        $this->container['expirationAmount'] = isset($data['expirationAmount']) ? $data['expirationAmount'] : null;
+        $this->container['expirationQuantity'] = isset($data['expirationQuantity']) ? $data['expirationQuantity'] : null;
         $this->container['createdDate'] = isset($data['createdDate']) ? $data['createdDate'] : null;
         $this->container['paymentLink'] = isset($data['paymentLink']) ? $data['paymentLink'] : null;
     }
@@ -141,6 +145,78 @@ class PblPaymentLinksPost201ResponsePurchaseInformation implements ArrayAccess
     public function setPurchaseNumber($purchaseNumber)
     {
         $this->container['purchaseNumber'] = $purchaseNumber;
+        return $this;
+    }
+    /**
+     * Gets transactionReferenceNumber
+     * @return string
+     */
+    public function getTransactionReferenceNumber()
+    {
+        return $this->container['transactionReferenceNumber'];
+    }
+    /**
+     * Sets transactionReferenceNumber
+     * @param string $transactionReferenceNumber The transaction reference number (TRN) is a identifier assigned to each payment transaction that allows merchants, customers, and payment processors to track and reference specific transactions throughout their lifecycle.  When provided, this value is passed to the payment processor as the reconciliation ID for the payment. For invoices this is typically the invoice number, and for purchase or donation links it is typically the link identifier.  Only letters and numbers are allowed; spaces and other special characters are not permitted.
+     * @return $this
+     */
+    public function setTransactionReferenceNumber($transactionReferenceNumber)
+    {
+        $this->container['transactionReferenceNumber'] = $transactionReferenceNumber;
+        return $this;
+    }
+    /**
+     * Gets expirationDate
+     * @return \DateTime
+     */
+    public function getExpirationDate()
+    {
+        return $this->container['expirationDate'];
+    }
+    /**
+     * Sets expirationDate
+     * @param \DateTime $expirationDate Define an expiration date for the link.  The date must be today or in the future.  Format: `YYYY-MM-DD`, where `YYYY` = year, `MM` = month, and `DD` = day.  The invoice link automatically expires 12 months after the due date.
+     * @return $this
+     */
+    public function setExpirationDate($expirationDate)
+    {
+        $this->container['expirationDate'] = $expirationDate;
+        return $this;
+    }
+    /**
+     * Gets expirationAmount
+     * @return string
+     */
+    public function getExpirationAmount()
+    {
+        return $this->container['expirationAmount'];
+    }
+    /**
+     * Sets expirationAmount
+     * @param string $expirationAmount Define an expiry amount for the link.  Must be null or greater than 0.  If the total price of all transactions for this link exceeds the expiry amount, the link will expire.
+     * @return $this
+     */
+    public function setExpirationAmount($expirationAmount)
+    {
+        $this->container['expirationAmount'] = $expirationAmount;
+        return $this;
+    }
+    /**
+     * Gets expirationQuantity
+     * @return string
+     */
+    public function getExpirationQuantity()
+    {
+        return $this->container['expirationQuantity'];
+    }
+    /**
+     * Sets expirationQuantity
+     * @param string $expirationQuantity Define an expiration quantity for the link.  Must be null or greater than 0.  If the total quantity of items sold exceeds the expiration quantity, the link is expired.
+     * @return $this
+     */
+    public function setExpirationQuantity($expirationQuantity)
+    {
+        $this->container['expirationQuantity'] = $expirationQuantity;
         return $this;
     }
     /**

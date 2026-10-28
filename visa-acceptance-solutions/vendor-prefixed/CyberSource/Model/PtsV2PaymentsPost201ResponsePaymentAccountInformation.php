@@ -48,12 +48,12 @@ class PtsV2PaymentsPost201ResponsePaymentAccountInformation implements ArrayAcce
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['card' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentAccountInformationCard'];
+    protected static $swaggerTypes = ['card' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentAccountInformationCard', 'tokenizedCard' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentAccountInformationTokenizedCard'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['card' => null];
+    protected static $swaggerFormats = ['card' => null, 'tokenizedCard' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PtsV2PaymentsPost201ResponsePaymentAccountInformation implements ArrayAcce
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['card' => 'card'];
+    protected static $attributeMap = ['card' => 'card', 'tokenizedCard' => 'tokenizedCard'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['card' => 'setCard'];
+    protected static $setters = ['card' => 'setCard', 'tokenizedCard' => 'setTokenizedCard'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['card' => 'getCard'];
+    protected static $getters = ['card' => 'getCard', 'tokenizedCard' => 'getTokenizedCard'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -101,6 +101,7 @@ class PtsV2PaymentsPost201ResponsePaymentAccountInformation implements ArrayAcce
     public function __construct(array $data = null)
     {
         $this->container['card'] = isset($data['card']) ? $data['card'] : null;
+        $this->container['tokenizedCard'] = isset($data['tokenizedCard']) ? $data['tokenizedCard'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -138,6 +139,24 @@ class PtsV2PaymentsPost201ResponsePaymentAccountInformation implements ArrayAcce
     public function setCard($card)
     {
         $this->container['card'] = $card;
+        return $this;
+    }
+    /**
+     * Gets tokenizedCard
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentAccountInformationTokenizedCard
+     */
+    public function getTokenizedCard()
+    {
+        return $this->container['tokenizedCard'];
+    }
+    /**
+     * Sets tokenizedCard
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentAccountInformationTokenizedCard $tokenizedCard
+     * @return $this
+     */
+    public function setTokenizedCard($tokenizedCard)
+    {
+        $this->container['tokenizedCard'] = $tokenizedCard;
         return $this;
     }
     /**

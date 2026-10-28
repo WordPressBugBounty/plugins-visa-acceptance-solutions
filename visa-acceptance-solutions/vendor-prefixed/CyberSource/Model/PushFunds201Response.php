@@ -48,12 +48,12 @@ class PushFunds201Response implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['id' => 'string', 'submitTimeUtc' => 'string', 'status' => 'string', 'reconciliationId' => 'string', 'clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseClientReferenceInformation', 'recipientInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseRecipientInformation', 'merchantInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseMerchantInformation', 'errorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseErrorInformation', 'processorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseProcessorInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseOrderInformation', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponsePaymentInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseProcessingInformation', 'links' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseLinks'];
+    protected static $swaggerTypes = ['id' => 'string', 'submitTimeUtc' => 'string', 'status' => 'string', 'reconciliationId' => 'string', 'clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseClientReferenceInformation', 'recipientInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseRecipientInformation', 'merchantInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseMerchantInformation', 'errorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseErrorInformation', 'processorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseProcessorInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseOrderInformation', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponsePaymentInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseProcessingInformation', 'issuerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseIssuerInformation', 'links' => '\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseLinks'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['id' => null, 'submitTimeUtc' => null, 'status' => null, 'reconciliationId' => null, 'clientReferenceInformation' => null, 'recipientInformation' => null, 'merchantInformation' => null, 'errorInformation' => null, 'processorInformation' => null, 'orderInformation' => null, 'paymentInformation' => null, 'processingInformation' => null, 'links' => null];
+    protected static $swaggerFormats = ['id' => null, 'submitTimeUtc' => null, 'status' => null, 'reconciliationId' => null, 'clientReferenceInformation' => null, 'recipientInformation' => null, 'merchantInformation' => null, 'errorInformation' => null, 'processorInformation' => null, 'orderInformation' => null, 'paymentInformation' => null, 'processingInformation' => null, 'issuerInformation' => null, 'links' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PushFunds201Response implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['id' => 'id', 'submitTimeUtc' => 'submitTimeUtc', 'status' => 'status', 'reconciliationId' => 'reconciliationId', 'clientReferenceInformation' => 'clientReferenceInformation', 'recipientInformation' => 'recipientInformation', 'merchantInformation' => 'merchantInformation', 'errorInformation' => 'errorInformation', 'processorInformation' => 'processorInformation', 'orderInformation' => 'orderInformation', 'paymentInformation' => 'paymentInformation', 'processingInformation' => 'processingInformation', 'links' => '_links'];
+    protected static $attributeMap = ['id' => 'id', 'submitTimeUtc' => 'submitTimeUtc', 'status' => 'status', 'reconciliationId' => 'reconciliationId', 'clientReferenceInformation' => 'clientReferenceInformation', 'recipientInformation' => 'recipientInformation', 'merchantInformation' => 'merchantInformation', 'errorInformation' => 'errorInformation', 'processorInformation' => 'processorInformation', 'orderInformation' => 'orderInformation', 'paymentInformation' => 'paymentInformation', 'processingInformation' => 'processingInformation', 'issuerInformation' => 'issuerInformation', 'links' => '_links'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['id' => 'setId', 'submitTimeUtc' => 'setSubmitTimeUtc', 'status' => 'setStatus', 'reconciliationId' => 'setReconciliationId', 'clientReferenceInformation' => 'setClientReferenceInformation', 'recipientInformation' => 'setRecipientInformation', 'merchantInformation' => 'setMerchantInformation', 'errorInformation' => 'setErrorInformation', 'processorInformation' => 'setProcessorInformation', 'orderInformation' => 'setOrderInformation', 'paymentInformation' => 'setPaymentInformation', 'processingInformation' => 'setProcessingInformation', 'links' => 'setLinks'];
+    protected static $setters = ['id' => 'setId', 'submitTimeUtc' => 'setSubmitTimeUtc', 'status' => 'setStatus', 'reconciliationId' => 'setReconciliationId', 'clientReferenceInformation' => 'setClientReferenceInformation', 'recipientInformation' => 'setRecipientInformation', 'merchantInformation' => 'setMerchantInformation', 'errorInformation' => 'setErrorInformation', 'processorInformation' => 'setProcessorInformation', 'orderInformation' => 'setOrderInformation', 'paymentInformation' => 'setPaymentInformation', 'processingInformation' => 'setProcessingInformation', 'issuerInformation' => 'setIssuerInformation', 'links' => 'setLinks'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['id' => 'getId', 'submitTimeUtc' => 'getSubmitTimeUtc', 'status' => 'getStatus', 'reconciliationId' => 'getReconciliationId', 'clientReferenceInformation' => 'getClientReferenceInformation', 'recipientInformation' => 'getRecipientInformation', 'merchantInformation' => 'getMerchantInformation', 'errorInformation' => 'getErrorInformation', 'processorInformation' => 'getProcessorInformation', 'orderInformation' => 'getOrderInformation', 'paymentInformation' => 'getPaymentInformation', 'processingInformation' => 'getProcessingInformation', 'links' => 'getLinks'];
+    protected static $getters = ['id' => 'getId', 'submitTimeUtc' => 'getSubmitTimeUtc', 'status' => 'getStatus', 'reconciliationId' => 'getReconciliationId', 'clientReferenceInformation' => 'getClientReferenceInformation', 'recipientInformation' => 'getRecipientInformation', 'merchantInformation' => 'getMerchantInformation', 'errorInformation' => 'getErrorInformation', 'processorInformation' => 'getProcessorInformation', 'orderInformation' => 'getOrderInformation', 'paymentInformation' => 'getPaymentInformation', 'processingInformation' => 'getProcessingInformation', 'issuerInformation' => 'getIssuerInformation', 'links' => 'getLinks'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -112,6 +112,7 @@ class PushFunds201Response implements ArrayAccess
         $this->container['orderInformation'] = isset($data['orderInformation']) ? $data['orderInformation'] : null;
         $this->container['paymentInformation'] = isset($data['paymentInformation']) ? $data['paymentInformation'] : null;
         $this->container['processingInformation'] = isset($data['processingInformation']) ? $data['processingInformation'] : null;
+        $this->container['issuerInformation'] = isset($data['issuerInformation']) ? $data['issuerInformation'] : null;
         $this->container['links'] = isset($data['links']) ? $data['links'] : null;
     }
     /**
@@ -348,6 +349,24 @@ class PushFunds201Response implements ArrayAccess
     public function setProcessingInformation($processingInformation)
     {
         $this->container['processingInformation'] = $processingInformation;
+        return $this;
+    }
+    /**
+     * Gets issuerInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseIssuerInformation
+     */
+    public function getIssuerInformation()
+    {
+        return $this->container['issuerInformation'];
+    }
+    /**
+     * Sets issuerInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PushFunds201ResponseIssuerInformation $issuerInformation
+     * @return $this
+     */
+    public function setIssuerInformation($issuerInformation)
+    {
+        $this->container['issuerInformation'] = $issuerInformation;
         return $this;
     }
     /**

@@ -48,7 +48,7 @@ class AgenticRetrievePaymentCredentialsRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['clientCorrelationId' => 'string', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensPaymentInformation', 'transactionData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1instructionsinstructionIdcredentialsTransactionData[]'];
+    protected static $swaggerTypes = ['clientCorrelationId' => 'string', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensPaymentInformation', 'transactionData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1instructionsinstructionIdcredentialsTransactionData[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -162,7 +162,7 @@ class AgenticRetrievePaymentCredentialsRequest implements ArrayAccess
     }
     /**
      * Gets paymentInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensPaymentInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensPaymentInformation
      */
     public function getPaymentInformation()
     {
@@ -170,7 +170,7 @@ class AgenticRetrievePaymentCredentialsRequest implements ArrayAccess
     }
     /**
      * Sets paymentInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensPaymentInformation $paymentInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensPaymentInformation $paymentInformation
      * @return $this
      */
     public function setPaymentInformation($paymentInformation)
@@ -180,7 +180,7 @@ class AgenticRetrievePaymentCredentialsRequest implements ArrayAccess
     }
     /**
      * Gets transactionData
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1instructionsinstructionIdcredentialsTransactionData[]
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1instructionsinstructionIdcredentialsTransactionData[]
      */
     public function getTransactionData()
     {
@@ -188,7 +188,7 @@ class AgenticRetrievePaymentCredentialsRequest implements ArrayAccess
     }
     /**
      * Sets transactionData
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1instructionsinstructionIdcredentialsTransactionData[] $transactionData List of transaction data.
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1instructionsinstructionIdcredentialsTransactionData[] $transactionData List of transaction data.
      * @return $this
      */
     public function setTransactionData($transactionData)

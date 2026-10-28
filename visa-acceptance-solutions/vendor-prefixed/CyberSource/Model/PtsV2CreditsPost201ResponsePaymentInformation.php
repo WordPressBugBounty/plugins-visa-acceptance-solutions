@@ -48,12 +48,12 @@ class PtsV2CreditsPost201ResponsePaymentInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['bank' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationBank', 'customer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationCustomer', 'paymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentInstrument', 'instrumentIdentifier' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationInstrumentIdentifier', 'shippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationShippingAddress'];
+    protected static $swaggerTypes = ['bank' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationBank', 'customer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationCustomer', 'paymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentInstrument', 'instrumentIdentifier' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponsePaymentInformationInstrumentIdentifier', 'shippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationShippingAddress', 'accountFeatures' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponsePaymentInformationAccountFeatures'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['bank' => null, 'customer' => null, 'paymentInstrument' => null, 'instrumentIdentifier' => null, 'shippingAddress' => null];
+    protected static $swaggerFormats = ['bank' => null, 'customer' => null, 'paymentInstrument' => null, 'instrumentIdentifier' => null, 'shippingAddress' => null, 'accountFeatures' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PtsV2CreditsPost201ResponsePaymentInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['bank' => 'bank', 'customer' => 'customer', 'paymentInstrument' => 'paymentInstrument', 'instrumentIdentifier' => 'instrumentIdentifier', 'shippingAddress' => 'shippingAddress'];
+    protected static $attributeMap = ['bank' => 'bank', 'customer' => 'customer', 'paymentInstrument' => 'paymentInstrument', 'instrumentIdentifier' => 'instrumentIdentifier', 'shippingAddress' => 'shippingAddress', 'accountFeatures' => 'accountFeatures'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['bank' => 'setBank', 'customer' => 'setCustomer', 'paymentInstrument' => 'setPaymentInstrument', 'instrumentIdentifier' => 'setInstrumentIdentifier', 'shippingAddress' => 'setShippingAddress'];
+    protected static $setters = ['bank' => 'setBank', 'customer' => 'setCustomer', 'paymentInstrument' => 'setPaymentInstrument', 'instrumentIdentifier' => 'setInstrumentIdentifier', 'shippingAddress' => 'setShippingAddress', 'accountFeatures' => 'setAccountFeatures'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['bank' => 'getBank', 'customer' => 'getCustomer', 'paymentInstrument' => 'getPaymentInstrument', 'instrumentIdentifier' => 'getInstrumentIdentifier', 'shippingAddress' => 'getShippingAddress'];
+    protected static $getters = ['bank' => 'getBank', 'customer' => 'getCustomer', 'paymentInstrument' => 'getPaymentInstrument', 'instrumentIdentifier' => 'getInstrumentIdentifier', 'shippingAddress' => 'getShippingAddress', 'accountFeatures' => 'getAccountFeatures'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -105,6 +105,7 @@ class PtsV2CreditsPost201ResponsePaymentInformation implements ArrayAccess
         $this->container['paymentInstrument'] = isset($data['paymentInstrument']) ? $data['paymentInstrument'] : null;
         $this->container['instrumentIdentifier'] = isset($data['instrumentIdentifier']) ? $data['instrumentIdentifier'] : null;
         $this->container['shippingAddress'] = isset($data['shippingAddress']) ? $data['shippingAddress'] : null;
+        $this->container['accountFeatures'] = isset($data['accountFeatures']) ? $data['accountFeatures'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -214,6 +215,24 @@ class PtsV2CreditsPost201ResponsePaymentInformation implements ArrayAccess
     public function setShippingAddress($shippingAddress)
     {
         $this->container['shippingAddress'] = $shippingAddress;
+        return $this;
+    }
+    /**
+     * Gets accountFeatures
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponsePaymentInformationAccountFeatures
+     */
+    public function getAccountFeatures()
+    {
+        return $this->container['accountFeatures'];
+    }
+    /**
+     * Sets accountFeatures
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreditsPost201ResponsePaymentInformationAccountFeatures $accountFeatures
+     * @return $this
+     */
+    public function setAccountFeatures($accountFeatures)
+    {
+        $this->container['accountFeatures'] = $accountFeatures;
         return $this;
     }
     /**

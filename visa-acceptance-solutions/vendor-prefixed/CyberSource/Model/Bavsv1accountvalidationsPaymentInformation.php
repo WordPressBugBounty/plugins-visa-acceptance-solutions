@@ -32,6 +32,7 @@ use ArrayAccess;
  * Bavsv1accountvalidationsPaymentInformation Class Doc Comment
  *
  * @category    Class
+ * @description Payment information for account validation. Either tokenized payment data or bank account details must be provided, but not both. When token information is provided, the bank object becomes optional. Only one token type may be included per request.
  * @package     CyberSource
  * @author      Swagger Codegen team
  * @link        https://github.com/swagger-api/swagger-codegen
@@ -48,12 +49,12 @@ class Bavsv1accountvalidationsPaymentInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['bank' => '\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsPaymentInformationBank'];
+    protected static $swaggerTypes = ['customer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsPaymentInformationCustomer', 'paymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsPaymentInformationPaymentInstrument', 'instrumentIdentifier' => '\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsPaymentInformationInstrumentIdentifier', 'bank' => '\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsPaymentInformationBank'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['bank' => null];
+    protected static $swaggerFormats = ['customer' => null, 'paymentInstrument' => null, 'instrumentIdentifier' => null, 'bank' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +67,17 @@ class Bavsv1accountvalidationsPaymentInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['bank' => 'bank'];
+    protected static $attributeMap = ['customer' => 'customer', 'paymentInstrument' => 'paymentInstrument', 'instrumentIdentifier' => 'instrumentIdentifier', 'bank' => 'bank'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['bank' => 'setBank'];
+    protected static $setters = ['customer' => 'setCustomer', 'paymentInstrument' => 'setPaymentInstrument', 'instrumentIdentifier' => 'setInstrumentIdentifier', 'bank' => 'setBank'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['bank' => 'getBank'];
+    protected static $getters = ['customer' => 'getCustomer', 'paymentInstrument' => 'getPaymentInstrument', 'instrumentIdentifier' => 'getInstrumentIdentifier', 'bank' => 'getBank'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -100,6 +101,9 @@ class Bavsv1accountvalidationsPaymentInformation implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
+        $this->container['customer'] = isset($data['customer']) ? $data['customer'] : null;
+        $this->container['paymentInstrument'] = isset($data['paymentInstrument']) ? $data['paymentInstrument'] : null;
+        $this->container['instrumentIdentifier'] = isset($data['instrumentIdentifier']) ? $data['instrumentIdentifier'] : null;
         $this->container['bank'] = isset($data['bank']) ? $data['bank'] : null;
     }
     /**
@@ -110,9 +114,6 @@ class Bavsv1accountvalidationsPaymentInformation implements ArrayAccess
     public function listInvalidProperties()
     {
         $invalid_properties = [];
-        if ($this->container['bank'] === null) {
-            $invalid_properties[] = "'bank' can't be null";
-        }
         return $invalid_properties;
     }
     /**
@@ -123,10 +124,61 @@ class Bavsv1accountvalidationsPaymentInformation implements ArrayAccess
      */
     public function valid()
     {
-        if ($this->container['bank'] === null) {
-            return false;
-        }
         return true;
+    }
+    /**
+     * Gets customer
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsPaymentInformationCustomer
+     */
+    public function getCustomer()
+    {
+        return $this->container['customer'];
+    }
+    /**
+     * Sets customer
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsPaymentInformationCustomer $customer
+     * @return $this
+     */
+    public function setCustomer($customer)
+    {
+        $this->container['customer'] = $customer;
+        return $this;
+    }
+    /**
+     * Gets paymentInstrument
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsPaymentInformationPaymentInstrument
+     */
+    public function getPaymentInstrument()
+    {
+        return $this->container['paymentInstrument'];
+    }
+    /**
+     * Sets paymentInstrument
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsPaymentInformationPaymentInstrument $paymentInstrument
+     * @return $this
+     */
+    public function setPaymentInstrument($paymentInstrument)
+    {
+        $this->container['paymentInstrument'] = $paymentInstrument;
+        return $this;
+    }
+    /**
+     * Gets instrumentIdentifier
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsPaymentInformationInstrumentIdentifier
+     */
+    public function getInstrumentIdentifier()
+    {
+        return $this->container['instrumentIdentifier'];
+    }
+    /**
+     * Sets instrumentIdentifier
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Bavsv1accountvalidationsPaymentInformationInstrumentIdentifier $instrumentIdentifier
+     * @return $this
+     */
+    public function setInstrumentIdentifier($instrumentIdentifier)
+    {
+        $this->container['instrumentIdentifier'] = $instrumentIdentifier;
+        return $this;
     }
     /**
      * Gets bank

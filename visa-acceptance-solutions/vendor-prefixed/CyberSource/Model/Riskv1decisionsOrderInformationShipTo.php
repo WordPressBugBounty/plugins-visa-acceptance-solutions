@@ -48,12 +48,12 @@ class Riskv1decisionsOrderInformationShipTo implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['address1' => 'string', 'address2' => 'string', 'address3' => 'string', 'administrativeArea' => 'string', 'country' => 'string', 'destinationTypes' => 'string', 'locality' => 'string', 'firstName' => 'string', 'lastName' => 'string', 'middleName' => 'string', 'phoneNumber' => 'string', 'postalCode' => 'string', 'destinationCode' => 'int', 'method' => 'string'];
+    protected static $swaggerTypes = ['address1' => 'string', 'address2' => 'string', 'address3' => 'string', 'administrativeArea' => 'string', 'country' => 'string', 'destinationTypes' => 'string', 'locality' => 'string', 'firstName' => 'string', 'lastName' => 'string', 'middleName' => 'string', 'phoneNumber' => 'string', 'postalCode' => 'string', 'destinationCode' => 'int', 'method' => 'string', 'email' => 'string', 'company' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['address1' => null, 'address2' => null, 'address3' => null, 'administrativeArea' => null, 'country' => null, 'destinationTypes' => null, 'locality' => null, 'firstName' => null, 'lastName' => null, 'middleName' => null, 'phoneNumber' => null, 'postalCode' => null, 'destinationCode' => null, 'method' => null];
+    protected static $swaggerFormats = ['address1' => null, 'address2' => null, 'address3' => null, 'administrativeArea' => null, 'country' => null, 'destinationTypes' => null, 'locality' => null, 'firstName' => null, 'lastName' => null, 'middleName' => null, 'phoneNumber' => null, 'postalCode' => null, 'destinationCode' => null, 'method' => null, 'email' => null, 'company' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Riskv1decisionsOrderInformationShipTo implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['address1' => 'address1', 'address2' => 'address2', 'address3' => 'address3', 'administrativeArea' => 'administrativeArea', 'country' => 'country', 'destinationTypes' => 'destinationTypes', 'locality' => 'locality', 'firstName' => 'firstName', 'lastName' => 'lastName', 'middleName' => 'middleName', 'phoneNumber' => 'phoneNumber', 'postalCode' => 'postalCode', 'destinationCode' => 'destinationCode', 'method' => 'method'];
+    protected static $attributeMap = ['address1' => 'address1', 'address2' => 'address2', 'address3' => 'address3', 'administrativeArea' => 'administrativeArea', 'country' => 'country', 'destinationTypes' => 'destinationTypes', 'locality' => 'locality', 'firstName' => 'firstName', 'lastName' => 'lastName', 'middleName' => 'middleName', 'phoneNumber' => 'phoneNumber', 'postalCode' => 'postalCode', 'destinationCode' => 'destinationCode', 'method' => 'method', 'email' => 'email', 'company' => 'company'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['address1' => 'setAddress1', 'address2' => 'setAddress2', 'address3' => 'setAddress3', 'administrativeArea' => 'setAdministrativeArea', 'country' => 'setCountry', 'destinationTypes' => 'setDestinationTypes', 'locality' => 'setLocality', 'firstName' => 'setFirstName', 'lastName' => 'setLastName', 'middleName' => 'setMiddleName', 'phoneNumber' => 'setPhoneNumber', 'postalCode' => 'setPostalCode', 'destinationCode' => 'setDestinationCode', 'method' => 'setMethod'];
+    protected static $setters = ['address1' => 'setAddress1', 'address2' => 'setAddress2', 'address3' => 'setAddress3', 'administrativeArea' => 'setAdministrativeArea', 'country' => 'setCountry', 'destinationTypes' => 'setDestinationTypes', 'locality' => 'setLocality', 'firstName' => 'setFirstName', 'lastName' => 'setLastName', 'middleName' => 'setMiddleName', 'phoneNumber' => 'setPhoneNumber', 'postalCode' => 'setPostalCode', 'destinationCode' => 'setDestinationCode', 'method' => 'setMethod', 'email' => 'setEmail', 'company' => 'setCompany'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['address1' => 'getAddress1', 'address2' => 'getAddress2', 'address3' => 'getAddress3', 'administrativeArea' => 'getAdministrativeArea', 'country' => 'getCountry', 'destinationTypes' => 'getDestinationTypes', 'locality' => 'getLocality', 'firstName' => 'getFirstName', 'lastName' => 'getLastName', 'middleName' => 'getMiddleName', 'phoneNumber' => 'getPhoneNumber', 'postalCode' => 'getPostalCode', 'destinationCode' => 'getDestinationCode', 'method' => 'getMethod'];
+    protected static $getters = ['address1' => 'getAddress1', 'address2' => 'getAddress2', 'address3' => 'getAddress3', 'administrativeArea' => 'getAdministrativeArea', 'country' => 'getCountry', 'destinationTypes' => 'getDestinationTypes', 'locality' => 'getLocality', 'firstName' => 'getFirstName', 'lastName' => 'getLastName', 'middleName' => 'getMiddleName', 'phoneNumber' => 'getPhoneNumber', 'postalCode' => 'getPostalCode', 'destinationCode' => 'getDestinationCode', 'method' => 'getMethod', 'email' => 'getEmail', 'company' => 'getCompany'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -114,6 +114,8 @@ class Riskv1decisionsOrderInformationShipTo implements ArrayAccess
         $this->container['postalCode'] = isset($data['postalCode']) ? $data['postalCode'] : null;
         $this->container['destinationCode'] = isset($data['destinationCode']) ? $data['destinationCode'] : null;
         $this->container['method'] = isset($data['method']) ? $data['method'] : null;
+        $this->container['email'] = isset($data['email']) ? $data['email'] : null;
+        $this->container['company'] = isset($data['company']) ? $data['company'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -385,6 +387,42 @@ class Riskv1decisionsOrderInformationShipTo implements ArrayAccess
     public function setMethod($method)
     {
         $this->container['method'] = $method;
+        return $this;
+    }
+    /**
+     * Gets email
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->container['email'];
+    }
+    /**
+     * Sets email
+     * @param string $email Email of the recipient.
+     * @return $this
+     */
+    public function setEmail($email)
+    {
+        $this->container['email'] = $email;
+        return $this;
+    }
+    /**
+     * Gets company
+     * @return string
+     */
+    public function getCompany()
+    {
+        return $this->container['company'];
+    }
+    /**
+     * Sets company
+     * @param string $company Name of the customer's company.
+     * @return $this
+     */
+    public function setCompany($company)
+    {
+        $this->container['company'] = $company;
         return $this;
     }
     /**

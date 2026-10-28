@@ -210,6 +210,128 @@ class MerchantDefinedFieldsApi
         }
     }
     /**
+     * Operation createPblMerchantDefinedFieldDefinition
+     *
+     * Create a PayByLink merchant defined field for a given reference type
+     *
+     * @param string $referenceType The reference type for which the merchant defined field is to be created. Available values are Purchase and Donation (required)
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\MerchantDefinedFieldDefinitionRequest1 $merchantDefinedFieldDefinitionRequest  (required)
+     * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[], HTTP status code, HTTP response headers (array of strings)
+     */
+    public function createPblMerchantDefinedFieldDefinition($referenceType, $merchantDefinedFieldDefinitionRequest)
+    {
+        self::$logger->info('CALL TO METHOD createPblMerchantDefinedFieldDefinition STARTED');
+        list($response, $statusCode, $httpHeader) = $this->createPblMerchantDefinedFieldDefinitionWithHttpInfo($referenceType, $merchantDefinedFieldDefinitionRequest);
+        self::$logger->info('CALL TO METHOD createPblMerchantDefinedFieldDefinition ENDED');
+        self::$logger->close();
+        return [$response, $statusCode, $httpHeader];
+    }
+    /**
+     * Operation createPblMerchantDefinedFieldDefinitionWithHttpInfo
+     *
+     * Create a PayByLink merchant defined field for a given reference type
+     *
+     * @param string $referenceType The reference type for which the merchant defined field is to be created. Available values are Purchase and Donation (required)
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\MerchantDefinedFieldDefinitionRequest1 $merchantDefinedFieldDefinitionRequest  (required)
+     * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[], HTTP status code, HTTP response headers (array of strings)
+     */
+    public function createPblMerchantDefinedFieldDefinitionWithHttpInfo($referenceType, $merchantDefinedFieldDefinitionRequest)
+    {
+        // verify the required parameter 'referenceType' is set
+        if ($referenceType === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter {$referenceType} when calling createPblMerchantDefinedFieldDefinition");
+            throw new \InvalidArgumentException('Missing the required parameter $referenceType when calling createPblMerchantDefinedFieldDefinition');
+        }
+        // verify the required parameter 'merchantDefinedFieldDefinitionRequest' is set
+        if ($merchantDefinedFieldDefinitionRequest === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter {$merchantDefinedFieldDefinitionRequest} when calling createPblMerchantDefinedFieldDefinition");
+            throw new \InvalidArgumentException('Missing the required parameter $merchantDefinedFieldDefinitionRequest when calling createPblMerchantDefinedFieldDefinition');
+        }
+        // parse inputs
+        $resourcePath = "/ipl/v2/{referenceType}/merchantDefinedFields";
+        $httpBody = '';
+        $queryParams = [];
+        $headerParams = [];
+        $formParams = [];
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json']);
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json']);
+        // path params
+        if ($referenceType !== null) {
+            $resourcePath = str_replace("{" . "referenceType" . "}", $this->apiClient->getSerializer()->toPathValue($referenceType), $resourcePath);
+        }
+        // body params
+        $_tempBody = null;
+        if (isset($merchantDefinedFieldDefinitionRequest)) {
+            $_tempBody = $merchantDefinedFieldDefinitionRequest;
+        }
+        $sdkTracker = new \Pymt_Vas\Dependencies\CyberSource\Utilities\Tracking\SdkTracker();
+        $modelClassLocation = explode('\\', '\Pymt_Vas\Dependencies\CyberSource\Model\MerchantDefinedFieldDefinitionRequest1');
+        $_tempBody = $sdkTracker->insertDeveloperIdTracker($_tempBody, end($modelClassLocation), $this->apiClient->merchantConfig->getRunEnvironment(), $this->apiClient->merchantConfig->getDefaultDeveloperId());
+        // for model (json/xml)
+        if (isset($_tempBody) and count($formParams) <= 0) {
+            $httpBody = $_tempBody;
+            // $_tempBody is the method argument, if present
+        } elseif (count($formParams) > 0) {
+            $httpBody = MultipartHelper::build_data_files($boundary, $formParams);
+            // for HTTP post (form)
+        }
+        //MLE check and mle encryption for req body
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "createPblMerchantDefinedFieldDefinition,createPblMerchantDefinedFieldDefinitionWithHttpInfo")) {
+            try {
+                $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
+            } catch (Exception $e) {
+                self::$logger->error("Failed to encrypt request body:  {$e}");
+                throw new ApiException("Failed to encrypt request body : " . $e->getMessage());
+            }
+        }
+        // Logging
+        self::$logger->debug("Resource : POST {$resourcePath}");
+        if (isset($httpBody) and count($formParams) <= 0) {
+            if ($this->apiClient->merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
+                $printHttpBody = \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\DataMasker::maskData($httpBody);
+            } else {
+                $printHttpBody = $httpBody;
+            }
+            self::$logger->debug("Body Parameter :\n" . $printHttpBody);
+        }
+        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse2004[]");
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "createPblMerchantDefinedFieldDefinition,createPblMerchantDefinedFieldDefinitionWithHttpInfo");
+        // make the API Call
+        try {
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'POST', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[]', '/ipl/v2/{referenceType}/merchantDefinedFields', $isResponseMLEForAPI);
+            self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
+            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[]', $httpHeader), $statusCode, $httpHeader];
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 201:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[]', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 400:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4042', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 409:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4042', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 412:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4042', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+            }
+            self::$logger->error("ApiException : {$e}");
+            throw $e;
+        }
+    }
+    /**
      * Operation deleteMerchantDefinedFieldsDefinitions
      *
      * Delete a MerchantDefinedField by ID
@@ -315,6 +437,111 @@ class MerchantDefinedFieldsApi
         }
     }
     /**
+     * Operation deletePblMerchantDefinedFieldsDefinitions
+     *
+     * Delete a PayByLink MerchantDefinedField by ID
+     *
+     * @param string $referenceType  (required)
+     * @param int $id  (required)
+     * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
+     * @return array of void, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function deletePblMerchantDefinedFieldsDefinitions($referenceType, $id)
+    {
+        self::$logger->info('CALL TO METHOD deletePblMerchantDefinedFieldsDefinitions STARTED');
+        list($response, $statusCode, $httpHeader) = $this->deletePblMerchantDefinedFieldsDefinitionsWithHttpInfo($referenceType, $id);
+        self::$logger->info('CALL TO METHOD deletePblMerchantDefinedFieldsDefinitions ENDED');
+        self::$logger->close();
+        return [$response, $statusCode, $httpHeader];
+    }
+    /**
+     * Operation deletePblMerchantDefinedFieldsDefinitionsWithHttpInfo
+     *
+     * Delete a PayByLink MerchantDefinedField by ID
+     *
+     * @param string $referenceType  (required)
+     * @param int $id  (required)
+     * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
+     * @return array of null, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function deletePblMerchantDefinedFieldsDefinitionsWithHttpInfo($referenceType, $id)
+    {
+        // verify the required parameter 'referenceType' is set
+        if ($referenceType === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter {$referenceType} when calling deletePblMerchantDefinedFieldsDefinitions");
+            throw new \InvalidArgumentException('Missing the required parameter $referenceType when calling deletePblMerchantDefinedFieldsDefinitions');
+        }
+        // verify the required parameter 'id' is set
+        if ($id === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter {$id} when calling deletePblMerchantDefinedFieldsDefinitions");
+            throw new \InvalidArgumentException('Missing the required parameter $id when calling deletePblMerchantDefinedFieldsDefinitions');
+        }
+        // parse inputs
+        $resourcePath = "/ipl/v2/{referenceType}/merchantDefinedFields/{id}";
+        $httpBody = '';
+        $queryParams = [];
+        $headerParams = [];
+        $formParams = [];
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/hal+json;charset=utf-8']);
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json;charset=utf-8']);
+        // path params
+        if ($referenceType !== null) {
+            $resourcePath = str_replace("{" . "referenceType" . "}", $this->apiClient->getSerializer()->toPathValue($referenceType), $resourcePath);
+        }
+        // path params
+        if ($id !== null) {
+            $resourcePath = str_replace("{" . "id" . "}", $this->apiClient->getSerializer()->toPathValue($id), $resourcePath);
+        }
+        if ('DELETE' == 'POST') {
+            $_tempBody = '{}';
+        }
+        // for model (json/xml)
+        if (isset($_tempBody) and count($formParams) <= 0) {
+            $httpBody = $_tempBody;
+            // $_tempBody is the method argument, if present
+        } elseif (count($formParams) > 0) {
+            $httpBody = MultipartHelper::build_data_files($boundary, $formParams);
+            // for HTTP post (form)
+        }
+        //MLE check and mle encryption for req body
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "deletePblMerchantDefinedFieldsDefinitions,deletePblMerchantDefinedFieldsDefinitionsWithHttpInfo")) {
+            try {
+                $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
+            } catch (Exception $e) {
+                self::$logger->error("Failed to encrypt request body:  {$e}");
+                throw new ApiException("Failed to encrypt request body : " . $e->getMessage());
+            }
+        }
+        // Logging
+        self::$logger->debug("Resource : DELETE {$resourcePath}");
+        if (isset($httpBody) and count($formParams) <= 0) {
+            if ($this->apiClient->merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
+                $printHttpBody = \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\DataMasker::maskData($httpBody);
+            } else {
+                $printHttpBody = $httpBody;
+            }
+            self::$logger->debug("Body Parameter :\n" . $printHttpBody);
+        }
+        self::$logger->debug("Return Type : null");
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "deletePblMerchantDefinedFieldsDefinitions,deletePblMerchantDefinedFieldsDefinitionsWithHttpInfo");
+        // make the API Call
+        try {
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'DELETE', $queryParams, $httpBody, $headerParams, null, '/ipl/v2/{referenceType}/merchantDefinedFields/{id}', $isResponseMLEForAPI);
+            self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
+            return [$response, $statusCode, $httpHeader];
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+            }
+            self::$logger->error("ApiException : {$e}");
+            throw $e;
+        }
+    }
+    /**
      * Operation getMerchantDefinedFieldsDefinitions
      *
      * Get all merchant defined fields for a given reference type
@@ -399,6 +626,108 @@ class MerchantDefinedFieldsApi
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'GET', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[]', '/invoicing/v2/{referenceType}/merchantDefinedFields', $isResponseMLEForAPI);
+            self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
+            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[]', $httpHeader), $statusCode, $httpHeader];
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[]', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 404:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4042', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+            }
+            self::$logger->error("ApiException : {$e}");
+            throw $e;
+        }
+    }
+    /**
+     * Operation getPblMerchantDefinedFieldsDefinitions
+     *
+     * Get all PayByLink merchant defined fields for a given reference type
+     *
+     * @param string $referenceType The reference type for which merchant defined fields are to be fetched. Available values are Purchase, Donation and PayByLink. PayByLink returns the merchant defined fields for both Purchase and Donation combined. (required)
+     * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[], HTTP status code, HTTP response headers (array of strings)
+     */
+    public function getPblMerchantDefinedFieldsDefinitions($referenceType)
+    {
+        self::$logger->info('CALL TO METHOD getPblMerchantDefinedFieldsDefinitions STARTED');
+        list($response, $statusCode, $httpHeader) = $this->getPblMerchantDefinedFieldsDefinitionsWithHttpInfo($referenceType);
+        self::$logger->info('CALL TO METHOD getPblMerchantDefinedFieldsDefinitions ENDED');
+        self::$logger->close();
+        return [$response, $statusCode, $httpHeader];
+    }
+    /**
+     * Operation getPblMerchantDefinedFieldsDefinitionsWithHttpInfo
+     *
+     * Get all PayByLink merchant defined fields for a given reference type
+     *
+     * @param string $referenceType The reference type for which merchant defined fields are to be fetched. Available values are Purchase, Donation and PayByLink. PayByLink returns the merchant defined fields for both Purchase and Donation combined. (required)
+     * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[], HTTP status code, HTTP response headers (array of strings)
+     */
+    public function getPblMerchantDefinedFieldsDefinitionsWithHttpInfo($referenceType)
+    {
+        // verify the required parameter 'referenceType' is set
+        if ($referenceType === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter {$referenceType} when calling getPblMerchantDefinedFieldsDefinitions");
+            throw new \InvalidArgumentException('Missing the required parameter $referenceType when calling getPblMerchantDefinedFieldsDefinitions');
+        }
+        // parse inputs
+        $resourcePath = "/ipl/v2/{referenceType}/merchantDefinedFields";
+        $httpBody = '';
+        $queryParams = [];
+        $headerParams = [];
+        $formParams = [];
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json']);
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json']);
+        // path params
+        if ($referenceType !== null) {
+            $resourcePath = str_replace("{" . "referenceType" . "}", $this->apiClient->getSerializer()->toPathValue($referenceType), $resourcePath);
+        }
+        if ('GET' == 'POST') {
+            $_tempBody = '{}';
+        }
+        // for model (json/xml)
+        if (isset($_tempBody) and count($formParams) <= 0) {
+            $httpBody = $_tempBody;
+            // $_tempBody is the method argument, if present
+        } elseif (count($formParams) > 0) {
+            $httpBody = MultipartHelper::build_data_files($boundary, $formParams);
+            // for HTTP post (form)
+        }
+        //MLE check and mle encryption for req body
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "getPblMerchantDefinedFieldsDefinitions,getPblMerchantDefinedFieldsDefinitionsWithHttpInfo")) {
+            try {
+                $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
+            } catch (Exception $e) {
+                self::$logger->error("Failed to encrypt request body:  {$e}");
+                throw new ApiException("Failed to encrypt request body : " . $e->getMessage());
+            }
+        }
+        // Logging
+        self::$logger->debug("Resource : GET {$resourcePath}");
+        if (isset($httpBody) and count($formParams) <= 0) {
+            if ($this->apiClient->merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
+                $printHttpBody = \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\DataMasker::maskData($httpBody);
+            } else {
+                $printHttpBody = $httpBody;
+            }
+            self::$logger->debug("Body Parameter :\n" . $printHttpBody);
+        }
+        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse2004[]");
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getPblMerchantDefinedFieldsDefinitions,getPblMerchantDefinedFieldsDefinitionsWithHttpInfo");
+        // make the API Call
+        try {
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'GET', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[]', '/ipl/v2/{referenceType}/merchantDefinedFields', $isResponseMLEForAPI);
             self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
             return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[]', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {
@@ -524,6 +853,135 @@ class MerchantDefinedFieldsApi
         // make the API Call
         try {
             list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'PUT', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[]', '/invoicing/v2/{referenceType}/merchantDefinedFields/{id}', $isResponseMLEForAPI);
+            self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
+            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[]', $httpHeader), $statusCode, $httpHeader];
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[]', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 400:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4042', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 409:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4042', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+            }
+            self::$logger->error("ApiException : {$e}");
+            throw $e;
+        }
+    }
+    /**
+     * Operation putPblMerchantDefinedFieldsDefinitions
+     *
+     * Update a PayByLink MerchantDefinedField by ID
+     *
+     * @param string $referenceType  (required)
+     * @param int $id  (required)
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\MerchantDefinedFieldCore1 $merchantDefinedFieldCore  (required)
+     * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[], HTTP status code, HTTP response headers (array of strings)
+     */
+    public function putPblMerchantDefinedFieldsDefinitions($referenceType, $id, $merchantDefinedFieldCore)
+    {
+        self::$logger->info('CALL TO METHOD putPblMerchantDefinedFieldsDefinitions STARTED');
+        list($response, $statusCode, $httpHeader) = $this->putPblMerchantDefinedFieldsDefinitionsWithHttpInfo($referenceType, $id, $merchantDefinedFieldCore);
+        self::$logger->info('CALL TO METHOD putPblMerchantDefinedFieldsDefinitions ENDED');
+        self::$logger->close();
+        return [$response, $statusCode, $httpHeader];
+    }
+    /**
+     * Operation putPblMerchantDefinedFieldsDefinitionsWithHttpInfo
+     *
+     * Update a PayByLink MerchantDefinedField by ID
+     *
+     * @param string $referenceType  (required)
+     * @param int $id  (required)
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\MerchantDefinedFieldCore1 $merchantDefinedFieldCore  (required)
+     * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[], HTTP status code, HTTP response headers (array of strings)
+     */
+    public function putPblMerchantDefinedFieldsDefinitionsWithHttpInfo($referenceType, $id, $merchantDefinedFieldCore)
+    {
+        // verify the required parameter 'referenceType' is set
+        if ($referenceType === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter {$referenceType} when calling putPblMerchantDefinedFieldsDefinitions");
+            throw new \InvalidArgumentException('Missing the required parameter $referenceType when calling putPblMerchantDefinedFieldsDefinitions');
+        }
+        // verify the required parameter 'id' is set
+        if ($id === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter {$id} when calling putPblMerchantDefinedFieldsDefinitions");
+            throw new \InvalidArgumentException('Missing the required parameter $id when calling putPblMerchantDefinedFieldsDefinitions');
+        }
+        // verify the required parameter 'merchantDefinedFieldCore' is set
+        if ($merchantDefinedFieldCore === null) {
+            self::$logger->error("InvalidArgumentException : Missing the required parameter {$merchantDefinedFieldCore} when calling putPblMerchantDefinedFieldsDefinitions");
+            throw new \InvalidArgumentException('Missing the required parameter $merchantDefinedFieldCore when calling putPblMerchantDefinedFieldsDefinitions');
+        }
+        // parse inputs
+        $resourcePath = "/ipl/v2/{referenceType}/merchantDefinedFields/{id}";
+        $httpBody = '';
+        $queryParams = [];
+        $headerParams = [];
+        $formParams = [];
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/hal+json;charset=utf-8']);
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(['application/json;charset=utf-8']);
+        // path params
+        if ($referenceType !== null) {
+            $resourcePath = str_replace("{" . "referenceType" . "}", $this->apiClient->getSerializer()->toPathValue($referenceType), $resourcePath);
+        }
+        // path params
+        if ($id !== null) {
+            $resourcePath = str_replace("{" . "id" . "}", $this->apiClient->getSerializer()->toPathValue($id), $resourcePath);
+        }
+        // body params
+        $_tempBody = null;
+        if (isset($merchantDefinedFieldCore)) {
+            $_tempBody = $merchantDefinedFieldCore;
+        }
+        $sdkTracker = new \Pymt_Vas\Dependencies\CyberSource\Utilities\Tracking\SdkTracker();
+        $modelClassLocation = explode('\\', '\Pymt_Vas\Dependencies\CyberSource\Model\MerchantDefinedFieldCore1');
+        $_tempBody = $sdkTracker->insertDeveloperIdTracker($_tempBody, end($modelClassLocation), $this->apiClient->merchantConfig->getRunEnvironment(), $this->apiClient->merchantConfig->getDefaultDeveloperId());
+        // for model (json/xml)
+        if (isset($_tempBody) and count($formParams) <= 0) {
+            $httpBody = $_tempBody;
+            // $_tempBody is the method argument, if present
+        } elseif (count($formParams) > 0) {
+            $httpBody = MultipartHelper::build_data_files($boundary, $formParams);
+            // for HTTP post (form)
+        }
+        //MLE check and mle encryption for req body
+        $inboundMLEStatus = 'false';
+        if (MLEUtility::checkIsMLEForAPI($this->apiClient->merchantConfig, $inboundMLEStatus, "putPblMerchantDefinedFieldsDefinitions,putPblMerchantDefinedFieldsDefinitionsWithHttpInfo")) {
+            try {
+                $httpBody = MLEUtility::encryptRequestPayload($this->apiClient->merchantConfig, $httpBody);
+            } catch (Exception $e) {
+                self::$logger->error("Failed to encrypt request body:  {$e}");
+                throw new ApiException("Failed to encrypt request body : " . $e->getMessage());
+            }
+        }
+        // Logging
+        self::$logger->debug("Resource : PUT {$resourcePath}");
+        if (isset($httpBody) and count($formParams) <= 0) {
+            if ($this->apiClient->merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
+                $printHttpBody = \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\DataMasker::maskData($httpBody);
+            } else {
+                $printHttpBody = $httpBody;
+            }
+            self::$logger->debug("Body Parameter :\n" . $printHttpBody);
+        }
+        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse2004[]");
+        // Response MLE check
+        $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "putPblMerchantDefinedFieldsDefinitions,putPblMerchantDefinedFieldsDefinitionsWithHttpInfo");
+        // make the API Call
+        try {
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'PUT', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[]', '/ipl/v2/{referenceType}/merchantDefinedFields/{id}', $isResponseMLEForAPI);
             self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
             return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2004[]', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {

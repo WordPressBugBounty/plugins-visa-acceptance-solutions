@@ -6,16 +6,9 @@ use Pymt_Vas\Dependencies\CyberSource\Authentication\Util\GlobalParameter;
 use Pymt_Vas\Dependencies\CyberSource\Authentication\Util\Cache as Cache;
 use Pymt_Vas\Dependencies\CyberSource\Logging\LogFactory as LogFactory;
 use Pymt_Vas\Dependencies\CyberSource\Logging\LogConfiguration;
-use Pymt_Vas\Dependencies\Jose\Component\Core\JWK;
-use Pymt_Vas\Dependencies\Jose\Component\Core\AlgorithmManager;
-use Pymt_Vas\Dependencies\Jose\Component\Encryption\JWEBuilder;
-use Pymt_Vas\Dependencies\Jose\Component\Encryption\Serializer\CompactSerializer;
-use Pymt_Vas\Dependencies\Jose\Component\KeyManagement\JWKFactory;
-use Pymt_Vas\Dependencies\Jose\Component\Encryption\Algorithm\KeyEncryption\RSAOAEP;
-use Pymt_Vas\Dependencies\Jose\Component\Encryption\Algorithm\KeyEncryption\RSAOAEP256;
-use Pymt_Vas\Dependencies\Jose\Component\Encryption\Algorithm\ContentEncryption\A256GCM;
-use Pymt_Vas\Dependencies\Jose\Component\Encryption\Compression\CompressionMethodManager;
-use Pymt_Vas\Dependencies\Jose\Component\Encryption\Compression\Deflate;
+use Pymt_Vas\Dependencies\SimpleJWT\JWE;
+use Pymt_Vas\Dependencies\SimpleJWT\Keys\RSAKey;
+use Pymt_Vas\Dependencies\SimpleJWT\Keys\KeySet;
 use Pymt_Vas\Dependencies\CyberSource\Authentication\Util\MLEException;
 use Pymt_Vas\Dependencies\CyberSource\Authentication\Util\JWE\JWEUtility;
 /*
@@ -80,6 +73,11 @@ class MLEUtility
             self::$logger->debug("The certificate to use for MLE for requests is not provided in the merchant configuration. Please ensure that the certificate path is provided.");
             self::$logger->debug("Currently, MLE for requests using HTTP Signature as authentication is not supported by Cybersource. By default, the SDK will fall back to non-encrypted requests.");
             return $requestBody;
+        }
+        if ($mleCert == false) {
+            $errorMsg = "No certificate found for MLE Request. " . "Please provide the Request MLE certificate file path via 'mleForRequestPublicCertPath' in merchant configuration. " . "This is required when using jwtKeyType=SHARED_SECRET or when the P12 file does not contain the MLE certificate.";
+            self::$logger->error($errorMsg);
+            throw new MLEException($errorMsg);
         }
         if ($merchantConfig->getLogConfiguration()->isMaskingEnabled()) {
             $printRequestBody = \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\DataMasker::maskData($requestBody);
@@ -158,14 +156,18 @@ class MLEUtility
         try {
             $serialNumber = self::extractSerialNumber($cert, "Serial number not found in certificate subject field for Request MLE encryption");
             $publicKey = openssl_pkey_get_details(openssl_pkey_get_public($cert))['key'];
-            $jwk = JWKFactory::createFromKey($publicKey, null, ['kid' => $serialNumber]);
+            // Build the RSA public key and tag it with the certificate serial number as
+            // the key id (kid). SimpleJWT derives the JWE 'kid' header from the selected
+            // key's id, so this must be set for CyberSource to identify the cert.
+            $jwk = new RSAKey($publicKey, 'pem');
+            $jwk->setKeyId($serialNumber);
+            $keySet = new KeySet();
+            $keySet->add($jwk);
             $header = ['alg' => 'RSA-OAEP-256', 'enc' => 'A256GCM', 'cty' => 'JWT', 'kid' => $serialNumber, 'iat' => time()];
-            $algorithmManager = new AlgorithmManager([new RSAOAEP(), new RSAOAEP256(), new A256GCM()]);
-            $compressionManager = new CompressionMethodManager([new Deflate()]);
-            $jweBuilder = new JWEBuilder($algorithmManager, $algorithmManager, $compressionManager);
-            $jwe = $jweBuilder->create()->withPayload($requestBody)->withSharedProtectedHeader($header)->addRecipient($jwk)->build();
-            $serializer = new CompactSerializer();
-            return $serializer->serialize($jwe);
+            $jwe = new JWE($header, $requestBody);
+            // Passing the kid explicitly selects the matching key from the key set and
+            // produces JWE Compact Serialization.
+            return $jwe->encrypt($keySet, $serialNumber);
         } catch (\Exception $e) {
             self::$logger->error("Error encrypting request payload: " . $e->getMessage());
             throw new MLEException("Error encrypting request payload: " . $e->getMessage());

@@ -49,12 +49,12 @@ class Iplv2paymentlinksOrderInformationLineItems implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['productSku' => 'string', 'productName' => 'string', 'quantity' => 'int', 'unitPrice' => 'string', 'productDescription' => 'string'];
+    protected static $swaggerTypes = ['productSku' => 'string', 'productName' => 'string', 'quantity' => 'int', 'unitPrice' => 'string', 'productDescription' => 'string', 'discountAmount' => 'string', 'discountPercent' => 'string', 'taxAmount' => 'string', 'taxRate' => 'string', 'totalAmount' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['productSku' => null, 'productName' => null, 'quantity' => null, 'unitPrice' => null, 'productDescription' => null];
+    protected static $swaggerFormats = ['productSku' => null, 'productName' => null, 'quantity' => null, 'unitPrice' => null, 'productDescription' => null, 'discountAmount' => null, 'discountPercent' => null, 'taxAmount' => null, 'taxRate' => null, 'totalAmount' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -67,17 +67,17 @@ class Iplv2paymentlinksOrderInformationLineItems implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['productSku' => 'productSku', 'productName' => 'productName', 'quantity' => 'quantity', 'unitPrice' => 'unitPrice', 'productDescription' => 'productDescription'];
+    protected static $attributeMap = ['productSku' => 'productSku', 'productName' => 'productName', 'quantity' => 'quantity', 'unitPrice' => 'unitPrice', 'productDescription' => 'productDescription', 'discountAmount' => 'discountAmount', 'discountPercent' => 'discountPercent', 'taxAmount' => 'taxAmount', 'taxRate' => 'taxRate', 'totalAmount' => 'totalAmount'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['productSku' => 'setProductSku', 'productName' => 'setProductName', 'quantity' => 'setQuantity', 'unitPrice' => 'setUnitPrice', 'productDescription' => 'setProductDescription'];
+    protected static $setters = ['productSku' => 'setProductSku', 'productName' => 'setProductName', 'quantity' => 'setQuantity', 'unitPrice' => 'setUnitPrice', 'productDescription' => 'setProductDescription', 'discountAmount' => 'setDiscountAmount', 'discountPercent' => 'setDiscountPercent', 'taxAmount' => 'setTaxAmount', 'taxRate' => 'setTaxRate', 'totalAmount' => 'setTotalAmount'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['productSku' => 'getProductSku', 'productName' => 'getProductName', 'quantity' => 'getQuantity', 'unitPrice' => 'getUnitPrice', 'productDescription' => 'getProductDescription'];
+    protected static $getters = ['productSku' => 'getProductSku', 'productName' => 'getProductName', 'quantity' => 'getQuantity', 'unitPrice' => 'getUnitPrice', 'productDescription' => 'getProductDescription', 'discountAmount' => 'getDiscountAmount', 'discountPercent' => 'getDiscountPercent', 'taxAmount' => 'getTaxAmount', 'taxRate' => 'getTaxRate', 'totalAmount' => 'getTotalAmount'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -106,6 +106,11 @@ class Iplv2paymentlinksOrderInformationLineItems implements ArrayAccess
         $this->container['quantity'] = isset($data['quantity']) ? $data['quantity'] : null;
         $this->container['unitPrice'] = isset($data['unitPrice']) ? $data['unitPrice'] : null;
         $this->container['productDescription'] = isset($data['productDescription']) ? $data['productDescription'] : null;
+        $this->container['discountAmount'] = isset($data['discountAmount']) ? $data['discountAmount'] : null;
+        $this->container['discountPercent'] = isset($data['discountPercent']) ? $data['discountPercent'] : null;
+        $this->container['taxAmount'] = isset($data['taxAmount']) ? $data['taxAmount'] : null;
+        $this->container['taxRate'] = isset($data['taxRate']) ? $data['taxRate'] : null;
+        $this->container['totalAmount'] = isset($data['totalAmount']) ? $data['totalAmount'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -221,6 +226,96 @@ class Iplv2paymentlinksOrderInformationLineItems implements ArrayAccess
     public function setProductDescription($productDescription)
     {
         $this->container['productDescription'] = $productDescription;
+        return $this;
+    }
+    /**
+     * Gets discountAmount
+     * @return string
+     */
+    public function getDiscountAmount()
+    {
+        return $this->container['discountAmount'];
+    }
+    /**
+     * Sets discountAmount
+     * @param string $discountAmount Discount amount applied to the item. Maximum of 2 decimal places. You may provide either discountAmount or discountPercent (not both). Example: 0.60
+     * @return $this
+     */
+    public function setDiscountAmount($discountAmount)
+    {
+        $this->container['discountAmount'] = $discountAmount;
+        return $this;
+    }
+    /**
+     * Gets discountPercent
+     * @return string
+     */
+    public function getDiscountPercent()
+    {
+        return $this->container['discountPercent'];
+    }
+    /**
+     * Sets discountPercent
+     * @param string $discountPercent Discount rate applied to the item. Maximum of 3 decimal places. You may provide either discountAmount or discountPercent (not both). If you add discountPercent, a discountAmount will be calculated automatically. Example: 5.00 (=5.00%)
+     * @return $this
+     */
+    public function setDiscountPercent($discountPercent)
+    {
+        $this->container['discountPercent'] = $discountPercent;
+        return $this;
+    }
+    /**
+     * Gets taxAmount
+     * @return string
+     */
+    public function getTaxAmount()
+    {
+        return $this->container['taxAmount'];
+    }
+    /**
+     * Sets taxAmount
+     * @param string $taxAmount Tax amount applied to the item. This value cannot be negative. Maximum of 2 decimal places. The tax amount and the offer amount must be in the same currency. The tax amount field is additive. If taxAmount is provided but taxRate is not, the taxRate will be calculated. Example: 2.86
+     * @return $this
+     */
+    public function setTaxAmount($taxAmount)
+    {
+        $this->container['taxAmount'] = $taxAmount;
+        return $this;
+    }
+    /**
+     * Gets taxRate
+     * @return string
+     */
+    public function getTaxRate()
+    {
+        return $this->container['taxRate'];
+    }
+    /**
+     * Sets taxRate
+     * @param string $taxRate Tax rate applied to the item. Valid range: 1.001% to 99.999%. Maximum of 3 decimal places. If a taxRate is provided but taxAmount is missing or incorrect, the taxAmount based on the given taxRate will be overwritten. Example: 25.00 (=25.00%)
+     * @return $this
+     */
+    public function setTaxRate($taxRate)
+    {
+        $this->container['taxRate'] = $taxRate;
+        return $this;
+    }
+    /**
+     * Gets totalAmount
+     * @return string
+     */
+    public function getTotalAmount()
+    {
+        return $this->container['totalAmount'];
+    }
+    /**
+     * Sets totalAmount
+     * @param string $totalAmount Total amount for the line item after discount and tax, calculated per single unit. Formula: (unitPrice - discountAmount) + taxAmount. This field is calculated automatically and does not need to be provided in the request. Example: 14.31
+     * @return $this
+     */
+    public function setTotalAmount($totalAmount)
+    {
+        $this->container['totalAmount'] = $totalAmount;
         return $this;
     }
     /**

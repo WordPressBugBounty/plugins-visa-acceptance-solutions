@@ -48,12 +48,12 @@ class GetAllSubscriptionsResponseOrderInformationAmountDetailsSurcharge implemen
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['amount' => 'string'];
+    protected static $swaggerTypes = ['amount' => 'string', 'description' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['amount' => null];
+    protected static $swaggerFormats = ['amount' => null, 'description' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class GetAllSubscriptionsResponseOrderInformationAmountDetailsSurcharge implemen
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['amount' => 'amount'];
+    protected static $attributeMap = ['amount' => 'amount', 'description' => 'description'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['amount' => 'setAmount'];
+    protected static $setters = ['amount' => 'setAmount', 'description' => 'setDescription'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['amount' => 'getAmount'];
+    protected static $getters = ['amount' => 'getAmount', 'description' => 'getDescription'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -101,6 +101,7 @@ class GetAllSubscriptionsResponseOrderInformationAmountDetailsSurcharge implemen
     public function __construct(array $data = null)
     {
         $this->container['amount'] = isset($data['amount']) ? $data['amount'] : null;
+        $this->container['description'] = isset($data['description']) ? $data['description'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -138,6 +139,24 @@ class GetAllSubscriptionsResponseOrderInformationAmountDetailsSurcharge implemen
     public function setAmount($amount)
     {
         $this->container['amount'] = $amount;
+        return $this;
+    }
+    /**
+     * Gets description
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->container['description'];
+    }
+    /**
+     * Sets description
+     * @param string $description Description of the surcharge.
+     * @return $this
+     */
+    public function setDescription($description)
+    {
+        $this->container['description'] = $description;
         return $this;
     }
     /**

@@ -48,7 +48,7 @@ class Rbsv1subscriptionsProcessingInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['commerceIndicator' => 'string', 'authorizationOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Rbsv1subscriptionsProcessingInformationAuthorizationOptions'];
+    protected static $swaggerTypes = ['commerceIndicator' => 'string', 'authorizationOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\RbsAuthorizationOptions'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -143,7 +143,7 @@ class Rbsv1subscriptionsProcessingInformation implements ArrayAccess
     }
     /**
      * Gets authorizationOptions
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Rbsv1subscriptionsProcessingInformationAuthorizationOptions
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\RbsAuthorizationOptions
      */
     public function getAuthorizationOptions()
     {
@@ -151,7 +151,7 @@ class Rbsv1subscriptionsProcessingInformation implements ArrayAccess
     }
     /**
      * Sets authorizationOptions
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Rbsv1subscriptionsProcessingInformationAuthorizationOptions $authorizationOptions
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\RbsAuthorizationOptions $authorizationOptions
      * @return $this
      */
     public function setAuthorizationOptions($authorizationOptions)

@@ -48,12 +48,12 @@ class Ptsv2paymentsidrefundsPaymentInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['card' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformationCard', 'bank' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformationBank', 'tokenizedCard' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationTokenizedCard', 'fluidData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationFluidData', 'customer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationCustomer', 'paymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentInstrument', 'instrumentIdentifier' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationInstrumentIdentifier', 'shippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationShippingAddress', 'legacyToken' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationLegacyToken', 'paymentType' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformationPaymentType', 'eWallet' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformationEWallet', 'paymentAccountReference' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentAccountReference'];
+    protected static $swaggerTypes = ['card' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformationCard', 'bank' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformationBank', 'tokenizedCard' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationTokenizedCard', 'fluidData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationFluidData', 'customer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationCustomer', 'paymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentInstrument', 'instrumentIdentifier' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationInstrumentIdentifier', 'shippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationShippingAddress', 'legacyToken' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationLegacyToken', 'paymentType' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformationPaymentType', 'eWallet' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformationEWallet', 'paymentAccountReference' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentAccountReference', 'thirdPartyToken' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationThirdPartyToken', 'initiationChannel' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['card' => null, 'bank' => null, 'tokenizedCard' => null, 'fluidData' => null, 'customer' => null, 'paymentInstrument' => null, 'instrumentIdentifier' => null, 'shippingAddress' => null, 'legacyToken' => null, 'paymentType' => null, 'eWallet' => null, 'paymentAccountReference' => null];
+    protected static $swaggerFormats = ['card' => null, 'bank' => null, 'tokenizedCard' => null, 'fluidData' => null, 'customer' => null, 'paymentInstrument' => null, 'instrumentIdentifier' => null, 'shippingAddress' => null, 'legacyToken' => null, 'paymentType' => null, 'eWallet' => null, 'paymentAccountReference' => null, 'thirdPartyToken' => null, 'initiationChannel' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2paymentsidrefundsPaymentInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['card' => 'card', 'bank' => 'bank', 'tokenizedCard' => 'tokenizedCard', 'fluidData' => 'fluidData', 'customer' => 'customer', 'paymentInstrument' => 'paymentInstrument', 'instrumentIdentifier' => 'instrumentIdentifier', 'shippingAddress' => 'shippingAddress', 'legacyToken' => 'legacyToken', 'paymentType' => 'paymentType', 'eWallet' => 'eWallet', 'paymentAccountReference' => 'paymentAccountReference'];
+    protected static $attributeMap = ['card' => 'card', 'bank' => 'bank', 'tokenizedCard' => 'tokenizedCard', 'fluidData' => 'fluidData', 'customer' => 'customer', 'paymentInstrument' => 'paymentInstrument', 'instrumentIdentifier' => 'instrumentIdentifier', 'shippingAddress' => 'shippingAddress', 'legacyToken' => 'legacyToken', 'paymentType' => 'paymentType', 'eWallet' => 'eWallet', 'paymentAccountReference' => 'paymentAccountReference', 'thirdPartyToken' => 'thirdPartyToken', 'initiationChannel' => 'initiationChannel'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['card' => 'setCard', 'bank' => 'setBank', 'tokenizedCard' => 'setTokenizedCard', 'fluidData' => 'setFluidData', 'customer' => 'setCustomer', 'paymentInstrument' => 'setPaymentInstrument', 'instrumentIdentifier' => 'setInstrumentIdentifier', 'shippingAddress' => 'setShippingAddress', 'legacyToken' => 'setLegacyToken', 'paymentType' => 'setPaymentType', 'eWallet' => 'setEWallet', 'paymentAccountReference' => 'setPaymentAccountReference'];
+    protected static $setters = ['card' => 'setCard', 'bank' => 'setBank', 'tokenizedCard' => 'setTokenizedCard', 'fluidData' => 'setFluidData', 'customer' => 'setCustomer', 'paymentInstrument' => 'setPaymentInstrument', 'instrumentIdentifier' => 'setInstrumentIdentifier', 'shippingAddress' => 'setShippingAddress', 'legacyToken' => 'setLegacyToken', 'paymentType' => 'setPaymentType', 'eWallet' => 'setEWallet', 'paymentAccountReference' => 'setPaymentAccountReference', 'thirdPartyToken' => 'setThirdPartyToken', 'initiationChannel' => 'setInitiationChannel'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['card' => 'getCard', 'bank' => 'getBank', 'tokenizedCard' => 'getTokenizedCard', 'fluidData' => 'getFluidData', 'customer' => 'getCustomer', 'paymentInstrument' => 'getPaymentInstrument', 'instrumentIdentifier' => 'getInstrumentIdentifier', 'shippingAddress' => 'getShippingAddress', 'legacyToken' => 'getLegacyToken', 'paymentType' => 'getPaymentType', 'eWallet' => 'getEWallet', 'paymentAccountReference' => 'getPaymentAccountReference'];
+    protected static $getters = ['card' => 'getCard', 'bank' => 'getBank', 'tokenizedCard' => 'getTokenizedCard', 'fluidData' => 'getFluidData', 'customer' => 'getCustomer', 'paymentInstrument' => 'getPaymentInstrument', 'instrumentIdentifier' => 'getInstrumentIdentifier', 'shippingAddress' => 'getShippingAddress', 'legacyToken' => 'getLegacyToken', 'paymentType' => 'getPaymentType', 'eWallet' => 'getEWallet', 'paymentAccountReference' => 'getPaymentAccountReference', 'thirdPartyToken' => 'getThirdPartyToken', 'initiationChannel' => 'getInitiationChannel'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -112,6 +112,8 @@ class Ptsv2paymentsidrefundsPaymentInformation implements ArrayAccess
         $this->container['paymentType'] = isset($data['paymentType']) ? $data['paymentType'] : null;
         $this->container['eWallet'] = isset($data['eWallet']) ? $data['eWallet'] : null;
         $this->container['paymentAccountReference'] = isset($data['paymentAccountReference']) ? $data['paymentAccountReference'] : null;
+        $this->container['thirdPartyToken'] = isset($data['thirdPartyToken']) ? $data['thirdPartyToken'] : null;
+        $this->container['initiationChannel'] = isset($data['initiationChannel']) ? $data['initiationChannel'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -347,6 +349,42 @@ class Ptsv2paymentsidrefundsPaymentInformation implements ArrayAccess
     public function setPaymentAccountReference($paymentAccountReference)
     {
         $this->container['paymentAccountReference'] = $paymentAccountReference;
+        return $this;
+    }
+    /**
+     * Gets thirdPartyToken
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationThirdPartyToken
+     */
+    public function getThirdPartyToken()
+    {
+        return $this->container['thirdPartyToken'];
+    }
+    /**
+     * Sets thirdPartyToken
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationThirdPartyToken $thirdPartyToken
+     * @return $this
+     */
+    public function setThirdPartyToken($thirdPartyToken)
+    {
+        $this->container['thirdPartyToken'] = $thirdPartyToken;
+        return $this;
+    }
+    /**
+     * Gets initiationChannel
+     * @return string
+     */
+    public function getInitiationChannel()
+    {
+        return $this->container['initiationChannel'];
+    }
+    /**
+     * Sets initiationChannel
+     * @param string $initiationChannel Mastercard-defined code that indicates how the account information was obtained for credit authorization transactions.  Possible values: - `00`: Card (default) - `01`: Mobile network operator (MNO) controlled removable secure element (SIM or UICC) personalized for use with a mobile phone or smartphone - `02`: Key fob - `03`: Watch - `04`: Mobile tag - `05`: Wristband - `06`: Mobile phone case or sleeve - `07`: Mobile phone or smartphone with fixed (nonremovable) secure element controlled by the MNO (for example, code division multiple access (CDMA)) - `08`: Removable secure element not controlled by the MNO (for example, memory card personalized for use with a mobile phone or smartphone) - `09`: Mobile phone or smartphone with a fixed (nonremovable) secure element not controlled by the MNO - `10`: MNO-controlled removable secure element (SIM or UICC) personalized for use with a tablet or e-book - `11`: Tablet or e-book with a fixed (nonremovable) secure element controlled by the MNO - `12`: Removable secure element not controlled by the MNO (for example, memory card personalized for use with a tablet or e-book) - `13`: Tablet or e-book with fixed (nonremovable) secure element not controlled by the MNO - `14` - `99`: Reserved for future use  This field flows in ISO Field 104 DSID 65 Tag 04.  This field is supported for Mastercard credit authorization transactions.  #### Used by **Credit Authorization (Standalone)** Optional field.
+     * @return $this
+     */
+    public function setInitiationChannel($initiationChannel)
+    {
+        $this->container['initiationChannel'] = $initiationChannel;
         return $this;
     }
     /**

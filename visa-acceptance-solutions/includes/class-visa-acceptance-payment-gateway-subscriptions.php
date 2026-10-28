@@ -206,8 +206,31 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
         $result = array( VISA_ACCEPTANCE_SUCCESS => false );
         if ( $order->get_payment_method( 'edit' ) === $this->get_id() ) {
             try {
-                $token           = $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN );
+                // Get token from subscription, not from renewal order.
+                $token           = null;
                 $current_user_id = $order->get_user_id();
+                $subscriptions = wcs_get_subscriptions_for_order(
+                    $order,
+                    array(
+                        'order_type'  => array( 'any' ),
+                        'customer_id' => $current_user_id,
+                    )
+                );
+               
+                // Try to get token from the first subscription.
+                if ( ! empty( $subscriptions ) ) {
+                    foreach ( $subscriptions as $subscription ) {
+                        $token = $this->get_order_meta( $subscription, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN );
+                        if ( ! empty( $token ) ) {
+                            break;
+                        }
+                    }
+                }
+                // Fallback: try to get token from renewal order itself (legacy support).
+                if ( empty( $token ) ) {
+                    $token = $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN );
+                }
+               
                 $is_early_renewal = false;
                 $accepted_via_modal = false;
  
@@ -227,15 +250,8 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
                 }
  
                 if ( ! empty( $token ) && $token instanceof \WC_Payment_Token ) {
-                    $result = $authorization_saved_card->do_transaction( $order, $token, null, wcs_order_contains_early_renewal( $order ) ? false : true );
+                    $result = $authorization_saved_card->do_transaction( $order, $token, wcs_order_contains_early_renewal( $order ) ? false : true );
                 } else {
-                    $subscriptions = wcs_get_subscriptions_for_order(
-                        $order,
-                        array(
-                            'order_type'  => array( 'any' ),
-                            'customer_id' => $current_user_id,
-                        )
-                    );
                     $this->add_logs_data( 'Payment token not found for autorenewal transaction for order ' . $order->get_id() . ' of subscription ' . wp_json_encode( $subscriptions ), true, 'Auto renewal subscription order payment' );
                 }
  
@@ -243,7 +259,7 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
                     // Refresh order to get latest status after transaction.
                     $order = wc_get_order( $order->get_id() );
                     
-                    // Check if order is in Decision Manager review (pending/on-hold status).
+                    // Check if order is in Decision Manager review — DM review sets order to PENDING.
                     $is_dm_review = $order->has_status( array( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_ON_HOLD, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PENDING ) );
                     
                     // For early renewal orders in DM review, add a flag.
@@ -401,18 +417,107 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 */
 	public function saved_token_subscriptions_payload( $order, $payload, $merchant_initiated ) {
 		$contain_token = $this->has_subscription_token ( $order );
+		$is_echeck     = $this->is_echeck_transaction( $order );
 		if ( wcs_order_contains_subscription( $order ) || wcs_order_contains_renewal( $order ) ) {
 			if ( wcs_order_contains_renewal( $order ) && $merchant_initiated ) {
 				$payload['authorizationOptions']['initiator']['type'] = 'merchant';
+				$payload['authorizationOptions']['initiator']['storedCredentialUsed'] = true;
+
+				// merchantInitiatedTransaction is a card-only field, not supported for eCheck/bank transfer.
+				if ( ! $is_echeck ) {
+					$previous_txn_id = $this->get_previous_transaction_id( $order );
+					$is_mastercard = $this->is_mastercard_transaction( $order );
+					$is_discover = $this->is_discover_transaction( $order );
+
+					$payload['authorizationOptions']['initiator']['merchantInitiatedTransaction'] = array();
+
+					if ( $is_mastercard ) {
+						$payload['authorizationOptions']['initiator']['merchantInitiatedTransaction']['reason'] = '7';
+					}
+
+					if ( ! empty( $previous_txn_id ) ) {
+						$payload['authorizationOptions']['initiator']['merchantInitiatedTransaction']['previousTransactionId'] = $previous_txn_id;
+					}
+
+					// Discover requires original authorized amount.
+					if ( $is_discover ) {
+						$original_amount = $this->get_original_authorized_amount( $order );
+						if ( ! empty( $original_amount ) ) {
+							$payload['authorizationOptions']['initiator']['merchantInitiatedTransaction']['originalAuthorizedAmount'] = $original_amount;
+						}
+					}
+				}
+                $payload['commerceIndicator'] = VISA_ACCEPTANCE_RECURRING;
 				if ( ! in_array( VISA_ACCEPTANCE_DECISION_SKIP, $payload['actionList'], true ) ) {
 					array_push( $payload['actionList'], VISA_ACCEPTANCE_DECISION_SKIP );
 				}
+			} elseif ( wcs_order_contains_renewal( $order ) && ! $merchant_initiated ) {
+				// Customer-initiated renewal (from My Account section).
+                $is_mastercard = ! $is_echeck && $this->is_mastercard_transaction( $order );
+                $is_discover = ! $is_echeck && $this->is_discover_transaction( $order );
+                $previous_txn_id = $is_echeck ? null : $this->get_previous_transaction_id( $order );
+                
+                // Customer-initiated renewals use internet.
+                $payload['commerceIndicator'] = VISA_ACCEPTANCE_INTERNET;
+                
+                // Add merchantInitiatedTransaction for Mastercard.
+                if ( ! $is_echeck && ( $is_mastercard || $is_discover || ! empty( $previous_txn_id ) ) ) {
+                    if ( ! isset( $payload['authorizationOptions']['initiator']['merchantInitiatedTransaction'] ) ) {
+                        $payload['authorizationOptions']['initiator']['merchantInitiatedTransaction'] = array();
+                    }
+                    
+                    if ( $is_mastercard ) {
+                        $payload['authorizationOptions']['initiator']['merchantInitiatedTransaction']['reason'] = '7';
+                    }
+                    
+                    if ( ! empty( $previous_txn_id ) ) {
+                        $payload['authorizationOptions']['initiator']['merchantInitiatedTransaction']['previousTransactionId'] = $previous_txn_id;
+                    }
+                    
+                    // Discover requires original authorized amount.
+                    if ( $is_discover ) {
+                        $original_amount = $this->get_original_authorized_amount( $order );
+                        if ( ! empty( $original_amount ) ) {
+                            $payload['authorizationOptions']['initiator']['merchantInitiatedTransaction']['originalAuthorizedAmount'] = $original_amount;
+                        }
+                    }
+                }
 			}
-			// Set commerceIndicator to recurring only when a subscription token exists AND the order is a renewal.
-			if ( ( ! empty( $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ) ) || $contain_token ) && wcs_order_contains_renewal( $order ) ) { 
-			$payload['commerceIndicator'] = VISA_ACCEPTANCE_RECURRING;
+			// Fallback: for other renewal scenarios.
+			if ( ( ! empty( $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ) ) || $contain_token ) && wcs_order_contains_renewal( $order ) && ! isset( $payload['commerceIndicator'] ) ) { 
+			$payload['commerceIndicator'] = VISA_ACCEPTANCE_INTERNET;
 		} elseif ( wcs_order_contains_subscription( $order ) && ! wcs_order_contains_renewal( $order ) ) {
-			$payload['recurringOptions']['firstRecurringPayment'] = true;
+			// Initial subscription with saved card.
+			$is_mastercard = $this->is_mastercard_transaction( $order );
+			$is_discover = $this->is_discover_transaction( $order );
+			$payload['commerceIndicator'] = VISA_ACCEPTANCE_INTERNET;
+            $payload['recurringOptions']['firstRecurringPayment'] = true;
+			
+			// Add merchantInitiatedTransaction for Mastercard on initial subscription with saved card.
+            if ( $is_mastercard || $is_discover ) {
+                // Ensure authorizationOptions structure exists.
+                if ( ! isset( $payload['authorizationOptions'] ) ) {
+                    $payload['authorizationOptions'] = array();
+                }
+                if ( ! isset( $payload['authorizationOptions']['initiator'] ) ) {
+                    $payload['authorizationOptions']['initiator'] = array();
+                }
+                if ( ! isset( $payload['authorizationOptions']['initiator']['merchantInitiatedTransaction'] ) ) {
+                    $payload['authorizationOptions']['initiator']['merchantInitiatedTransaction'] = array();
+                }
+                
+                if ( $is_mastercard ) {
+                    $payload['authorizationOptions']['initiator']['merchantInitiatedTransaction']['reason'] = '7';
+                }
+                
+                // Discover requires original authorized amount for initial transactions.
+                if ( $is_discover ) {
+                    $original_amount = $this->get_original_authorized_amount( $order );
+                    if ( ! empty( $original_amount ) ) {
+                        $payload['authorizationOptions']['initiator']['merchantInitiatedTransaction']['originalAuthorizedAmount'] = $original_amount;
+                    }
+                }
+            }
 		}
 		}
 
@@ -429,13 +534,126 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 */
 	public function customer_subscription_payload( $order, $payload ) {
 		$contain_token = $this->has_subscription_token ( $order );
+		$is_echeck     = $this->is_echeck_transaction( $order );
 		if ( ( ! empty( $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN ) ) || $contain_token ) && wcs_order_contains_renewal( $order ) ) { 
-			$payload['commerceIndicator'] = VISA_ACCEPTANCE_RECURRING;
+			// Customer-initiated renewals (from checkout/My Account) use internet.
+			$is_mastercard = ! $is_echeck && $this->is_mastercard_transaction( $order );
+			$is_discover = ! $is_echeck && $this->is_discover_transaction( $order );
+			$previous_txn_id = $is_echeck ? null : $this->get_previous_transaction_id( $order );
+			
+			$payload['commerceIndicator'] = VISA_ACCEPTANCE_INTERNET;
+			
+			// merchantInitiatedTransaction is a card-only field, not supported for eCheck/bank transfer.
+			if ( ! $is_echeck && ( $is_mastercard || $is_discover || ! empty( $previous_txn_id ) ) ) {
+				if ( ! isset( $payload['authorizationOptions'] ) ) {
+					$payload['authorizationOptions'] = array();
+				}
+				if ( ! isset( $payload['authorizationOptions']['initiator'] ) ) {
+					$payload['authorizationOptions']['initiator'] = array();
+				}
+				if ( ! isset( $payload['authorizationOptions']['initiator']['merchantInitiatedTransaction'] ) ) {
+					$payload['authorizationOptions']['initiator']['merchantInitiatedTransaction'] = array();
+				}
+				
+				if ( $is_mastercard ) {
+					$payload['authorizationOptions']['initiator']['merchantInitiatedTransaction']['reason'] = '7';
+				}
+				
+				if ( ! empty( $previous_txn_id ) ) {
+					$payload['authorizationOptions']['initiator']['merchantInitiatedTransaction']['previousTransactionId'] = $previous_txn_id;
+				}
+				
+				// Discover requires original authorized amount.
+				if ( $is_discover ) {
+					$original_amount = $this->get_original_authorized_amount( $order );
+					if ( ! empty( $original_amount ) ) {
+						$payload['authorizationOptions']['initiator']['merchantInitiatedTransaction']['originalAuthorizedAmount'] = $original_amount;
+					}
+				}
+			}
 		} elseif ( wcs_order_contains_subscription( $order ) && ! wcs_order_contains_renewal( $order ) ) {
-			$payload['recurringOptions']['firstRecurringPayment'] = true;
+			$is_mastercard = $this->is_mastercard_transaction( $order );
+ 
+            if ( $is_mastercard ) {
+            $payload['commerceIndicator'] = VISA_ACCEPTANCE_INTERNET;
+            $payload['recurringOptions']   = array(
+                'firstRecurringPayment' => true,
+            );
+ 
+            if ( ! isset( $payload['authorizationOptions'] ) ) {
+                $payload['authorizationOptions'] = array();
+            }
+            if ( ! isset( $payload['authorizationOptions']['initiator'] ) ) {
+                $payload['authorizationOptions']['initiator'] = array();
+            }
+ 
+            $payload['authorizationOptions']['initiator'] = array_merge(
+                $payload['authorizationOptions']['initiator'],
+                array(
+                    'credentialStoredOnFile'       => true,
+                    'type'                         => 'customer',
+                    'merchantInitiatedTransaction' => array(
+                        'reason' => '7',
+                    ),
+                )
+            );
+        } else {
+            $payload['commerceIndicator']  = VISA_ACCEPTANCE_INTERNET;
+            $payload['recurringOptions']   = array(
+                'firstRecurringPayment' => true,
+            );
+			if ( ! isset( $payload['authorizationOptions'] ) ) {
+                $payload['authorizationOptions'] = array();
+            }
+            if ( ! isset( $payload['authorizationOptions']['initiator'] ) ) {
+                $payload['authorizationOptions']['initiator'] = array();
+            }
+ 
+            $payload['authorizationOptions']['initiator'] = array_merge(
+                $payload['authorizationOptions']['initiator'],
+                array(
+                    'credentialStoredOnFile' => true,
+                    'type'                   => 'customer',
+                )
+            );
+        }
 		}
 		return $payload;
 	}
+
+	/**
+     * Check if the transaction uses an eCheck (bank transfer) payment method.
+     *
+     * @param WC_Order $order The order object.
+     * @return bool True if eCheck, false otherwise.
+     */
+    public function is_echeck_transaction( $order ) {
+        $card_type = $this->get_order_meta( $order, 'card_type' );
+
+        if ( is_array( $card_type ) ) {
+            $card_type = reset( $card_type );
+        }
+
+        if ( ! empty( $card_type ) && VISA_ACCEPTANCE_TOKEN_TYPE_ECHECK === $card_type ) {
+            return true;
+        }
+
+        $token_id = $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN );
+
+        if ( ! empty( $token_id ) ) {
+            $user_id = $order->get_user_id();
+
+            if ( $user_id ) {
+                $token = $this->get_wc_token( $token_id, $user_id );
+
+                if ( $token instanceof \WC_Payment_Token && VISA_ACCEPTANCE_TOKEN_TYPE_ECHECK === $token->get_type() ) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
 	/**
 	 * Check if the subscription token associated with renewal order.
@@ -456,6 +674,206 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 		}
 		return $token;
 	}
+	/**
+     * Generic method to check card type for a transaction.
+     *
+     * @param WC_Order $order The order object.
+     * @param array    $card_names Array of card type names to match (e.g., ['mastercard', 'master']).
+     * @param string   $cybersource_code CyberSource card type code (e.g., '002' for Mastercard).
+     * @return bool True if card type matches, false otherwise.
+     */
+    private function is_card_type( $order, $card_names, $cybersource_code ) {
+        // Check card_type order meta.
+        $card_type = $this->get_order_meta( $order, 'card_type' );
+ 
+        if ( ! empty( $card_type ) ) {
+            if ( is_array( $card_type ) ) {
+                $card_type = reset( $card_type );
+            }
+ 
+            if ( is_string( $card_type ) ) {
+                $card_type = strtolower( $card_type );
+                if ( in_array( $card_type, $card_names, true ) ) {
+                    return true;
+                }
+            }
+        }
+ 
+        // Check WooCommerce payment token.
+        $token_id = $this->get_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN );
+ 
+        if ( ! empty( $token_id ) ) {
+            $user_id = $order->get_user_id();
+ 
+            if ( $user_id ) {
+                $token = $this->get_wc_token( $token_id, $user_id );
+ 
+                if ( $token instanceof \WC_Payment_Token_CC ) {
+                    $card_type = strtolower( $token->get_card_type() );
+                    if ( in_array( $card_type, $card_names, true ) ) {
+                        return true;
+                    }
+                }
+            }
+        }
+ 
+        // Check JWT transient token.
+        $jwt = $this->get_order_meta( $order, 'transient_token_jwt' );
+ 
+        if ( ! empty( $jwt ) ) {
+            $payment_method = new Visa_Acceptance_Payment_Methods( $this );
+            $card_type_code = $payment_method->get_card_type_from_token( $jwt );
+ 
+            if ( $card_type_code === $cybersource_code ) {
+                return true;
+            }
+        }
+ 
+        return false;
+    }
+ 
+    /**
+     * Check if the transaction is using a Mastercard.
+     *
+     * @param WC_Order $order The order object.
+     * @return bool True if Mastercard, false otherwise.
+     */
+    public function is_mastercard_transaction( $order ) {
+        return $this->is_card_type( $order, array( 'mastercard', 'master' ), '002' );
+    }
+ 
+    /**
+     * Check if the transaction is a Discover card.
+     *
+     * @param WC_Order $order The order object.
+     * @return bool True if Discover, false otherwise.
+     */
+    public function is_discover_transaction( $order ) {
+        return $this->is_card_type( $order, array( 'discover' ), '004' );
+    }
+ 
+    /**
+     * Get the original authorized amount from the parent subscription order.
+     *
+     * @param WC_Order $order The renewal order.
+     * @return string|null The original authorized amount or null if not found.
+     */
+    private function get_original_authorized_amount( $order ) {
+        $original_amount = null;
+       
+        if ( ! function_exists( 'wcs_get_subscriptions_for_renewal_order' ) ) {
+            return $original_amount;
+        }
+       
+        // Get the parent subscription(s) for this renewal order.
+        $subscriptions = wcs_get_subscriptions_for_renewal_order( $order );
+       
+        if ( empty( $subscriptions ) ) {
+            return $original_amount;
+        }
+       
+        // Get the first subscription.
+        $subscription = reset( $subscriptions );
+       
+        if ( ! $subscription instanceof \WC_Subscription ) {
+            return $original_amount;
+        }
+       
+        // Get the parent order (initial signup order).
+        $parent_order = $subscription->get_parent();
+       
+        if ( $parent_order && $parent_order instanceof \WC_Order ) {
+            $original_amount = $parent_order->get_total();
+        }
+       
+        return $original_amount;
+    }
+ 
+    /**
+     * Get the previous transaction ID from the parent subscription's last successful payment.
+     *
+     * @param WC_Order $order The renewal order object.
+     * @return string|null The previous transaction ID or null if not found.
+     */
+    private function get_previous_transaction_id( $order ) {
+        $previous_transaction_id = null;
+       
+        if ( ! function_exists( 'wcs_get_subscriptions_for_renewal_order' ) ) {
+            return $previous_transaction_id;
+        }
+       
+        // Get the parent subscription(s) for this renewal order.
+        $subscriptions = wcs_get_subscriptions_for_renewal_order( $order );
+       
+        if ( empty( $subscriptions ) ) {
+            return $previous_transaction_id;
+        }
+       
+        // Get the first subscription (usually only one).
+        $subscription = reset( $subscriptions );
+       
+        if ( ! $subscription instanceof \WC_Subscription ) {
+            return $previous_transaction_id;
+        }
+        $parent_order = $subscription->get_parent();
+        if ( $parent_order && $parent_order instanceof \WC_Order ) {
+            $parent_network_txn_id = $this->get_order_meta( $parent_order, VISA_ACCEPTANCE_NETWORK_TRANSACTION_ID );
+            if ( ! empty( $parent_network_txn_id ) ) {
+                $previous_transaction_id = $parent_network_txn_id;
+            } else {
+                // Fall back to CYBS transaction ID if network ID not stored.
+                $parent_txn_id = $this->get_order_meta( $parent_order, VISA_ACCEPTANCE_TRANSACTION_ID );
+                if ( ! empty( $parent_txn_id ) ) {
+                    $previous_transaction_id = $parent_txn_id;
+                }
+            }
+        }
+       
+        // If not found in parent, check the subscription's related renewal orders.
+        if ( empty( $previous_transaction_id ) ) {
+            $related_orders = $subscription->get_related_orders( 'all', array( 'renewal' ) );
+           
+            if ( ! empty( $related_orders ) ) {
+                // Sort by date descending to get the most recent.
+                usort( $related_orders, function( $a, $b ) {
+                    $order_a = wc_get_order( $a );
+                    $order_b = wc_get_order( $b );
+                    if ( ! $order_a || ! $order_b ) {
+                        return 0;
+                    }
+                    return $order_b->get_date_created()->getTimestamp() - $order_a->get_date_created()->getTimestamp();
+                });
+               
+                // Find the most recent successful renewal order (excluding current order).
+                foreach ( $related_orders as $related_order_id ) {
+                    if ( $related_order_id === $order->get_id() ) {
+                        continue; // Skip the current order.
+                    }
+                   
+                    $related_order = wc_get_order( $related_order_id );
+                    if ( ! $related_order ) {
+                        continue;
+                    }
+                   
+                    // Check if the order was successful (completed or processing).
+                    if ( $related_order->has_status( array( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_COMPLETED, VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PROCESSING ) ) ) {
+                        $network_txn_id = $this->get_order_meta( $related_order, VISA_ACCEPTANCE_NETWORK_TRANSACTION_ID );
+                        if ( ! empty( $network_txn_id ) ) {
+                            $previous_transaction_id = $network_txn_id;
+                            break;
+                        }
+                        $related_txn_id = $this->get_order_meta( $related_order, VISA_ACCEPTANCE_TRANSACTION_ID );
+                        if ( ! empty( $related_txn_id ) ) {
+                            $previous_transaction_id = $related_txn_id;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+       
+        return $previous_transaction_id;
+    }
 
 	/**
 	 * Admin add payment meta.
@@ -505,6 +923,16 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 				}
 				$updated = true;
 			}
+			// Copy WooCommerce payment token ID from order to subscription to link subscription to payment method.
+            $payment_token_id = $order->get_meta( '_payment_token_id', true );
+            if ( ! empty( $payment_token_id ) ) {
+                if ( ! empty( $subscription->get_meta( '_payment_token_id', true ) ) ) {
+                    $subscription->update_meta_data( '_payment_token_id', $payment_token_id );
+                } else {
+                    $subscription->add_meta_data( '_payment_token_id', $payment_token_id );
+                }
+                $updated = true;
+            }
 			if ( $updated ) {
 				$subscription->save_meta_data();
 			}
@@ -523,6 +951,8 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 		} else {
 			$authorization_saved_card = new Visa_Acceptance_Authorization_Saved_Card( $this );
 			$authorization_saved_card->add_order_meta( $order, VISA_ACCEPTANCE_SUBSCRIPTION_TOKEN, $instrument_identifier );
+			// Save order to commit meta data immediately.
+        	$order->save();
 		}
 	}
 
@@ -532,10 +962,11 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 	 * @param string $token_id token_id.
 	 * @param object $order order details.
 	 * @param array  $transient_token $transient_token.
+	 * @param string $complete_response_raw EBC complete response JSON.
 	 *
 	 * @return array $response_array
 	 */
-	public function change_payment_method( $token_id, $order, $transient_token ) {
+	public function change_payment_method( $token_id, $order, $transient_token, $complete_response_raw = VISA_ACCEPTANCE_STRING_EMPTY ) {
 		$payment_method_updated = false;
 		$instrument_identifier  = null;
 		$subscriptions          = array();
@@ -552,21 +983,43 @@ class Visa_Acceptance_Payment_Gateway_Subscriptions extends Visa_Acceptance_Paym
 						$instrument_identifier  = $token->get_token();
 					}
 				} elseif ( ! empty( $transient_token ) ) {
-					$payment_method = new Visa_Acceptance_Payment_Methods( $this );
-					// Detect if this is an eCheck token.
-					$is_echeck = false;
-					$decoded_transient_token = json_decode( base64_decode( explode( VISA_ACCEPTANCE_FULL_STOP, $transient_token )[VISA_ACCEPTANCE_VAL_ONE] ), true );// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
-					if ( isset( $decoded_transient_token['metadata']['paymentType'] ) && VISA_ACCEPTANCE_CHECK === $decoded_transient_token['metadata']['paymentType'] ) {
-						$is_echeck = true;
-					}
-					$result         = $payment_method->create_token( $transient_token, $order, $is_echeck );
-					if ( isset( $result['status'] ) && $result['status'] && isset( $result['token'] ) ) {
-						$payment_method_updated = true;
-						$instrument_identifier  = $result['token'];
-					} elseif ( ! empty( $result['message'] ) ) {
-						$error_message = $result['message'];
-					}
-				}
+                    // Detect if this is an eCheck token.
+                    $is_echeck = false;
+                    $decoded_transient_token = json_decode( base64_decode( explode( VISA_ACCEPTANCE_FULL_STOP, $transient_token )[VISA_ACCEPTANCE_VAL_ONE] ), true );// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+                    if ( isset( $decoded_transient_token['metadata']['paymentType'] ) && VISA_ACCEPTANCE_CHECK === $decoded_transient_token['metadata']['paymentType'] ) {
+                        $is_echeck = true;
+                    }
+                    $complete_payload = ! empty( $complete_response_raw ) ? json_decode( $complete_response_raw, true ) : null;
+                    if ( is_string( $complete_payload ) ) {
+                        $complete_payload = json_decode( $complete_payload, true );
+                    }
+ 
+                    $token_info_from_complete = ( is_array( $complete_payload ) && isset( $complete_payload['details']['tokenInformation'] ) )
+                        ? $complete_payload['details']['tokenInformation']
+                        : null;
+ 
+                    if ( ! empty( $token_info_from_complete ) ) {
+                        $ebc_status = $is_echeck ? VISA_ACCEPTANCE_API_RESPONSE_ECHECK_STATUS : ( $complete_payload['status'] ?? VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED );
+                        $synth_body = array_merge(
+                            isset( $complete_payload['details'] ) ? $complete_payload['details'] : array(),
+                            array(
+                                'id'     => $complete_payload['id'] ?? VISA_ACCEPTANCE_STRING_EMPTY,
+                                'status' => $ebc_status,
+                            )
+                        );
+                        $response_for_save = array(
+                            'body'      => wp_json_encode( $synth_body ),
+                            'http_code' => VISA_ACCEPTANCE_TWO_ZERO_ONE,
+                        );
+                        $save_result = $this->save_payment_method( $response_for_save, $order, $is_echeck );
+                        if ( is_array( $save_result ) && ! empty( $save_result['status'] ) && ! empty( $save_result['token'] ) ) {
+                            $payment_method_updated = true;
+                            $instrument_identifier  = $save_result['token'];
+                        } elseif ( is_array( $save_result ) && ! empty( $save_result['message'] ) ) {
+                            $error_message = $save_result['message'];
+                        }
+                    }
+                }
 				$subscriptions = wcs_get_subscriptions_for_order(
 					$order->get_parent_id(),
 					array(

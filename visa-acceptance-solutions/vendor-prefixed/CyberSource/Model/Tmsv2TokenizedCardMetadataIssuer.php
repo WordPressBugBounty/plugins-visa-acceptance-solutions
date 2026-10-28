@@ -49,12 +49,12 @@ class Tmsv2TokenizedCardMetadataIssuer implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['name' => 'string', 'shortDescription' => 'string', 'longDescription' => 'string', 'email' => 'string', 'phoneNumber' => 'string', 'url' => 'string'];
+    protected static $swaggerTypes = ['name' => 'string', 'shortDescription' => 'string', 'longDescription' => 'string', 'email' => 'string', 'phoneNumber' => 'string', 'url' => 'string', 'privacyPolicyUrl' => 'string', 'capabilities' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCardMetadataIssuerCapabilities', 'bankApplications' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCardMetadataIssuerBankApplications[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['name' => null, 'shortDescription' => null, 'longDescription' => null, 'email' => null, 'phoneNumber' => null, 'url' => null];
+    protected static $swaggerFormats = ['name' => null, 'shortDescription' => null, 'longDescription' => null, 'email' => null, 'phoneNumber' => null, 'url' => null, 'privacyPolicyUrl' => null, 'capabilities' => null, 'bankApplications' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -67,17 +67,17 @@ class Tmsv2TokenizedCardMetadataIssuer implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['name' => 'name', 'shortDescription' => 'shortDescription', 'longDescription' => 'longDescription', 'email' => 'email', 'phoneNumber' => 'phoneNumber', 'url' => 'url'];
+    protected static $attributeMap = ['name' => 'name', 'shortDescription' => 'shortDescription', 'longDescription' => 'longDescription', 'email' => 'email', 'phoneNumber' => 'phoneNumber', 'url' => 'url', 'privacyPolicyUrl' => 'privacyPolicyUrl', 'capabilities' => 'capabilities', 'bankApplications' => 'bankApplications'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['name' => 'setName', 'shortDescription' => 'setShortDescription', 'longDescription' => 'setLongDescription', 'email' => 'setEmail', 'phoneNumber' => 'setPhoneNumber', 'url' => 'setUrl'];
+    protected static $setters = ['name' => 'setName', 'shortDescription' => 'setShortDescription', 'longDescription' => 'setLongDescription', 'email' => 'setEmail', 'phoneNumber' => 'setPhoneNumber', 'url' => 'setUrl', 'privacyPolicyUrl' => 'setPrivacyPolicyUrl', 'capabilities' => 'setCapabilities', 'bankApplications' => 'setBankApplications'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['name' => 'getName', 'shortDescription' => 'getShortDescription', 'longDescription' => 'getLongDescription', 'email' => 'getEmail', 'phoneNumber' => 'getPhoneNumber', 'url' => 'getUrl'];
+    protected static $getters = ['name' => 'getName', 'shortDescription' => 'getShortDescription', 'longDescription' => 'getLongDescription', 'email' => 'getEmail', 'phoneNumber' => 'getPhoneNumber', 'url' => 'getUrl', 'privacyPolicyUrl' => 'getPrivacyPolicyUrl', 'capabilities' => 'getCapabilities', 'bankApplications' => 'getBankApplications'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -107,6 +107,9 @@ class Tmsv2TokenizedCardMetadataIssuer implements ArrayAccess
         $this->container['email'] = isset($data['email']) ? $data['email'] : null;
         $this->container['phoneNumber'] = isset($data['phoneNumber']) ? $data['phoneNumber'] : null;
         $this->container['url'] = isset($data['url']) ? $data['url'] : null;
+        $this->container['privacyPolicyUrl'] = isset($data['privacyPolicyUrl']) ? $data['privacyPolicyUrl'] : null;
+        $this->container['capabilities'] = isset($data['capabilities']) ? $data['capabilities'] : null;
+        $this->container['bankApplications'] = isset($data['bankApplications']) ? $data['bankApplications'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -234,6 +237,60 @@ class Tmsv2TokenizedCardMetadataIssuer implements ArrayAccess
     public function setUrl($url)
     {
         $this->container['url'] = $url;
+        return $this;
+    }
+    /**
+     * Gets privacyPolicyUrl
+     * @return string
+     */
+    public function getPrivacyPolicyUrl()
+    {
+        return $this->container['privacyPolicyUrl'];
+    }
+    /**
+     * Sets privacyPolicyUrl
+     * @param string $privacyPolicyUrl Issuer privacy policy url.
+     * @return $this
+     */
+    public function setPrivacyPolicyUrl($privacyPolicyUrl)
+    {
+        $this->container['privacyPolicyUrl'] = $privacyPolicyUrl;
+        return $this;
+    }
+    /**
+     * Gets capabilities
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCardMetadataIssuerCapabilities
+     */
+    public function getCapabilities()
+    {
+        return $this->container['capabilities'];
+    }
+    /**
+     * Sets capabilities
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCardMetadataIssuerCapabilities $capabilities
+     * @return $this
+     */
+    public function setCapabilities($capabilities)
+    {
+        $this->container['capabilities'] = $capabilities;
+        return $this;
+    }
+    /**
+     * Gets bankApplications
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCardMetadataIssuerBankApplications[]
+     */
+    public function getBankApplications()
+    {
+        return $this->container['bankApplications'];
+    }
+    /**
+     * Sets bankApplications
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCardMetadataIssuerBankApplications[] $bankApplications
+     * @return $this
+     */
+    public function setBankApplications($bankApplications)
+    {
+        $this->container['bankApplications'] = $bankApplications;
         return $this;
     }
     /**

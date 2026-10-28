@@ -48,7 +48,7 @@ class UnderwritingConfigurationOrganizationInformationBusinessInformation implem
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['businessIdentifier' => 'string', 'countryRegistration' => 'string', 'legalName' => 'string', 'doingBusinessAs' => 'string', 'businessDescription' => 'string', 'registrationNumber' => 'string', 'stockExchange' => 'string', 'tickerSymbol' => 'string', 'startDate' => '\DateTime', 'merchantCategoryCode' => 'string', 'mccDescription' => 'string', 'websiteURL' => 'string', 'businessType' => 'string', 'localMCC' => 'string[]', 'countryPhoneNumber' => 'string', 'phoneNumber' => 'string', 'email' => 'string', 'whatYourCompanyDoes' => 'string', 'address' => '\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationOrganizationInformationBusinessInformationAddress', 'tradingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationOrganizationInformationBusinessInformationTradingAddress', 'businessContact' => '\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationOrganizationInformationBusinessInformationBusinessContact', 'businessDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationOrganizationInformationBusinessInformationBusinessDetails', 'ownerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationOrganizationInformationBusinessInformationOwnerInformation[]', 'directorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationOrganizationInformationBusinessInformationDirectorInformation[]'];
+    protected static $swaggerTypes = ['businessIdentifier' => 'string', 'countryRegistration' => 'string', 'legalName' => 'string', 'doingBusinessAs' => 'string', 'businessDescription' => 'string', 'registrationNumber' => 'string', 'stockExchange' => 'string', 'tickerSymbol' => 'string', 'startDate' => '\DateTime', 'merchantCategoryCode' => 'string', 'mccDescription' => 'string', 'websiteURL' => 'string', 'businessType' => 'string', 'localMCC' => 'string[]', 'countryPhoneNumber' => 'string', 'phoneNumber' => 'string', 'email' => 'string', 'whatYourCompanyDoes' => 'string', 'address' => '\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationOrganizationInformationBusinessInformationAddress', 'tradingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationOrganizationInformationBusinessInformationTradingAddress', 'businessContact' => '\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationOrganizationInformationBusinessInformationBusinessContact', 'businessDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationBusinessDetails', 'ownerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationOrganizationInformationBusinessInformationOwnerInformation[]', 'directorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationOrganizationInformationBusinessInformationDirectorInformation[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -591,7 +591,7 @@ class UnderwritingConfigurationOrganizationInformationBusinessInformation implem
     }
     /**
      * Gets businessDetails
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationOrganizationInformationBusinessInformationBusinessDetails
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationBusinessDetails
      */
     public function getBusinessDetails()
     {
@@ -599,7 +599,7 @@ class UnderwritingConfigurationOrganizationInformationBusinessInformation implem
     }
     /**
      * Sets businessDetails
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationOrganizationInformationBusinessInformationBusinessDetails $businessDetails
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\UnderwritingConfigurationBusinessDetails $businessDetails
      * @return $this
      */
     public function setBusinessDetails($businessDetails)

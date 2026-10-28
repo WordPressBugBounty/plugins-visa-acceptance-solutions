@@ -48,7 +48,7 @@ class Upv1capturecontextsDataProcessingInformationAuthorizationOptionsInitiator 
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['credentialStoredOnFile' => 'bool', 'merchantInitiatedTransaction' => '\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataProcessingInformationAuthorizationOptionsInitiatorMerchantInitiatedTransaction'];
+    protected static $swaggerTypes = ['credentialStoredOnFile' => 'bool', 'merchantInitiatedTransaction' => '\Pymt_Vas\Dependencies\CyberSource\Model\UnifiedCheckoutMerchantInitiatedTransaction'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -143,7 +143,7 @@ class Upv1capturecontextsDataProcessingInformationAuthorizationOptionsInitiator 
     }
     /**
      * Gets merchantInitiatedTransaction
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataProcessingInformationAuthorizationOptionsInitiatorMerchantInitiatedTransaction
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\UnifiedCheckoutMerchantInitiatedTransaction
      */
     public function getMerchantInitiatedTransaction()
     {
@@ -151,7 +151,7 @@ class Upv1capturecontextsDataProcessingInformationAuthorizationOptionsInitiator 
     }
     /**
      * Sets merchantInitiatedTransaction
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Upv1capturecontextsDataProcessingInformationAuthorizationOptionsInitiatorMerchantInitiatedTransaction $merchantInitiatedTransaction
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\UnifiedCheckoutMerchantInitiatedTransaction $merchantInitiatedTransaction
      * @return $this
      */
     public function setMerchantInitiatedTransaction($merchantInitiatedTransaction)

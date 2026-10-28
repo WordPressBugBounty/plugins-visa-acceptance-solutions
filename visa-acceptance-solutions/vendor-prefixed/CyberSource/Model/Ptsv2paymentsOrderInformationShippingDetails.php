@@ -49,12 +49,12 @@ class Ptsv2paymentsOrderInformationShippingDetails implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['giftWrap' => 'bool', 'shippingMethod' => 'string', 'shipFromPostalCode' => 'string'];
+    protected static $swaggerTypes = ['giftWrap' => 'bool', 'shippingMethod' => 'string', 'shipFromPostalCode' => 'string', 'shippingCarrier' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['giftWrap' => null, 'shippingMethod' => null, 'shipFromPostalCode' => null];
+    protected static $swaggerFormats = ['giftWrap' => null, 'shippingMethod' => null, 'shipFromPostalCode' => null, 'shippingCarrier' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -67,17 +67,17 @@ class Ptsv2paymentsOrderInformationShippingDetails implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['giftWrap' => 'giftWrap', 'shippingMethod' => 'shippingMethod', 'shipFromPostalCode' => 'shipFromPostalCode'];
+    protected static $attributeMap = ['giftWrap' => 'giftWrap', 'shippingMethod' => 'shippingMethod', 'shipFromPostalCode' => 'shipFromPostalCode', 'shippingCarrier' => 'shippingCarrier'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['giftWrap' => 'setGiftWrap', 'shippingMethod' => 'setShippingMethod', 'shipFromPostalCode' => 'setShipFromPostalCode'];
+    protected static $setters = ['giftWrap' => 'setGiftWrap', 'shippingMethod' => 'setShippingMethod', 'shipFromPostalCode' => 'setShipFromPostalCode', 'shippingCarrier' => 'setShippingCarrier'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['giftWrap' => 'getGiftWrap', 'shippingMethod' => 'getShippingMethod', 'shipFromPostalCode' => 'getShipFromPostalCode'];
+    protected static $getters = ['giftWrap' => 'getGiftWrap', 'shippingMethod' => 'getShippingMethod', 'shipFromPostalCode' => 'getShipFromPostalCode', 'shippingCarrier' => 'getShippingCarrier'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -104,6 +104,7 @@ class Ptsv2paymentsOrderInformationShippingDetails implements ArrayAccess
         $this->container['giftWrap'] = isset($data['giftWrap']) ? $data['giftWrap'] : null;
         $this->container['shippingMethod'] = isset($data['shippingMethod']) ? $data['shippingMethod'] : null;
         $this->container['shipFromPostalCode'] = isset($data['shipFromPostalCode']) ? $data['shipFromPostalCode'] : null;
+        $this->container['shippingCarrier'] = isset($data['shippingCarrier']) ? $data['shippingCarrier'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -153,7 +154,7 @@ class Ptsv2paymentsOrderInformationShippingDetails implements ArrayAccess
     }
     /**
      * Sets shippingMethod
-     * @param string $shippingMethod Shipping method for the product. Possible values:   - `lowcost`: Lowest-cost service  - `sameday`: Courier or same-day service  - `oneday`: Next-day or overnight service  - `twoday`: Two-day service  - `threeday`: Three-day service  - `pickup`: Store pick-up  - `other`: Other shipping method  - `none`: No shipping method because product is a service or subscription
+     * @param string $shippingMethod Shipping method for the product. Possible values:   - `lowcost`: Lowest-cost service  - `sameday`: Courier or same-day service  - `oneday`: Next-day or overnight service  - `twoday`: Two-day service  - `threeday`: Three-day service  - `pickup`: Store pick-up  - `other`: Other shipping method  - `none`: No shipping method because product is a service or subscription  Klarna Advantage Plus additional values:  - `TO_DOOR`: Delivery to door  - `TO_CURB`: Delivery to curb  - `TO_MAILBOX`: Delivery to mailbox  - `PICKUP_BOX`: Pickup from box  - `PICKUP_POINT`: Pickup from point  - `PICKUP_STORE`: Pickup from store  - `PICKUP_WAREHOUSE`: Pickup from warehouse  - `DIGITAL_EMAIL`: Digital delivery via email  - `DIGITAL_DOWNLOAD`: Digital download  - `DIGITAL_OTHER`: Other digital delivery  - `PHYSICAL_OTHER`: Other physical delivery
      * @return $this
      */
     public function setShippingMethod($shippingMethod)
@@ -177,6 +178,24 @@ class Ptsv2paymentsOrderInformationShippingDetails implements ArrayAccess
     public function setShipFromPostalCode($shipFromPostalCode)
     {
         $this->container['shipFromPostalCode'] = $shipFromPostalCode;
+        return $this;
+    }
+    /**
+     * Gets shippingCarrier
+     * @return string
+     */
+    public function getShippingCarrier()
+    {
+        return $this->container['shippingCarrier'];
+    }
+    /**
+     * Sets shippingCarrier
+     * @param string $shippingCarrier Name of the shipping carrier/company handling the delivery.
+     * @return $this
+     */
+    public function setShippingCarrier($shippingCarrier)
+    {
+        $this->container['shippingCarrier'] = $shippingCarrier;
         return $this;
     }
     /**

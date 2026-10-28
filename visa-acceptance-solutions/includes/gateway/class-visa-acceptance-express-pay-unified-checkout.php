@@ -84,20 +84,16 @@ class Visa_Acceptance_Express_Pay_Unified_Checkout extends AbstractPaymentMethod
 		$subscription_order = false;
 		$uc_settings         = get_option( VISA_ACCEPTANCE_WOOCOMMERCE_UNDERSCORE . $this->gateway->get_id() . VISA_ACCEPTANCE_UNDERSCORE_SETTINGS, array() );
 		// Return empty array if express pay is disabled.
-		$is_express_pay_enabled = isset( $uc_settings['enable_express_pay'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enable_express_pay'];
-		if ( ! $is_express_pay_enabled ) {
-			return array();
-		}
+        $is_express_pay_enabled = isset( $uc_settings['enable_express_pay'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enable_express_pay'];
+        if ( ! $is_express_pay_enabled ) {
+            return array();
+        }
 		$payment_gateway_unified_checkout = new Visa_Acceptance_Payment_Gateway_Unified_Checkout();
 		$available_gateways = WC()->payment_gateways()->get_available_payment_gateways();
 		$is_gateway_available = isset( $available_gateways[ $this->gateway->id ] );
-		$enable_gpay = ( isset( $uc_settings['enabled_payment_methods'] ) && is_array( $uc_settings['enabled_payment_methods'] ) && in_array( 'enable_gpay', $uc_settings['enabled_payment_methods'], true ) ) ? true : false;
-		$enable_apay = ( isset( $uc_settings['enabled_payment_methods'] ) && is_array( $uc_settings['enabled_payment_methods'] ) && in_array( 'enable_apay', $uc_settings['enabled_payment_methods'], true ) ) ? true : false;
-		$enable_paze = ( isset( $uc_settings['enabled_payment_methods'] ) && is_array( $uc_settings['enabled_payment_methods'] ) && in_array( 'enable_paze', $uc_settings['enabled_payment_methods'], true ) ) ? true : false;
-		if ( $is_gateway_available && isset( $uc_settings['enabled'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enabled'] && ( is_checkout() || is_admin() ) ) {
+        if ( $is_gateway_available && isset( $uc_settings['enabled'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enabled'] && ( is_checkout() || is_admin() ) ) {
+ 
 			$enable_tokenization  = ( isset( $uc_settings['tokenization'] ) && VISA_ACCEPTANCE_YES === $general_settings['tokenization'] && is_user_logged_in() ) ? true : false;
-			$payer_auth_enabled   = ( isset( $uc_settings['enable_threed_secure'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enable_threed_secure'] ) ? $uc_settings['enable_threed_secure'] : VISA_ACCEPTANCE_STRING_EMPTY;
-
 			$subscription_active              = $payment_gateway_unified_checkout->is_wc_subscriptions_activated();
 			if ( $subscription_active ) {
 				$subscription_order  = WC_Subscriptions_Cart::cart_contains_subscription() || wcs_cart_contains_renewal() || WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment;
@@ -106,28 +102,28 @@ class Visa_Acceptance_Express_Pay_Unified_Checkout extends AbstractPaymentMethod
 					$enable_tokenization = false;
 				}
 		}
+		// A plain (non-subscription) order with nothing to charge, e.g. a 100%-off coupon, has no payment to verify.
+		if ( ! $subscription_order && isset( WC()->cart ) && VISA_ACCEPTANCE_ZERO_AMOUNT === WC()->cart->get_total( 'edit' ) ) {
+			return array();
+		}
 
 		$express_pay_payment_method_data = array(
-			'title'                           => __( 'Express Pay', 'visa-acceptance-solutions' ),
-			'supports'                        => $this->get_supported_features(),
-			'ajax_url'                        => admin_url( 'admin-ajax.php' ),
+				'title'                           => __( 'Express Pay', 'visa-acceptance-solutions' ),
+				'supports'                        => $this->get_supported_features(),
+				'ajax_url'                        => admin_url( 'admin-ajax.php' ),
 				'enable_tokenization'             => $enable_tokenization,
 				'force_tokenization'              => $force_tokenization,
-				'payer_auth_enabled'              => $payer_auth_enabled,
-				'enable_gpay' 					  => $enable_gpay,
-				'enable_apay'			 		  => $enable_apay,
-				'enable_paze'			 		  => $enable_paze,
 				'subscription_order'			  => $subscription_order,
 				'is_user_logged_in'				  => is_user_logged_in(),
-				'enabled_payment_methods'         => ! empty( $uc_settings['enabled_payment_methods'] ) ? $uc_settings['enabled_payment_methods'] : array(),
 				'enable_express_pay'              => isset( $uc_settings['enable_express_pay'] ) && VISA_ACCEPTANCE_YES === $uc_settings['enable_express_pay'],
 				'express_pay_uc_id'               => VISA_ACCEPTANCE_EXPRESS_PAY_UC_ID,
 				'form_load_error'                 => __( 'Unable to load the payment form. Please contact customer care for any assistance.', 'visa-acceptance-solutions' ),
-				'cvv_error'                       => __( 'Please enter valid Security Code.', 'visa-acceptance-solutions' ),
 				'failure_error'                   => __( 'Unable to complete your order. Please check your details and try again.', 'visa-acceptance-solutions' ),
 				// Bypassing condition for idle stage for version lower than 8.6.
 				'isVersionSupported'              => version_compare( WC_VERSION, VISA_ACCEPTANCE_WC_VERSION_EIGHT_SIX_ZERO, '>=' ),
 				'is_subscriptions_tokenization_enabled' => $this->gateway->is_subscriptions_activated,
+				'get_addresses_nonce'             => wp_create_nonce( 'vas_get_addresses_nonce' ),
+				'update_price_nonce'              => wp_create_nonce( 'wc_call_uc_update_price_action' ),
 			);
 		}
 		return $express_pay_payment_method_data;
@@ -160,15 +156,22 @@ class Visa_Acceptance_Express_Pay_Unified_Checkout extends AbstractPaymentMethod
 		}
 		wp_enqueue_style( 'wc-unified-checkout-cart-checkout-block', $this->gateway->get_plugin_url() . '/../public/css/visa-acceptance-payment-gateway-blocks.css', array(), $version );
 
-		wp_register_script(
-			'wc-express-pay-payment-method-unified-checkout',
-			$this->gateway->get_plugin_url() . '/../includes/build/index-unified-checkout.js',
-			array( 'jquery' ),
-			$version,
-			true
-		);
-		return array( 'wc-express-pay-payment-method-unified-checkout' );
-	}
+		if ( ! wp_script_is( 'wc-payment-method-unified-checkout', 'registered' ) ) {
+			wp_register_script(
+				'wc-payment-method-unified-checkout',
+				$this->gateway->get_plugin_url() . '/../includes/build/index-unified-checkout.js',
+				array( 'jquery' ),
+				$version,
+				true
+			);
+
+			wp_set_script_translations(
+				'wc-payment-method-unified-checkout',
+				'visa-acceptance-solutions'
+			);
+		}
+		return array( 'wc-payment-method-unified-checkout' );
+    }
 
     /**
 	 * Initializes the payment method.

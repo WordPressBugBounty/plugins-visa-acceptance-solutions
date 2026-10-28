@@ -34,7 +34,6 @@ namespace Pymt_Vas\Dependencies\phpseclib3\System\SSH;
 use Pymt_Vas\Dependencies\phpseclib3\Common\Functions\Strings;
 use Pymt_Vas\Dependencies\phpseclib3\Crypt\Common\PublicKey;
 use Pymt_Vas\Dependencies\phpseclib3\Crypt\PublicKeyLoader;
-use Pymt_Vas\Dependencies\phpseclib3\Crypt\RSA;
 use Pymt_Vas\Dependencies\phpseclib3\Exception\BadConfigurationException;
 use Pymt_Vas\Dependencies\phpseclib3\Net\SSH2;
 use Pymt_Vas\Dependencies\phpseclib3\System\SSH\Agent\Identity;

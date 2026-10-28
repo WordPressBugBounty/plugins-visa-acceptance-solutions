@@ -48,7 +48,7 @@ class InlineResponse20016 implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20016ClientReferenceInformation', 'id' => 'string', 'submitTimeUtc' => 'string', 'status' => 'string', 'errorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019ErrorInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019OrderInformation'];
+    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20016ClientReferenceInformation', 'id' => 'string', 'submitTimeUtc' => 'string', 'status' => 'string', 'errorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20111ErrorInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20111OrderInformation'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -219,7 +219,7 @@ class InlineResponse20016 implements ArrayAccess
     }
     /**
      * Gets errorInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019ErrorInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20111ErrorInformation
      */
     public function getErrorInformation()
     {
@@ -227,7 +227,7 @@ class InlineResponse20016 implements ArrayAccess
     }
     /**
      * Sets errorInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019ErrorInformation $errorInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20111ErrorInformation $errorInformation
      * @return $this
      */
     public function setErrorInformation($errorInformation)
@@ -237,7 +237,7 @@ class InlineResponse20016 implements ArrayAccess
     }
     /**
      * Gets orderInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019OrderInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20111OrderInformation
      */
     public function getOrderInformation()
     {
@@ -245,7 +245,7 @@ class InlineResponse20016 implements ArrayAccess
     }
     /**
      * Sets orderInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019OrderInformation $orderInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20111OrderInformation $orderInformation
      * @return $this
      */
     public function setOrderInformation($orderInformation)

@@ -48,12 +48,12 @@ class CreateCreditRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsClientReferenceInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2creditsProcessingInformation', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsOrderInformation', 'buyerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesBuyerInformation', 'deviceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesDeviceInformation', 'merchantInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsMerchantInformation', 'aggregatorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesAggregatorInformation', 'pointOfSaleInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPointOfSaleInformation', 'merchantDefinedInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsMerchantDefinedInformation[]', 'merchantDefinedSecureInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsMerchantDefinedSecureInformation', 'installmentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2creditsInstallmentInformation', 'travelInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsTravelInformation', 'recipientInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2creditsRecipientInformation', 'senderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2creditsSenderInformation', 'promotionInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPromotionInformation', 'processorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2reversalsProcessorInformation'];
+    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsClientReferenceInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2creditsProcessingInformation', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsPaymentInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsOrderInformation', 'buyerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesBuyerInformation', 'deviceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesDeviceInformation', 'merchantInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsMerchantInformation', 'aggregatorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesAggregatorInformation', 'pointOfSaleInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPointOfSaleInformation', 'merchantDefinedInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsMerchantDefinedInformation[]', 'merchantDefinedSecureInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsMerchantDefinedSecureInformation', 'installmentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2creditsInstallmentInformation', 'travelInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsTravelInformation', 'recipientInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2creditsRecipientInformation', 'senderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2creditsSenderInformation', 'promotionInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPromotionInformation', 'processorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2reversalsProcessorInformation', 'tokenInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2creditsTokenInformation'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['clientReferenceInformation' => null, 'processingInformation' => null, 'paymentInformation' => null, 'orderInformation' => null, 'buyerInformation' => null, 'deviceInformation' => null, 'merchantInformation' => null, 'aggregatorInformation' => null, 'pointOfSaleInformation' => null, 'merchantDefinedInformation' => null, 'merchantDefinedSecureInformation' => null, 'installmentInformation' => null, 'travelInformation' => null, 'recipientInformation' => null, 'senderInformation' => null, 'promotionInformation' => null, 'processorInformation' => null];
+    protected static $swaggerFormats = ['clientReferenceInformation' => null, 'processingInformation' => null, 'paymentInformation' => null, 'orderInformation' => null, 'buyerInformation' => null, 'deviceInformation' => null, 'merchantInformation' => null, 'aggregatorInformation' => null, 'pointOfSaleInformation' => null, 'merchantDefinedInformation' => null, 'merchantDefinedSecureInformation' => null, 'installmentInformation' => null, 'travelInformation' => null, 'recipientInformation' => null, 'senderInformation' => null, 'promotionInformation' => null, 'processorInformation' => null, 'tokenInformation' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class CreateCreditRequest implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['clientReferenceInformation' => 'clientReferenceInformation', 'processingInformation' => 'processingInformation', 'paymentInformation' => 'paymentInformation', 'orderInformation' => 'orderInformation', 'buyerInformation' => 'buyerInformation', 'deviceInformation' => 'deviceInformation', 'merchantInformation' => 'merchantInformation', 'aggregatorInformation' => 'aggregatorInformation', 'pointOfSaleInformation' => 'pointOfSaleInformation', 'merchantDefinedInformation' => 'merchantDefinedInformation', 'merchantDefinedSecureInformation' => 'merchantDefinedSecureInformation', 'installmentInformation' => 'installmentInformation', 'travelInformation' => 'travelInformation', 'recipientInformation' => 'recipientInformation', 'senderInformation' => 'senderInformation', 'promotionInformation' => 'promotionInformation', 'processorInformation' => 'processorInformation'];
+    protected static $attributeMap = ['clientReferenceInformation' => 'clientReferenceInformation', 'processingInformation' => 'processingInformation', 'paymentInformation' => 'paymentInformation', 'orderInformation' => 'orderInformation', 'buyerInformation' => 'buyerInformation', 'deviceInformation' => 'deviceInformation', 'merchantInformation' => 'merchantInformation', 'aggregatorInformation' => 'aggregatorInformation', 'pointOfSaleInformation' => 'pointOfSaleInformation', 'merchantDefinedInformation' => 'merchantDefinedInformation', 'merchantDefinedSecureInformation' => 'merchantDefinedSecureInformation', 'installmentInformation' => 'installmentInformation', 'travelInformation' => 'travelInformation', 'recipientInformation' => 'recipientInformation', 'senderInformation' => 'senderInformation', 'promotionInformation' => 'promotionInformation', 'processorInformation' => 'processorInformation', 'tokenInformation' => 'tokenInformation'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['clientReferenceInformation' => 'setClientReferenceInformation', 'processingInformation' => 'setProcessingInformation', 'paymentInformation' => 'setPaymentInformation', 'orderInformation' => 'setOrderInformation', 'buyerInformation' => 'setBuyerInformation', 'deviceInformation' => 'setDeviceInformation', 'merchantInformation' => 'setMerchantInformation', 'aggregatorInformation' => 'setAggregatorInformation', 'pointOfSaleInformation' => 'setPointOfSaleInformation', 'merchantDefinedInformation' => 'setMerchantDefinedInformation', 'merchantDefinedSecureInformation' => 'setMerchantDefinedSecureInformation', 'installmentInformation' => 'setInstallmentInformation', 'travelInformation' => 'setTravelInformation', 'recipientInformation' => 'setRecipientInformation', 'senderInformation' => 'setSenderInformation', 'promotionInformation' => 'setPromotionInformation', 'processorInformation' => 'setProcessorInformation'];
+    protected static $setters = ['clientReferenceInformation' => 'setClientReferenceInformation', 'processingInformation' => 'setProcessingInformation', 'paymentInformation' => 'setPaymentInformation', 'orderInformation' => 'setOrderInformation', 'buyerInformation' => 'setBuyerInformation', 'deviceInformation' => 'setDeviceInformation', 'merchantInformation' => 'setMerchantInformation', 'aggregatorInformation' => 'setAggregatorInformation', 'pointOfSaleInformation' => 'setPointOfSaleInformation', 'merchantDefinedInformation' => 'setMerchantDefinedInformation', 'merchantDefinedSecureInformation' => 'setMerchantDefinedSecureInformation', 'installmentInformation' => 'setInstallmentInformation', 'travelInformation' => 'setTravelInformation', 'recipientInformation' => 'setRecipientInformation', 'senderInformation' => 'setSenderInformation', 'promotionInformation' => 'setPromotionInformation', 'processorInformation' => 'setProcessorInformation', 'tokenInformation' => 'setTokenInformation'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['clientReferenceInformation' => 'getClientReferenceInformation', 'processingInformation' => 'getProcessingInformation', 'paymentInformation' => 'getPaymentInformation', 'orderInformation' => 'getOrderInformation', 'buyerInformation' => 'getBuyerInformation', 'deviceInformation' => 'getDeviceInformation', 'merchantInformation' => 'getMerchantInformation', 'aggregatorInformation' => 'getAggregatorInformation', 'pointOfSaleInformation' => 'getPointOfSaleInformation', 'merchantDefinedInformation' => 'getMerchantDefinedInformation', 'merchantDefinedSecureInformation' => 'getMerchantDefinedSecureInformation', 'installmentInformation' => 'getInstallmentInformation', 'travelInformation' => 'getTravelInformation', 'recipientInformation' => 'getRecipientInformation', 'senderInformation' => 'getSenderInformation', 'promotionInformation' => 'getPromotionInformation', 'processorInformation' => 'getProcessorInformation'];
+    protected static $getters = ['clientReferenceInformation' => 'getClientReferenceInformation', 'processingInformation' => 'getProcessingInformation', 'paymentInformation' => 'getPaymentInformation', 'orderInformation' => 'getOrderInformation', 'buyerInformation' => 'getBuyerInformation', 'deviceInformation' => 'getDeviceInformation', 'merchantInformation' => 'getMerchantInformation', 'aggregatorInformation' => 'getAggregatorInformation', 'pointOfSaleInformation' => 'getPointOfSaleInformation', 'merchantDefinedInformation' => 'getMerchantDefinedInformation', 'merchantDefinedSecureInformation' => 'getMerchantDefinedSecureInformation', 'installmentInformation' => 'getInstallmentInformation', 'travelInformation' => 'getTravelInformation', 'recipientInformation' => 'getRecipientInformation', 'senderInformation' => 'getSenderInformation', 'promotionInformation' => 'getPromotionInformation', 'processorInformation' => 'getProcessorInformation', 'tokenInformation' => 'getTokenInformation'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -117,6 +117,7 @@ class CreateCreditRequest implements ArrayAccess
         $this->container['senderInformation'] = isset($data['senderInformation']) ? $data['senderInformation'] : null;
         $this->container['promotionInformation'] = isset($data['promotionInformation']) ? $data['promotionInformation'] : null;
         $this->container['processorInformation'] = isset($data['processorInformation']) ? $data['processorInformation'] : null;
+        $this->container['tokenInformation'] = isset($data['tokenInformation']) ? $data['tokenInformation'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -442,6 +443,24 @@ class CreateCreditRequest implements ArrayAccess
     public function setProcessorInformation($processorInformation)
     {
         $this->container['processorInformation'] = $processorInformation;
+        return $this;
+    }
+    /**
+     * Gets tokenInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2creditsTokenInformation
+     */
+    public function getTokenInformation()
+    {
+        return $this->container['tokenInformation'];
+    }
+    /**
+     * Sets tokenInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2creditsTokenInformation $tokenInformation
+     * @return $this
+     */
+    public function setTokenInformation($tokenInformation)
+    {
+        $this->container['tokenInformation'] = $tokenInformation;
         return $this;
     }
     /**

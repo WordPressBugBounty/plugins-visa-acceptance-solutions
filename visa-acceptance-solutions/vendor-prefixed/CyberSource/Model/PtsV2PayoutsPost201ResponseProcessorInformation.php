@@ -48,12 +48,12 @@ class PtsV2PayoutsPost201ResponseProcessorInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['approvalCode' => 'string', 'responseCode' => 'string', 'transactionId' => 'string', 'systemTraceAuditNumber' => 'string', 'responseCodeSource' => 'string', 'merchantAdvice' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsRefundPost201ResponseProcessorInformationMerchantAdvice'];
+    protected static $swaggerTypes = ['approvalCode' => 'string', 'responseCode' => 'string', 'transactionId' => 'string', 'systemTraceAuditNumber' => 'string', 'responseCodeSource' => 'string', 'merchantAdvice' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsRefundPost201ResponseProcessorInformationMerchantAdvice', 'avs' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PayoutsPost201ResponseProcessorInformationAvs', 'customer' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PayoutsPost201ResponseProcessorInformationCustomer', 'electronicVerificationResults' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PayoutsPost201ResponseProcessorInformationElectronicVerificationResults', 'cardVerification' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessorInformationCardVerification'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['approvalCode' => null, 'responseCode' => null, 'transactionId' => null, 'systemTraceAuditNumber' => null, 'responseCodeSource' => null, 'merchantAdvice' => null];
+    protected static $swaggerFormats = ['approvalCode' => null, 'responseCode' => null, 'transactionId' => null, 'systemTraceAuditNumber' => null, 'responseCodeSource' => null, 'merchantAdvice' => null, 'avs' => null, 'customer' => null, 'electronicVerificationResults' => null, 'cardVerification' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PtsV2PayoutsPost201ResponseProcessorInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['approvalCode' => 'approvalCode', 'responseCode' => 'responseCode', 'transactionId' => 'transactionId', 'systemTraceAuditNumber' => 'systemTraceAuditNumber', 'responseCodeSource' => 'responseCodeSource', 'merchantAdvice' => 'merchantAdvice'];
+    protected static $attributeMap = ['approvalCode' => 'approvalCode', 'responseCode' => 'responseCode', 'transactionId' => 'transactionId', 'systemTraceAuditNumber' => 'systemTraceAuditNumber', 'responseCodeSource' => 'responseCodeSource', 'merchantAdvice' => 'merchantAdvice', 'avs' => 'avs', 'customer' => 'customer', 'electronicVerificationResults' => 'electronicVerificationResults', 'cardVerification' => 'cardVerification'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['approvalCode' => 'setApprovalCode', 'responseCode' => 'setResponseCode', 'transactionId' => 'setTransactionId', 'systemTraceAuditNumber' => 'setSystemTraceAuditNumber', 'responseCodeSource' => 'setResponseCodeSource', 'merchantAdvice' => 'setMerchantAdvice'];
+    protected static $setters = ['approvalCode' => 'setApprovalCode', 'responseCode' => 'setResponseCode', 'transactionId' => 'setTransactionId', 'systemTraceAuditNumber' => 'setSystemTraceAuditNumber', 'responseCodeSource' => 'setResponseCodeSource', 'merchantAdvice' => 'setMerchantAdvice', 'avs' => 'setAvs', 'customer' => 'setCustomer', 'electronicVerificationResults' => 'setElectronicVerificationResults', 'cardVerification' => 'setCardVerification'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['approvalCode' => 'getApprovalCode', 'responseCode' => 'getResponseCode', 'transactionId' => 'getTransactionId', 'systemTraceAuditNumber' => 'getSystemTraceAuditNumber', 'responseCodeSource' => 'getResponseCodeSource', 'merchantAdvice' => 'getMerchantAdvice'];
+    protected static $getters = ['approvalCode' => 'getApprovalCode', 'responseCode' => 'getResponseCode', 'transactionId' => 'getTransactionId', 'systemTraceAuditNumber' => 'getSystemTraceAuditNumber', 'responseCodeSource' => 'getResponseCodeSource', 'merchantAdvice' => 'getMerchantAdvice', 'avs' => 'getAvs', 'customer' => 'getCustomer', 'electronicVerificationResults' => 'getElectronicVerificationResults', 'cardVerification' => 'getCardVerification'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -106,6 +106,10 @@ class PtsV2PayoutsPost201ResponseProcessorInformation implements ArrayAccess
         $this->container['systemTraceAuditNumber'] = isset($data['systemTraceAuditNumber']) ? $data['systemTraceAuditNumber'] : null;
         $this->container['responseCodeSource'] = isset($data['responseCodeSource']) ? $data['responseCodeSource'] : null;
         $this->container['merchantAdvice'] = isset($data['merchantAdvice']) ? $data['merchantAdvice'] : null;
+        $this->container['avs'] = isset($data['avs']) ? $data['avs'] : null;
+        $this->container['customer'] = isset($data['customer']) ? $data['customer'] : null;
+        $this->container['electronicVerificationResults'] = isset($data['electronicVerificationResults']) ? $data['electronicVerificationResults'] : null;
+        $this->container['cardVerification'] = isset($data['cardVerification']) ? $data['cardVerification'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -233,6 +237,78 @@ class PtsV2PayoutsPost201ResponseProcessorInformation implements ArrayAccess
     public function setMerchantAdvice($merchantAdvice)
     {
         $this->container['merchantAdvice'] = $merchantAdvice;
+        return $this;
+    }
+    /**
+     * Gets avs
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PayoutsPost201ResponseProcessorInformationAvs
+     */
+    public function getAvs()
+    {
+        return $this->container['avs'];
+    }
+    /**
+     * Sets avs
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PayoutsPost201ResponseProcessorInformationAvs $avs
+     * @return $this
+     */
+    public function setAvs($avs)
+    {
+        $this->container['avs'] = $avs;
+        return $this;
+    }
+    /**
+     * Gets customer
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PayoutsPost201ResponseProcessorInformationCustomer
+     */
+    public function getCustomer()
+    {
+        return $this->container['customer'];
+    }
+    /**
+     * Sets customer
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PayoutsPost201ResponseProcessorInformationCustomer $customer
+     * @return $this
+     */
+    public function setCustomer($customer)
+    {
+        $this->container['customer'] = $customer;
+        return $this;
+    }
+    /**
+     * Gets electronicVerificationResults
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PayoutsPost201ResponseProcessorInformationElectronicVerificationResults
+     */
+    public function getElectronicVerificationResults()
+    {
+        return $this->container['electronicVerificationResults'];
+    }
+    /**
+     * Sets electronicVerificationResults
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PayoutsPost201ResponseProcessorInformationElectronicVerificationResults $electronicVerificationResults
+     * @return $this
+     */
+    public function setElectronicVerificationResults($electronicVerificationResults)
+    {
+        $this->container['electronicVerificationResults'] = $electronicVerificationResults;
+        return $this;
+    }
+    /**
+     * Gets cardVerification
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessorInformationCardVerification
+     */
+    public function getCardVerification()
+    {
+        return $this->container['cardVerification'];
+    }
+    /**
+     * Sets cardVerification
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessorInformationCardVerification $cardVerification
+     * @return $this
+     */
+    public function setCardVerification($cardVerification)
+    {
+        $this->container['cardVerification'] = $cardVerification;
         return $this;
     }
     /**

@@ -101,7 +101,7 @@ class OffersApi
      * @param string $vCOrganizationId  (required)
      * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\OfferRequest $offerRequest  (required)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
-     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20111, HTTP status code, HTTP response headers (array of strings)
      */
     public function createOffer($contentType, $xRequestid, $vCMerchantId, $vCCorrelationId, $vCOrganizationId, $offerRequest)
     {
@@ -123,7 +123,7 @@ class OffersApi
      * @param string $vCOrganizationId  (required)
      * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\OfferRequest $offerRequest  (required)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
-     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20111, HTTP status code, HTTP response headers (array of strings)
      */
     public function createOfferWithHttpInfo($contentType, $xRequestid, $vCMerchantId, $vCCorrelationId, $vCOrganizationId, $offerRequest)
     {
@@ -224,26 +224,26 @@ class OffersApi
             }
             self::$logger->debug("Body Parameter :\n" . $printHttpBody);
         }
-        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse2019");
+        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse20111");
         // Response MLE check
         $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "createOffer,createOfferWithHttpInfo");
         // make the API Call
         try {
-            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'POST', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019', '/vas/v1/currencyconversion', $isResponseMLEForAPI);
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'POST', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20111', '/vas/v1/currencyconversion', $isResponseMLEForAPI);
             self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
-            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019', $httpHeader), $statusCode, $httpHeader];
+            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20111', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 201:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20111', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse40010', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse40015', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 502:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse5022', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse5025', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
             }
@@ -404,7 +404,7 @@ class OffersApi
                     $e->setResponseObject($data);
                     break;
                 case 500:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse5022', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse5025', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
             }

@@ -48,12 +48,12 @@ class PtsV2PaymentsPost201ResponseProcessingInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['bankTransferOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessingInformationBankTransferOptions', 'paymentSolution' => 'string', 'enhancedDataEnabled' => 'bool', 'captureOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessingInformationCaptureOptions', 'authorizationOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessingInformationAuthorizationOptions', 'purchaseOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessingInformationPurchaseOptions'];
+    protected static $swaggerTypes = ['bankTransferOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessingInformationBankTransferOptions', 'paymentSolution' => 'string', 'enhancedDataEnabled' => 'bool', 'digitalServiceIndicator' => 'string', 'captureOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessingInformationCaptureOptions', 'authorizationOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessingInformationAuthorizationOptions', 'purchaseOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseProcessingInformationPurchaseOptions'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['bankTransferOptions' => null, 'paymentSolution' => null, 'enhancedDataEnabled' => null, 'captureOptions' => null, 'authorizationOptions' => null, 'purchaseOptions' => null];
+    protected static $swaggerFormats = ['bankTransferOptions' => null, 'paymentSolution' => null, 'enhancedDataEnabled' => null, 'digitalServiceIndicator' => null, 'captureOptions' => null, 'authorizationOptions' => null, 'purchaseOptions' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PtsV2PaymentsPost201ResponseProcessingInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['bankTransferOptions' => 'bankTransferOptions', 'paymentSolution' => 'paymentSolution', 'enhancedDataEnabled' => 'enhancedDataEnabled', 'captureOptions' => 'captureOptions', 'authorizationOptions' => 'authorizationOptions', 'purchaseOptions' => 'purchaseOptions'];
+    protected static $attributeMap = ['bankTransferOptions' => 'bankTransferOptions', 'paymentSolution' => 'paymentSolution', 'enhancedDataEnabled' => 'enhancedDataEnabled', 'digitalServiceIndicator' => 'digitalServiceIndicator', 'captureOptions' => 'captureOptions', 'authorizationOptions' => 'authorizationOptions', 'purchaseOptions' => 'purchaseOptions'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['bankTransferOptions' => 'setBankTransferOptions', 'paymentSolution' => 'setPaymentSolution', 'enhancedDataEnabled' => 'setEnhancedDataEnabled', 'captureOptions' => 'setCaptureOptions', 'authorizationOptions' => 'setAuthorizationOptions', 'purchaseOptions' => 'setPurchaseOptions'];
+    protected static $setters = ['bankTransferOptions' => 'setBankTransferOptions', 'paymentSolution' => 'setPaymentSolution', 'enhancedDataEnabled' => 'setEnhancedDataEnabled', 'digitalServiceIndicator' => 'setDigitalServiceIndicator', 'captureOptions' => 'setCaptureOptions', 'authorizationOptions' => 'setAuthorizationOptions', 'purchaseOptions' => 'setPurchaseOptions'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['bankTransferOptions' => 'getBankTransferOptions', 'paymentSolution' => 'getPaymentSolution', 'enhancedDataEnabled' => 'getEnhancedDataEnabled', 'captureOptions' => 'getCaptureOptions', 'authorizationOptions' => 'getAuthorizationOptions', 'purchaseOptions' => 'getPurchaseOptions'];
+    protected static $getters = ['bankTransferOptions' => 'getBankTransferOptions', 'paymentSolution' => 'getPaymentSolution', 'enhancedDataEnabled' => 'getEnhancedDataEnabled', 'digitalServiceIndicator' => 'getDigitalServiceIndicator', 'captureOptions' => 'getCaptureOptions', 'authorizationOptions' => 'getAuthorizationOptions', 'purchaseOptions' => 'getPurchaseOptions'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -103,6 +103,7 @@ class PtsV2PaymentsPost201ResponseProcessingInformation implements ArrayAccess
         $this->container['bankTransferOptions'] = isset($data['bankTransferOptions']) ? $data['bankTransferOptions'] : null;
         $this->container['paymentSolution'] = isset($data['paymentSolution']) ? $data['paymentSolution'] : null;
         $this->container['enhancedDataEnabled'] = isset($data['enhancedDataEnabled']) ? $data['enhancedDataEnabled'] : null;
+        $this->container['digitalServiceIndicator'] = isset($data['digitalServiceIndicator']) ? $data['digitalServiceIndicator'] : null;
         $this->container['captureOptions'] = isset($data['captureOptions']) ? $data['captureOptions'] : null;
         $this->container['authorizationOptions'] = isset($data['authorizationOptions']) ? $data['authorizationOptions'] : null;
         $this->container['purchaseOptions'] = isset($data['purchaseOptions']) ? $data['purchaseOptions'] : null;
@@ -179,6 +180,24 @@ class PtsV2PaymentsPost201ResponseProcessingInformation implements ArrayAccess
     public function setEnhancedDataEnabled($enhancedDataEnabled)
     {
         $this->container['enhancedDataEnabled'] = $enhancedDataEnabled;
+        return $this;
+    }
+    /**
+     * Gets digitalServiceIndicator
+     * @return string
+     */
+    public function getDigitalServiceIndicator()
+    {
+        return $this->container['digitalServiceIndicator'];
+    }
+    /**
+     * Sets digitalServiceIndicator
+     * @param string $digitalServiceIndicator Mastercard Digital Enablement Service (MDES) digital service indicators received in the authorization response message for MDES transactions.   This data is provided in the 0110 response in the Field 34—Acceptance Environment Data (TLV Format), Dataset ID 04—Additional Service Result Data, Tag DF1F—Mastercard Digital Enablement Service Indicator for Acquirer to acquirers.  This field is in ANS, EBCDIC format and flows in Field 34, DSID 04 Tag DF1F, mapped to Mastercard Data Element DE119, Sub-element 004.  This field is supported for all flavors of Authorization response only.  #### Used by **Authorization Response** Response field only.
+     * @return $this
+     */
+    public function setDigitalServiceIndicator($digitalServiceIndicator)
+    {
+        $this->container['digitalServiceIndicator'] = $digitalServiceIndicator;
         return $this;
     }
     /**

@@ -48,12 +48,12 @@ class Ucv1sessionsDataMerchantInformationMerchantDescriptor implements ArrayAcce
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['name' => 'string', 'alternateName' => 'string', 'locality' => 'string', 'phone' => 'string', 'country' => 'string', 'postalCode' => 'string', 'administrativeArea' => 'string', 'address1' => 'string'];
+    protected static $swaggerTypes = ['name' => 'string', 'alternateName' => 'string', 'contact' => 'string', 'locality' => 'string', 'phone' => 'string', 'country' => 'string', 'postalCode' => 'string', 'administrativeArea' => 'string', 'address1' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['name' => null, 'alternateName' => null, 'locality' => null, 'phone' => null, 'country' => null, 'postalCode' => null, 'administrativeArea' => null, 'address1' => null];
+    protected static $swaggerFormats = ['name' => null, 'alternateName' => null, 'contact' => null, 'locality' => null, 'phone' => null, 'country' => null, 'postalCode' => null, 'administrativeArea' => null, 'address1' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ucv1sessionsDataMerchantInformationMerchantDescriptor implements ArrayAcce
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['name' => 'name', 'alternateName' => 'alternateName', 'locality' => 'locality', 'phone' => 'phone', 'country' => 'country', 'postalCode' => 'postalCode', 'administrativeArea' => 'administrativeArea', 'address1' => 'address1'];
+    protected static $attributeMap = ['name' => 'name', 'alternateName' => 'alternateName', 'contact' => 'contact', 'locality' => 'locality', 'phone' => 'phone', 'country' => 'country', 'postalCode' => 'postalCode', 'administrativeArea' => 'administrativeArea', 'address1' => 'address1'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['name' => 'setName', 'alternateName' => 'setAlternateName', 'locality' => 'setLocality', 'phone' => 'setPhone', 'country' => 'setCountry', 'postalCode' => 'setPostalCode', 'administrativeArea' => 'setAdministrativeArea', 'address1' => 'setAddress1'];
+    protected static $setters = ['name' => 'setName', 'alternateName' => 'setAlternateName', 'contact' => 'setContact', 'locality' => 'setLocality', 'phone' => 'setPhone', 'country' => 'setCountry', 'postalCode' => 'setPostalCode', 'administrativeArea' => 'setAdministrativeArea', 'address1' => 'setAddress1'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['name' => 'getName', 'alternateName' => 'getAlternateName', 'locality' => 'getLocality', 'phone' => 'getPhone', 'country' => 'getCountry', 'postalCode' => 'getPostalCode', 'administrativeArea' => 'getAdministrativeArea', 'address1' => 'getAddress1'];
+    protected static $getters = ['name' => 'getName', 'alternateName' => 'getAlternateName', 'contact' => 'getContact', 'locality' => 'getLocality', 'phone' => 'getPhone', 'country' => 'getCountry', 'postalCode' => 'getPostalCode', 'administrativeArea' => 'getAdministrativeArea', 'address1' => 'getAddress1'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -102,6 +102,7 @@ class Ucv1sessionsDataMerchantInformationMerchantDescriptor implements ArrayAcce
     {
         $this->container['name'] = isset($data['name']) ? $data['name'] : null;
         $this->container['alternateName'] = isset($data['alternateName']) ? $data['alternateName'] : null;
+        $this->container['contact'] = isset($data['contact']) ? $data['contact'] : null;
         $this->container['locality'] = isset($data['locality']) ? $data['locality'] : null;
         $this->container['phone'] = isset($data['phone']) ? $data['phone'] : null;
         $this->container['country'] = isset($data['country']) ? $data['country'] : null;
@@ -163,6 +164,24 @@ class Ucv1sessionsDataMerchantInformationMerchantDescriptor implements ArrayAcce
     public function setAlternateName($alternateName)
     {
         $this->container['alternateName'] = $alternateName;
+        return $this;
+    }
+    /**
+     * Gets contact
+     * @return string
+     */
+    public function getContact()
+    {
+        return $this->container['contact'];
+    }
+    /**
+     * Sets contact
+     * @param string $contact Contact information for the merchant.  **Note** These are the maximum data lengths for the following payment processors: - FDCCompass (13) - Paymentech (13)
+     * @return $this
+     */
+    public function setContact($contact)
+    {
+        $this->container['contact'] = $contact;
         return $this;
     }
     /**

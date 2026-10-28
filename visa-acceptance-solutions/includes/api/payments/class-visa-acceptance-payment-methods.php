@@ -23,6 +23,7 @@ require_once __DIR__ . '/../request/payments/class-visa-acceptance-zero-auth-req
 require_once __DIR__ . '/../request/payments/class-visa-acceptance-payment-adapter.php';
 require_once __DIR__ . '/class-visa-acceptance-auth-reversal.php';
 require_once __DIR__ . '/class-visa-acceptance-refund.php';
+require_once __DIR__ . '/class-visa-acceptance-payment-token-echeck.php';
 
 /**
  * Visa Acceptance Payment Methods Class
@@ -144,7 +145,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 	public function get_delete_response( $token, $token_data ) {
 		// Initialize CyberSource API Client using visa acceptance adapter class.
 		$request                = new Visa_Acceptance_Payment_Adapter( $this->gateway );
-		$api_client             = $request->get_api_client(true);
+		$api_client             = $request->get_api_client(); // Use JWT authentication.
 		$payment_instrument_api = new \Pymt_Vas\Dependencies\CyberSource\Api\CustomerPaymentInstrumentApi( $api_client );
 
 		try {
@@ -161,103 +162,6 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 				'body'      => $e->getResponseBody(),
 			);
 			return $return_array;
-		}
-	}
-
-	/**
-	 * Create payment tokens through payment gateway API
-	 * Enhanced with automatic authorization reversal for China UnionPay (CUP) cards
-	 *
-	 * @param string  $transient_token transient token value.
-	 * @param object  $order order details.
-	 * @param boolean $is_echeck whether this is an eCheck token.
-	 *
-	 * @return array
-	 */
-	public function create_token( $transient_token, $order = null, $is_echeck = false ) {
-		try {
-			$settings                 = $this->gateway->get_gateway_settings();
-			$return_result['message'] = null;
-			$return_result['status']  = null;
-			$customer_data            = $this->get_order_for_add_payment_method();
-			$customer                 = WC()->customer;
-			$refund          		  = new Visa_Acceptance_Refund( $this->gateway );
-		
-			// Check if this is a CUP or JAYWAN card for automatic authorization reversal (only for cards).
-			$unsupported_zero_amount_card = ! $is_echeck ? $this->unsupported_zero_amount_card( $transient_token ) : false;
-
-			if ( $customer->get_billing_first_name() && $customer->get_billing_last_name() ) {
-				$response = $this->get_token_response( $transient_token, $customer, $order, $is_echeck );
-				if ( empty( $response ) || ! isset( $response['body'] ) || ! $response['body'] ) {
-                    $return_result['message'] = __( 'Unable to save card. Please try again', 'visa-acceptance-solutions' );
-                    $return_result['status']  = false;
-                    return $return_result;
-                }
-				$client_reference_info = $response['body']->getClientReferenceInformation();
-				$code = $client_reference_info->getCode();
-			
-				if ( VISA_ACCEPTANCE_TWO_ZERO_ONE === (int) $response['http_code'] ) {
-					$core_token = $this->check_token_exist( $response, $customer_data, $is_echeck );
-				
-					if ( $core_token ) {
-						if ( $is_echeck ) {
-							$return_result['message'] = __( 'Account is already saved. Please try with another account.', 'visa-acceptance-solutions' );
-							$return_result['status']  = true;
-							$return_result['token']   = $core_token->get_token();
-						} else {
-							$return_result = $this->update_token( $core_token, $response, $settings, $customer_data );
-						}
-					} else {
-						$return_result = $this->get_token_Response_Array( $response, $customer_data, $is_echeck, $transient_token );
-					}
-					if ( $unsupported_zero_amount_card && isset( $return_result['status'] ) && $return_result['status'] ) {
-						// Execute automatic authorization reversal for CUP/JAYWAN verification amount.
-						$reversal_result = $this->process_card_auth_reversal( $response, $code, $order );
-
-						// Process authorization reversal results.
-						if ( $reversal_result['status'] ) {
-							$return_result['auth_reversal_status'] = VISA_ACCEPTANCE_SUCCESS;
-							$return_result['auth_reversal_transaction_id'] = $reversal_result['reversal_id'];
-							$return_result['original_transaction_id'] = $reversal_result['original_id'];
-							$return_result['message'] = $return_result['message'] . ' ' . __( 'Verification amount ($1) automatically reversed.', 'visa-acceptance-solutions' );
-						} else {
-							$return_result['auth_reversal_status'] = VISA_ACCEPTANCE_FAILURE;
-							$return_result['auth_reversal_message'] = $reversal_result['message'];
-							$return_result['message'] = $return_result['message'] . ' ' . __( 'Note: Verification amount reversal pending.', 'visa-acceptance-solutions' );
-						}
-					}
-				if ( $is_echeck ) {
-					$transaction_id  = $response['body']->getId();
-					$refund_response = $refund->get_refund_response( null, VISA_ACCEPTANCE_PLACEHOLDER_AMOUNT, $transaction_id, true, $code );
-					if ( isset( $refund_response['http_code'] ) && VISA_ACCEPTANCE_TWO_ZERO_ONE === $refund_response['http_code'] ) {
-						$return_result['refund_status']           = VISA_ACCEPTANCE_SUCCESS;
-						$return_result['refund_transaction_id']   = is_object( $refund_response['body'] ) && method_exists( $refund_response['body'], 'getId' ) ? $refund_response['body']->getId() : VISA_ACCEPTANCE_STRING_EMPTY;
-						$return_result['original_transaction_id'] = $transaction_id;
-						$return_result['message']                 = $return_result['message'] . ' ' . __( 'Verification amount ($0.01) automatically refunded.', 'visa-acceptance-solutions' );
-					} else {
-						$return_result['refund_status']  = VISA_ACCEPTANCE_FAILURE;
-						$return_result['refund_message'] = $refund_response['message'];
-						$return_result['message']        = $return_result['message'] . ' ' . __( 'Note: Verification amount refund pending.', 'visa-acceptance-solutions' );
-					}
-				}
-				} else {
-					$return_result['message'] = __( 'Unable to save card. Please try again later.', 'visa-acceptance-solutions' );
-					$return_result['status']  = false;
-				}
-			} else {
-				$return_result['message'] = __( 'Please add the address to proceed.', 'visa-acceptance-solutions' );
-				$return_result['status']  = false;
-			}
-			return $return_result;
-		
-		} catch ( \Exception $e ) {
-			$this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to create payment tokens through payment gateway API.', true );
-		
-			// Return error result.
-			return array(
-				'message' => __( 'An error occurred while processing your card. Please try again.', 'visa-acceptance-solutions' ),
-				'status' => false
-			);
 		}
 	}
  
@@ -421,11 +325,21 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 	 * @return $result
 	 */
 	public function update_token( $core_token, $response, $settings, $customer_data ) {
-		$old_token          = $this->build_token_data( $core_token );
-		$json               = json_decode( $response['body'] );
-		$tokens             = $this->get_token_information( $json );
-		$card_data_response = $this->get_card_details( $tokens, $settings );
-		$token_obj 			= new \WC_Payment_Token_CC();
+		$old_token = $this->build_token_data( $core_token );
+        $json      = json_decode( $response['body'] );
+        $tokens    = $this->get_token_information( $json );
+        if ( empty( $tokens['payment_instrument_id'] )
+            && ! empty( $tokens['instrument_identifier_id'] ) ) {
+            $return_result['message'] = __(
+                'Card is already saved. Please try with another card.',
+                'visa-acceptance-solutions'
+            );
+            $return_result['status'] = true;
+            $return_result['token']  = $tokens['instrument_identifier_id'];
+            return $return_result;
+        }
+        $card_data_response = $this->get_card_details($tokens,$settings);
+        $token_obj = new \WC_Payment_Token_CC();
 		try {
 			if ( isset( $card_data_response[VISA_ACCEPTANCE_VAL_ONE] ) && VISA_ACCEPTANCE_TWO_ZERO_ZERO === $card_data_response[VISA_ACCEPTANCE_VAL_ONE] ) {
 				$new_token = $this->get_card_token_information( $card_data_response, $tokens );
@@ -533,13 +447,41 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 		$return_result          = array();
 		
 		try {
-			$valid_statuses = array( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED, VISA_ACCEPTANCE_API_RESPONSE_ECHECK_STATUS );
+			$valid_statuses = array( VISA_ACCEPTANCE_API_RESPONSE_STATUS_AUTHORIZED, VISA_ACCEPTANCE_API_RESPONSE_ECHECK_STATUS, VISA_ACCEPTANCE_API_RESPONSE_STATUS_TRANSMITTED );
 			if ( VISA_ACCEPTANCE_TWO_ZERO_ONE === (int) $response['http_code'] && in_array( $status, $valid_statuses, true ) ) {
 				$tokens = $this->get_token_information( $json );
-				$card_data_response = $this->get_card_details( $tokens, $settings );
-				$token_obj          = $is_echeck ? new \WC_Payment_Token_eCheck() : new \WC_Payment_Token_CC();
-				if ( VISA_ACCEPTANCE_TWO_ZERO_ZERO === (int) $card_data_response[VISA_ACCEPTANCE_VAL_ONE] ) {
-					$tokens = $this->get_card_token_information( $card_data_response, $tokens, $is_echeck );
+				// For express pay or when transient token is provided, skip card details fetch.
+                $skip_card_details = ! empty( $transient_token ) || empty( $tokens['payment_instrument_id'] );
+                if ( $skip_card_details ) {
+                    // Use token information directly without fetching card details.
+                    $card_data_response = array( null, VISA_ACCEPTANCE_TWO_ZERO_ZERO, array() );
+                } else {
+                    $card_data_response = $this->get_card_details( $tokens, $settings );
+                }
+				$token_obj          = $is_echeck ? new \Visa_Acceptance_Payment_Token_ECheck() : new \WC_Payment_Token_CC();
+				$card_details_fetched = VISA_ACCEPTANCE_TWO_ZERO_ZERO === (int) $card_data_response[VISA_ACCEPTANCE_VAL_ONE];
+                // eCheck: don't hard-fail if the live TMS retrieve errors out — save with placeholder last4 rather than losing the token entirely.
+                if ( $card_details_fetched || $is_echeck ) {
+ 
+                    if ( $skip_card_details && ! $is_echeck ) {
+                        // Google Pay may return only instrumentIdentifier and no paymentInstrument.
+                        if ( ! empty( $tokens['instrument_identifier_id'] ) ) {
+                            $return_result['status'] = true;
+                            $return_result['token']  = $tokens['instrument_identifier_id'];
+                            return $return_result;
+                        }
+                        $return_result['status']  = false;
+                        $return_result['message'] = __( 'Unable to retrieve payment information. Please try again.', 'visa-acceptance-solutions' );
+                        return $return_result;
+                    }
+                   
+                    // Only call get_card_token_information if we actually fetched card details.
+                    if ( ! $skip_card_details && $card_details_fetched ) {
+                        $tokens = $this->get_card_token_information( $card_data_response, $tokens, $is_echeck );
+                    } elseif ( $is_echeck && empty( $tokens['account_number_last_four'] ) ) {
+                        $tokens['account_number_last_four'] = 'XXXX';
+                        $tokens['account_type']              = 'Checking';
+                    }
 				if ( $is_echeck ) {
 						$data  = $this->get_data_to_save( $tokens, $customer_data, true, $is_echeck );
 						$props = $this->get_props( true );
@@ -564,7 +506,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 			return $return_result;
 		} catch ( \Exception $e ) {
 			$this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to create array based on response data.', true );
-	
+			$this->gateway->add_logs_data( array( 'exception' => get_class( $e ) . ': ' . $e->getMessage(), 'trace' => $e->getTraceAsString() ), false, 'eCheck Debug - get_token_Response_Array Exception' );
 		}
 		
 		
@@ -594,6 +536,10 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
             } elseif ( $core_key ) {
                 $token_obj->set_props( array( $core_key => $value ) );
             } else {
+				// Skip null values to prevent WordPress deprecation warnings.
+                if ( null === $value ) {
+                    continue;
+                }
                 if ( (is_array( $value ) || is_object( $value )) && $is_echeck ) {
                     $value = maybe_serialize( $value );
                 }
@@ -607,8 +553,9 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
                 : __( 'Card Saved Succesfully.', 'visa-acceptance-solutions' );
             $return_result['status']  = true;
             $return_result['token']   = $token_obj->get_token();
+			$return_result['token_id'] = $token_obj->get_id();
  
-        } catch ( \Exception $e ) {
+        } catch ( \Throwable $e ) {
             $return_result['message'] = __( 'Unable to store card information. Please try again later.', 'visa-acceptance-solutions' );
             $return_result['status']  = false;
         }
@@ -635,12 +582,13 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 			$token_identifier['payment_instrument_id'] = $tokens['payment_instrument_id'];
 			$token_identifier['state']                 = VISA_ACCEPTANCE_ACTIVE;
 			$token_identifier['new']                   = $new_card;
+			if ( ! empty( $tokens['instrument_identifier_id'] ) ) {
+				$token_identifier['instrument_identifier_id'] = $tokens['instrument_identifier_id'];
+			}
 			if ($is_echeck) {
 				$data['token']                        			= $tokens['payment_instrument_id'];
 				$data['last4']                        			= $tokens['account_number_last_four'];
 				$data['account_type']                 			= $tokens['account_type'];
-				$token_identifier['instrument_identifier_id'] 	= $tokens['instrument_identifier_id'];
-				$data['account_type']                 = $tokens['account_type'];
 			} else {
 			$data['first_six']                         = $tokens['first_six'];
 			$data['last_four']                         = $tokens['last_four'];
@@ -706,8 +654,8 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 
 				if ( null !== $masked_account ) {
 					$cleaned = trim( preg_replace( '/[X\*\-]/', VISA_ACCEPTANCE_STRING_EMPTY, $masked_account ) );
-					$tokens['account_number_last_four'] = strlen( $cleaned ) < 4
-						? str_pad( $cleaned, 4, 'X', STR_PAD_LEFT )
+					$tokens['account_number_last_four'] = strlen( $cleaned ) < VISA_ACCEPTANCE_VAL_FOUR
+						? str_pad( $cleaned, VISA_ACCEPTANCE_VAL_FOUR, 'X', STR_PAD_LEFT )
 						: substr( $cleaned, -4 );
 				} else {
 					$tokens['account_number_last_four'] = 'XXXX';
@@ -763,8 +711,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 	}
 
 	/**
-	 * Sets card number details
-	 *
+	 * Sets card number details.
 	 * @param array $tokens tokens array.
 	 *
 	 * @return array
@@ -777,8 +724,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 	}
 
 	/**
-	 * Gets properties of card or eCheck
-	 *
+	 * Gets properties of card or eCheck.
 	 * @param boolean $is_echeck whether this is an eCheck token.
 	 *
 	 * @return array
@@ -792,6 +738,7 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 		if ( $is_echeck ) {
 			$response['token']        = 'token';
 			$response['last4']        = 'last4';
+			// account_type is saved as metadata, not a core property.
 			$response['account_type'] = 'account_type';
 		} else {
 			$response['is_default']   = 'default';
@@ -804,6 +751,326 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 	}
 
 	/**
+     * Fetches a payment instrument from TMS API and returns the data as an array.
+     *
+     * @param string           $payment_instrument_id The payment instrument ID.
+     * @param \WC_Payment_Token $token Optional token object for deletion on 404/410.
+     * @return array|null Instrument data array, null on 404/410, or false on other errors.
+     */
+    public function fetch_tms_payment_instrument( $payment_instrument_id, $token = null ) {
+        if ( empty( $payment_instrument_id ) ) {
+            return false;
+        }
+ 
+        try {
+            // Initialize CyberSource API Client using visa acceptance adapter class.
+            $request    = new Visa_Acceptance_Payment_Adapter( $this->gateway );
+            $api_client = $request->get_api_client(); 
+ 
+            // Initialize TMS Payment Instrument API (v1).
+            $payment_instrument_api = new \Pymt_Vas\Dependencies\CyberSource\Api\PaymentInstrumentApi( $api_client );
+ 
+            // Call TMS API via SDK method - returns [data, status_code, headers].
+            list( $response_data, $status_code, $http_headers ) = $payment_instrument_api->getPaymentInstrumentWithHttpInfo(
+                $payment_instrument_id,
+                VISA_ACCEPTANCE_STRING_EMPTY 
+            );
+ 
+            // Extract data from CyberSource object using getter methods.
+            $data = array();
+            if ( $response_data && is_object( $response_data ) ) {
+                try {
+                    // Get embedded data.
+                    $embedded = $response_data->getEmbedded();
+                    if ( $embedded && method_exists( $embedded, 'getInstrumentIdentifier' ) ) {
+                        $instrument_identifier = $embedded->getInstrumentIdentifier();
+                        
+                        if ( $instrument_identifier && method_exists( $instrument_identifier, 'getTokenizedCard' ) ) {
+                            $tokenized_card = $instrument_identifier->getTokenizedCard();
+                            
+                            if ( $tokenized_card && method_exists( $tokenized_card, 'getCard' ) ) {
+                                $card = $tokenized_card->getCard();
+                                
+                                // Build array structure expected by update_token_from_tms_data.
+                                $data = array(
+                                    '_embedded' => array(
+                                        'instrumentIdentifier' => array(
+                                            'tokenizedCard' => array(
+                                                'state' => method_exists( $tokenized_card, 'getState' ) ? $tokenized_card->getState() : null,
+                                                'card' => array(
+                                                    'suffix' => method_exists( $card, 'getSuffix' ) ? $card->getSuffix() : null,
+                                                    'expirationMonth' => method_exists( $card, 'getExpirationMonth' ) ? $card->getExpirationMonth() : null,
+                                                    'expirationYear' => method_exists( $card, 'getExpirationYear' ) ? $card->getExpirationYear() : null,
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                );
+                            }
+                        }
+                    }
+                } catch ( \Exception $e ) {
+                    $this->gateway->add_logs_data(
+                        array( 'Error extracting TMS data: ' . $e->getMessage() ),
+                        false,
+                        'TMS Token Refresh',
+                        true
+                    );
+                }
+            }
+ 
+            // Return data only on successful 200 response.
+            if ( VISA_ACCEPTANCE_TWO_ZERO_ZERO === $status_code && $data ) {
+                return $data;
+            }
+            
+            return false;
+ 
+        } catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
+            $status_code = $e->getCode();
+            if ( VISA_ACCEPTANCE_FOUR_ZERO_FOUR === $status_code || VISA_ACCEPTANCE_FOUR_TEN === $status_code ) {
+                $this->gateway->add_logs_data(
+                    array(
+                        'TMS token unavailable (HTTP ' . $status_code . '): ' . $payment_instrument_id,
+                        'Deleting token from local store',
+                    ),
+                    true,
+                    'TMS Token Refresh'
+                );
+                
+                // Delete token from WooCommerce database.
+                if ( $token instanceof \WC_Payment_Token ) {
+                    \WC_Payment_Tokens::delete( $token->get_id() );
+                }
+                
+                // Return null to indicate token unavailable (not an error).
+                return null;
+            }
+            
+            // Other API errors.
+            $this->gateway->add_logs_data(
+                array(
+                    'TMS API error (HTTP ' . $status_code . '): ' . $e->getMessage(),
+                    'response_body' => $e->getResponseBody(),
+                ),
+                false,
+                'TMS Token Refresh',
+                true
+            );
+            return false;
+        } catch ( \Exception $e ) {
+            $this->gateway->add_logs_data(
+                array( 'TMS API error: ' . $e->getMessage() ),
+                false,
+                'TMS Token Refresh',
+                true
+            );
+            return false;
+        }
+    }
+ 
+    /**
+     * Updates a WooCommerce payment token with data from TMS API response.
+     *
+     * @param \WC_Payment_Token $token         The WooCommerce payment token to update.
+     * @param array             $tms_data      Data from TMS API paymentinstruments endpoint.
+     * @return bool True if token was updated, false otherwise.
+     */
+    public function update_token_from_tms_data( $token, $tms_data ) {
+        if ( ! $token instanceof \WC_Payment_Token || empty( $tms_data ) ) {
+            return false;
+        }
+ 
+        // Extract tokenizedCard from nested structure: _embedded.instrumentIdentifier.tokenizedCard.
+        $embedded = $tms_data['_embedded'] ?? array();
+        $instrument_identifier = $embedded['instrumentIdentifier'] ?? array();
+        $tokenized_card = $instrument_identifier['tokenizedCard'] ?? array();
+        
+        // If tokenizedCard is absent, token exists but no network token data yet - skip update.
+        if ( empty( $tokenized_card ) ) {
+            $this->gateway->add_logs_data(
+                array( 'TMS token refresh: tokenizedCard absent for token ID ' . $token->get_id() . ' - retaining existing data' ),
+                true,
+                'TMS Token Refresh'
+            );
+            return false;
+        }
+        
+        $card_state = $tokenized_card['state'] ?? VISA_ACCEPTANCE_STRING_EMPTY;
+ 
+        if ( 'ACTIVE' !== $card_state ) {
+            $this->gateway->add_logs_data(
+                array( 'TMS token refresh: tokenized card is not ACTIVE. State: ' . $card_state . ' for token ID ' . $token->get_id() ),
+                false,
+                'TMS Token Refresh',
+                true
+            );
+            return false;
+        }
+ 
+        // Extract new card details from tokenizedCard.
+        $tokenized_card_info = $tokenized_card['card'] ?? array();
+        $new_suffix = $tokenized_card_info['suffix'] ?? null;
+        $new_expiry_month = $tokenized_card_info['expirationMonth'] ?? null;
+        $new_expiry_year = $tokenized_card_info['expirationYear'] ?? null;
+        $updated = false;
+        $formatted_month = $token->get_expiry_month();
+
+        // Update last4 if changed.
+        if ( $new_suffix && $token->get_last4() !== $new_suffix ) {
+            $token->set_last4( $new_suffix );
+            $updated = true;
+        }
+ 
+        // Update expiry month if changed.
+        if ( $new_expiry_month ) {
+            $formatted_month = str_pad( $new_expiry_month, VISA_ACCEPTANCE_VAL_TWO, '0', STR_PAD_LEFT );
+            if ( $token->get_expiry_month() !== $formatted_month ) {
+                $token->set_expiry_month( $formatted_month );
+                $updated = true;
+            }
+        }
+ 
+        // Update expiry year if changed.
+        if ( $new_expiry_year && $token->get_expiry_year() !== (string) $new_expiry_year ) {
+            $token->set_expiry_year( $new_expiry_year );
+            $updated = true;
+        }
+ 
+        if ( $updated ) {
+            // Save token to database.
+            $token->save();
+ 
+            $this->gateway->add_logs_data(
+                array(
+                    'TMS token refresh: updated token ID ' . $token->get_id(),
+                    'new_last4' => $new_suffix,
+                    'new_expiry' => $formatted_month . '/' . $new_expiry_year,
+                ),
+                true,
+                'TMS Token Refresh'
+            );
+        }
+        return $updated;
+    }
+ 
+    /**
+     * Refreshes all customer tokens from TMS API at checkout load.
+     * Only runs if Network Token feature is enabled.
+     *
+     * @param array  $tokens   Array of WC_Payment_Token objects.
+     * @return void
+     */
+    public function refresh_all_tokens_from_tms( $tokens ) {
+        // Check if Network Token feature is enabled.
+        $settings = $this->gateway->get_gateway_settings();
+        $network_token_enabled = isset( $settings['enable_network_token_webhook'] ) ? $settings['enable_network_token_webhook'] : VISA_ACCEPTANCE_NO;
+        
+        if ( VISA_ACCEPTANCE_YES !== $network_token_enabled ) {
+            return;
+        }
+       
+        if ( empty( $tokens ) || ! is_array( $tokens ) ) {
+            return;
+        }
+ 
+        // Get current user ID to ensure we only process THEIR tokens.
+        $current_user_id = get_current_user_id();
+        
+        if ( ! $current_user_id ) {
+            return; // Not logged in - no tokens to refresh.
+        }
+ 
+        // Throttle: this runs on every checkout render (including AJAX re-renders), so
+        // debounce repeat TMS API calls for the same user within a short window.
+        $throttle_key = 'vas_tms_refresh_' . $current_user_id . '_' . $this->gateway->get_id();
+        if ( false !== get_transient( $throttle_key ) ) {
+            return;
+        }
+        set_transient( $throttle_key, VISA_ACCEPTANCE_VAL_ONE, 15 );
+ 
+        // Filter tokens to only include the current user's tokens (security safeguard).
+        $user_tokens = array();
+        foreach ( $tokens as $token ) {
+            if ( $token instanceof \WC_Payment_Token && (int) $token->get_user_id() === (int) $current_user_id ) {
+                $user_tokens[] = $token;
+            }
+        }
+ 
+        if ( empty( $user_tokens ) ) {
+            return; 
+        }
+ 
+        $this->gateway->add_logs_data(
+            array(
+                'TMS token refresh: starting refresh for user ' . $current_user_id,
+                'user_token_count' => count( $user_tokens ),
+                'total_tokens_passed' => count( $tokens ),
+            ),
+            true,
+            'TMS Token Refresh'
+        );
+ 
+        $refreshed_count = VISA_ACCEPTANCE_VAL_ZERO;
+        $skipped_count = VISA_ACCEPTANCE_VAL_ZERO;
+        $error_count = VISA_ACCEPTANCE_VAL_ZERO;
+       
+        foreach ( $user_tokens as $token ) {
+            if ( ! $token instanceof \WC_Payment_Token ) {
+                continue;
+            }
+ 
+            // Skip eCheck tokens - TMS is only for card tokens.
+            if ( VISA_ACCEPTANCE_TOKEN_TYPE_ECHECK === $token->get_type() ) {
+                continue;
+            }
+ 
+            // Get payment instrument ID from token metadata (recommended token type).
+            $token_info = $token->get_meta( 'token_information', true );
+            if ( is_string( $token_info ) ) {
+                $token_info = maybe_unserialize( $token_info );
+            }
+ 
+            $payment_instrument_id = is_array( $token_info ) ? ( $token_info['payment_instrument_id'] ?? null ) : null;
+ 
+            if ( empty( $payment_instrument_id ) ) {
+                $skipped_count++;
+                continue;
+            }
+ 
+            // Call TMS API to fetch latest token data.
+            // Pass token object for automatic deletion on 404/410.
+            $tms_data = $this->fetch_tms_payment_instrument( $payment_instrument_id, $token );
+ 
+            // Handle token unavailable (404/410) - already deleted by fetch method.
+            if ( null === $tms_data ) {
+                $error_count++;
+                continue; // Token deleted, move to next.
+            }
+            
+            // Handle other errors.
+            if ( false === $tms_data ) {
+                $error_count++;
+                continue;
+            }
+			// Apply the fetched TMS data (expiry/last4) onto the local token record.
+            $this->update_token_from_tms_data( $token, $tms_data );
+            $refreshed_count++;
+        } 
+        $this->gateway->add_logs_data(
+            array(
+                'TMS token refresh complete for user ' . $current_user_id,
+                'tokens_refreshed' => $refreshed_count,
+                'tokens_skipped' => $skipped_count,
+                'errors' => $error_count,
+            ),
+            true,
+            'TMS Token Refresh'
+        );
+    }
+ 
+ 
+	/**
 	 * Gets card details.
 	 *
 	 * @param array $tokens tokens array.
@@ -812,17 +1079,33 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 	 * @return array
 	 */
 	public function get_card_details( $tokens, $settings ) {
-		try {
-			$request                = new Visa_Acceptance_Payment_Adapter( $this->gateway );
-			$api_client             = $request->get_api_client(true);
-			$payment_instrument_api = new \Pymt_Vas\Dependencies\CyberSource\Api\CustomerPaymentInstrumentApi( $api_client );
-			$card_details_response  = $payment_instrument_api->getCustomerPaymentInstrument( $tokens['id'], $tokens['payment_instrument_id'] );
-			return $card_details_response;
-		} catch ( \Exception $e ) {
-			$this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to get card details.', true );
-		}
-	}
-
+        try {
+            $customer_id           = $tokens['id'];
+            $payment_instrument_id = $tokens['payment_instrument_id'];
+ 
+            // Guard: if either ID is empty the API call would be malformed — return a non-200 placeholder.
+            if ( empty( $customer_id ) || empty( $payment_instrument_id ) ) {
+                return array( null, VISA_ACCEPTANCE_VAL_ZERO, array() );
+            }
+ 
+            $request                = new Visa_Acceptance_Payment_Adapter( $this->gateway );
+            $api_client             = $request->get_api_client( true );
+            $payment_instrument_api = new \Pymt_Vas\Dependencies\CyberSource\Api\CustomerPaymentInstrumentApi( $api_client );
+ 
+            list( $response, $status_code, $http_header ) = $payment_instrument_api->getCustomerPaymentInstrumentWithHttpInfo(
+                $customer_id,
+                $payment_instrument_id
+            );
+ 
+            return array( $response, $status_code, $http_header );
+        } catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
+            $this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to get card details.', true );
+            return array( null, $e->getCode(), array() );
+        } catch ( \Throwable $e ) {
+            $this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to get card details.', true );
+			return array( null, VISA_ACCEPTANCE_VAL_ZERO, array() );
+        }
+    }
 	/**
 	 * Gets token response payload.
 	 *
@@ -864,16 +1147,19 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 		$order_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformation(
 			array(
 				'billTo'        => new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationBillTo(
-					array(
-						'firstName'          => $customer->get_billing_first_name(),
-						'lastName'           => $customer->get_billing_last_name(),
-						'address1'           => $customer->get_billing_address_1(),
-						'locality'           => $customer->get_billing_city(),
-						'administrativeArea' => $customer->get_billing_state(),
-						'postalCode'         => $customer->get_billing_postcode(),
-						'country'            => $customer->get_billing_country(),
-						'email'              => $customer->get_billing_email(),
-						'phoneNumber'        => $customer->get_billing_phone(),
+					array_filter(
+						array(
+							'firstName'          => $customer->get_billing_first_name(),
+							'lastName'           => $customer->get_billing_last_name(),
+							'address1'           => $customer->get_billing_address_1(),
+							'locality'           => $customer->get_billing_city(),
+							'administrativeArea' => $customer->get_billing_state(),
+							'postalCode'         => $customer->get_billing_postcode(),
+							'country'            => $customer->get_billing_country(),
+							'email'              => $customer->get_billing_email(),
+							'phoneNumber'        => $customer->get_billing_phone(),
+						),
+						function( $v ) { return ! empty( $v ); }
 					)
 				),
 				'amountDetails' => new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationAmountDetails(
@@ -885,10 +1171,14 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 			)
 		);
 
-		$authorization_options = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformationAuthorizationOptions(
+		$authorization_options = new \Pymt_Vas\Dependencies\CyberSource\Model\ProcessingInfoAuthorizationOptions(
 			array(
-				'credentialStoredOnFile' => true,
-				'type'                   => 'customer',
+				'initiator' => new \Pymt_Vas\Dependencies\CyberSource\Model\ProcessingInfoAuthorizationOptionsInitiator(
+					array(
+						'credentialStoredOnFile' => true,
+						'type'                   => 'customer',
+					)
+				),
 			)
 		);
 		if ( ! empty( $order ) && $order instanceof \WC_Order ) {
@@ -898,12 +1188,21 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 			}
 		}
 
+		// For eCheck, determine existing customer early so actionTokenTypes can be set correctly.
+		$existing_echeck_customer_id = $is_echeck ? $request->get_customer_id() : null;
+
 		$processing_info_array = array(
-			'actionList'           => $action_list,
-			'authorizationOptions' => $authorization_options,
+			'actionList' => $action_list,
 		);
 		if ( $is_echeck ) {
 			$processing_info_array += $this->get_echeck_bank_transfer_options();
+			if ( empty( $existing_echeck_customer_id ) ) {
+				$processing_info_array['actionTokenTypes'] = array( 'customer', 'paymentInstrument', 'instrumentIdentifier' );
+			} else {
+				$processing_info_array['actionTokenTypes'] = array( 'paymentInstrument', 'instrumentIdentifier' );
+			}
+		} else {
+			$processing_info_array['authorizationOptions'] = $authorization_options;
 		}
 
 		$processing_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformation( $processing_info_array );
@@ -923,26 +1222,61 @@ class Visa_Acceptance_Payment_Methods extends Visa_Acceptance_Request {
 
 		if ( $is_echeck ) {
 			$payload_array['paymentInformation'] = $request->get_echeck_payment_information( null );
+			// Link to existing CyberSource customer profile if one exists.
+			if ( ! empty( $existing_echeck_customer_id ) ) {
+				$payment_info_with_customer = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformation(
+					array(
+						'paymentType' => new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentType( array( 'name' => VISA_ACCEPTANCE_CHECK ) ),
+						'customer'    => new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationCustomer( array( 'id' => $existing_echeck_customer_id ) ),
+					)
+				);
+				$payload_array['paymentInformation'] = $payment_info_with_customer;
+			}
 		}
 		
 		$payload = new \Pymt_Vas\Dependencies\CyberSource\Model\CreatePaymentRequest( $payload_array );
+		if ( ! $is_echeck ) {
 		$payload = $request->get_action_token_type( $payload );
+		}
 
-		if ( ! empty( $payload ) ) {
-			$log_header = $is_echeck ? 'eCheck Tokenization' : ucfirst( VISA_ACCEPTANCE_TOKENIZATION );
-			$this->gateway->add_logs_data( $payload, true, $log_header );
 			try {
-				// Make the API call.
-				$api_response = $payments_api->createPayment( $payload );
-				$this->gateway->add_logs_service_response( $api_response[VISA_ACCEPTANCE_VAL_ZERO],$api_response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, $log_header );
-				$return_array = array(
-					'http_code' => $api_response[VISA_ACCEPTANCE_VAL_ONE],
-					'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
+			$this->gateway->add_logs_data( (string) $payload, true, 'Token Create' );
+			$api_response = $payments_api->createPayment( $payload );
+			// Log encrypted response FIRST (if it's encrypted).
+			$response_body_raw = $api_response[ VISA_ACCEPTANCE_VAL_ZERO ];
+			$this->gateway->add_logs_service_response(
+				$response_body_raw,
+				$api_response[ VISA_ACCEPTANCE_VAL_TWO ][ VISA_ACCEPTANCE_V_C_CORRELATION_ID ] ?? VISA_ACCEPTANCE_STRING_EMPTY,
+				true,
+				'Token Create'
+			);
+			
+			// Decrypt MLE response if needed.
+			$payment_adapter = new Visa_Acceptance_Payment_Adapter( $this->gateway );
+			$response_body = $this->decrypt_mle_response( $response_body_raw, $payment_adapter, 'Token Create' );
+			
+			// Log decrypted response if it was encrypted.
+			if ( $response_body !== $response_body_raw ) {
+				$this->gateway->add_logs_service_response( 
+					$response_body, 
+					$api_response[ VISA_ACCEPTANCE_VAL_TWO ][ VISA_ACCEPTANCE_V_C_CORRELATION_ID ], 
+					true, 
+					'Token Create' 
 				);
-				return $return_array;
-			} catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
-				$this->gateway->add_logs_header_response( array( $e->getMessage() ), true, $log_header );
 			}
+			
+			return array(
+				'http_code' => $api_response[ VISA_ACCEPTANCE_VAL_ONE ],
+				'body'      => $response_body,
+				);
+			} catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
+				$response_body = $e->getResponseBody();
+				$this->gateway->add_logs_header_response(
+				wp_json_encode( array(
+                    VISA_ACCEPTANCE_ERROR => $e->getMessage(),
+                    'response_body'       => is_string( $response_body ) ? $response_body : wp_json_encode( $response_body ),
+                ) ), false, 'Token Create Error'
+			);
 		}
 	}
 }

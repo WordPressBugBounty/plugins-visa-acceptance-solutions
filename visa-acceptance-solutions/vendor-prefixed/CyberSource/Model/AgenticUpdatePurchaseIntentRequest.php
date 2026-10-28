@@ -48,7 +48,7 @@ class AgenticUpdatePurchaseIntentRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['clientCorrelationId' => 'string', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensPaymentInformation', 'deviceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensDeviceInformation', 'assuranceData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensAssuranceData[]', 'mandates' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1instructionsMandates[]', 'buyerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensBuyerInformation', 'consumerPrompt' => 'string'];
+    protected static $swaggerTypes = ['clientCorrelationId' => 'string', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensPaymentInformation', 'deviceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensDeviceInformation', 'assuranceData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensAssuranceData[]', 'mandates' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1instructionsMandates[]', 'buyerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensBuyerInformation', 'consumerPrompt' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -178,7 +178,7 @@ class AgenticUpdatePurchaseIntentRequest implements ArrayAccess
     }
     /**
      * Gets paymentInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensPaymentInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensPaymentInformation
      */
     public function getPaymentInformation()
     {
@@ -186,7 +186,7 @@ class AgenticUpdatePurchaseIntentRequest implements ArrayAccess
     }
     /**
      * Sets paymentInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensPaymentInformation $paymentInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensPaymentInformation $paymentInformation
      * @return $this
      */
     public function setPaymentInformation($paymentInformation)
@@ -196,7 +196,7 @@ class AgenticUpdatePurchaseIntentRequest implements ArrayAccess
     }
     /**
      * Gets deviceInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensDeviceInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensDeviceInformation
      */
     public function getDeviceInformation()
     {
@@ -204,7 +204,7 @@ class AgenticUpdatePurchaseIntentRequest implements ArrayAccess
     }
     /**
      * Sets deviceInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensDeviceInformation $deviceInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensDeviceInformation $deviceInformation
      * @return $this
      */
     public function setDeviceInformation($deviceInformation)
@@ -214,7 +214,7 @@ class AgenticUpdatePurchaseIntentRequest implements ArrayAccess
     }
     /**
      * Gets assuranceData
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensAssuranceData[]
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensAssuranceData[]
      */
     public function getAssuranceData()
     {
@@ -222,7 +222,7 @@ class AgenticUpdatePurchaseIntentRequest implements ArrayAccess
     }
     /**
      * Sets assuranceData
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensAssuranceData[] $assuranceData Assurance data.
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensAssuranceData[] $assuranceData Assurance data.
      * @return $this
      */
     public function setAssuranceData($assuranceData)
@@ -232,7 +232,7 @@ class AgenticUpdatePurchaseIntentRequest implements ArrayAccess
     }
     /**
      * Gets mandates
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1instructionsMandates[]
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1instructionsMandates[]
      */
     public function getMandates()
     {
@@ -240,7 +240,7 @@ class AgenticUpdatePurchaseIntentRequest implements ArrayAccess
     }
     /**
      * Sets mandates
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1instructionsMandates[] $mandates
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1instructionsMandates[] $mandates
      * @return $this
      */
     public function setMandates($mandates)
@@ -250,7 +250,7 @@ class AgenticUpdatePurchaseIntentRequest implements ArrayAccess
     }
     /**
      * Gets buyerInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensBuyerInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensBuyerInformation
      */
     public function getBuyerInformation()
     {
@@ -258,7 +258,7 @@ class AgenticUpdatePurchaseIntentRequest implements ArrayAccess
     }
     /**
      * Sets buyerInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Acpv1tokensBuyerInformation $buyerInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Iccv1tokensBuyerInformation $buyerInformation
      * @return $this
      */
     public function setBuyerInformation($buyerInformation)

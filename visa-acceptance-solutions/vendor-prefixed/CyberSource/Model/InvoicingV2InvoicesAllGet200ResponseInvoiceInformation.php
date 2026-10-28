@@ -133,7 +133,7 @@ class InvoicingV2InvoicesAllGet200ResponseInvoiceInformation implements ArrayAcc
     }
     /**
      * Sets dueDate
-     * @param \DateTime $dueDate The invoice due date. This field is required for creating an invoice. Format: `YYYY-MM-DD`, where `YYYY` = year, `MM` = month, and `DD` = day
+     * @param \DateTime $dueDate The invoice due date. This field is required for creating an invoice. Format: `YYYY-MM-DD`, where `YYYY` = year, `MM` = month, and `DD` = day.  The invoice link automatically expires 12 months after the due date.
      * @return $this
      */
     public function setDueDate($dueDate)
@@ -151,7 +151,7 @@ class InvoicingV2InvoicesAllGet200ResponseInvoiceInformation implements ArrayAcc
     }
     /**
      * Sets expirationDate
-     * @param \DateTime $expirationDate Define an expiration date for the link.  Format: `YYYY-MM-DD`, where `YYYY` = year, `MM` = month, and `DD` = day
+     * @param \DateTime $expirationDate Define an expiration date for the link.  The date must be today or in the future.  Format: `YYYY-MM-DD`, where `YYYY` = year, `MM` = month, and `DD` = day.  The invoice link automatically expires 12 months after the due date.
      * @return $this
      */
     public function setExpirationDate($expirationDate)

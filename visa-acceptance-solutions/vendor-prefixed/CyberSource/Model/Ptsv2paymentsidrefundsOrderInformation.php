@@ -48,12 +48,12 @@ class Ptsv2paymentsidrefundsOrderInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['amountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesOrderInformationAmountDetails', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesOrderInformationBillTo', 'shipTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesOrderInformationShipTo', 'lineItems' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsOrderInformationLineItems[]', 'invoiceDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesOrderInformationInvoiceDetails', 'shippingDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesOrderInformationShippingDetails'];
+    protected static $swaggerTypes = ['amountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesOrderInformationAmountDetails', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesOrderInformationBillTo', 'shipTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesOrderInformationShipTo', 'lineItems' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsOrderInformationLineItems[]', 'invoiceDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesOrderInformationInvoiceDetails', 'shippingDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsOrderInformationShippingDetails', 'digitalCurrency' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationDigitalCurrency'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['amountDetails' => null, 'billTo' => null, 'shipTo' => null, 'lineItems' => null, 'invoiceDetails' => null, 'shippingDetails' => null];
+    protected static $swaggerFormats = ['amountDetails' => null, 'billTo' => null, 'shipTo' => null, 'lineItems' => null, 'invoiceDetails' => null, 'shippingDetails' => null, 'digitalCurrency' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2paymentsidrefundsOrderInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['amountDetails' => 'amountDetails', 'billTo' => 'billTo', 'shipTo' => 'shipTo', 'lineItems' => 'lineItems', 'invoiceDetails' => 'invoiceDetails', 'shippingDetails' => 'shippingDetails'];
+    protected static $attributeMap = ['amountDetails' => 'amountDetails', 'billTo' => 'billTo', 'shipTo' => 'shipTo', 'lineItems' => 'lineItems', 'invoiceDetails' => 'invoiceDetails', 'shippingDetails' => 'shippingDetails', 'digitalCurrency' => 'digitalCurrency'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['amountDetails' => 'setAmountDetails', 'billTo' => 'setBillTo', 'shipTo' => 'setShipTo', 'lineItems' => 'setLineItems', 'invoiceDetails' => 'setInvoiceDetails', 'shippingDetails' => 'setShippingDetails'];
+    protected static $setters = ['amountDetails' => 'setAmountDetails', 'billTo' => 'setBillTo', 'shipTo' => 'setShipTo', 'lineItems' => 'setLineItems', 'invoiceDetails' => 'setInvoiceDetails', 'shippingDetails' => 'setShippingDetails', 'digitalCurrency' => 'setDigitalCurrency'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['amountDetails' => 'getAmountDetails', 'billTo' => 'getBillTo', 'shipTo' => 'getShipTo', 'lineItems' => 'getLineItems', 'invoiceDetails' => 'getInvoiceDetails', 'shippingDetails' => 'getShippingDetails'];
+    protected static $getters = ['amountDetails' => 'getAmountDetails', 'billTo' => 'getBillTo', 'shipTo' => 'getShipTo', 'lineItems' => 'getLineItems', 'invoiceDetails' => 'getInvoiceDetails', 'shippingDetails' => 'getShippingDetails', 'digitalCurrency' => 'getDigitalCurrency'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -106,6 +106,7 @@ class Ptsv2paymentsidrefundsOrderInformation implements ArrayAccess
         $this->container['lineItems'] = isset($data['lineItems']) ? $data['lineItems'] : null;
         $this->container['invoiceDetails'] = isset($data['invoiceDetails']) ? $data['invoiceDetails'] : null;
         $this->container['shippingDetails'] = isset($data['shippingDetails']) ? $data['shippingDetails'] : null;
+        $this->container['digitalCurrency'] = isset($data['digitalCurrency']) ? $data['digitalCurrency'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -219,7 +220,7 @@ class Ptsv2paymentsidrefundsOrderInformation implements ArrayAccess
     }
     /**
      * Gets shippingDetails
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesOrderInformationShippingDetails
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsOrderInformationShippingDetails
      */
     public function getShippingDetails()
     {
@@ -227,12 +228,30 @@ class Ptsv2paymentsidrefundsOrderInformation implements ArrayAccess
     }
     /**
      * Sets shippingDetails
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidcapturesOrderInformationShippingDetails $shippingDetails
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidrefundsOrderInformationShippingDetails $shippingDetails
      * @return $this
      */
     public function setShippingDetails($shippingDetails)
     {
         $this->container['shippingDetails'] = $shippingDetails;
+        return $this;
+    }
+    /**
+     * Gets digitalCurrency
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationDigitalCurrency
+     */
+    public function getDigitalCurrency()
+    {
+        return $this->container['digitalCurrency'];
+    }
+    /**
+     * Sets digitalCurrency
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationDigitalCurrency $digitalCurrency
+     * @return $this
+     */
+    public function setDigitalCurrency($digitalCurrency)
+    {
+        $this->container['digitalCurrency'] = $digitalCurrency;
         return $this;
     }
     /**

@@ -48,7 +48,7 @@ class PaymentsProductsUnifiedCheckoutConfigurationInformation implements ArrayAc
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['configurations' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsUnifiedCheckoutConfigurationInformationConfigurations'];
+    protected static $swaggerTypes = ['configurations' => '\Pymt_Vas\Dependencies\CyberSource\Model\UcConfigurations'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -124,7 +124,7 @@ class PaymentsProductsUnifiedCheckoutConfigurationInformation implements ArrayAc
     }
     /**
      * Gets configurations
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsUnifiedCheckoutConfigurationInformationConfigurations
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\UcConfigurations
      */
     public function getConfigurations()
     {
@@ -132,7 +132,7 @@ class PaymentsProductsUnifiedCheckoutConfigurationInformation implements ArrayAc
     }
     /**
      * Sets configurations
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsUnifiedCheckoutConfigurationInformationConfigurations $configurations
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\UcConfigurations $configurations
      * @return $this
      */
     public function setConfigurations($configurations)

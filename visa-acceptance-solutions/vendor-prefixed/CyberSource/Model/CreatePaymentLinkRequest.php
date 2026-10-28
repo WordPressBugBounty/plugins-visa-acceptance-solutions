@@ -48,12 +48,12 @@ class CreatePaymentLinkRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Invoicingv2invoicesClientReferenceInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iplv2paymentlinksProcessingInformation', 'purchaseInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iplv2paymentlinksPurchaseInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iplv2paymentlinksOrderInformation'];
+    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Invoicingv2invoicesClientReferenceInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iplv2paymentlinksProcessingInformation', 'purchaseInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iplv2paymentlinksPurchaseInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Iplv2paymentlinksOrderInformation', 'merchantDefinedFieldValues' => '\Pymt_Vas\Dependencies\CyberSource\Model\Invoicingv2invoicesMerchantDefinedFieldValues[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['clientReferenceInformation' => null, 'processingInformation' => null, 'purchaseInformation' => null, 'orderInformation' => null];
+    protected static $swaggerFormats = ['clientReferenceInformation' => null, 'processingInformation' => null, 'purchaseInformation' => null, 'orderInformation' => null, 'merchantDefinedFieldValues' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class CreatePaymentLinkRequest implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['clientReferenceInformation' => 'clientReferenceInformation', 'processingInformation' => 'processingInformation', 'purchaseInformation' => 'purchaseInformation', 'orderInformation' => 'orderInformation'];
+    protected static $attributeMap = ['clientReferenceInformation' => 'clientReferenceInformation', 'processingInformation' => 'processingInformation', 'purchaseInformation' => 'purchaseInformation', 'orderInformation' => 'orderInformation', 'merchantDefinedFieldValues' => 'merchantDefinedFieldValues'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['clientReferenceInformation' => 'setClientReferenceInformation', 'processingInformation' => 'setProcessingInformation', 'purchaseInformation' => 'setPurchaseInformation', 'orderInformation' => 'setOrderInformation'];
+    protected static $setters = ['clientReferenceInformation' => 'setClientReferenceInformation', 'processingInformation' => 'setProcessingInformation', 'purchaseInformation' => 'setPurchaseInformation', 'orderInformation' => 'setOrderInformation', 'merchantDefinedFieldValues' => 'setMerchantDefinedFieldValues'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['clientReferenceInformation' => 'getClientReferenceInformation', 'processingInformation' => 'getProcessingInformation', 'purchaseInformation' => 'getPurchaseInformation', 'orderInformation' => 'getOrderInformation'];
+    protected static $getters = ['clientReferenceInformation' => 'getClientReferenceInformation', 'processingInformation' => 'getProcessingInformation', 'purchaseInformation' => 'getPurchaseInformation', 'orderInformation' => 'getOrderInformation', 'merchantDefinedFieldValues' => 'getMerchantDefinedFieldValues'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -104,6 +104,7 @@ class CreatePaymentLinkRequest implements ArrayAccess
         $this->container['processingInformation'] = isset($data['processingInformation']) ? $data['processingInformation'] : null;
         $this->container['purchaseInformation'] = isset($data['purchaseInformation']) ? $data['purchaseInformation'] : null;
         $this->container['orderInformation'] = isset($data['orderInformation']) ? $data['orderInformation'] : null;
+        $this->container['merchantDefinedFieldValues'] = isset($data['merchantDefinedFieldValues']) ? $data['merchantDefinedFieldValues'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -213,6 +214,24 @@ class CreatePaymentLinkRequest implements ArrayAccess
     public function setOrderInformation($orderInformation)
     {
         $this->container['orderInformation'] = $orderInformation;
+        return $this;
+    }
+    /**
+     * Gets merchantDefinedFieldValues
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Invoicingv2invoicesMerchantDefinedFieldValues[]
+     */
+    public function getMerchantDefinedFieldValues()
+    {
+        return $this->container['merchantDefinedFieldValues'];
+    }
+    /**
+     * Sets merchantDefinedFieldValues
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Invoicingv2invoicesMerchantDefinedFieldValues[] $merchantDefinedFieldValues
+     * @return $this
+     */
+    public function setMerchantDefinedFieldValues($merchantDefinedFieldValues)
+    {
+        $this->container['merchantDefinedFieldValues'] = $merchantDefinedFieldValues;
         return $this;
     }
     /**

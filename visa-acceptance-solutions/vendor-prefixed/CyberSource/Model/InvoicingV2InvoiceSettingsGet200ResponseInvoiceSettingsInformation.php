@@ -48,12 +48,12 @@ class InvoicingV2InvoiceSettingsGet200ResponseInvoiceSettingsInformation impleme
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['merchantLogo' => 'string', 'merchantDisplayName' => 'string', 'customEmailMessage' => 'string', 'enableReminders' => 'bool', 'headerStyle' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoiceSettingsGet200ResponseInvoiceSettingsInformationHeaderStyle', 'deliveryLanguage' => 'string', 'defaultCurrencyCode' => 'string', 'payerAuthentication3DSVersion' => 'bool', 'showVatNumber' => 'bool', 'vatRegistrationNumber' => 'string', 'shipTo' => 'bool', 'phoneNumber' => 'bool', 'email' => 'bool', 'enableMerchantEmailNotifications' => 'bool', 'customLabels' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesPost201ResponseInvoiceInformationCustomLabels[]', 'customRedirectUrls' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoiceSettingsGet200ResponseInvoiceSettingsInformationCustomRedirectUrls'];
+    protected static $swaggerTypes = ['merchantLogo' => 'string', 'merchantDisplayName' => 'string', 'customEmailMessage' => 'string', 'enableReminders' => 'bool', 'headerStyle' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoiceSettingsGet200ResponseInvoiceSettingsInformationHeaderStyle', 'deliveryLanguage' => 'string', 'defaultCurrencyCode' => 'string', 'payerAuthentication3DSVersion' => 'bool', 'showVatNumber' => 'bool', 'vatRegistrationNumber' => 'string', 'shipTo' => 'bool', 'phoneNumber' => 'bool', 'email' => 'bool', 'enableMerchantEmailNotifications' => 'bool', 'merchantEmail' => 'string', 'customLabels' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoicesPost201ResponseInvoiceInformationCustomLabels[]', 'customRedirectUrls' => '\Pymt_Vas\Dependencies\CyberSource\Model\InvoicingV2InvoiceSettingsGet200ResponseInvoiceSettingsInformationCustomRedirectUrls'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['merchantLogo' => null, 'merchantDisplayName' => null, 'customEmailMessage' => null, 'enableReminders' => null, 'headerStyle' => null, 'deliveryLanguage' => null, 'defaultCurrencyCode' => null, 'payerAuthentication3DSVersion' => null, 'showVatNumber' => null, 'vatRegistrationNumber' => null, 'shipTo' => null, 'phoneNumber' => null, 'email' => null, 'enableMerchantEmailNotifications' => null, 'customLabels' => null, 'customRedirectUrls' => null];
+    protected static $swaggerFormats = ['merchantLogo' => null, 'merchantDisplayName' => null, 'customEmailMessage' => null, 'enableReminders' => null, 'headerStyle' => null, 'deliveryLanguage' => null, 'defaultCurrencyCode' => null, 'payerAuthentication3DSVersion' => null, 'showVatNumber' => null, 'vatRegistrationNumber' => null, 'shipTo' => null, 'phoneNumber' => null, 'email' => null, 'enableMerchantEmailNotifications' => null, 'merchantEmail' => null, 'customLabels' => null, 'customRedirectUrls' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class InvoicingV2InvoiceSettingsGet200ResponseInvoiceSettingsInformation impleme
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['merchantLogo' => 'merchantLogo', 'merchantDisplayName' => 'merchantDisplayName', 'customEmailMessage' => 'customEmailMessage', 'enableReminders' => 'enableReminders', 'headerStyle' => 'headerStyle', 'deliveryLanguage' => 'deliveryLanguage', 'defaultCurrencyCode' => 'defaultCurrencyCode', 'payerAuthentication3DSVersion' => 'payerAuthentication3DSVersion', 'showVatNumber' => 'showVatNumber', 'vatRegistrationNumber' => 'vatRegistrationNumber', 'shipTo' => 'shipTo', 'phoneNumber' => 'phoneNumber', 'email' => 'email', 'enableMerchantEmailNotifications' => 'enableMerchantEmailNotifications', 'customLabels' => 'customLabels', 'customRedirectUrls' => 'customRedirectUrls'];
+    protected static $attributeMap = ['merchantLogo' => 'merchantLogo', 'merchantDisplayName' => 'merchantDisplayName', 'customEmailMessage' => 'customEmailMessage', 'enableReminders' => 'enableReminders', 'headerStyle' => 'headerStyle', 'deliveryLanguage' => 'deliveryLanguage', 'defaultCurrencyCode' => 'defaultCurrencyCode', 'payerAuthentication3DSVersion' => 'payerAuthentication3DSVersion', 'showVatNumber' => 'showVatNumber', 'vatRegistrationNumber' => 'vatRegistrationNumber', 'shipTo' => 'shipTo', 'phoneNumber' => 'phoneNumber', 'email' => 'email', 'enableMerchantEmailNotifications' => 'enableMerchantEmailNotifications', 'merchantEmail' => 'merchantEmail', 'customLabels' => 'customLabels', 'customRedirectUrls' => 'customRedirectUrls'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['merchantLogo' => 'setMerchantLogo', 'merchantDisplayName' => 'setMerchantDisplayName', 'customEmailMessage' => 'setCustomEmailMessage', 'enableReminders' => 'setEnableReminders', 'headerStyle' => 'setHeaderStyle', 'deliveryLanguage' => 'setDeliveryLanguage', 'defaultCurrencyCode' => 'setDefaultCurrencyCode', 'payerAuthentication3DSVersion' => 'setPayerAuthentication3DSVersion', 'showVatNumber' => 'setShowVatNumber', 'vatRegistrationNumber' => 'setVatRegistrationNumber', 'shipTo' => 'setShipTo', 'phoneNumber' => 'setPhoneNumber', 'email' => 'setEmail', 'enableMerchantEmailNotifications' => 'setEnableMerchantEmailNotifications', 'customLabels' => 'setCustomLabels', 'customRedirectUrls' => 'setCustomRedirectUrls'];
+    protected static $setters = ['merchantLogo' => 'setMerchantLogo', 'merchantDisplayName' => 'setMerchantDisplayName', 'customEmailMessage' => 'setCustomEmailMessage', 'enableReminders' => 'setEnableReminders', 'headerStyle' => 'setHeaderStyle', 'deliveryLanguage' => 'setDeliveryLanguage', 'defaultCurrencyCode' => 'setDefaultCurrencyCode', 'payerAuthentication3DSVersion' => 'setPayerAuthentication3DSVersion', 'showVatNumber' => 'setShowVatNumber', 'vatRegistrationNumber' => 'setVatRegistrationNumber', 'shipTo' => 'setShipTo', 'phoneNumber' => 'setPhoneNumber', 'email' => 'setEmail', 'enableMerchantEmailNotifications' => 'setEnableMerchantEmailNotifications', 'merchantEmail' => 'setMerchantEmail', 'customLabels' => 'setCustomLabels', 'customRedirectUrls' => 'setCustomRedirectUrls'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['merchantLogo' => 'getMerchantLogo', 'merchantDisplayName' => 'getMerchantDisplayName', 'customEmailMessage' => 'getCustomEmailMessage', 'enableReminders' => 'getEnableReminders', 'headerStyle' => 'getHeaderStyle', 'deliveryLanguage' => 'getDeliveryLanguage', 'defaultCurrencyCode' => 'getDefaultCurrencyCode', 'payerAuthentication3DSVersion' => 'getPayerAuthentication3DSVersion', 'showVatNumber' => 'getShowVatNumber', 'vatRegistrationNumber' => 'getVatRegistrationNumber', 'shipTo' => 'getShipTo', 'phoneNumber' => 'getPhoneNumber', 'email' => 'getEmail', 'enableMerchantEmailNotifications' => 'getEnableMerchantEmailNotifications', 'customLabels' => 'getCustomLabels', 'customRedirectUrls' => 'getCustomRedirectUrls'];
+    protected static $getters = ['merchantLogo' => 'getMerchantLogo', 'merchantDisplayName' => 'getMerchantDisplayName', 'customEmailMessage' => 'getCustomEmailMessage', 'enableReminders' => 'getEnableReminders', 'headerStyle' => 'getHeaderStyle', 'deliveryLanguage' => 'getDeliveryLanguage', 'defaultCurrencyCode' => 'getDefaultCurrencyCode', 'payerAuthentication3DSVersion' => 'getPayerAuthentication3DSVersion', 'showVatNumber' => 'getShowVatNumber', 'vatRegistrationNumber' => 'getVatRegistrationNumber', 'shipTo' => 'getShipTo', 'phoneNumber' => 'getPhoneNumber', 'email' => 'getEmail', 'enableMerchantEmailNotifications' => 'getEnableMerchantEmailNotifications', 'merchantEmail' => 'getMerchantEmail', 'customLabels' => 'getCustomLabels', 'customRedirectUrls' => 'getCustomRedirectUrls'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -114,6 +114,7 @@ class InvoicingV2InvoiceSettingsGet200ResponseInvoiceSettingsInformation impleme
         $this->container['phoneNumber'] = isset($data['phoneNumber']) ? $data['phoneNumber'] : false;
         $this->container['email'] = isset($data['email']) ? $data['email'] : false;
         $this->container['enableMerchantEmailNotifications'] = isset($data['enableMerchantEmailNotifications']) ? $data['enableMerchantEmailNotifications'] : false;
+        $this->container['merchantEmail'] = isset($data['merchantEmail']) ? $data['merchantEmail'] : null;
         $this->container['customLabels'] = isset($data['customLabels']) ? $data['customLabels'] : null;
         $this->container['customRedirectUrls'] = isset($data['customRedirectUrls']) ? $data['customRedirectUrls'] : null;
     }
@@ -387,6 +388,24 @@ class InvoicingV2InvoiceSettingsGet200ResponseInvoiceSettingsInformation impleme
     public function setEnableMerchantEmailNotifications($enableMerchantEmailNotifications)
     {
         $this->container['enableMerchantEmailNotifications'] = $enableMerchantEmailNotifications;
+        return $this;
+    }
+    /**
+     * Gets merchantEmail
+     * @return string
+     */
+    public function getMerchantEmail()
+    {
+        return $this->container['merchantEmail'];
+    }
+    /**
+     * Sets merchantEmail
+     * @param string $merchantEmail The merchant's email address for receiving payment notifications.
+     * @return $this
+     */
+    public function setMerchantEmail($merchantEmail)
+    {
+        $this->container['merchantEmail'] = $merchantEmail;
         return $this;
     }
     /**

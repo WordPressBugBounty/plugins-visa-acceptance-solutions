@@ -197,7 +197,7 @@ class PtsV2PaymentsRefundPost201Response implements ArrayAccess
     }
     /**
      * Sets status
-     * @param string $status The status of the submitted transaction.  Possible values:  - PENDING
+     * @param string $status The status of the submitted transaction.  Possible values:  - PENDING  - DECLINED  - INVALID_REQUEST
      * @return $this
      */
     public function setStatus($status)

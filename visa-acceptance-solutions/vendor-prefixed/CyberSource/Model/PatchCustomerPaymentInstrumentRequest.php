@@ -48,7 +48,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentLinks', 'id' => 'string', 'object' => 'string', 'default' => 'bool', 'state' => 'string', 'type' => 'string', 'bankAccount' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentBankAccount', 'card' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentCard', 'buyerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentBuyerInformation', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentBillTo', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsPaymentInstrumentProcessingInfo', 'merchantInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsMerchantInformation', 'instrumentIdentifier' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentInstrumentIdentifier', 'metadata' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentMetadata', 'embedded' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentEmbedded'];
+    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentLinks', 'id' => 'string', 'object' => 'string', 'default' => 'bool', 'state' => 'string', 'type' => 'string', 'bankAccount' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentBankAccount', 'card' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentCard', 'buyerInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentBuyerInformation', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentBillTo', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsPaymentInstrumentProcessingInfo', 'merchantInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsMerchantInformation', 'instrumentIdentifier' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentInstrumentIdentifier', 'metadata' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentMetadata', 'embedded' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv1paymentinstrumentsEmbedded'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -138,7 +138,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Gets links
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentLinks
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentLinks
      */
     public function getLinks()
     {
@@ -146,7 +146,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Sets links
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentLinks $links
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentLinks $links
      * @return $this
      */
     public function setLinks($links)
@@ -246,7 +246,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Gets bankAccount
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentBankAccount
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentBankAccount
      */
     public function getBankAccount()
     {
@@ -254,7 +254,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Sets bankAccount
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentBankAccount $bankAccount
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentBankAccount $bankAccount
      * @return $this
      */
     public function setBankAccount($bankAccount)
@@ -264,7 +264,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Gets card
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentCard
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentCard
      */
     public function getCard()
     {
@@ -272,7 +272,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Sets card
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentCard $card
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentCard $card
      * @return $this
      */
     public function setCard($card)
@@ -282,7 +282,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Gets buyerInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentBuyerInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentBuyerInformation
      */
     public function getBuyerInformation()
     {
@@ -290,7 +290,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Sets buyerInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentBuyerInformation $buyerInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentBuyerInformation $buyerInformation
      * @return $this
      */
     public function setBuyerInformation($buyerInformation)
@@ -300,7 +300,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Gets billTo
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentBillTo
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentBillTo
      */
     public function getBillTo()
     {
@@ -308,7 +308,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Sets billTo
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentBillTo $billTo
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentBillTo $billTo
      * @return $this
      */
     public function setBillTo($billTo)
@@ -354,7 +354,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Gets instrumentIdentifier
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentInstrumentIdentifier
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentInstrumentIdentifier
      */
     public function getInstrumentIdentifier()
     {
@@ -362,7 +362,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Sets instrumentIdentifier
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentInstrumentIdentifier $instrumentIdentifier
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentInstrumentIdentifier $instrumentIdentifier
      * @return $this
      */
     public function setInstrumentIdentifier($instrumentIdentifier)
@@ -372,7 +372,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Gets metadata
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentMetadata
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentMetadata
      */
     public function getMetadata()
     {
@@ -380,7 +380,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Sets metadata
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentMetadata $metadata
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultPaymentInstrumentMetadata $metadata
      * @return $this
      */
     public function setMetadata($metadata)
@@ -390,7 +390,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Gets embedded
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentEmbedded
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv1paymentinstrumentsEmbedded
      */
     public function getEmbedded()
     {
@@ -398,7 +398,7 @@ class PatchCustomerPaymentInstrumentRequest implements ArrayAccess
     }
     /**
      * Sets embedded
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultPaymentInstrumentEmbedded $embedded
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv1paymentinstrumentsEmbedded $embedded
      * @return $this
      */
     public function setEmbedded($embedded)

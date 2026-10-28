@@ -48,12 +48,12 @@ class Ptsv2payoutsProcessingInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['businessApplicationId' => 'string', 'networkRoutingOrder' => 'string', 'commerceIndicator' => 'string', 'reconciliationId' => 'string', 'payoutsOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2payoutsProcessingInformationPayoutsOptions', 'transactionReason' => 'string', 'purposeOfPayment' => 'string', 'fundingOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2payoutsProcessingInformationFundingOptions', 'languageCode' => 'string', 'purchaseOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2payoutsProcessingInformationPurchaseOptions'];
+    protected static $swaggerTypes = ['businessApplicationId' => 'string', 'networkRoutingOrder' => 'string', 'commerceIndicator' => 'string', 'reconciliationId' => 'string', 'payoutsOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2payoutsProcessingInformationPayoutsOptions', 'transactionReason' => 'string', 'purposeOfPayment' => 'string', 'fundingOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2payoutsProcessingInformationFundingOptions', 'languageCode' => 'string', 'purchaseOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2payoutsProcessingInformationPurchaseOptions', 'accountVerificationCode' => 'string[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['businessApplicationId' => null, 'networkRoutingOrder' => null, 'commerceIndicator' => null, 'reconciliationId' => null, 'payoutsOptions' => null, 'transactionReason' => null, 'purposeOfPayment' => null, 'fundingOptions' => null, 'languageCode' => null, 'purchaseOptions' => null];
+    protected static $swaggerFormats = ['businessApplicationId' => null, 'networkRoutingOrder' => null, 'commerceIndicator' => null, 'reconciliationId' => null, 'payoutsOptions' => null, 'transactionReason' => null, 'purposeOfPayment' => null, 'fundingOptions' => null, 'languageCode' => null, 'purchaseOptions' => null, 'accountVerificationCode' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2payoutsProcessingInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['businessApplicationId' => 'businessApplicationId', 'networkRoutingOrder' => 'networkRoutingOrder', 'commerceIndicator' => 'commerceIndicator', 'reconciliationId' => 'reconciliationId', 'payoutsOptions' => 'payoutsOptions', 'transactionReason' => 'transactionReason', 'purposeOfPayment' => 'purposeOfPayment', 'fundingOptions' => 'fundingOptions', 'languageCode' => 'languageCode', 'purchaseOptions' => 'purchaseOptions'];
+    protected static $attributeMap = ['businessApplicationId' => 'businessApplicationId', 'networkRoutingOrder' => 'networkRoutingOrder', 'commerceIndicator' => 'commerceIndicator', 'reconciliationId' => 'reconciliationId', 'payoutsOptions' => 'payoutsOptions', 'transactionReason' => 'transactionReason', 'purposeOfPayment' => 'purposeOfPayment', 'fundingOptions' => 'fundingOptions', 'languageCode' => 'languageCode', 'purchaseOptions' => 'purchaseOptions', 'accountVerificationCode' => 'accountVerificationCode'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['businessApplicationId' => 'setBusinessApplicationId', 'networkRoutingOrder' => 'setNetworkRoutingOrder', 'commerceIndicator' => 'setCommerceIndicator', 'reconciliationId' => 'setReconciliationId', 'payoutsOptions' => 'setPayoutsOptions', 'transactionReason' => 'setTransactionReason', 'purposeOfPayment' => 'setPurposeOfPayment', 'fundingOptions' => 'setFundingOptions', 'languageCode' => 'setLanguageCode', 'purchaseOptions' => 'setPurchaseOptions'];
+    protected static $setters = ['businessApplicationId' => 'setBusinessApplicationId', 'networkRoutingOrder' => 'setNetworkRoutingOrder', 'commerceIndicator' => 'setCommerceIndicator', 'reconciliationId' => 'setReconciliationId', 'payoutsOptions' => 'setPayoutsOptions', 'transactionReason' => 'setTransactionReason', 'purposeOfPayment' => 'setPurposeOfPayment', 'fundingOptions' => 'setFundingOptions', 'languageCode' => 'setLanguageCode', 'purchaseOptions' => 'setPurchaseOptions', 'accountVerificationCode' => 'setAccountVerificationCode'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['businessApplicationId' => 'getBusinessApplicationId', 'networkRoutingOrder' => 'getNetworkRoutingOrder', 'commerceIndicator' => 'getCommerceIndicator', 'reconciliationId' => 'getReconciliationId', 'payoutsOptions' => 'getPayoutsOptions', 'transactionReason' => 'getTransactionReason', 'purposeOfPayment' => 'getPurposeOfPayment', 'fundingOptions' => 'getFundingOptions', 'languageCode' => 'getLanguageCode', 'purchaseOptions' => 'getPurchaseOptions'];
+    protected static $getters = ['businessApplicationId' => 'getBusinessApplicationId', 'networkRoutingOrder' => 'getNetworkRoutingOrder', 'commerceIndicator' => 'getCommerceIndicator', 'reconciliationId' => 'getReconciliationId', 'payoutsOptions' => 'getPayoutsOptions', 'transactionReason' => 'getTransactionReason', 'purposeOfPayment' => 'getPurposeOfPayment', 'fundingOptions' => 'getFundingOptions', 'languageCode' => 'getLanguageCode', 'purchaseOptions' => 'getPurchaseOptions', 'accountVerificationCode' => 'getAccountVerificationCode'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -110,6 +110,7 @@ class Ptsv2payoutsProcessingInformation implements ArrayAccess
         $this->container['fundingOptions'] = isset($data['fundingOptions']) ? $data['fundingOptions'] : null;
         $this->container['languageCode'] = isset($data['languageCode']) ? $data['languageCode'] : null;
         $this->container['purchaseOptions'] = isset($data['purchaseOptions']) ? $data['purchaseOptions'] : null;
+        $this->container['accountVerificationCode'] = isset($data['accountVerificationCode']) ? $data['accountVerificationCode'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -141,7 +142,7 @@ class Ptsv2payoutsProcessingInformation implements ArrayAccess
     }
     /**
      * Sets businessApplicationId
-     * @param string $businessApplicationId Payouts transaction type.  Applicable Processors: FDC Compass, Paymentech, CtV  Possible values:  **Credit Card Bill Payment**   - **CP**: credit card bill payment  **Funds Disbursement**   - **FD**: funds disbursement  - **GD**: government disbursement  - **MD**: merchant disbursement  **Money Transfer**   - **AA**: account to account. Sender and receiver are same person.  - **PP**: person to person. Sender and receiver are different.  **Prepaid Load**   - **TU**: top up
+     * @param string $businessApplicationId Payouts transaction type.  Money Transfer (MT) - `AA`: Account to Account - `BI`: Bank-Initiated Money Transfer - `CD`: Cash Deposit - `FT`: Funds Transfer - `LA`: Liquid Assets - `PP`: P2P Money Transfer - `WT`: Wallet Transfer-Staged Digital Wallet (SDW) Transfer  Funds Disbursement (FD) - `BB`: Business-to-business Supplier Payments - `BP`: Non-Card Bill Pay - `CP`: Credit Card Bill Pay - `FD`: General Funds Disbursements - `GD`: Government Disbursements and Government Initiated Tax Refunds - `GP`: Gambling/Gaming Payouts (other than online gaming) - `LO`: Loyalty Payments - `MD`: Merchant Settlement - `MI`: Faster Refunds - `OG`: Online Gambling Payouts - `PD`: Payroll and Pension Disbursements - `RP`: Request-to-Pay Service - `TU`: Prepaid Card Load  Supported BAIs vary by payment gateway and configuration. Clients are responsible for confirming gateway specific BAI availability. Conditional - If not provided in payload, the value is picked from Merchant Configuration.
      * @return $this
      */
     public function setBusinessApplicationId($businessApplicationId)
@@ -309,6 +310,24 @@ class Ptsv2payoutsProcessingInformation implements ArrayAccess
     public function setPurchaseOptions($purchaseOptions)
     {
         $this->container['purchaseOptions'] = $purchaseOptions;
+        return $this;
+    }
+    /**
+     * Gets accountVerificationCode
+     * @return string[]
+     */
+    public function getAccountVerificationCode()
+    {
+        return $this->container['accountVerificationCode'];
+    }
+    /**
+     * Sets accountVerificationCode
+     * @param string[] $accountVerificationCode Account verification code will inform what Payment Account Verification should be performed. With this array of codes, a merchant can choose à la carte what verifications to run. This field is optional, and the default is 1 if it is not passed in. This means that a full validation of the fields will be performed. Valid verification codes: - `1` = Full Account Verification (Card Account, CVN, CAVV, TAVV, Address, Name, eMail, Phone, Identity) - `2` = Card Account Verification - `3` = Address Verification - `4` = Card Authentication Method (CAM) (Cryptogram) - `5` = Cardholder Authentication Verification (CAVV) - `6` = Cardholder Identity Verification - `7` = CVV2 Verification - `8` = eMail Verification - `9` = Name Verification - `10` = Phone Verification
+     * @return $this
+     */
+    public function setAccountVerificationCode($accountVerificationCode)
+    {
+        $this->container['accountVerificationCode'] = $accountVerificationCode;
         return $this;
     }
     /**

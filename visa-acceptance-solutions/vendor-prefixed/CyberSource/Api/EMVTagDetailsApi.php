@@ -179,7 +179,7 @@ class EMVTagDetailsApi
      *
      * Parse an EMV String
      *
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Body $body  (required)
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Body2 $body  (required)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
      * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TssV2PostEmvTags200Response, HTTP status code, HTTP response headers (array of strings)
      */
@@ -196,7 +196,7 @@ class EMVTagDetailsApi
      *
      * Parse an EMV String
      *
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Body $body  (required)
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Body2 $body  (required)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
      * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\TssV2PostEmvTags200Response, HTTP status code, HTTP response headers (array of strings)
      */
@@ -224,7 +224,7 @@ class EMVTagDetailsApi
             $_tempBody = $body;
         }
         $sdkTracker = new \Pymt_Vas\Dependencies\CyberSource\Utilities\Tracking\SdkTracker();
-        $modelClassLocation = explode('\\', '\Pymt_Vas\Dependencies\CyberSource\Model\Body');
+        $modelClassLocation = explode('\\', '\Pymt_Vas\Dependencies\CyberSource\Model\Body2');
         $_tempBody = $sdkTracker->insertDeveloperIdTracker($_tempBody, end($modelClassLocation), $this->apiClient->merchantConfig->getRunEnvironment(), $this->apiClient->merchantConfig->getDefaultDeveloperId());
         // for model (json/xml)
         if (isset($_tempBody) and count($formParams) <= 0) {

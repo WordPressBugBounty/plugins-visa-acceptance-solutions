@@ -49,12 +49,12 @@ class Ptsv2paymentsProcessorInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['preApprovalToken' => 'string', 'authorizationOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessorInformationAuthorizationOptions', 'reversal' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessorInformationReversal', 'network' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessorInformationReversalNetwork', 'responseSourceCode' => 'string'];
+    protected static $swaggerTypes = ['preApprovalToken' => 'string', 'authorizationOptions' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessorInformationAuthorizationOptions', 'reversal' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessorInformationReversal', 'network' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessorInformationReversalNetwork', 'authApprovalToken' => 'string', 'supplementaryTransactionData' => 'string', 'responseSourceCode' => 'string', 'cedpVerifiedIndicator' => 'string', 'feeProgramIndicator' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['preApprovalToken' => null, 'authorizationOptions' => null, 'reversal' => null, 'network' => null, 'responseSourceCode' => null];
+    protected static $swaggerFormats = ['preApprovalToken' => null, 'authorizationOptions' => null, 'reversal' => null, 'network' => null, 'authApprovalToken' => null, 'supplementaryTransactionData' => null, 'responseSourceCode' => null, 'cedpVerifiedIndicator' => null, 'feeProgramIndicator' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -67,17 +67,17 @@ class Ptsv2paymentsProcessorInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['preApprovalToken' => 'preApprovalToken', 'authorizationOptions' => 'authorizationOptions', 'reversal' => 'reversal', 'network' => 'network', 'responseSourceCode' => 'responseSourceCode'];
+    protected static $attributeMap = ['preApprovalToken' => 'preApprovalToken', 'authorizationOptions' => 'authorizationOptions', 'reversal' => 'reversal', 'network' => 'network', 'authApprovalToken' => 'authApprovalToken', 'supplementaryTransactionData' => 'supplementaryTransactionData', 'responseSourceCode' => 'responseSourceCode', 'cedpVerifiedIndicator' => 'cedpVerifiedIndicator', 'feeProgramIndicator' => 'feeProgramIndicator'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['preApprovalToken' => 'setPreApprovalToken', 'authorizationOptions' => 'setAuthorizationOptions', 'reversal' => 'setReversal', 'network' => 'setNetwork', 'responseSourceCode' => 'setResponseSourceCode'];
+    protected static $setters = ['preApprovalToken' => 'setPreApprovalToken', 'authorizationOptions' => 'setAuthorizationOptions', 'reversal' => 'setReversal', 'network' => 'setNetwork', 'authApprovalToken' => 'setAuthApprovalToken', 'supplementaryTransactionData' => 'setSupplementaryTransactionData', 'responseSourceCode' => 'setResponseSourceCode', 'cedpVerifiedIndicator' => 'setCedpVerifiedIndicator', 'feeProgramIndicator' => 'setFeeProgramIndicator'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['preApprovalToken' => 'getPreApprovalToken', 'authorizationOptions' => 'getAuthorizationOptions', 'reversal' => 'getReversal', 'network' => 'getNetwork', 'responseSourceCode' => 'getResponseSourceCode'];
+    protected static $getters = ['preApprovalToken' => 'getPreApprovalToken', 'authorizationOptions' => 'getAuthorizationOptions', 'reversal' => 'getReversal', 'network' => 'getNetwork', 'authApprovalToken' => 'getAuthApprovalToken', 'supplementaryTransactionData' => 'getSupplementaryTransactionData', 'responseSourceCode' => 'getResponseSourceCode', 'cedpVerifiedIndicator' => 'getCedpVerifiedIndicator', 'feeProgramIndicator' => 'getFeeProgramIndicator'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -105,7 +105,11 @@ class Ptsv2paymentsProcessorInformation implements ArrayAccess
         $this->container['authorizationOptions'] = isset($data['authorizationOptions']) ? $data['authorizationOptions'] : null;
         $this->container['reversal'] = isset($data['reversal']) ? $data['reversal'] : null;
         $this->container['network'] = isset($data['network']) ? $data['network'] : null;
+        $this->container['authApprovalToken'] = isset($data['authApprovalToken']) ? $data['authApprovalToken'] : null;
+        $this->container['supplementaryTransactionData'] = isset($data['supplementaryTransactionData']) ? $data['supplementaryTransactionData'] : null;
         $this->container['responseSourceCode'] = isset($data['responseSourceCode']) ? $data['responseSourceCode'] : null;
+        $this->container['cedpVerifiedIndicator'] = isset($data['cedpVerifiedIndicator']) ? $data['cedpVerifiedIndicator'] : null;
+        $this->container['feeProgramIndicator'] = isset($data['feeProgramIndicator']) ? $data['feeProgramIndicator'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -200,6 +204,42 @@ class Ptsv2paymentsProcessorInformation implements ArrayAccess
         return $this;
     }
     /**
+     * Gets authApprovalToken
+     * @return string
+     */
+    public function getAuthApprovalToken()
+    {
+        return $this->container['authApprovalToken'];
+    }
+    /**
+     * Sets authApprovalToken
+     * @param string $authApprovalToken Interoperability Token received by merchant for Authorization API. Field for merchant to send Klarna Advantage Plus authorization approval token for Auth API call.
+     * @return $this
+     */
+    public function setAuthApprovalToken($authApprovalToken)
+    {
+        $this->container['authApprovalToken'] = $authApprovalToken;
+        return $this;
+    }
+    /**
+     * Gets supplementaryTransactionData
+     * @return string
+     */
+    public function getSupplementaryTransactionData()
+    {
+        return $this->container['supplementaryTransactionData'];
+    }
+    /**
+     * Sets supplementaryTransactionData
+     * @param string $supplementaryTransactionData Supplementary transaction data for Klarna Advantage Plus. Fields to capture Interoperability Data from Merchant and transfer to Klarna for Authorization/Sale/Re-Auth/Capture APIs.
+     * @return $this
+     */
+    public function setSupplementaryTransactionData($supplementaryTransactionData)
+    {
+        $this->container['supplementaryTransactionData'] = $supplementaryTransactionData;
+        return $this;
+    }
+    /**
      * Gets responseSourceCode
      * @return string
      */
@@ -215,6 +255,42 @@ class Ptsv2paymentsProcessorInformation implements ArrayAccess
     public function setResponseSourceCode($responseSourceCode)
     {
         $this->container['responseSourceCode'] = $responseSourceCode;
+        return $this;
+    }
+    /**
+     * Gets cedpVerifiedIndicator
+     * @return string
+     */
+    public function getCedpVerifiedIndicator()
+    {
+        return $this->container['cedpVerifiedIndicator'];
+    }
+    /**
+     * Sets cedpVerifiedIndicator
+     * @param string $cedpVerifiedIndicator Merchant Commercial Enhanced Data Program (CEDP) verified indicator for capture/bill requests.  This field is used when the client is doing authorization with a different gateway and capture/settlement with CyberSource.  This field flows in ISO field 34, DSID 02 tag DA, in AN, EBCDIC format.  Possible values: - `Y`: Merchant CEDP verified  #### Used by **Capture Request** Request field for force capture/bill support when auth is done with a different gateway.
+     * @return $this
+     */
+    public function setCedpVerifiedIndicator($cedpVerifiedIndicator)
+    {
+        $this->container['cedpVerifiedIndicator'] = $cedpVerifiedIndicator;
+        return $this;
+    }
+    /**
+     * Gets feeProgramIndicator
+     * @return string
+     */
+    public function getFeeProgramIndicator()
+    {
+        return $this->container['feeProgramIndicator'];
+    }
+    /**
+     * Sets feeProgramIndicator
+     * @param string $feeProgramIndicator Interchange reimbursement fee program indicator (FPI), which is used when assessing the fee applied to a cross-border or domestic Asia Pacific financial transaction. Acquirers and issues retain and return the FPI value in chargeback and representments.
+     * @return $this
+     */
+    public function setFeeProgramIndicator($feeProgramIndicator)
+    {
+        $this->container['feeProgramIndicator'] = $feeProgramIndicator;
         return $this;
     }
     /**

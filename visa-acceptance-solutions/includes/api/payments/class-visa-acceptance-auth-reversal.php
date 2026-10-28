@@ -62,7 +62,11 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 			$order = wc_get_order( $order );
 		}
 		try {
-			if ( VISA_ACCEPTANCE_VAL_ZERO != $order->get_total() && $order->get_total() == $amount ) { //phpcs:ignore
+			$capture_context  = $this->get_partial_capture_refund_context( $order );
+			$requested_amount = round( (float) $amount, VISA_ACCEPTANCE_VAL_TWO );
+			$can_reverse       = abs( $capture_context['total_captured'] - VISA_ACCEPTANCE_VAL_ZERO ) < 0.01
+				&& abs( $requested_amount - $capture_context['authorized_amount'] ) < 0.01;
+			if ( VISA_ACCEPTANCE_VAL_ZERO != $order->get_total() && $can_reverse ) { //phpcs:ignore
 				$transaction_id          = $this->get_order_meta( $order, VISA_ACCEPTANCE_TRANSACTION_ID );
 				$reversal_response       = $this->get_reversal_response( $order, $amount, $reason, $transaction_id ,$reversal_order_id);
 				$http_code               = $reversal_response['http_code'];
@@ -76,6 +80,8 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 					VISA_ACCEPTANCE_AUTH_REVERSAL
 				);
 				$status                  = $reversal_response_array['status'];
+                $reversal_response_array['amount']   = $amount;
+                $reversal_response_array['currency'] = $order->get_currency();
 				if ( $auth_rev_response->is_transaction_approved( $reversal_response, $status ) ) {
 					$this->add_void_data( $order, $reversal_response_array );
 					$this->mark_order_as_voided( $order, $reason, $reversal_response_array );
@@ -90,7 +96,11 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 			}
 			return $response;
 		} catch ( \Throwable $e ) {
-			$this->gateway->add_logs_data( array( $e->getMessage() ), false, 'Unable to handles Void transaction', true );
+			$error_details = $e->getMessage();
+			if ( $e instanceof \Pymt_Vas\Dependencies\CyberSource\ApiException && $e->getResponseBody() ) {
+				$error_details = wp_json_encode( $e->getResponseBody() );
+			}
+			$this->gateway->add_logs_data( array( $error_details ), false, 'Unable to handles Void transaction', true );
 			return new \WP_Error( 'vas_void_failed', $this->gateway->get_title() . ' ' . __( 'Void Failed:', 'visa-acceptance-solutions' ) );
 		}
 	}
@@ -147,15 +157,14 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 		// Build the payload for the reversal request.
 		$client_reference_information_partner = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsClientReferenceInformationPartner(
 			array(
-				'developerId' => VISA_ACCEPTANCE_DEVELOPER_ID,
 				'solutionId'  => VISA_ACCEPTANCE_SOLUTION_ID,
 			)
 		);
 
-		if($order) {
-			$reversal_order_id = strval( $order->get_id() );
+		if ( $order ) {
+			$stored_ref_code   = $this->get_order_meta( $order, VISA_ACCEPTANCE_MERCHANT_REF_CODE );
+			$reversal_order_id = ! empty( $stored_ref_code ) ? strval( $stored_ref_code ) : strval( $order->get_id() );
 		}
-
 		$client_reference_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsClientReferenceInformation(
 			array(
 				'code'               => $reversal_order_id,
@@ -182,19 +191,23 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 			$request->get_payment_solution( $order ),
 		);
 
-		$order_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsOrderInformation(
+		$is_full_reversal = $order && round( (float) $amount, VISA_ACCEPTANCE_VAL_TWO ) === round( (float) $order->get_total(), VISA_ACCEPTANCE_VAL_TWO );
+		$order_information = $is_full_reversal ? new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsOrderInformation(
 			array(
 				'lineItems' => $request->get_line_items_information( $order ),
 			)
-		);
+		) : null;
 
 		if ( (!empty($order)) && VISA_ACCEPTANCE_UC_ID === $order->get_payment_method( VISA_ACCEPTANCE_EDIT ) ) {
 			$payment_solution = $this->get_order_meta( $order, 'payment_solution' );
 			$reversal_request = array(
 				'clientReferenceInformation' => $client_reference_information,
 				'reversalInformation'        => $reversal_information,
-				'orderInformation'           => $order_information,
 			);
+
+			if ( $order_information ) {
+				$reversal_request['orderInformation'] = $order_information;
+			}
 
 			if ( ! empty( $payment_solution ) ) {
 				$reversal_request['processingInformation'] = $processing_information;
@@ -208,13 +221,30 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 		}
 		$reversal_request_array = new \Pymt_Vas\Dependencies\CyberSource\Model\AuthReversalRequest( $reversal_request );
 		if ( ! empty( $reversal_request_array ) ) {
-			$this->gateway->add_logs_data( $reversal_request_array, true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
+			$this->gateway->add_logs_data( (string) $reversal_request_array, true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
 			try {
 				$api_response = $reversal_api->authReversal( $transaction_id, $reversal_request_array );
-				$this->gateway->add_logs_service_response( $api_response[VISA_ACCEPTANCE_VAL_ZERO],$api_response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
+				// Log encrypted response FIRST (if it's encrypted).
+				$response_body_raw = $api_response[VISA_ACCEPTANCE_VAL_ZERO];
+				$this->gateway->add_logs_service_response( $response_body_raw, $api_response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], true, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
+				
+				// Decrypt MLE response if needed.
+				$payment_adapter = new Visa_Acceptance_Payment_Adapter( $this->gateway );
+				$response_body = $this->decrypt_mle_response( $response_body_raw, $payment_adapter, VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL );
+				
+				// Log decrypted response if it was encrypted.
+				if ( $response_body !== $response_body_raw ) {
+					$this->gateway->add_logs_service_response( 
+						$response_body, 
+						$api_response[VISA_ACCEPTANCE_VAL_TWO][VISA_ACCEPTANCE_V_C_CORRELATION_ID], 
+						true, 
+						VISA_ACCEPTANCE_AUTHORIZATION_REVERSAL 
+					);
+				}
+				
 				$return_array = array(
 					'http_code' => $api_response[VISA_ACCEPTANCE_VAL_ONE],
-					'body'      => $api_response[VISA_ACCEPTANCE_VAL_ZERO],
+					'body'      => $response_body,
 				);
 				return $return_array;
 			} catch ( \Throwable $e ) {
@@ -237,7 +267,7 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 
 		$message = sprintf(
 		/* translators: Placeholders: %1$s - payment gateway title, %2$s - a monetary amount. Void as in to void an order. */
-			esc_html__( 'Void amount of %1$s approved.', 'visa-acceptance-solutions' ),
+			esc_html__( 'Void amount of %1$s Approved:', 'visa-acceptance-solutions' ),
 			wc_price(
 				$reversal_response_array['amount'],
 				array(
@@ -253,14 +283,9 @@ class Visa_Acceptance_Auth_Reversal extends Visa_Acceptance_Request {
 			);
 			$message = $message . $reason_message;
 		}
-
-		// adds the transaction id (if any) to the order note.
-		if ( $reversal_response_array['transaction_id'] ) {
-			$message .= VISA_ACCEPTANCE_SPACE . sprintf(
-				/* translators: Placeholders: %1$s - payment gateway title, %2$s - error code, %3$s - error message. Void as in to void an order. */
-				esc_html__( '(Transaction ID %s)', 'visa-acceptance-solutions' ),
-				$reversal_response_array['transaction_id']
-			);
+		$credit_fields = $this->build_response_credit_fields( $reversal_response_array );
+		if ( ! empty( $credit_fields ) ) {
+			$message .= "\n" . implode( "\n", $credit_fields );
 		}
 		// mark order as cancelled, since no money was actually transferred.
 		if ( ! $order->has_status( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_CANCELLED ) ) {

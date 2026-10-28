@@ -24,10 +24,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * The function is automatically called on WordPress 'init' hook or immediately
  * if init has already fired.
  *
- * @since 2.2.2
+ * @since 3.0.0
  * @return void
  */
-function visa_acceptance_define_translation_constants_data() {
+function visa_acceptance_response_constants() {
 	/**
 	 *
 	 * Unauthorized Error Message.
@@ -152,4 +152,4 @@ function visa_acceptance_define_translation_constants_data() {
 	define( 'VISA_ACCEPTANCE_INVALID_DATA_ERROR', 'INVALID_DATA' );
 }
 
-add_action( 'init', 'visa_acceptance_define_translation_constants_data');
+add_action( 'init', 'visa_acceptance_response_constants');

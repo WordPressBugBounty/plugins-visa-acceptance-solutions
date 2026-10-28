@@ -70,7 +70,21 @@ class Visa_Acceptance_Payment_Gateway_Activator {
                  continue;
             }
 			$token_data = $this->build_token_data( $token );
-			$tokens_based_user_id[ $token->get_user_id() ][ $token_data['token_information']['payment_instrument_id'] ] = $token;
+			
+			// Validate that required token information exists.
+			if ( ! isset( $token_data['token_information']['payment_instrument_id'] ) ) {
+				$this->add_logs_data( 'Skipping token ID ' . $token->get_id() . ' - missing payment_instrument_id' );
+				continue;
+			}
+			
+			$user_id = $token->get_user_id();
+			$payment_instrument_id = $token_data['token_information']['payment_instrument_id'];
+			
+			if ( ! isset( $tokens_based_user_id[ $user_id ] ) ) {
+				$tokens_based_user_id[ $user_id ] = array();
+			}
+			
+			$tokens_based_user_id[ $user_id ][ $payment_instrument_id ] = $token;
 		}
 		return $tokens_based_user_id;
 	}
@@ -80,9 +94,21 @@ class Visa_Acceptance_Payment_Gateway_Activator {
 	 *
 	 * @param array $tokens tokens array.
 	 *
-	 * @return array
+	 * @return array|false
 	 */
 	public function get_data_to_save_migrated( $tokens ) {
+		// Validate required fields.
+		if ( ! isset( $tokens['card_type'], $tokens['user_id'], $tokens['token'], $tokens['instrument_identifier']['state'], $tokens['instrument_identifier']['new'] ) ) {
+			// Missing required token data fields.
+			$this->add_logs_data( 'Missing required token data fields' );
+			return false;
+		}
+		
+		if ( ! isset( $tokens[VISA_ACCEPTANCE_ENVIRONMENT] ) ) {
+			$this->add_logs_data( 'Missing environment data in token' );
+			return false;
+		}
+		
 		$data = array();
 		if ( 'amex' === strtolower( $tokens['card_type'] ) || 'jcb' === strtolower( $tokens['card_type'] ) ) {
 			$tokens['card_type'] = strtoupper( ( $tokens['card_type'] ) );
@@ -215,10 +241,30 @@ class Visa_Acceptance_Payment_Gateway_Activator {
 				$return_result                   = false;
 				$token_data                      = $this->build_token_data( $token );
 				$data                            = $this->get_data_to_save_migrated( $token_data );
-				$visa_acceptance_solutions_token = $tokens_based_user_id[ $data['user_id'] ][ $data['token_information']['payment_instrument_id'] ] ?? false;
+				
+				// Skip if data validation failed.
+				if ( false === $data ) {
+					continue;
+				}
+				
+				// Validate required keys exist.
+				if ( ! isset( $data['user_id'], $data['token_information']['payment_instrument_id'] ) ) {
+					$this->add_logs_data( 'Skipping token migration - missing user_id or payment_instrument_id' );
+					continue;
+				}
+				
+				$visa_acceptance_solutions_token = isset( $tokens_based_user_id[ $data['user_id'] ][ $data['token_information']['payment_instrument_id'] ] ) 
+					? $tokens_based_user_id[ $data['user_id'] ][ $data['token_information']['payment_instrument_id'] ] 
+					: false;
 				if ( $visa_acceptance_solutions_token instanceof \WC_Payment_Token ) {
 					continue;
 				} else {
+					// Validate instrument_identifier exists before accessing.
+					if ( ! isset( $token_data['instrument_identifier']['id'] ) ) {
+						$this->add_logs_data( 'Skipping token migration - missing instrument_identifier id' );
+						continue;
+					}
+					
 					$token_obj->set_token( $token_data['instrument_identifier']['id'] );
 					$props         = $this->get_props();
 					$return_result = $this->save_token_to_database( $token_obj, $data, $props );

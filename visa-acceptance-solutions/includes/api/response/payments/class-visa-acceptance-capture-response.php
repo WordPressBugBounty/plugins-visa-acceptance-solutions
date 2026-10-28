@@ -54,6 +54,7 @@ class Visa_Acceptance_Capture_Response extends Visa_Acceptance_Response {
 	 * @return boolean
 	 */
 	public function is_transaction_approved( $payment_response, $status ) {
-		return ( VISA_ACCEPTANCE_TWO_ZERO_ONE === (int) $payment_response['http_code'] && strtoupper( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PENDING ) === $status ) ? true : false;
-	}
+        $approved_statuses = array( strtoupper( VISA_ACCEPTANCE_WOOCOMMERCE_ORDER_STATUS_PENDING ), VISA_ACCEPTANCE_STRING_COMPLETED );
+        return ( VISA_ACCEPTANCE_TWO_ZERO_ONE === (int) $payment_response['http_code'] && in_array( $status, $approved_statuses, true ) ) ? true : false;
+    }
 }

@@ -145,7 +145,7 @@ class Bavsv1accountvalidationsPaymentInformationBank implements ArrayAccess
     }
     /**
      * Sets routingNumber
-     * @param string $routingNumber Bank routing number. This is also called the transit number.  Non-Negative Integer
+     * @param string $routingNumber Bank routing number. This is also called the transit number.  Non-Negative String, containing only digits.
      * @return $this
      */
     public function setRoutingNumber($routingNumber)

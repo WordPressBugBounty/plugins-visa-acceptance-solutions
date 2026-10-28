@@ -48,12 +48,12 @@ class Ptsv2paymentsPaymentInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['card' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationCard', 'tokenizedCard' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationTokenizedCard', 'tokenizedPaymentMethod' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationTokenizedPaymentMethod', 'directDebit' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationDirectDebit', 'fluidData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationFluidData', 'customer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationCustomer', 'paymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentInstrument', 'instrumentIdentifier' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationInstrumentIdentifier', 'shippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationShippingAddress', 'legacyToken' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationLegacyToken', 'bank' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationBank', 'options' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationOptions', 'paymentType' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentType', 'initiationChannel' => 'string', 'sepa' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationSepa', 'eWallet' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationEWallet', 'paymentAccountReference' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentAccountReference'];
+    protected static $swaggerTypes = ['card' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationCard', 'tokenizedCard' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationTokenizedCard', 'tokenizedPaymentMethod' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationTokenizedPaymentMethod', 'directDebit' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationDirectDebit', 'fluidData' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationFluidData', 'customer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationCustomer', 'paymentInstrument' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentInstrument', 'instrumentIdentifier' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationInstrumentIdentifier', 'shippingAddress' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationShippingAddress', 'legacyToken' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationLegacyToken', 'bank' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationBank', 'options' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationOptions', 'paymentType' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentType', 'initiationChannel' => 'string', 'sepa' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationSepa', 'eWallet' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationEWallet', 'paymentAccountReference' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationPaymentAccountReference', 'thirdPartyToken' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationThirdPartyToken', 'merchantLimitedAcceptanceIndicator' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['card' => null, 'tokenizedCard' => null, 'tokenizedPaymentMethod' => null, 'directDebit' => null, 'fluidData' => null, 'customer' => null, 'paymentInstrument' => null, 'instrumentIdentifier' => null, 'shippingAddress' => null, 'legacyToken' => null, 'bank' => null, 'options' => null, 'paymentType' => null, 'initiationChannel' => null, 'sepa' => null, 'eWallet' => null, 'paymentAccountReference' => null];
+    protected static $swaggerFormats = ['card' => null, 'tokenizedCard' => null, 'tokenizedPaymentMethod' => null, 'directDebit' => null, 'fluidData' => null, 'customer' => null, 'paymentInstrument' => null, 'instrumentIdentifier' => null, 'shippingAddress' => null, 'legacyToken' => null, 'bank' => null, 'options' => null, 'paymentType' => null, 'initiationChannel' => null, 'sepa' => null, 'eWallet' => null, 'paymentAccountReference' => null, 'thirdPartyToken' => null, 'merchantLimitedAcceptanceIndicator' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2paymentsPaymentInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['card' => 'card', 'tokenizedCard' => 'tokenizedCard', 'tokenizedPaymentMethod' => 'tokenizedPaymentMethod', 'directDebit' => 'directDebit', 'fluidData' => 'fluidData', 'customer' => 'customer', 'paymentInstrument' => 'paymentInstrument', 'instrumentIdentifier' => 'instrumentIdentifier', 'shippingAddress' => 'shippingAddress', 'legacyToken' => 'legacyToken', 'bank' => 'bank', 'options' => 'options', 'paymentType' => 'paymentType', 'initiationChannel' => 'initiationChannel', 'sepa' => 'sepa', 'eWallet' => 'eWallet', 'paymentAccountReference' => 'paymentAccountReference'];
+    protected static $attributeMap = ['card' => 'card', 'tokenizedCard' => 'tokenizedCard', 'tokenizedPaymentMethod' => 'tokenizedPaymentMethod', 'directDebit' => 'directDebit', 'fluidData' => 'fluidData', 'customer' => 'customer', 'paymentInstrument' => 'paymentInstrument', 'instrumentIdentifier' => 'instrumentIdentifier', 'shippingAddress' => 'shippingAddress', 'legacyToken' => 'legacyToken', 'bank' => 'bank', 'options' => 'options', 'paymentType' => 'paymentType', 'initiationChannel' => 'initiationChannel', 'sepa' => 'sepa', 'eWallet' => 'eWallet', 'paymentAccountReference' => 'paymentAccountReference', 'thirdPartyToken' => 'thirdPartyToken', 'merchantLimitedAcceptanceIndicator' => 'merchantLimitedAcceptanceIndicator'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['card' => 'setCard', 'tokenizedCard' => 'setTokenizedCard', 'tokenizedPaymentMethod' => 'setTokenizedPaymentMethod', 'directDebit' => 'setDirectDebit', 'fluidData' => 'setFluidData', 'customer' => 'setCustomer', 'paymentInstrument' => 'setPaymentInstrument', 'instrumentIdentifier' => 'setInstrumentIdentifier', 'shippingAddress' => 'setShippingAddress', 'legacyToken' => 'setLegacyToken', 'bank' => 'setBank', 'options' => 'setOptions', 'paymentType' => 'setPaymentType', 'initiationChannel' => 'setInitiationChannel', 'sepa' => 'setSepa', 'eWallet' => 'setEWallet', 'paymentAccountReference' => 'setPaymentAccountReference'];
+    protected static $setters = ['card' => 'setCard', 'tokenizedCard' => 'setTokenizedCard', 'tokenizedPaymentMethod' => 'setTokenizedPaymentMethod', 'directDebit' => 'setDirectDebit', 'fluidData' => 'setFluidData', 'customer' => 'setCustomer', 'paymentInstrument' => 'setPaymentInstrument', 'instrumentIdentifier' => 'setInstrumentIdentifier', 'shippingAddress' => 'setShippingAddress', 'legacyToken' => 'setLegacyToken', 'bank' => 'setBank', 'options' => 'setOptions', 'paymentType' => 'setPaymentType', 'initiationChannel' => 'setInitiationChannel', 'sepa' => 'setSepa', 'eWallet' => 'setEWallet', 'paymentAccountReference' => 'setPaymentAccountReference', 'thirdPartyToken' => 'setThirdPartyToken', 'merchantLimitedAcceptanceIndicator' => 'setMerchantLimitedAcceptanceIndicator'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['card' => 'getCard', 'tokenizedCard' => 'getTokenizedCard', 'tokenizedPaymentMethod' => 'getTokenizedPaymentMethod', 'directDebit' => 'getDirectDebit', 'fluidData' => 'getFluidData', 'customer' => 'getCustomer', 'paymentInstrument' => 'getPaymentInstrument', 'instrumentIdentifier' => 'getInstrumentIdentifier', 'shippingAddress' => 'getShippingAddress', 'legacyToken' => 'getLegacyToken', 'bank' => 'getBank', 'options' => 'getOptions', 'paymentType' => 'getPaymentType', 'initiationChannel' => 'getInitiationChannel', 'sepa' => 'getSepa', 'eWallet' => 'getEWallet', 'paymentAccountReference' => 'getPaymentAccountReference'];
+    protected static $getters = ['card' => 'getCard', 'tokenizedCard' => 'getTokenizedCard', 'tokenizedPaymentMethod' => 'getTokenizedPaymentMethod', 'directDebit' => 'getDirectDebit', 'fluidData' => 'getFluidData', 'customer' => 'getCustomer', 'paymentInstrument' => 'getPaymentInstrument', 'instrumentIdentifier' => 'getInstrumentIdentifier', 'shippingAddress' => 'getShippingAddress', 'legacyToken' => 'getLegacyToken', 'bank' => 'getBank', 'options' => 'getOptions', 'paymentType' => 'getPaymentType', 'initiationChannel' => 'getInitiationChannel', 'sepa' => 'getSepa', 'eWallet' => 'getEWallet', 'paymentAccountReference' => 'getPaymentAccountReference', 'thirdPartyToken' => 'getThirdPartyToken', 'merchantLimitedAcceptanceIndicator' => 'getMerchantLimitedAcceptanceIndicator'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -117,6 +117,8 @@ class Ptsv2paymentsPaymentInformation implements ArrayAccess
         $this->container['sepa'] = isset($data['sepa']) ? $data['sepa'] : null;
         $this->container['eWallet'] = isset($data['eWallet']) ? $data['eWallet'] : null;
         $this->container['paymentAccountReference'] = isset($data['paymentAccountReference']) ? $data['paymentAccountReference'] : null;
+        $this->container['thirdPartyToken'] = isset($data['thirdPartyToken']) ? $data['thirdPartyToken'] : null;
+        $this->container['merchantLimitedAcceptanceIndicator'] = isset($data['merchantLimitedAcceptanceIndicator']) ? $data['merchantLimitedAcceptanceIndicator'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -442,6 +444,42 @@ class Ptsv2paymentsPaymentInformation implements ArrayAccess
     public function setPaymentAccountReference($paymentAccountReference)
     {
         $this->container['paymentAccountReference'] = $paymentAccountReference;
+        return $this;
+    }
+    /**
+     * Gets thirdPartyToken
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationThirdPartyToken
+     */
+    public function getThirdPartyToken()
+    {
+        return $this->container['thirdPartyToken'];
+    }
+    /**
+     * Sets thirdPartyToken
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformationThirdPartyToken $thirdPartyToken
+     * @return $this
+     */
+    public function setThirdPartyToken($thirdPartyToken)
+    {
+        $this->container['thirdPartyToken'] = $thirdPartyToken;
+        return $this;
+    }
+    /**
+     * Gets merchantLimitedAcceptanceIndicator
+     * @return string
+     */
+    public function getMerchantLimitedAcceptanceIndicator()
+    {
+        return $this->container['merchantLimitedAcceptanceIndicator'];
+    }
+    /**
+     * Sets merchantLimitedAcceptanceIndicator
+     * @param string $merchantLimitedAcceptanceIndicator Mastercard One Credential merchant limited acceptance indicator. Mastercard One Credential connects multiple Mastercard payment methods and allows cardhollers to access various options and set payment preferences.  This field indicates which Mastercard One Credential funding PAN acceptance brands should NOT be assigned for this transaction.  This field flows in ISO field 34, DSID 02 tag DB, mapped to Mastercard Data Element (DE) 48, Sub element 02, Subfield 01.  Possible values: - `C`: Do not assign a Mastercard One Credential funding PAN containing the Mastercard Credit Acceptance Brand for this transaction - `D`: Do not assign a Mastercard One Credential funding PAN containing the Debit Mastercard Acceptance Brand for this transaction - `M`: Do not assign a Mastercard One Credential funding PAN containing the Maestro Acceptance Brand for this transaction  This field is supported for all flavors of Authorization request only. Will not be received in response.  #### Used by **Authorization Request** Optional field.
+     * @return $this
+     */
+    public function setMerchantLimitedAcceptanceIndicator($merchantLimitedAcceptanceIndicator)
+    {
+        $this->container['merchantLimitedAcceptanceIndicator'] = $merchantLimitedAcceptanceIndicator;
         return $this;
     }
     /**

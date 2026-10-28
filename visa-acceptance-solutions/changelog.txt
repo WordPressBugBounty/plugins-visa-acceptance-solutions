@@ -1,11 +1,20 @@
 *** Visa Acceptance Solutions Changelog ***
 
+2026-10-19 - version 3.0.0
+* Feature - Migrated to Unified Checkout v1.x including Unified Checkout becoming responsible for calling Payer Authentication, Tokenization, and Fraud Screening.
+* Feature - Added webhook support for payment response and Fraud Management
+* Feature - Support for PayPal and Venmo
+* Feature - Offer Sidebar and Embedded display for Unified Checkout widget
+* Feature - Network Token Support
+* Feature - Full Message-Level Encryption(MLE)
+* Bug Fix - Handled Zero Amount Checkout due to discount
+
 2026-06-09 - version 2.2.2
 * Feature - Wordpress v7.0 compatibility
 * Bug Fix - Optimized order status handling
 * Misc - Removed Express Pay from Product Page
 * Misc - Added Express Pay Configuration
-
+ 
 2026-04-23 - version 2.2.1
 * Feature - Updated Cybersource Rest Client SDK to v0.0.72
 * Bug Fix - WordPress validation issue fixed

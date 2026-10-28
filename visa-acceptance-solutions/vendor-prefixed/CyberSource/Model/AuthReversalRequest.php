@@ -48,12 +48,12 @@ class AuthReversalRequest implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsClientReferenceInformation', 'reversalInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsReversalInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsProcessingInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsOrderInformation', 'pointOfSaleInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsPointOfSaleInformation', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsPaymentInformation', 'processorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessorInformationReversal'];
+    protected static $swaggerTypes = ['clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsClientReferenceInformation', 'reversalInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsReversalInformation', 'processingInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsProcessingInformation', 'orderInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsOrderInformation', 'pointOfSaleInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsPointOfSaleInformation', 'paymentInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsPaymentInformation', 'deviceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsDeviceInformation', 'processorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessorInformationReversal'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['clientReferenceInformation' => null, 'reversalInformation' => null, 'processingInformation' => null, 'orderInformation' => null, 'pointOfSaleInformation' => null, 'paymentInformation' => null, 'processorInformation' => null];
+    protected static $swaggerFormats = ['clientReferenceInformation' => null, 'reversalInformation' => null, 'processingInformation' => null, 'orderInformation' => null, 'pointOfSaleInformation' => null, 'paymentInformation' => null, 'deviceInformation' => null, 'processorInformation' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class AuthReversalRequest implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['clientReferenceInformation' => 'clientReferenceInformation', 'reversalInformation' => 'reversalInformation', 'processingInformation' => 'processingInformation', 'orderInformation' => 'orderInformation', 'pointOfSaleInformation' => 'pointOfSaleInformation', 'paymentInformation' => 'paymentInformation', 'processorInformation' => 'processorInformation'];
+    protected static $attributeMap = ['clientReferenceInformation' => 'clientReferenceInformation', 'reversalInformation' => 'reversalInformation', 'processingInformation' => 'processingInformation', 'orderInformation' => 'orderInformation', 'pointOfSaleInformation' => 'pointOfSaleInformation', 'paymentInformation' => 'paymentInformation', 'deviceInformation' => 'deviceInformation', 'processorInformation' => 'processorInformation'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['clientReferenceInformation' => 'setClientReferenceInformation', 'reversalInformation' => 'setReversalInformation', 'processingInformation' => 'setProcessingInformation', 'orderInformation' => 'setOrderInformation', 'pointOfSaleInformation' => 'setPointOfSaleInformation', 'paymentInformation' => 'setPaymentInformation', 'processorInformation' => 'setProcessorInformation'];
+    protected static $setters = ['clientReferenceInformation' => 'setClientReferenceInformation', 'reversalInformation' => 'setReversalInformation', 'processingInformation' => 'setProcessingInformation', 'orderInformation' => 'setOrderInformation', 'pointOfSaleInformation' => 'setPointOfSaleInformation', 'paymentInformation' => 'setPaymentInformation', 'deviceInformation' => 'setDeviceInformation', 'processorInformation' => 'setProcessorInformation'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['clientReferenceInformation' => 'getClientReferenceInformation', 'reversalInformation' => 'getReversalInformation', 'processingInformation' => 'getProcessingInformation', 'orderInformation' => 'getOrderInformation', 'pointOfSaleInformation' => 'getPointOfSaleInformation', 'paymentInformation' => 'getPaymentInformation', 'processorInformation' => 'getProcessorInformation'];
+    protected static $getters = ['clientReferenceInformation' => 'getClientReferenceInformation', 'reversalInformation' => 'getReversalInformation', 'processingInformation' => 'getProcessingInformation', 'orderInformation' => 'getOrderInformation', 'pointOfSaleInformation' => 'getPointOfSaleInformation', 'paymentInformation' => 'getPaymentInformation', 'deviceInformation' => 'getDeviceInformation', 'processorInformation' => 'getProcessorInformation'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -106,6 +106,7 @@ class AuthReversalRequest implements ArrayAccess
         $this->container['orderInformation'] = isset($data['orderInformation']) ? $data['orderInformation'] : null;
         $this->container['pointOfSaleInformation'] = isset($data['pointOfSaleInformation']) ? $data['pointOfSaleInformation'] : null;
         $this->container['paymentInformation'] = isset($data['paymentInformation']) ? $data['paymentInformation'] : null;
+        $this->container['deviceInformation'] = isset($data['deviceInformation']) ? $data['deviceInformation'] : null;
         $this->container['processorInformation'] = isset($data['processorInformation']) ? $data['processorInformation'] : null;
     }
     /**
@@ -234,6 +235,24 @@ class AuthReversalRequest implements ArrayAccess
     public function setPaymentInformation($paymentInformation)
     {
         $this->container['paymentInformation'] = $paymentInformation;
+        return $this;
+    }
+    /**
+     * Gets deviceInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsDeviceInformation
+     */
+    public function getDeviceInformation()
+    {
+        return $this->container['deviceInformation'];
+    }
+    /**
+     * Sets deviceInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsDeviceInformation $deviceInformation
+     * @return $this
+     */
+    public function setDeviceInformation($deviceInformation)
+    {
+        $this->container['deviceInformation'] = $deviceInformation;
         return $this;
     }
     /**

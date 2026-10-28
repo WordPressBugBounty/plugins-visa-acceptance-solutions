@@ -48,12 +48,12 @@ class Ptsv2billingagreementsOrderInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['amountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsReversalInformationAmountDetails', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsOrderInformationBillTo'];
+    protected static $swaggerTypes = ['amountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsOrderInformationAmountDetails', 'invoiceDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsOrderInformationInvoiceDetails', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsOrderInformationBillTo'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['amountDetails' => null, 'billTo' => null];
+    protected static $swaggerFormats = ['amountDetails' => null, 'invoiceDetails' => null, 'billTo' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Ptsv2billingagreementsOrderInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['amountDetails' => 'amountDetails', 'billTo' => 'billTo'];
+    protected static $attributeMap = ['amountDetails' => 'amountDetails', 'invoiceDetails' => 'invoiceDetails', 'billTo' => 'billTo'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['amountDetails' => 'setAmountDetails', 'billTo' => 'setBillTo'];
+    protected static $setters = ['amountDetails' => 'setAmountDetails', 'invoiceDetails' => 'setInvoiceDetails', 'billTo' => 'setBillTo'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['amountDetails' => 'getAmountDetails', 'billTo' => 'getBillTo'];
+    protected static $getters = ['amountDetails' => 'getAmountDetails', 'invoiceDetails' => 'getInvoiceDetails', 'billTo' => 'getBillTo'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -101,6 +101,7 @@ class Ptsv2billingagreementsOrderInformation implements ArrayAccess
     public function __construct(array $data = null)
     {
         $this->container['amountDetails'] = isset($data['amountDetails']) ? $data['amountDetails'] : null;
+        $this->container['invoiceDetails'] = isset($data['invoiceDetails']) ? $data['invoiceDetails'] : null;
         $this->container['billTo'] = isset($data['billTo']) ? $data['billTo'] : null;
     }
     /**
@@ -125,7 +126,7 @@ class Ptsv2billingagreementsOrderInformation implements ArrayAccess
     }
     /**
      * Gets amountDetails
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsReversalInformationAmountDetails
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsOrderInformationAmountDetails
      */
     public function getAmountDetails()
     {
@@ -133,12 +134,30 @@ class Ptsv2billingagreementsOrderInformation implements ArrayAccess
     }
     /**
      * Sets amountDetails
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsidreversalsReversalInformationAmountDetails $amountDetails
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsOrderInformationAmountDetails $amountDetails
      * @return $this
      */
     public function setAmountDetails($amountDetails)
     {
         $this->container['amountDetails'] = $amountDetails;
+        return $this;
+    }
+    /**
+     * Gets invoiceDetails
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsOrderInformationInvoiceDetails
+     */
+    public function getInvoiceDetails()
+    {
+        return $this->container['invoiceDetails'];
+    }
+    /**
+     * Sets invoiceDetails
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2billingagreementsOrderInformationInvoiceDetails $invoiceDetails
+     * @return $this
+     */
+    public function setInvoiceDetails($invoiceDetails)
+    {
+        $this->container['invoiceDetails'] = $invoiceDetails;
         return $this;
     }
     /**

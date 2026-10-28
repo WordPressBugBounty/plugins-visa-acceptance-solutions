@@ -49,7 +49,7 @@ class CardProcessingConfigCommonAcquirerAgreement implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['acquirerCode' => '\Pymt_Vas\Dependencies\CyberSource\Model\CardProcessingConfigCommonAcquirerAgreementAcquirerCode'];
+    protected static $swaggerTypes = ['acquirerCode' => '\Pymt_Vas\Dependencies\CyberSource\Model\BoardingAcquirerDetails'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -125,7 +125,7 @@ class CardProcessingConfigCommonAcquirerAgreement implements ArrayAccess
     }
     /**
      * Gets acquirerCode
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\CardProcessingConfigCommonAcquirerAgreementAcquirerCode
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\BoardingAcquirerDetails
      */
     public function getAcquirerCode()
     {
@@ -133,7 +133,7 @@ class CardProcessingConfigCommonAcquirerAgreement implements ArrayAccess
     }
     /**
      * Sets acquirerCode
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\CardProcessingConfigCommonAcquirerAgreementAcquirerCode $acquirerCode
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\BoardingAcquirerDetails $acquirerCode
      * @return $this
      */
     public function setAcquirerCode($acquirerCode)

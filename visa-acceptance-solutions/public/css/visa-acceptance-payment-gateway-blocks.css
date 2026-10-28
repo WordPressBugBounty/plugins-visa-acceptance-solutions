@@ -167,9 +167,27 @@ apple-pay-button {
     display: flex;
 }
 
+.saved-card-container .blocks-saved-card-uc-wrapper {
+    flex: 1 0 100%;
+    width: 100%;
+}
+
+.saved-card-container .blocks-saved-card-uc-wrapper ~ .saved-card-alignment-fix {
+    display: none;
+}
+
 .saved-card-container .saved-card-flex-container .flex-cvv-container .flex-microform-field iframe {
 	margin: -3rem;
 	left: 48px;
+}
+
+#blocks-saved-card-uc-form-container {
+    width: 100%;
+}
+
+#blocks-saved-card-pay-btn-container {
+    width: 100%;
+    margin-bottom: 8px;
 }
 
 .saved-card-cvv-field {

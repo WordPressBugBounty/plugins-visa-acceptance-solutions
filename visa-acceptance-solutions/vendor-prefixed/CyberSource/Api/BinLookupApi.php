@@ -96,7 +96,7 @@ class BinLookupApi
      *
      * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\CreateBinLookupRequest $createBinLookupRequest  (required)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
-     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2015, HTTP status code, HTTP response headers (array of strings)
      */
     public function getAccountInfo($createBinLookupRequest)
     {
@@ -113,7 +113,7 @@ class BinLookupApi
      *
      * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\CreateBinLookupRequest $createBinLookupRequest  (required)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
-     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2015, HTTP status code, HTTP response headers (array of strings)
      */
     public function getAccountInfoWithHttpInfo($createBinLookupRequest)
     {
@@ -169,22 +169,26 @@ class BinLookupApi
             }
             self::$logger->debug("Body Parameter :\n" . $printHttpBody);
         }
-        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse2013");
+        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse2015");
         // Response MLE check
         $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getAccountInfo,getAccountInfoWithHttpInfo");
         // make the API Call
         try {
-            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'POST', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013', '/bin/v1/binlookup', $isResponseMLEForAPI);
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'POST', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2015', '/bin/v1/binlookup', $isResponseMLEForAPI);
             self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
-            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013', $httpHeader), $statusCode, $httpHeader];
+            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2015', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 201:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2015', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 400:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2CreateOrderPost400Response', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\BinLookupv400Response', $e->getResponseHeaders());
+                    $e->setResponseObject($data);
+                    break;
+                case 403:
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\BinLookup403Response', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
                 case 502:

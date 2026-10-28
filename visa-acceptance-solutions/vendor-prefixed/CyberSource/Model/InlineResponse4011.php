@@ -48,12 +48,12 @@ class InlineResponse4011 implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011Links', 'code' => 'string', 'correlationId' => 'string', 'detail' => 'string', 'fields' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011Fields[]', 'localizationKey' => 'string', 'message' => 'string'];
+    protected static $swaggerTypes = ['id' => 'string', 'submitTimeStampUtc' => 'string', 'reason' => 'string', 'message' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['links' => null, 'code' => null, 'correlationId' => null, 'detail' => null, 'fields' => null, 'localizationKey' => null, 'message' => null];
+    protected static $swaggerFormats = ['id' => null, 'submitTimeStampUtc' => null, 'reason' => null, 'message' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class InlineResponse4011 implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['links' => '_links', 'code' => 'code', 'correlationId' => 'correlationId', 'detail' => 'detail', 'fields' => 'fields', 'localizationKey' => 'localizationKey', 'message' => 'message'];
+    protected static $attributeMap = ['id' => 'id', 'submitTimeStampUtc' => 'submitTimeStampUtc', 'reason' => 'reason', 'message' => 'message'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['links' => 'setLinks', 'code' => 'setCode', 'correlationId' => 'setCorrelationId', 'detail' => 'setDetail', 'fields' => 'setFields', 'localizationKey' => 'setLocalizationKey', 'message' => 'setMessage'];
+    protected static $setters = ['id' => 'setId', 'submitTimeStampUtc' => 'setSubmitTimeStampUtc', 'reason' => 'setReason', 'message' => 'setMessage'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['links' => 'getLinks', 'code' => 'getCode', 'correlationId' => 'getCorrelationId', 'detail' => 'getDetail', 'fields' => 'getFields', 'localizationKey' => 'getLocalizationKey', 'message' => 'getMessage'];
+    protected static $getters = ['id' => 'getId', 'submitTimeStampUtc' => 'getSubmitTimeStampUtc', 'reason' => 'getReason', 'message' => 'getMessage'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -100,12 +100,9 @@ class InlineResponse4011 implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['links'] = isset($data['links']) ? $data['links'] : null;
-        $this->container['code'] = isset($data['code']) ? $data['code'] : null;
-        $this->container['correlationId'] = isset($data['correlationId']) ? $data['correlationId'] : null;
-        $this->container['detail'] = isset($data['detail']) ? $data['detail'] : null;
-        $this->container['fields'] = isset($data['fields']) ? $data['fields'] : null;
-        $this->container['localizationKey'] = isset($data['localizationKey']) ? $data['localizationKey'] : null;
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        $this->container['submitTimeStampUtc'] = isset($data['submitTimeStampUtc']) ? $data['submitTimeStampUtc'] : null;
+        $this->container['reason'] = isset($data['reason']) ? $data['reason'] : null;
         $this->container['message'] = isset($data['message']) ? $data['message'] : null;
     }
     /**
@@ -129,111 +126,57 @@ class InlineResponse4011 implements ArrayAccess
         return true;
     }
     /**
-     * Gets links
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011Links
-     */
-    public function getLinks()
-    {
-        return $this->container['links'];
-    }
-    /**
-     * Sets links
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011Links $links
-     * @return $this
-     */
-    public function setLinks($links)
-    {
-        $this->container['links'] = $links;
-        return $this;
-    }
-    /**
-     * Gets code
+     * Gets id
      * @return string
      */
-    public function getCode()
+    public function getId()
     {
-        return $this->container['code'];
+        return $this->container['id'];
     }
     /**
-     * Sets code
-     * @param string $code Valid Values:   * FORBIDDEN_RESPONSE   * VALIDATION_ERROR   * UNSUPPORTED_MEDIA_TYPE   * MALFORMED_PAYLOAD_ERROR   * SERVER_ERROR
+     * Sets id
+     * @param string $id A unique identification number to identify the submitted request. It is also appended to the endpoint of the resource.
      * @return $this
      */
-    public function setCode($code)
+    public function setId($id)
     {
-        $this->container['code'] = $code;
+        $this->container['id'] = $id;
         return $this;
     }
     /**
-     * Gets correlationId
+     * Gets submitTimeStampUtc
      * @return string
      */
-    public function getCorrelationId()
+    public function getSubmitTimeStampUtc()
     {
-        return $this->container['correlationId'];
+        return $this->container['submitTimeStampUtc'];
     }
     /**
-     * Sets correlationId
-     * @param string $correlationId
+     * Sets submitTimeStampUtc
+     * @param string $submitTimeStampUtc Time of request in UTC. Format: `YYYY-MM-DD'T'HH:mm:ssZ`  Example: `2016-08-11T22:47:57Z` equals August 11, 2016, at 22:47:57 (10:47:57 p.m.). The T separates the date and the time. The Z indicates UTC.
      * @return $this
      */
-    public function setCorrelationId($correlationId)
+    public function setSubmitTimeStampUtc($submitTimeStampUtc)
     {
-        $this->container['correlationId'] = $correlationId;
+        $this->container['submitTimeStampUtc'] = $submitTimeStampUtc;
         return $this;
     }
     /**
-     * Gets detail
+     * Gets reason
      * @return string
      */
-    public function getDetail()
+    public function getReason()
     {
-        return $this->container['detail'];
+        return $this->container['reason'];
     }
     /**
-     * Sets detail
-     * @param string $detail
+     * Sets reason
+     * @param string $reason The reason of the status.  Possible values: - UNAUTHORIZED
      * @return $this
      */
-    public function setDetail($detail)
+    public function setReason($reason)
     {
-        $this->container['detail'] = $detail;
-        return $this;
-    }
-    /**
-     * Gets fields
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011Fields[]
-     */
-    public function getFields()
-    {
-        return $this->container['fields'];
-    }
-    /**
-     * Sets fields
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse4011Fields[] $fields
-     * @return $this
-     */
-    public function setFields($fields)
-    {
-        $this->container['fields'] = $fields;
-        return $this;
-    }
-    /**
-     * Gets localizationKey
-     * @return string
-     */
-    public function getLocalizationKey()
-    {
-        return $this->container['localizationKey'];
-    }
-    /**
-     * Sets localizationKey
-     * @param string $localizationKey Valid Values:   * cybsapi.forbidden.response   * cybsapi.validation.error   * cybsapi.media.notsupported
-     * @return $this
-     */
-    public function setLocalizationKey($localizationKey)
-    {
-        $this->container['localizationKey'] = $localizationKey;
+        $this->container['reason'] = $reason;
         return $this;
     }
     /**
@@ -246,7 +189,7 @@ class InlineResponse4011 implements ArrayAccess
     }
     /**
      * Sets message
-     * @param string $message
+     * @param string $message The detail message related to the status and reason listed above.
      * @return $this
      */
     public function setMessage($message)

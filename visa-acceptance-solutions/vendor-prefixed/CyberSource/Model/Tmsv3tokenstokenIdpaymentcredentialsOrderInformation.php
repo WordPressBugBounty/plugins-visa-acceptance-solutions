@@ -48,7 +48,7 @@ class Tmsv3tokenstokenIdpaymentcredentialsOrderInformation implements ArrayAcces
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['amountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv3tokenstokenIdpaymentcredentialsOrderInformationAmountDetails', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv3tokenstokenIdpaymentcredentialsOrderInformationBillTo'];
+    protected static $swaggerTypes = ['amountDetails' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv3tokenstokenIdpaymentcredentialsOrderInformationAmountDetails', 'billTo' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardsBillTo'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -143,7 +143,7 @@ class Tmsv3tokenstokenIdpaymentcredentialsOrderInformation implements ArrayAcces
     }
     /**
      * Gets billTo
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv3tokenstokenIdpaymentcredentialsOrderInformationBillTo
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardsBillTo
      */
     public function getBillTo()
     {
@@ -151,7 +151,7 @@ class Tmsv3tokenstokenIdpaymentcredentialsOrderInformation implements ArrayAcces
     }
     /**
      * Sets billTo
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv3tokenstokenIdpaymentcredentialsOrderInformationBillTo $billTo
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizedcardsBillTo $billTo
      * @return $this
      */
     public function setBillTo($billTo)

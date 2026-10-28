@@ -191,7 +191,7 @@ class CreateSubscriptionResponse implements ArrayAccess
     }
     /**
      * Sets status
-     * @param string $status The status of the submitted transaction.  Possible values:  - COMPLETED  - PENDING_REVIEW  - DECLINED  - INVALID_REQUEST
+     * @param string $status The status of the submitted transaction.  Possible values:  - COMPLETED  - DECLINED
      * @return $this
      */
     public function setStatus($status)

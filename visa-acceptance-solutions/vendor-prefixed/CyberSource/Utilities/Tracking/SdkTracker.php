@@ -4,7 +4,34 @@ namespace Pymt_Vas\Dependencies\CyberSource\Utilities\Tracking;
 
 class SdkTracker
 {
-    private static $inclusionList = array('CapturePaymentRequest', 'CreateCreditRequest', 'AddNegativeListRequest', 'CreateBundledDecisionManagerCaseRequest', 'FraudMarkingActionRequest', 'CheckPayerAuthEnrollmentRequest', 'PayerAuthSetupRequest', 'ValidateRequest', 'CreatePaymentRequest', 'IncrementAuthRequest', 'CreatePlanRequest', 'RefundCaptureRequest', 'RefundPaymentRequest', 'AuthReversalRequest', 'MitReversalRequest', 'CreateSubscriptionRequest', 'UpdateSubscription', 'TaxRequest', 'VoidTaxRequest', 'ValidateExportComplianceRequest', 'VerifyCustomerAddressRequest', 'MitVoidRequest', 'VoidCaptureRequest', 'VoidCreditRequest', 'VoidPaymentRequest', 'VoidRefundRequest');
+    private static $inclusionList = array(
+        'CapturePaymentRequest',
+        'CreateCreditRequest',
+        'AddNegativeListRequest',
+        'CreateBundledDecisionManagerCaseRequest',
+        'FraudMarkingActionRequest',
+        'CheckPayerAuthEnrollmentRequest',
+        'PayerAuthSetupRequest',
+        'ValidateRequest',
+        'CreatePaymentRequest',
+        'IncrementAuthRequest',
+        // 'CreatePlanRequest',
+        'RefundCaptureRequest',
+        'RefundPaymentRequest',
+        'AuthReversalRequest',
+        'MitReversalRequest',
+        // 'CreateSubscriptionRequest',
+        // 'UpdateSubscription',
+        'TaxRequest',
+        'VoidTaxRequest',
+        'ValidateExportComplianceRequest',
+        'VerifyCustomerAddressRequest',
+        'MitVoidRequest',
+        'VoidCaptureRequest',
+        'VoidCreditRequest',
+        'VoidPaymentRequest',
+        'VoidRefundRequest',
+    );
     public function __construct()
     {
     }

@@ -48,12 +48,12 @@ class CommerceSolutionsProducts implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['tokenManagement' => '\Pymt_Vas\Dependencies\CyberSource\Model\CommerceSolutionsProductsTokenManagement', 'accountUpdater' => '\Pymt_Vas\Dependencies\CyberSource\Model\CommerceSolutionsProductsAccountUpdater', 'binLookup' => '\Pymt_Vas\Dependencies\CyberSource\Model\CommerceSolutionsProductsBinLookup'];
+    protected static $swaggerTypes = ['tokenManagement' => '\Pymt_Vas\Dependencies\CyberSource\Model\CommerceSolutionsProductsTokenManagement', 'accountUpdater' => '\Pymt_Vas\Dependencies\CyberSource\Model\CommerceSolutionsProductsAccountUpdater', 'binLookup' => '\Pymt_Vas\Dependencies\CyberSource\Model\CommerceSolutionsProductsBinLookup', 'agenticCommerce' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['tokenManagement' => null, 'accountUpdater' => null, 'binLookup' => null];
+    protected static $swaggerFormats = ['tokenManagement' => null, 'accountUpdater' => null, 'binLookup' => null, 'agenticCommerce' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class CommerceSolutionsProducts implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['tokenManagement' => 'tokenManagement', 'accountUpdater' => 'accountUpdater', 'binLookup' => 'binLookup'];
+    protected static $attributeMap = ['tokenManagement' => 'tokenManagement', 'accountUpdater' => 'accountUpdater', 'binLookup' => 'binLookup', 'agenticCommerce' => 'agenticCommerce'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['tokenManagement' => 'setTokenManagement', 'accountUpdater' => 'setAccountUpdater', 'binLookup' => 'setBinLookup'];
+    protected static $setters = ['tokenManagement' => 'setTokenManagement', 'accountUpdater' => 'setAccountUpdater', 'binLookup' => 'setBinLookup', 'agenticCommerce' => 'setAgenticCommerce'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['tokenManagement' => 'getTokenManagement', 'accountUpdater' => 'getAccountUpdater', 'binLookup' => 'getBinLookup'];
+    protected static $getters = ['tokenManagement' => 'getTokenManagement', 'accountUpdater' => 'getAccountUpdater', 'binLookup' => 'getBinLookup', 'agenticCommerce' => 'getAgenticCommerce'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -103,6 +103,7 @@ class CommerceSolutionsProducts implements ArrayAccess
         $this->container['tokenManagement'] = isset($data['tokenManagement']) ? $data['tokenManagement'] : null;
         $this->container['accountUpdater'] = isset($data['accountUpdater']) ? $data['accountUpdater'] : null;
         $this->container['binLookup'] = isset($data['binLookup']) ? $data['binLookup'] : null;
+        $this->container['agenticCommerce'] = isset($data['agenticCommerce']) ? $data['agenticCommerce'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -176,6 +177,24 @@ class CommerceSolutionsProducts implements ArrayAccess
     public function setBinLookup($binLookup)
     {
         $this->container['binLookup'] = $binLookup;
+        return $this;
+    }
+    /**
+     * Gets agenticCommerce
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax
+     */
+    public function getAgenticCommerce()
+    {
+        return $this->container['agenticCommerce'];
+    }
+    /**
+     * Sets agenticCommerce
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsTax $agenticCommerce
+     * @return $this
+     */
+    public function setAgenticCommerce($agenticCommerce)
+    {
+        $this->container['agenticCommerce'] = $agenticCommerce;
         return $this;
     }
     /**

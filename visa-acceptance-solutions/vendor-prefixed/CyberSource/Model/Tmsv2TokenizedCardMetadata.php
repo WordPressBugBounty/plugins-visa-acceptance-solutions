@@ -48,12 +48,12 @@ class Tmsv2TokenizedCardMetadata implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['cardArt' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsCardArt', 'issuer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCardMetadataIssuer'];
+    protected static $swaggerTypes = ['cardArt' => '\Pymt_Vas\Dependencies\CyberSource\Model\TmsCardArt', 'issuer' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2TokenizedCardMetadataIssuer', 'creator' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['cardArt' => null, 'issuer' => null];
+    protected static $swaggerFormats = ['cardArt' => null, 'issuer' => null, 'creator' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class Tmsv2TokenizedCardMetadata implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['cardArt' => 'cardArt', 'issuer' => 'issuer'];
+    protected static $attributeMap = ['cardArt' => 'cardArt', 'issuer' => 'issuer', 'creator' => 'creator'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['cardArt' => 'setCardArt', 'issuer' => 'setIssuer'];
+    protected static $setters = ['cardArt' => 'setCardArt', 'issuer' => 'setIssuer', 'creator' => 'setCreator'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['cardArt' => 'getCardArt', 'issuer' => 'getIssuer'];
+    protected static $getters = ['cardArt' => 'getCardArt', 'issuer' => 'getIssuer', 'creator' => 'getCreator'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -102,6 +102,7 @@ class Tmsv2TokenizedCardMetadata implements ArrayAccess
     {
         $this->container['cardArt'] = isset($data['cardArt']) ? $data['cardArt'] : null;
         $this->container['issuer'] = isset($data['issuer']) ? $data['issuer'] : null;
+        $this->container['creator'] = isset($data['creator']) ? $data['creator'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -157,6 +158,24 @@ class Tmsv2TokenizedCardMetadata implements ArrayAccess
     public function setIssuer($issuer)
     {
         $this->container['issuer'] = $issuer;
+        return $this;
+    }
+    /**
+     * Gets creator
+     * @return string
+     */
+    public function getCreator()
+    {
+        return $this->container['creator'];
+    }
+    /**
+     * Sets creator
+     * @param string $creator The creator of the Tokenized Card.
+     * @return $this
+     */
+    public function setCreator($creator)
+    {
+        $this->container['creator'] = $creator;
         return $this;
     }
     /**

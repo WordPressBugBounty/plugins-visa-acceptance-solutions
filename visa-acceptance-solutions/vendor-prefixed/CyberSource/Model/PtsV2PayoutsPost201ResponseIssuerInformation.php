@@ -48,12 +48,12 @@ class PtsV2PayoutsPost201ResponseIssuerInformation implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['serviceProcessingType' => 'string'];
+    protected static $swaggerTypes = ['octDomesticParticipantIndicator' => 'bool', 'octCrossBorderParticipantIndicator' => 'bool', 'octMoneyTransferDomesticIndicator' => 'bool', 'octMoneyTransferCrossBorderIndicator' => 'bool', 'octMoneyTransferFastFundsDomesticIndicator' => 'bool', 'octMoneyTransferFastFundsCrossBorderIndicator' => 'bool', 'octMoneyTransferMerchantCountryRestricted' => 'bool', 'octNonMoneyTransferDomesticIndicator' => 'bool', 'octNonMoneyTransferCrossBorderIndicator' => 'bool', 'octNonMoneyTransferFastFundsDomesticIndicator' => 'bool', 'octNonMoneyTransferFastFundsCrossBorderIndicator' => 'bool', 'octOnlineGamblingDomesticIndicator' => 'bool', 'octOnlineGamblingCrossBorderIndicator' => 'bool', 'octOnlineGamblingFastFundsDomesticIndicator' => 'bool', 'octOnlineGamblingFastFundsCrossBorderIndicator' => 'bool', 'serviceProcessingType' => 'string'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['serviceProcessingType' => null];
+    protected static $swaggerFormats = ['octDomesticParticipantIndicator' => null, 'octCrossBorderParticipantIndicator' => null, 'octMoneyTransferDomesticIndicator' => null, 'octMoneyTransferCrossBorderIndicator' => null, 'octMoneyTransferFastFundsDomesticIndicator' => null, 'octMoneyTransferFastFundsCrossBorderIndicator' => null, 'octMoneyTransferMerchantCountryRestricted' => null, 'octNonMoneyTransferDomesticIndicator' => null, 'octNonMoneyTransferCrossBorderIndicator' => null, 'octNonMoneyTransferFastFundsDomesticIndicator' => null, 'octNonMoneyTransferFastFundsCrossBorderIndicator' => null, 'octOnlineGamblingDomesticIndicator' => null, 'octOnlineGamblingCrossBorderIndicator' => null, 'octOnlineGamblingFastFundsDomesticIndicator' => null, 'octOnlineGamblingFastFundsCrossBorderIndicator' => null, 'serviceProcessingType' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class PtsV2PayoutsPost201ResponseIssuerInformation implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['serviceProcessingType' => 'serviceProcessingType'];
+    protected static $attributeMap = ['octDomesticParticipantIndicator' => 'octDomesticParticipantIndicator', 'octCrossBorderParticipantIndicator' => 'octCrossBorderParticipantIndicator', 'octMoneyTransferDomesticIndicator' => 'octMoneyTransferDomesticIndicator', 'octMoneyTransferCrossBorderIndicator' => 'octMoneyTransferCrossBorderIndicator', 'octMoneyTransferFastFundsDomesticIndicator' => 'octMoneyTransferFastFundsDomesticIndicator', 'octMoneyTransferFastFundsCrossBorderIndicator' => 'octMoneyTransferFastFundsCrossBorderIndicator', 'octMoneyTransferMerchantCountryRestricted' => 'octMoneyTransferMerchantCountryRestricted', 'octNonMoneyTransferDomesticIndicator' => 'octNonMoneyTransferDomesticIndicator', 'octNonMoneyTransferCrossBorderIndicator' => 'octNonMoneyTransferCrossBorderIndicator', 'octNonMoneyTransferFastFundsDomesticIndicator' => 'octNonMoneyTransferFastFundsDomesticIndicator', 'octNonMoneyTransferFastFundsCrossBorderIndicator' => 'octNonMoneyTransferFastFundsCrossBorderIndicator', 'octOnlineGamblingDomesticIndicator' => 'octOnlineGamblingDomesticIndicator', 'octOnlineGamblingCrossBorderIndicator' => 'octOnlineGamblingCrossBorderIndicator', 'octOnlineGamblingFastFundsDomesticIndicator' => 'octOnlineGamblingFastFundsDomesticIndicator', 'octOnlineGamblingFastFundsCrossBorderIndicator' => 'octOnlineGamblingFastFundsCrossBorderIndicator', 'serviceProcessingType' => 'serviceProcessingType'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['serviceProcessingType' => 'setServiceProcessingType'];
+    protected static $setters = ['octDomesticParticipantIndicator' => 'setOctDomesticParticipantIndicator', 'octCrossBorderParticipantIndicator' => 'setOctCrossBorderParticipantIndicator', 'octMoneyTransferDomesticIndicator' => 'setOctMoneyTransferDomesticIndicator', 'octMoneyTransferCrossBorderIndicator' => 'setOctMoneyTransferCrossBorderIndicator', 'octMoneyTransferFastFundsDomesticIndicator' => 'setOctMoneyTransferFastFundsDomesticIndicator', 'octMoneyTransferFastFundsCrossBorderIndicator' => 'setOctMoneyTransferFastFundsCrossBorderIndicator', 'octMoneyTransferMerchantCountryRestricted' => 'setOctMoneyTransferMerchantCountryRestricted', 'octNonMoneyTransferDomesticIndicator' => 'setOctNonMoneyTransferDomesticIndicator', 'octNonMoneyTransferCrossBorderIndicator' => 'setOctNonMoneyTransferCrossBorderIndicator', 'octNonMoneyTransferFastFundsDomesticIndicator' => 'setOctNonMoneyTransferFastFundsDomesticIndicator', 'octNonMoneyTransferFastFundsCrossBorderIndicator' => 'setOctNonMoneyTransferFastFundsCrossBorderIndicator', 'octOnlineGamblingDomesticIndicator' => 'setOctOnlineGamblingDomesticIndicator', 'octOnlineGamblingCrossBorderIndicator' => 'setOctOnlineGamblingCrossBorderIndicator', 'octOnlineGamblingFastFundsDomesticIndicator' => 'setOctOnlineGamblingFastFundsDomesticIndicator', 'octOnlineGamblingFastFundsCrossBorderIndicator' => 'setOctOnlineGamblingFastFundsCrossBorderIndicator', 'serviceProcessingType' => 'setServiceProcessingType'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['serviceProcessingType' => 'getServiceProcessingType'];
+    protected static $getters = ['octDomesticParticipantIndicator' => 'getOctDomesticParticipantIndicator', 'octCrossBorderParticipantIndicator' => 'getOctCrossBorderParticipantIndicator', 'octMoneyTransferDomesticIndicator' => 'getOctMoneyTransferDomesticIndicator', 'octMoneyTransferCrossBorderIndicator' => 'getOctMoneyTransferCrossBorderIndicator', 'octMoneyTransferFastFundsDomesticIndicator' => 'getOctMoneyTransferFastFundsDomesticIndicator', 'octMoneyTransferFastFundsCrossBorderIndicator' => 'getOctMoneyTransferFastFundsCrossBorderIndicator', 'octMoneyTransferMerchantCountryRestricted' => 'getOctMoneyTransferMerchantCountryRestricted', 'octNonMoneyTransferDomesticIndicator' => 'getOctNonMoneyTransferDomesticIndicator', 'octNonMoneyTransferCrossBorderIndicator' => 'getOctNonMoneyTransferCrossBorderIndicator', 'octNonMoneyTransferFastFundsDomesticIndicator' => 'getOctNonMoneyTransferFastFundsDomesticIndicator', 'octNonMoneyTransferFastFundsCrossBorderIndicator' => 'getOctNonMoneyTransferFastFundsCrossBorderIndicator', 'octOnlineGamblingDomesticIndicator' => 'getOctOnlineGamblingDomesticIndicator', 'octOnlineGamblingCrossBorderIndicator' => 'getOctOnlineGamblingCrossBorderIndicator', 'octOnlineGamblingFastFundsDomesticIndicator' => 'getOctOnlineGamblingFastFundsDomesticIndicator', 'octOnlineGamblingFastFundsCrossBorderIndicator' => 'getOctOnlineGamblingFastFundsCrossBorderIndicator', 'serviceProcessingType' => 'getServiceProcessingType'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -100,6 +100,21 @@ class PtsV2PayoutsPost201ResponseIssuerInformation implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
+        $this->container['octDomesticParticipantIndicator'] = isset($data['octDomesticParticipantIndicator']) ? $data['octDomesticParticipantIndicator'] : null;
+        $this->container['octCrossBorderParticipantIndicator'] = isset($data['octCrossBorderParticipantIndicator']) ? $data['octCrossBorderParticipantIndicator'] : null;
+        $this->container['octMoneyTransferDomesticIndicator'] = isset($data['octMoneyTransferDomesticIndicator']) ? $data['octMoneyTransferDomesticIndicator'] : null;
+        $this->container['octMoneyTransferCrossBorderIndicator'] = isset($data['octMoneyTransferCrossBorderIndicator']) ? $data['octMoneyTransferCrossBorderIndicator'] : null;
+        $this->container['octMoneyTransferFastFundsDomesticIndicator'] = isset($data['octMoneyTransferFastFundsDomesticIndicator']) ? $data['octMoneyTransferFastFundsDomesticIndicator'] : null;
+        $this->container['octMoneyTransferFastFundsCrossBorderIndicator'] = isset($data['octMoneyTransferFastFundsCrossBorderIndicator']) ? $data['octMoneyTransferFastFundsCrossBorderIndicator'] : null;
+        $this->container['octMoneyTransferMerchantCountryRestricted'] = isset($data['octMoneyTransferMerchantCountryRestricted']) ? $data['octMoneyTransferMerchantCountryRestricted'] : null;
+        $this->container['octNonMoneyTransferDomesticIndicator'] = isset($data['octNonMoneyTransferDomesticIndicator']) ? $data['octNonMoneyTransferDomesticIndicator'] : null;
+        $this->container['octNonMoneyTransferCrossBorderIndicator'] = isset($data['octNonMoneyTransferCrossBorderIndicator']) ? $data['octNonMoneyTransferCrossBorderIndicator'] : null;
+        $this->container['octNonMoneyTransferFastFundsDomesticIndicator'] = isset($data['octNonMoneyTransferFastFundsDomesticIndicator']) ? $data['octNonMoneyTransferFastFundsDomesticIndicator'] : null;
+        $this->container['octNonMoneyTransferFastFundsCrossBorderIndicator'] = isset($data['octNonMoneyTransferFastFundsCrossBorderIndicator']) ? $data['octNonMoneyTransferFastFundsCrossBorderIndicator'] : null;
+        $this->container['octOnlineGamblingDomesticIndicator'] = isset($data['octOnlineGamblingDomesticIndicator']) ? $data['octOnlineGamblingDomesticIndicator'] : null;
+        $this->container['octOnlineGamblingCrossBorderIndicator'] = isset($data['octOnlineGamblingCrossBorderIndicator']) ? $data['octOnlineGamblingCrossBorderIndicator'] : null;
+        $this->container['octOnlineGamblingFastFundsDomesticIndicator'] = isset($data['octOnlineGamblingFastFundsDomesticIndicator']) ? $data['octOnlineGamblingFastFundsDomesticIndicator'] : null;
+        $this->container['octOnlineGamblingFastFundsCrossBorderIndicator'] = isset($data['octOnlineGamblingFastFundsCrossBorderIndicator']) ? $data['octOnlineGamblingFastFundsCrossBorderIndicator'] : null;
         $this->container['serviceProcessingType'] = isset($data['serviceProcessingType']) ? $data['serviceProcessingType'] : null;
     }
     /**
@@ -121,6 +136,276 @@ class PtsV2PayoutsPost201ResponseIssuerInformation implements ArrayAccess
     public function valid()
     {
         return true;
+    }
+    /**
+     * Gets octDomesticParticipantIndicator
+     * @return bool
+     */
+    public function getOctDomesticParticipantIndicator()
+    {
+        return $this->container['octDomesticParticipantIndicator'];
+    }
+    /**
+     * Sets octDomesticParticipantIndicator
+     * @param bool $octDomesticParticipantIndicator Domestic indicator for Push funds (OCT). If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.   Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctDomesticParticipantIndicator($octDomesticParticipantIndicator)
+    {
+        $this->container['octDomesticParticipantIndicator'] = $octDomesticParticipantIndicator;
+        return $this;
+    }
+    /**
+     * Gets octCrossBorderParticipantIndicator
+     * @return bool
+     */
+    public function getOctCrossBorderParticipantIndicator()
+    {
+        return $this->container['octCrossBorderParticipantIndicator'];
+    }
+    /**
+     * Sets octCrossBorderParticipantIndicator
+     * @param bool $octCrossBorderParticipantIndicator Cross-border indicator for push funds (OCT). If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.   Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctCrossBorderParticipantIndicator($octCrossBorderParticipantIndicator)
+    {
+        $this->container['octCrossBorderParticipantIndicator'] = $octCrossBorderParticipantIndicator;
+        return $this;
+    }
+    /**
+     * Gets octMoneyTransferDomesticIndicator
+     * @return bool
+     */
+    public function getOctMoneyTransferDomesticIndicator()
+    {
+        return $this->container['octMoneyTransferDomesticIndicator'];
+    }
+    /**
+     * Sets octMoneyTransferDomesticIndicator
+     * @param bool $octMoneyTransferDomesticIndicator Indicates whether domestic money transfer OCTs (push funds) are allowed. If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.        Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctMoneyTransferDomesticIndicator($octMoneyTransferDomesticIndicator)
+    {
+        $this->container['octMoneyTransferDomesticIndicator'] = $octMoneyTransferDomesticIndicator;
+        return $this;
+    }
+    /**
+     * Gets octMoneyTransferCrossBorderIndicator
+     * @return bool
+     */
+    public function getOctMoneyTransferCrossBorderIndicator()
+    {
+        return $this->container['octMoneyTransferCrossBorderIndicator'];
+    }
+    /**
+     * Sets octMoneyTransferCrossBorderIndicator
+     * @param bool $octMoneyTransferCrossBorderIndicator Indicates whether cross-border money transfer OCTs (push funds) are allowed. If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.   Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctMoneyTransferCrossBorderIndicator($octMoneyTransferCrossBorderIndicator)
+    {
+        $this->container['octMoneyTransferCrossBorderIndicator'] = $octMoneyTransferCrossBorderIndicator;
+        return $this;
+    }
+    /**
+     * Gets octMoneyTransferFastFundsDomesticIndicator
+     * @return bool
+     */
+    public function getOctMoneyTransferFastFundsDomesticIndicator()
+    {
+        return $this->container['octMoneyTransferFastFundsDomesticIndicator'];
+    }
+    /**
+     * Sets octMoneyTransferFastFundsDomesticIndicator
+     * @param bool $octMoneyTransferFastFundsDomesticIndicator Indicates whether domestic money transfer OCTs (fast push funds) are allowed. If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.   Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctMoneyTransferFastFundsDomesticIndicator($octMoneyTransferFastFundsDomesticIndicator)
+    {
+        $this->container['octMoneyTransferFastFundsDomesticIndicator'] = $octMoneyTransferFastFundsDomesticIndicator;
+        return $this;
+    }
+    /**
+     * Gets octMoneyTransferFastFundsCrossBorderIndicator
+     * @return bool
+     */
+    public function getOctMoneyTransferFastFundsCrossBorderIndicator()
+    {
+        return $this->container['octMoneyTransferFastFundsCrossBorderIndicator'];
+    }
+    /**
+     * Sets octMoneyTransferFastFundsCrossBorderIndicator
+     * @param bool $octMoneyTransferFastFundsCrossBorderIndicator Indicates whether cross-border money transfer OCTs (fast push funds) are allowed. If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.   Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctMoneyTransferFastFundsCrossBorderIndicator($octMoneyTransferFastFundsCrossBorderIndicator)
+    {
+        $this->container['octMoneyTransferFastFundsCrossBorderIndicator'] = $octMoneyTransferFastFundsCrossBorderIndicator;
+        return $this;
+    }
+    /**
+     * Gets octMoneyTransferMerchantCountryRestricted
+     * @return bool
+     */
+    public function getOctMoneyTransferMerchantCountryRestricted()
+    {
+        return $this->container['octMoneyTransferMerchantCountryRestricted'];
+    }
+    /**
+     * Sets octMoneyTransferMerchantCountryRestricted
+     * @param bool $octMoneyTransferMerchantCountryRestricted This field indicates if the recipient issuer can accept push funds (OCT) transactions from the merchant country.  If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.   Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctMoneyTransferMerchantCountryRestricted($octMoneyTransferMerchantCountryRestricted)
+    {
+        $this->container['octMoneyTransferMerchantCountryRestricted'] = $octMoneyTransferMerchantCountryRestricted;
+        return $this;
+    }
+    /**
+     * Gets octNonMoneyTransferDomesticIndicator
+     * @return bool
+     */
+    public function getOctNonMoneyTransferDomesticIndicator()
+    {
+        return $this->container['octNonMoneyTransferDomesticIndicator'];
+    }
+    /**
+     * Sets octNonMoneyTransferDomesticIndicator
+     * @param bool $octNonMoneyTransferDomesticIndicator Indicates whether domestic non-money transfer OCTs (push funds) are allowed. If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.   Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctNonMoneyTransferDomesticIndicator($octNonMoneyTransferDomesticIndicator)
+    {
+        $this->container['octNonMoneyTransferDomesticIndicator'] = $octNonMoneyTransferDomesticIndicator;
+        return $this;
+    }
+    /**
+     * Gets octNonMoneyTransferCrossBorderIndicator
+     * @return bool
+     */
+    public function getOctNonMoneyTransferCrossBorderIndicator()
+    {
+        return $this->container['octNonMoneyTransferCrossBorderIndicator'];
+    }
+    /**
+     * Sets octNonMoneyTransferCrossBorderIndicator
+     * @param bool $octNonMoneyTransferCrossBorderIndicator Indicates whether cross-border non-money transfer OCTs (push funds) are allowed. If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.   Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctNonMoneyTransferCrossBorderIndicator($octNonMoneyTransferCrossBorderIndicator)
+    {
+        $this->container['octNonMoneyTransferCrossBorderIndicator'] = $octNonMoneyTransferCrossBorderIndicator;
+        return $this;
+    }
+    /**
+     * Gets octNonMoneyTransferFastFundsDomesticIndicator
+     * @return bool
+     */
+    public function getOctNonMoneyTransferFastFundsDomesticIndicator()
+    {
+        return $this->container['octNonMoneyTransferFastFundsDomesticIndicator'];
+    }
+    /**
+     * Sets octNonMoneyTransferFastFundsDomesticIndicator
+     * @param bool $octNonMoneyTransferFastFundsDomesticIndicator Indicates whether domestic non-money transfer OCTs (fast push funds) are allowed. If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.   Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctNonMoneyTransferFastFundsDomesticIndicator($octNonMoneyTransferFastFundsDomesticIndicator)
+    {
+        $this->container['octNonMoneyTransferFastFundsDomesticIndicator'] = $octNonMoneyTransferFastFundsDomesticIndicator;
+        return $this;
+    }
+    /**
+     * Gets octNonMoneyTransferFastFundsCrossBorderIndicator
+     * @return bool
+     */
+    public function getOctNonMoneyTransferFastFundsCrossBorderIndicator()
+    {
+        return $this->container['octNonMoneyTransferFastFundsCrossBorderIndicator'];
+    }
+    /**
+     * Sets octNonMoneyTransferFastFundsCrossBorderIndicator
+     * @param bool $octNonMoneyTransferFastFundsCrossBorderIndicator Indicates whether cross-border non-money transfer OCTs (fast push funds) are allowed. If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.   Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctNonMoneyTransferFastFundsCrossBorderIndicator($octNonMoneyTransferFastFundsCrossBorderIndicator)
+    {
+        $this->container['octNonMoneyTransferFastFundsCrossBorderIndicator'] = $octNonMoneyTransferFastFundsCrossBorderIndicator;
+        return $this;
+    }
+    /**
+     * Gets octOnlineGamblingDomesticIndicator
+     * @return bool
+     */
+    public function getOctOnlineGamblingDomesticIndicator()
+    {
+        return $this->container['octOnlineGamblingDomesticIndicator'];
+    }
+    /**
+     * Sets octOnlineGamblingDomesticIndicator
+     * @param bool $octOnlineGamblingDomesticIndicator Indicates whether domestic gambling OCTs (push funds) are allowed. If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.   Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctOnlineGamblingDomesticIndicator($octOnlineGamblingDomesticIndicator)
+    {
+        $this->container['octOnlineGamblingDomesticIndicator'] = $octOnlineGamblingDomesticIndicator;
+        return $this;
+    }
+    /**
+     * Gets octOnlineGamblingCrossBorderIndicator
+     * @return bool
+     */
+    public function getOctOnlineGamblingCrossBorderIndicator()
+    {
+        return $this->container['octOnlineGamblingCrossBorderIndicator'];
+    }
+    /**
+     * Sets octOnlineGamblingCrossBorderIndicator
+     * @param bool $octOnlineGamblingCrossBorderIndicator Indicates whether cross-border gambling OCTs (push funds) are allowed. If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.   Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctOnlineGamblingCrossBorderIndicator($octOnlineGamblingCrossBorderIndicator)
+    {
+        $this->container['octOnlineGamblingCrossBorderIndicator'] = $octOnlineGamblingCrossBorderIndicator;
+        return $this;
+    }
+    /**
+     * Gets octOnlineGamblingFastFundsDomesticIndicator
+     * @return bool
+     */
+    public function getOctOnlineGamblingFastFundsDomesticIndicator()
+    {
+        return $this->container['octOnlineGamblingFastFundsDomesticIndicator'];
+    }
+    /**
+     * Sets octOnlineGamblingFastFundsDomesticIndicator
+     * @param bool $octOnlineGamblingFastFundsDomesticIndicator Indicates whether domestic gambling OCTs (fast push funds) are allowed. If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.   Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctOnlineGamblingFastFundsDomesticIndicator($octOnlineGamblingFastFundsDomesticIndicator)
+    {
+        $this->container['octOnlineGamblingFastFundsDomesticIndicator'] = $octOnlineGamblingFastFundsDomesticIndicator;
+        return $this;
+    }
+    /**
+     * Gets octOnlineGamblingFastFundsCrossBorderIndicator
+     * @return bool
+     */
+    public function getOctOnlineGamblingFastFundsCrossBorderIndicator()
+    {
+        return $this->container['octOnlineGamblingFastFundsCrossBorderIndicator'];
+    }
+    /**
+     * Sets octOnlineGamblingFastFundsCrossBorderIndicator
+     * @param bool $octOnlineGamblingFastFundsCrossBorderIndicator Indicates whether cross-border gambling OCTs (fast push funds) are allowed. If no Funds Transfer Attributes Inquiry data is available for this card account, the field is omitted.   Supported for Visa Direct.
+     * @return $this
+     */
+    public function setOctOnlineGamblingFastFundsCrossBorderIndicator($octOnlineGamblingFastFundsCrossBorderIndicator)
+    {
+        $this->container['octOnlineGamblingFastFundsCrossBorderIndicator'] = $octOnlineGamblingFastFundsCrossBorderIndicator;
+        return $this;
     }
     /**
      * Gets serviceProcessingType

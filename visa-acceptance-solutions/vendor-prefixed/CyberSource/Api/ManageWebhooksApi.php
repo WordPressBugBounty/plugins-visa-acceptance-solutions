@@ -126,7 +126,7 @@ class ManageWebhooksApi
         $queryParams = [];
         $headerParams = [];
         $formParams = [];
-        $_header_accept = $this->apiClient->selectHeaderAccept(['application/hal+json;charset=utf-8']);
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json;charset=utf-8']);
         if (!is_null($_header_accept)) {
             $headerParams['Accept'] = $_header_accept;
         }
@@ -188,7 +188,7 @@ class ManageWebhooksApi
      *
      * @param string $webhookId The webhook Identifier (required)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
-     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2016, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2018, HTTP status code, HTTP response headers (array of strings)
      */
     public function getWebhookSubscriptionById($webhookId)
     {
@@ -205,7 +205,7 @@ class ManageWebhooksApi
      *
      * @param string $webhookId The webhook Identifier (required)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
-     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2016, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2018, HTTP status code, HTTP response headers (array of strings)
      */
     public function getWebhookSubscriptionByIdWithHttpInfo($webhookId)
     {
@@ -220,7 +220,7 @@ class ManageWebhooksApi
         $queryParams = [];
         $headerParams = [];
         $formParams = [];
-        $_header_accept = $this->apiClient->selectHeaderAccept(['application/hal+json;charset=utf-8']);
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json;charset=utf-8']);
         if (!is_null($_header_accept)) {
             $headerParams['Accept'] = $_header_accept;
         }
@@ -260,18 +260,18 @@ class ManageWebhooksApi
             }
             self::$logger->debug("Body Parameter :\n" . $printHttpBody);
         }
-        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse2016");
+        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse2018");
         // Response MLE check
         $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "getWebhookSubscriptionById,getWebhookSubscriptionByIdWithHttpInfo");
         // make the API Call
         try {
-            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'GET', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2016', '/notification-subscriptions/v2/webhooks/{webhookId}', $isResponseMLEForAPI);
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'GET', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2018', '/notification-subscriptions/v2/webhooks/{webhookId}', $isResponseMLEForAPI);
             self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
-            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2016', $httpHeader), $statusCode, $httpHeader];
+            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2018', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2016', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2018', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
             }
@@ -322,7 +322,7 @@ class ManageWebhooksApi
         $queryParams = [];
         $headerParams = [];
         $formParams = [];
-        $_header_accept = $this->apiClient->selectHeaderAccept(['application/hal+json;charset=utf-8']);
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json;charset=utf-8']);
         if (!is_null($_header_accept)) {
             $headerParams['Accept'] = $_header_accept;
         }
@@ -399,7 +399,7 @@ class ManageWebhooksApi
      *
      * @param string $webhookId The Webhook Identifier. (required)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
-     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2017, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019, HTTP status code, HTTP response headers (array of strings)
      */
     public function notificationSubscriptionsV1WebhooksWebhookIdPost($webhookId)
     {
@@ -416,7 +416,7 @@ class ManageWebhooksApi
      *
      * @param string $webhookId The Webhook Identifier. (required)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
-     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2017, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019, HTTP status code, HTTP response headers (array of strings)
      */
     public function notificationSubscriptionsV1WebhooksWebhookIdPostWithHttpInfo($webhookId)
     {
@@ -431,7 +431,7 @@ class ManageWebhooksApi
         $queryParams = [];
         $headerParams = [];
         $formParams = [];
-        $_header_accept = $this->apiClient->selectHeaderAccept(['application/hal+json;charset=utf-8']);
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json;charset=utf-8']);
         if (!is_null($_header_accept)) {
             $headerParams['Accept'] = $_header_accept;
         }
@@ -471,18 +471,18 @@ class ManageWebhooksApi
             }
             self::$logger->debug("Body Parameter :\n" . $printHttpBody);
         }
-        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse2017");
+        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse2019");
         // Response MLE check
         $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "notificationSubscriptionsV1WebhooksWebhookIdPost,notificationSubscriptionsV1WebhooksWebhookIdPostWithHttpInfo");
         // make the API Call
         try {
-            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'POST', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2017', '/notification-subscriptions/v1/webhooks/{webhookId}', $isResponseMLEForAPI);
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'POST', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019', '/notification-subscriptions/v1/webhooks/{webhookId}', $isResponseMLEForAPI);
             self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
-            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2017', $httpHeader), $statusCode, $httpHeader];
+            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 201:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2017', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2019', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
             }
@@ -531,7 +531,7 @@ class ManageWebhooksApi
         $queryParams = [];
         $headerParams = [];
         $formParams = [];
-        $_header_accept = $this->apiClient->selectHeaderAccept(['application/hal+json;charset=utf-8']);
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json;charset=utf-8']);
         if (!is_null($_header_accept)) {
             $headerParams['Accept'] = $_header_accept;
         }
@@ -640,7 +640,7 @@ class ManageWebhooksApi
         $queryParams = [];
         $headerParams = [];
         $formParams = [];
-        $_header_accept = $this->apiClient->selectHeaderAccept(['application/hal+json;charset=utf-8']);
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json;charset=utf-8']);
         if (!is_null($_header_accept)) {
             $headerParams['Accept'] = $_header_accept;
         }
@@ -709,17 +709,17 @@ class ManageWebhooksApi
      *
      * Message Level Encryption
      *
-     * @param string $vCSenderOrganizationId Sender organization id (required)
-     * @param string $vCPermissions Encoded user permissions returned by the CGK, for the entity user who initiated the boarding (required)
      * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\SaveAsymEgressKey $saveAsymEgressKey Provide egress Asymmetric key information to save (create or store) (required)
      * @param string $vCCorrelationId A globally unique id associated with your request (optional)
+     * @param string $vCSenderOrganizationId Sender organization id (optional)
+     * @param string $vCPermissions Encoded user permissions returned by the CGK, for the entity user who initiated the boarding (optional)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
-     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2018, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20110, HTTP status code, HTTP response headers (array of strings)
      */
-    public function saveAsymEgressKey($vCSenderOrganizationId, $vCPermissions, $saveAsymEgressKey, $vCCorrelationId = null)
+    public function saveAsymEgressKey($saveAsymEgressKey, $vCCorrelationId = null, $vCSenderOrganizationId = null, $vCPermissions = null)
     {
         self::$logger->info('CALL TO METHOD saveAsymEgressKey STARTED');
-        list($response, $statusCode, $httpHeader) = $this->saveAsymEgressKeyWithHttpInfo($vCSenderOrganizationId, $vCPermissions, $saveAsymEgressKey, $vCCorrelationId);
+        list($response, $statusCode, $httpHeader) = $this->saveAsymEgressKeyWithHttpInfo($saveAsymEgressKey, $vCCorrelationId, $vCSenderOrganizationId, $vCPermissions);
         self::$logger->info('CALL TO METHOD saveAsymEgressKey ENDED');
         self::$logger->close();
         return [$response, $statusCode, $httpHeader];
@@ -729,25 +729,15 @@ class ManageWebhooksApi
      *
      * Message Level Encryption
      *
-     * @param string $vCSenderOrganizationId Sender organization id (required)
-     * @param string $vCPermissions Encoded user permissions returned by the CGK, for the entity user who initiated the boarding (required)
      * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\SaveAsymEgressKey $saveAsymEgressKey Provide egress Asymmetric key information to save (create or store) (required)
      * @param string $vCCorrelationId A globally unique id associated with your request (optional)
+     * @param string $vCSenderOrganizationId Sender organization id (optional)
+     * @param string $vCPermissions Encoded user permissions returned by the CGK, for the entity user who initiated the boarding (optional)
      * @throws \Pymt_Vas\Dependencies\CyberSource\ApiException on non-2xx response
-     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2018, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20110, HTTP status code, HTTP response headers (array of strings)
      */
-    public function saveAsymEgressKeyWithHttpInfo($vCSenderOrganizationId, $vCPermissions, $saveAsymEgressKey, $vCCorrelationId = null)
+    public function saveAsymEgressKeyWithHttpInfo($saveAsymEgressKey, $vCCorrelationId = null, $vCSenderOrganizationId = null, $vCPermissions = null)
     {
-        // verify the required parameter 'vCSenderOrganizationId' is set
-        if ($vCSenderOrganizationId === null) {
-            self::$logger->error("InvalidArgumentException : Missing the required parameter {$vCSenderOrganizationId} when calling saveAsymEgressKey");
-            throw new \InvalidArgumentException('Missing the required parameter $vCSenderOrganizationId when calling saveAsymEgressKey');
-        }
-        // verify the required parameter 'vCPermissions' is set
-        if ($vCPermissions === null) {
-            self::$logger->error("InvalidArgumentException : Missing the required parameter {$vCPermissions} when calling saveAsymEgressKey");
-            throw new \InvalidArgumentException('Missing the required parameter $vCPermissions when calling saveAsymEgressKey');
-        }
         // verify the required parameter 'saveAsymEgressKey' is set
         if ($saveAsymEgressKey === null) {
             self::$logger->error("InvalidArgumentException : Missing the required parameter {$saveAsymEgressKey} when calling saveAsymEgressKey");
@@ -759,7 +749,7 @@ class ManageWebhooksApi
         $queryParams = [];
         $headerParams = [];
         $formParams = [];
-        $_header_accept = $this->apiClient->selectHeaderAccept(['application/hal+json;charset=utf-8']);
+        $_header_accept = $this->apiClient->selectHeaderAccept(['application/json;charset=utf-8']);
         if (!is_null($_header_accept)) {
             $headerParams['Accept'] = $_header_accept;
         }
@@ -812,18 +802,18 @@ class ManageWebhooksApi
             }
             self::$logger->debug("Body Parameter :\n" . $printHttpBody);
         }
-        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse2018");
+        self::$logger->debug("Return Type : \\CyberSource\\Model\\InlineResponse20110");
         // Response MLE check
         $isResponseMLEForAPI = MLEUtility::checkIsResponseMLEForAPI($this->apiClient->merchantConfig, "saveAsymEgressKey,saveAsymEgressKeyWithHttpInfo");
         // make the API Call
         try {
-            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'POST', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2018', '/kms/egress/v2/keys-asym', $isResponseMLEForAPI);
+            list($response, $statusCode, $httpHeader) = $this->apiClient->callApi($resourcePath, 'POST', $queryParams, $httpBody, $headerParams, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20110', '/kms/egress/v2/keys-asym', $isResponseMLEForAPI);
             self::$logger->debug("Response Headers :\n" . \Pymt_Vas\Dependencies\CyberSource\Utilities\Helpers\ListHelper::toString($httpHeader));
-            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2018', $httpHeader), $statusCode, $httpHeader];
+            return [$this->apiClient->getSerializer()->deserialize($response, '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20110', $httpHeader), $statusCode, $httpHeader];
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 201:
-                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2018', $e->getResponseHeaders());
+                    $data = $this->apiClient->getSerializer()->deserialize($e->getResponseBody(), '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse20110', $e->getResponseHeaders());
                     $e->setResponseObject($data);
                     break;
             }

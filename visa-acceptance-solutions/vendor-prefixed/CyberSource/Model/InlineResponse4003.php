@@ -48,12 +48,12 @@ class InlineResponse4003 implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['submitTimeUtc' => 'string', 'status' => 'string', 'reason' => 'string', 'message' => 'string', 'details' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseErrorInformationDetails[]'];
+    protected static $swaggerTypes = ['id' => 'string', 'submitTimeStampUtc' => 'string', 'status' => 'string', 'reason' => 'string', 'message' => 'string', 'details' => '\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013ErrorInformationDetails[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['submitTimeUtc' => null, 'status' => null, 'reason' => null, 'message' => null, 'details' => null];
+    protected static $swaggerFormats = ['id' => null, 'submitTimeStampUtc' => null, 'status' => null, 'reason' => null, 'message' => null, 'details' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class InlineResponse4003 implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['submitTimeUtc' => 'submitTimeUtc', 'status' => 'status', 'reason' => 'reason', 'message' => 'message', 'details' => 'details'];
+    protected static $attributeMap = ['id' => 'id', 'submitTimeStampUtc' => 'submitTimeStampUtc', 'status' => 'status', 'reason' => 'reason', 'message' => 'message', 'details' => 'details'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['submitTimeUtc' => 'setSubmitTimeUtc', 'status' => 'setStatus', 'reason' => 'setReason', 'message' => 'setMessage', 'details' => 'setDetails'];
+    protected static $setters = ['id' => 'setId', 'submitTimeStampUtc' => 'setSubmitTimeStampUtc', 'status' => 'setStatus', 'reason' => 'setReason', 'message' => 'setMessage', 'details' => 'setDetails'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['submitTimeUtc' => 'getSubmitTimeUtc', 'status' => 'getStatus', 'reason' => 'getReason', 'message' => 'getMessage', 'details' => 'getDetails'];
+    protected static $getters = ['id' => 'getId', 'submitTimeStampUtc' => 'getSubmitTimeStampUtc', 'status' => 'getStatus', 'reason' => 'getReason', 'message' => 'getMessage', 'details' => 'getDetails'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -100,7 +100,8 @@ class InlineResponse4003 implements ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['submitTimeUtc'] = isset($data['submitTimeUtc']) ? $data['submitTimeUtc'] : null;
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        $this->container['submitTimeStampUtc'] = isset($data['submitTimeStampUtc']) ? $data['submitTimeStampUtc'] : null;
         $this->container['status'] = isset($data['status']) ? $data['status'] : null;
         $this->container['reason'] = isset($data['reason']) ? $data['reason'] : null;
         $this->container['message'] = isset($data['message']) ? $data['message'] : null;
@@ -127,21 +128,39 @@ class InlineResponse4003 implements ArrayAccess
         return true;
     }
     /**
-     * Gets submitTimeUtc
+     * Gets id
      * @return string
      */
-    public function getSubmitTimeUtc()
+    public function getId()
     {
-        return $this->container['submitTimeUtc'];
+        return $this->container['id'];
     }
     /**
-     * Sets submitTimeUtc
-     * @param string $submitTimeUtc Time of request in UTC. Format: `YYYY-MM-DDThh:mm:ssZ` **Example** `2016-08-11T22:47:57Z` equals August 11, 2016, at 22:47:57 (10:47:57 p.m.). The `T` separates the date and the time. The `Z` indicates UTC.  Returned by Cybersource for all services.
+     * Sets id
+     * @param string $id A unique identification number to identify the submitted request. It is also appended to the endpoint of the resource.
      * @return $this
      */
-    public function setSubmitTimeUtc($submitTimeUtc)
+    public function setId($id)
     {
-        $this->container['submitTimeUtc'] = $submitTimeUtc;
+        $this->container['id'] = $id;
+        return $this;
+    }
+    /**
+     * Gets submitTimeStampUtc
+     * @return string
+     */
+    public function getSubmitTimeStampUtc()
+    {
+        return $this->container['submitTimeStampUtc'];
+    }
+    /**
+     * Sets submitTimeStampUtc
+     * @param string $submitTimeStampUtc Time of request in UTC. Format: `YYYY-MM-DD'T'HH:mm:ssZ`  Example: `2016-08-11T22:47:57Z` equals August 11, 2016, at 22:47:57 (10:47:57 p.m.). The T separates the date and the time. The Z indicates UTC.
+     * @return $this
+     */
+    public function setSubmitTimeStampUtc($submitTimeStampUtc)
+    {
+        $this->container['submitTimeStampUtc'] = $submitTimeStampUtc;
         return $this;
     }
     /**
@@ -154,7 +173,7 @@ class InlineResponse4003 implements ArrayAccess
     }
     /**
      * Sets status
-     * @param string $status The status of the submitted transaction.  Possible values:  - INVALID_REQUEST
+     * @param string $status Possible values: - INVALID_REQUEST
      * @return $this
      */
     public function setStatus($status)
@@ -172,7 +191,7 @@ class InlineResponse4003 implements ArrayAccess
     }
     /**
      * Sets reason
-     * @param string $reason The reason of the status.  Possible values:  - MISSING_FIELD  - INVALID_DATA  - DUPLICATE_REQUEST  - INVALID_MERCHANT_CONFIGURATION
+     * @param string $reason The reason of the status.  Possible values: - INVALID_DATA - MISSING_FIELD
      * @return $this
      */
     public function setReason($reason)
@@ -200,7 +219,7 @@ class InlineResponse4003 implements ArrayAccess
     }
     /**
      * Gets details
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseErrorInformationDetails[]
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013ErrorInformationDetails[]
      */
     public function getDetails()
     {
@@ -208,7 +227,7 @@ class InlineResponse4003 implements ArrayAccess
     }
     /**
      * Sets details
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2PaymentsPost201ResponseErrorInformationDetails[] $details
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\InlineResponse2013ErrorInformationDetails[] $details
      * @return $this
      */
     public function setDetails($details)

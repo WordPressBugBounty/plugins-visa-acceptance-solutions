@@ -466,6 +466,7 @@ class ApiClient
                     // if response is a string
                     $data = $http_body;
                 }
+                self::$logger->error("Response info: " . print_r($response_info, true));
                 self::$logger->error("ApiException : [" . $response_info['http_code'] . "] Error connecting to the API ({$url})");
                 self::$logger->close();
                 throw new ApiException("[" . $response_info['http_code'] . "] Error connecting to the API ({$url})", $response_info['http_code'], $http_header, $data);
@@ -632,11 +633,11 @@ class ApiClient
     {
         $merchantConfig = $this->merchantConfig;
         $authentication = new Authentication($merchantConfig->getLogConfiguration());
-        $getToken = $authentication->generateToken($resourcePath, $postData, $method, $merchantConfig, $isResponseMLEForAPI);
+        $date = gmdate("D, d M Y H:i:s ") . GlobalParameter::GMT;
+        $getToken = $authentication->generateToken($resourcePath, $postData, $method, $merchantConfig, $date, $isResponseMLEForAPI);
         if ($merchantConfig->getAuthenticationType() == GlobalParameter::HTTP_SIGNATURE) {
             $host = "Host:" . $merchantConfig->getHost();
             $vcMerchant = "v-c-merchant-id:" . $merchantConfig->getMerchantID();
-            $date = date("D, d M Y G:i:s ") . GlobalParameter::GMT;
             $headers = array($vcMerchant, $getToken, $host, 'Date:' . $date);
         } else if ($merchantConfig->getAuthenticationType() == GlobalParameter::JWT) {
             $headers = array('Authorization:' . $getToken);
@@ -645,6 +646,12 @@ class ApiClient
         } else {
             self::$logger->error("InvalidArgumentException : Invalid Authentication Type : " . $merchantConfig->getAuthenticationType());
             throw new \InvalidArgumentException("Invalid Authentication Type : " . $merchantConfig->getAuthenticationType());
+        }
+        $vcSDKTelemetryMerchant = "v-c-sdk-telemetry-merchant-id:" . $merchantConfig->getMerchantID();
+        array_push($headers, $vcSDKTelemetryMerchant);
+        if ($merchantConfig->getIsSDK() === true) {
+            $vcSDKTelemetryMCP = "v-c-sdk-telemetry-mcp:true";
+            array_push($headers, $vcSDKTelemetryMCP);
         }
         array_push($headers, "v-c-client-id:" . $this->clientId);
         // if ($merchantConfig->getSolutionId() != null && trim($merchantConfig->getSolutionId() ?? '') != '')

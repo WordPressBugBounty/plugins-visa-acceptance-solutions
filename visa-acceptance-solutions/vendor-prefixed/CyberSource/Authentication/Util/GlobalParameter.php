@@ -17,6 +17,11 @@ class GlobalParameter
     const MUTUAL_AUTH = "MUTUAL_AUTH";
     const GMT = "GMT";
     const HMACSHA256 = "HmacSHA256";
+    /* JWT Key Type constants — determines which credentials JWT uses for signing */
+    const JWT_KEY_TYPE_P12 = "P12";
+    const JWT_KEY_TYPE_SHARED_SECRET = "SHARED_SECRET";
+    const HS256 = "HS256";
+    const INVALID_JWT_KEY_TYPE = "Invalid Value for jwtKeyType in merchant configuration. Value must be 'P12' or 'SHARED_SECRET'. ";
     const DEFAULT_LOG_FILE = "Cybs.log";
     const DEFAULT_LOG_DIR = "Log";
     const DEFAULT_LOG_FILE_SIZE = "1048576";

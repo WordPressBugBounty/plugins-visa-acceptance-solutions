@@ -49,12 +49,12 @@ class Ucv1sessionsCompleteMandate implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['type' => 'string', 'tms' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsCompleteMandateTms', 'decisionManager' => 'bool', 'consumerAuthentication' => 'string'];
+    protected static $swaggerTypes = ['type' => 'string', 'tms' => '\Pymt_Vas\Dependencies\CyberSource\Model\Ucv1sessionsCompleteMandateTms', 'decisionManager' => 'bool', 'consumerAuthentication' => 'string', 'suppress' => 'bool'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['type' => null, 'tms' => null, 'decisionManager' => null, 'consumerAuthentication' => null];
+    protected static $swaggerFormats = ['type' => null, 'tms' => null, 'decisionManager' => null, 'consumerAuthentication' => null, 'suppress' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -67,17 +67,17 @@ class Ucv1sessionsCompleteMandate implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['type' => 'type', 'tms' => 'tms', 'decisionManager' => 'decisionManager', 'consumerAuthentication' => 'consumerAuthentication'];
+    protected static $attributeMap = ['type' => 'type', 'tms' => 'tms', 'decisionManager' => 'decisionManager', 'consumerAuthentication' => 'consumerAuthentication', 'suppress' => 'suppress'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['type' => 'setType', 'tms' => 'setTms', 'decisionManager' => 'setDecisionManager', 'consumerAuthentication' => 'setConsumerAuthentication'];
+    protected static $setters = ['type' => 'setType', 'tms' => 'setTms', 'decisionManager' => 'setDecisionManager', 'consumerAuthentication' => 'setConsumerAuthentication', 'suppress' => 'setSuppress'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['type' => 'getType', 'tms' => 'getTms', 'decisionManager' => 'getDecisionManager', 'consumerAuthentication' => 'getConsumerAuthentication'];
+    protected static $getters = ['type' => 'getType', 'tms' => 'getTms', 'decisionManager' => 'getDecisionManager', 'consumerAuthentication' => 'getConsumerAuthentication', 'suppress' => 'getSuppress'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -105,6 +105,7 @@ class Ucv1sessionsCompleteMandate implements ArrayAccess
         $this->container['tms'] = isset($data['tms']) ? $data['tms'] : null;
         $this->container['decisionManager'] = isset($data['decisionManager']) ? $data['decisionManager'] : null;
         $this->container['consumerAuthentication'] = isset($data['consumerAuthentication']) ? $data['consumerAuthentication'] : null;
+        $this->container['suppress'] = isset($data['suppress']) ? $data['suppress'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -190,12 +191,30 @@ class Ucv1sessionsCompleteMandate implements ArrayAccess
     }
     /**
      * Sets consumerAuthentication
-     * @param string $consumerAuthentication Configure Unified Checkout to determine whether Consumer Authentication is invoked during service orchestration.  Possible values:  - NONE  - 3DS<br><br>  Setting this value to 3DS will attempt to perform authentication using the Payer Authentication Service. Setting this value to NONE indicates that you do not wish to perform authentication using the Payer Authentication Service.<br><br>  Optional field: This field can be configured through the Merchant Experience screens in the Business Center. The configured value may be overridden on a per‑transaction basis in the uc/v1/sessions API request.
+     * @param string $consumerAuthentication Configure Unified Checkout to determine whether Consumer Authentication is invoked during service orchestration.  Possible values:   - PASSKEY  - 3DS  - NONE<br><br>  Setting this value to PASSKEY performs Payer Authentication with an existing Visa Payment Passkey or create a new Passkey (Post a traditional 3DS Authentication) attempt to perform authentication using the Payer Authentication Service.<br> Setting this value to 3DS will attempt to perform authentication using the Payer Authentication Service.<br> Setting this value to NONE indicates that you do not wish to perform authentication using the Payer Authentication Service.<br><br>  Optional field: This field can be configured through the Merchant Experience screens in the Business Center. The configured value may be overridden on a per‑transaction basis in the uc/v1/sessions API request.
      * @return $this
      */
     public function setConsumerAuthentication($consumerAuthentication)
     {
         $this->container['consumerAuthentication'] = $consumerAuthentication;
+        return $this;
+    }
+    /**
+     * Gets suppress
+     * @return bool
+     */
+    public function getSuppress()
+    {
+        return $this->container['suppress'];
+    }
+    /**
+     * Sets suppress
+     * @param bool $suppress Controls whether the Complete Mandate experience or related processing is suppressed.
+     * @return $this
+     */
+    public function setSuppress($suppress)
+    {
+        $this->container['suppress'] = $suppress;
         return $this;
     }
     /**

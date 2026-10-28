@@ -49,7 +49,7 @@ class ShippingAddressListForCustomerEmbedded implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['shippingAddresses' => '\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddress[]'];
+    protected static $swaggerTypes = ['shippingAddresses' => '\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddress[]'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -125,7 +125,7 @@ class ShippingAddressListForCustomerEmbedded implements ArrayAccess
     }
     /**
      * Gets shippingAddresses
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddress[]
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddress[]
      */
     public function getShippingAddresses()
     {
@@ -133,7 +133,7 @@ class ShippingAddressListForCustomerEmbedded implements ArrayAccess
     }
     /**
      * Sets shippingAddresses
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\Tmsv2tokenizeTokenInformationCustomerEmbeddedDefaultShippingAddress[] $shippingAddresses
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\DefaultShippingAddress[] $shippingAddresses
      * @return $this
      */
     public function setShippingAddresses($shippingAddresses)

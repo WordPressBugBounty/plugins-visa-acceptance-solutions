@@ -35,6 +35,7 @@ use Pymt_Vas\Dependencies\CyberSource\Configuration;
 use Pymt_Vas\Dependencies\CyberSource\Logging\LogConfiguration;
 use Pymt_Vas\Dependencies\CyberSource\ApiClient as CyberSourceClient;
 use Pymt_Vas\Dependencies\CyberSource\Api\TransactionDetailsApi;
+use Pymt_Vas\Dependencies\CyberSource\Api\PaymentsApi;
 
 /**
  * Visa Acceptance Payment Adapter Class
@@ -62,15 +63,21 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
      *
      * Configure Merchant Configuration for payment methods.
      *
-     * @param bool $authentication_type Authentication type flag.
-     * @return string $merchant_configuration.
+     * @param bool      $authentication_type Authentication type flag.
+     * @param bool|null $use_mle Optional. Override MLE usage. If null, uses plugin settings.
+     * @return array Array of [$configuration, $merchant_configuration].
      */
-    public function get_merchant_configuration($authentication_type) {
+    public function get_merchant_configuration($authentication_type, $use_mle = null) {
+		
         $unified_checkout       = new Visa_Acceptance_Payment_Gateway_Unified_Checkout();
         $settings               = $unified_checkout->get_config_settings();
+        
+        $enable_response_mle = isset( $settings['enable_response_mle'] ) && ( VISA_ACCEPTANCE_YES === $settings['enable_response_mle'] );
         $merchant_configuration = new MerchantConfiguration();
         $configuration          = new Configuration();
-        $merchant_configuration->setAuthenticationType( 'HTTP_SIGNATURE' );
+        $merchant_configuration->setAuthenticationType( 'JWT' );
+        $merchant_configuration->setJwtKeyType( 'SHARED_SECRET' );
+        
         if ( VISA_ACCEPTANCE_ENVIRONMENT_TEST === $settings[VISA_ACCEPTANCE_ENVIRONMENT] ) {
             $merchant_configuration->setRunEnvironment( VISA_ACCEPTANCE_REQUEST_HOST_APITEST );
             $configuration->setHost( VISA_ACCEPTANCE_REQUEST_HOST_APITEST );
@@ -84,34 +91,86 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
             $merchant_configuration->setApiKeyID( $settings['api_key'] );
             $merchant_configuration->setSecretKey( $settings['api_shared_secret'] );
         }
-        if ( isset($settings['enable_mle']) && (VISA_ACCEPTANCE_YES === $settings['enable_mle'])) {
-            $merchant_configuration->setEnableRequestMLEForOptionalApisGlobally( true );
-            if($authentication_type) {
-                $merchant_configuration->setAuthenticationType( 'HTTP_SIGNATURE' );
-            } else {
-                $merchant_configuration->setAuthenticationType( 'JWT' );
-            }
-            $certificate_path = str_replace( '\\', '/', $settings['mle_certificate_path']);
-            $merchant_configuration->setKeysDirectory( $certificate_path );
-            $merchant_configuration->setKeyFileName( $settings['mle_filename'] );
-            $merchant_configuration->setKeyPassword( $settings['mle_key_password'] );
+		$merchant_configuration->setEnableRequestMLEForOptionalApisGlobally( true );
+		$mle_request_cert_path = $this->getRequestMleCertPath($settings);
+		if (!empty($mle_request_cert_path)) {
+			$merchant_configuration->setMleForRequestPublicCertPath($mle_request_cert_path);
+		}
+		$merchant_configuration->setRequestMleKeyAlias('CyberSource_SJC_US');
+
+		// Configure Response MLE if enabled.
+        if ( $enable_response_mle ) {
+            $merchant_configuration->setEnableResponseMleGlobally( true );
+			$merchant_configuration->setResponseMlePrivateKeyFilePath( $settings['mle_certificate_path'] );
+			$merchant_configuration->setResponseMlePrivateKeyFilePassword( $settings['mle_key_password'] );
         } else {
-            $merchant_configuration->setEnableRequestMLEForOptionalApisGlobally( false );
+            $merchant_configuration->setEnableResponseMleGlobally( false );
         }
-        $merchant_configuration->setDefaultDeveloperId( VISA_ACCEPTANCE_DEVELOPER_ID );
         $merchant_configuration->setSolutionId( VISA_ACCEPTANCE_SOLUTION_ID );
         $merchant_configuration->setLogConfiguration( new LogConfiguration() );
         return [$configuration, $merchant_configuration];
     }
 
 	/**
+	 * Get the path to the extracted PEM certificate from the .p12 file.
+	 *
+	 * @param array $settings Gateway settings containing MLE certificate path and password.
+	 * @return string|null Path to the extracted PEM certificate, or null if no path configured.
+	 * @throws \Exception When the configured key file path is invalid or the password is incorrect.
+	 */
+	private function getRequestMleCertPath($settings) {
+		$p12_path = $settings['mle_certificate_path'] ?? '';
+		$p12_password = $settings['mle_key_password'] ?? '';
+
+		if (empty($p12_path)) {
+		return null;
+		}
+
+		if (!file_exists($p12_path) || !is_readable($p12_path)) {
+		throw new \Exception( 'Request MLE: Key file not found or not readable: ' . esc_html( $p12_path ) );
+		}
+
+		// Cache the extracted PEM cert alongside the .p12 to avoid repeated extraction.
+		$pem_cache_path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'mle_request_cert_' . md5($p12_path . $p12_password) . '.pem';
+		// Re-extract if cache doesn't exist or .p12 is newer.
+		if (!file_exists($pem_cache_path) || filemtime($p12_path) > filemtime($pem_cache_path)) {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading local certificate file for OpenSSL processing.
+		$p12_content = file_get_contents($p12_path);
+		$certs = array();
+		if (!openssl_pkcs12_read($p12_content, $certs, $p12_password)) {
+			throw new \Exception( 'Request MLE: Failed to read key file. The key file path or password may be incorrect.' );
+		}
+		
+		// Collect all certificates from the .p12 (main cert + extra certs).
+		$all_pem_certs = '';
+		if (!empty($certs['cert'])) {
+			$all_pem_certs .= $certs['cert'];
+		}
+		if (!empty($certs['extracerts']) && is_array($certs['extracerts'])) {
+			foreach ($certs['extracerts'] as $extra_cert) {
+			$all_pem_certs .= $extra_cert;
+			}
+		}
+		
+		if (empty($all_pem_certs)) {
+			throw new \Exception( 'Request MLE: No certificate found in key file.' );
+		}
+		
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Writing local certificate cache file.
+		file_put_contents($pem_cache_path, $all_pem_certs);
+		}
+		return $pem_cache_path;
+	}
+	
+	/**
      * Api Client function.
      *
      * @param bool $authentication_type Authentication type.
-     * @return string $api_client
+     * @param bool $use_mle Whether to use MLE encryption (default: null = use settings).
+     * @return CyberSourceClient API client.
      */
-    public function get_api_client($authentication_type = false) {
-        $merchant_config = $this->get_merchant_configuration($authentication_type);
+    public function get_api_client($authentication_type = false, $use_mle = null) {
+        $merchant_config = $this->get_merchant_configuration($authentication_type, $use_mle);
         $api_client      = new CyberSourceClient($merchant_config[VISA_ACCEPTANCE_VAL_ZERO], $merchant_config[VISA_ACCEPTANCE_VAL_ONE]);
         return $api_client;
     }
@@ -163,26 +222,42 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * @return array
 	 */
 	public function get_billing_information( $order ) {
-		$order_billing       = $order->get_data();
-		$bill_to_information = array(
-			'firstName'          => $order_billing['billing']['first_name'],
-			'lastName'           => $order_billing['billing']['last_name'],
-			'address1'           => $order_billing['billing']['address_1'],
-			'postalCode'         => $order_billing['billing']['postcode'],
-			'locality'           => $order_billing['billing']['city'],
-			'administrativeArea' => $order_billing['billing']['state'],
-			'country'            => $order_billing['billing']['country'],
-			'email'              => $order_billing['billing']['email'],
-		);
-		// Only include optional fields when non-empty; empty strings cause INVALID_DATA.
-		if ( ! empty( $order_billing['billing']['address_2'] ) ) {
-			$bill_to_information['address2'] = $order_billing['billing']['address_2'];
-		}
-		if ( ! empty( $order_billing['billing']['phone'] ) ) {
-			$bill_to_information['phoneNumber'] = $order_billing['billing']['phone'];
-		}
-		return $bill_to_information;
-	}
+  $b = $order->get_data()['billing'];
+
+  // For BO orders the customer profile may be incomplete; fall back to WC_Customer account data.
+  $customer_id = $order->get_customer_id();
+  if ( $customer_id ) {
+   $wc_customer = new \WC_Customer( $customer_id );
+   if ( empty( $b['first_name'] ) ) { $b['first_name'] = $wc_customer->get_billing_first_name(); }
+   if ( empty( $b['last_name'] ) )  { $b['last_name']  = $wc_customer->get_billing_last_name(); }
+   if ( empty( $b['address_1'] ) )  { $b['address_1']  = $wc_customer->get_billing_address_1(); }
+   if ( empty( $b['city'] ) )       { $b['city']       = $wc_customer->get_billing_city(); }
+   if ( empty( $b['phone'] ) )      { $b['phone']      = $wc_customer->get_billing_phone(); }
+   if ( empty( $b['postcode'] ) )   { $b['postcode']   = $wc_customer->get_billing_postcode(); }
+   if ( empty( $b['state'] ) )      { $b['state']      = $wc_customer->get_billing_state(); }
+   if ( empty( $b['country'] ) )    { $b['country']    = $wc_customer->get_billing_country(); }
+   if ( empty( $b['email'] ) )      { $b['email']      = $wc_customer->get_billing_email(); }
+  }
+
+  $bill_to_information = array(
+   'firstName'          => $b['first_name'],
+   'lastName'           => $b['last_name'],
+   'address1'           => $b['address_1'],
+   'postalCode'         => $b['postcode'],
+   'locality'           => $b['city'],
+   'administrativeArea' => $b['state'],
+   'country'            => $b['country'],
+   'email'              => $b['email'],
+  );
+  if ( ! empty( $b['address_2'] ) ) {
+   $bill_to_information['address2'] = $b['address_2'];
+  }
+  if ( ! empty( $b['phone'] ) ) {
+   $bill_to_information['phoneNumber'] = $b['phone'];
+  }
+  // Strip any remaining empty strings to prevent CyberSource MISSING_FIELD errors.
+  return array_filter( $bill_to_information, function( $v ) { return '' !== (string) $v; } );
+ }
 
 	/**
 	 * Gets shipping information.
@@ -191,64 +266,85 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * @return array
 	 */
 	public function get_shipping_information( $order ) {
-		$order_shipping = $order->get_data();
+  $order_data = $order->get_data();
+  $s          = $order_data['shipping'];
 
-		// If no shipping address is set (e.g. virtual products), return null so shipTo is omitted entirely.
-		if ( empty( $order_shipping['shipping']['address_1'] ) && empty( $order_shipping['shipping']['first_name'] ) ) {
-			return null;
-		}
+  // Fall back to WC_Customer account data for any empty shipping fields (common in BO orders).
+  $customer_id = $order->get_customer_id();
+  if ( $customer_id ) {
+   $wc_customer = new \WC_Customer( $customer_id );
+   if ( empty( $s['first_name'] ) ) { $s['first_name'] = $wc_customer->get_shipping_first_name(); }
+   if ( empty( $s['last_name'] ) )  { $s['last_name']  = $wc_customer->get_shipping_last_name(); }
+   if ( empty( $s['address_1'] ) )  { $s['address_1']  = $wc_customer->get_shipping_address_1(); }
+   if ( empty( $s['city'] ) )       { $s['city']       = $wc_customer->get_shipping_city(); }
+   if ( empty( $s['postcode'] ) )   { $s['postcode']   = $wc_customer->get_shipping_postcode(); }
+   if ( empty( $s['state'] ) )      { $s['state']      = $wc_customer->get_shipping_state(); }
+   if ( empty( $s['country'] ) )    { $s['country']    = $wc_customer->get_shipping_country(); }
+  }
 
-		$ship_to_information = array(
-			'firstName'          => $order_shipping['shipping']['first_name'],
-			'lastName'           => $order_shipping['shipping']['last_name'],
-			'address1'           => $order_shipping['shipping']['address_1'],
-			'postalCode'         => $order_shipping['shipping']['postcode'],
-			'locality'           => $order_shipping['shipping']['city'],
-			'administrativeArea' => $order_shipping['shipping']['state'],
-			'country'            => $order_shipping['shipping']['country'],
-			'email'              => $order_shipping['billing']['email'],
-		);
-		// Only include optional fields when non-empty; empty strings cause INVALID_DATA.
-		if ( ! empty( $order_shipping['shipping']['address_2'] ) ) {
-			$ship_to_information['address2'] = $order_shipping['shipping']['address_2'];
-		}
-		if ( ! empty( $order_shipping['shipping']['phone'] ) ) {
-			$ship_to_information['phoneNumber'] = $order_shipping['shipping']['phone'];
-		}
-		return $ship_to_information;
-	}
+  // If no shipping address is set (e.g. virtual products), return null so shipTo is omitted entirely.
+  if ( empty( $s['address_1'] ) && empty( $s['first_name'] ) ) {
+   return null;
+  }
+
+  $ship_to_information = array(
+   'firstName'          => $s['first_name'],
+   'lastName'           => $s['last_name'],
+   'address1'           => $s['address_1'],
+   'postalCode'         => $s['postcode'],
+   'locality'           => $s['city'],
+   'administrativeArea' => $s['state'],
+   'country'            => $s['country'],
+  );
+  if ( ! empty( $s['address_2'] ) ) {
+   $ship_to_information['address2'] = $s['address_2'];
+  }
+  if ( ! empty( $s['phone'] ) ) {
+   $ship_to_information['phoneNumber'] = $s['phone'];
+  }
+  if ( ! empty( $order_data['billing']['email'] ) ) {
+   $ship_to_information['email'] = $order_data['billing']['email'];
+  }
+  return $ship_to_information;
+ }
 
 	/**
 	 * Get cybersource payment information
 	 *
 	 * @param array  $token_data saved card token data.
 	 * @param string $saved_card_cvv saved card cvv.
-	 * @param string $flex_cvv_token JWT token from Flex microform.
 	 * @return array
 	 */
-	public function get_cybersource_payment_information( $token_data, $saved_card_cvv, $flex_cvv_token = null ) {
+	public function get_cybersource_payment_information( $token_data, $saved_card_cvv ) {
 		// Check if this is an eCheck token.
 		$is_echeck = isset( $token_data['is_echeck'] ) && $token_data['is_echeck'];
 		
-		// Build base payment info array.
-		$payment_info_array = array(
-			'paymentInstrument' => array(
-				'id' => $token_data['token_information']['payment_instrument_id'],
-			),
-			'customer'          => array(
-				'id' => $token_data['token_information']['id'],
-			),
-		);
 		if ( $is_echeck ) {
-			// eCheck: identify payment type; no card section needed.
-			$payment_info_array['paymentType'] = array( 'name' => VISA_ACCEPTANCE_CHECK );
+			// eCheck: identify via paymentInstrument + customer + paymentType.
+			$payment_info_array = array(
+				'paymentInstrument' => array(
+					'id' => $token_data['token_information']['payment_instrument_id'],
+				),
+				'customer'  => array(
+					'id' => $token_data['token_information']['id'],
+				),
+				'paymentType' => array( 'name' => VISA_ACCEPTANCE_CHECK ),
+			);
 		} else {
-			// Card: Flex JWT skips securityCode; traditional flow includes it only when non-null (omit for merchant-initiated renewals).
-			$card_array = array( 'typeSelectionIndicator' => '1' );
-			if ( empty( $flex_cvv_token ) && null !== $saved_card_cvv && '' !== $saved_card_cvv ) {
+			// CC: identify via paymentInstrument + customer.
+			$card_array         = array( 'typeSelectionIndicator' => '1' );
+			if ( null !== $saved_card_cvv && VISA_ACCEPTANCE_STRING_EMPTY !== $saved_card_cvv ) {
 				$card_array['securityCode'] = $saved_card_cvv;
 			}
-			$payment_info_array[VISA_ACCEPTANCE_CARD] = $card_array;
+			$payment_info_array = array(
+				'paymentInstrument' => array(
+					'id' => $token_data['token_information']['payment_instrument_id'],
+				),
+				'customer'          => array(
+					'id' => $token_data['token_information']['id'],
+				),
+				VISA_ACCEPTANCE_CARD => $card_array,
+			);
 		}
 		
 		$payment_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsPaymentInformation( $payment_info_array );
@@ -291,14 +387,10 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * Gets CyberSource billing information with eCheck support.
 	 *
 	 * @param mixed $order Order.
-	 * @param bool  $payer_auth_transaction Payer auth transaction flag.
 	 * @return object
 	 */
-	public function get_cybersource_billing_information_v2( $order, $payer_auth_transaction = false ) {
+	public function get_cybersource_billing_information_v2( $order ) {
 		$bill_to_information = $this->get_billing_information( $order );
-		if ( $payer_auth_transaction && empty( $bill_to_information['address2'] ) ) {
-			unset( $bill_to_information['address2'] );
-		}
 		$bill_to = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationBillTo( $bill_to_information );
 		return $bill_to;
 	}
@@ -307,16 +399,12 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * Gets CyberSource shipping information with eCheck support.
 	 *
 	 * @param mixed $order Order.
-	 * @param bool  $payer_auth_transaction Payer auth transaction flag.
 	 * @return object
 	 */
-	public function get_cybersource_shipping_information_v2( $order, $payer_auth_transaction = false ) {
+	public function get_cybersource_shipping_information_v2( $order ) {
 		$ship_to_information = $this->get_shipping_information( $order );
 		if ( null === $ship_to_information ) {
 			return null;
-		}
-		if ( $payer_auth_transaction && empty( $ship_to_information['address2'] ) ) {
-			unset( $ship_to_information['address2'] );
 		}
 		$ship_to = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsOrderInformationShipTo( $ship_to_information );
 		return $ship_to;
@@ -330,7 +418,6 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	public function client_reference_information_partner() {
 		$client_reference_information_partner = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsClientReferenceInformationPartner(
 			array(
-				'developerId' => VISA_ACCEPTANCE_DEVELOPER_ID,
 				'solutionId'  => VISA_ACCEPTANCE_SOLUTION_ID,
 			)
 		);
@@ -344,9 +431,12 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * @return array
 	 */
 	public function client_reference_information( $order ) {
+		$stored_ref_code = $this->get_order_meta( $order, VISA_ACCEPTANCE_MERCHANT_REF_CODE );
+		// No stored code yet (e.g. first charge for a subscription renewal order) - generate one instead of using the order ID.
+		$code = ! empty( $stored_ref_code ) ? $stored_ref_code : strtoupper( wp_generate_password( VISA_ACCEPTANCE_VAL_FIVE, false, false ) );
 		$client_reference_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsClientReferenceInformation(
 			array(
-				'code'               => strval( $order->get_id() ),
+				'code'               => $code,
 				'partner'            => $this->client_reference_information_partner(),
 				'applicationName'    => VISA_ACCEPTANCE_PLUGIN_APPLICATION_NAME . VISA_ACCEPTANCE_SPACE . VISA_ACCEPTANCE_PLUGIN_API_TYPE,
 				'applicationVersion' => VISA_ACCEPTANCE_PLUGIN_VERSION,
@@ -359,17 +449,16 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * Order Information
 	 *
 	 * @param object $order Order object.
-	 * @param bool   $payer_auth_transaction Whether it's a payer auth transaction.
 	 * @return array
 	 */
-	public function get_payment_order_information( $order, $payer_auth_transaction = false ) {
+	public function get_payment_order_information( $order ) {
 		$order_info_array = array(
 			'amountDetails' => $this->order_information_amount_details( $order ),
-			'billTo'        => $this->get_cybersource_billing_information_v2( $order, $payer_auth_transaction ),
+			'billTo'        => $this->get_cybersource_billing_information_v2( $order ),
 			'lineItems'     => $this->get_line_items_information( $order ),
 		);
 		// Only include shipTo when a shipping address is actually present.
-		$ship_to = $this->get_cybersource_shipping_information_v2( $order, $payer_auth_transaction );
+		$ship_to = $this->get_cybersource_shipping_information_v2( $order );
 		if ( ! empty( $ship_to ) ) {
 			$order_info_array['shipTo'] = $ship_to;
 		}
@@ -430,6 +519,8 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 			VISA_ACCEPTANCE_CAPTURE           => $this->get_capture( $gateway_settings, $order ),
 			'actionList'        => $this->get_action_list( $gateway_settings, $is_save_card, $service ),
 		);
+		// Set default commerceIndicator to internet for all transactions.
+		$processing_information['commerceIndicator'] = VISA_ACCEPTANCE_INTERNET;
 		if ( VISA_ACCEPTANCE_YES === $is_save_card ) {
 			$processing_information['authorizationOptions'] = array(
 				'initiator' => array(
@@ -446,7 +537,7 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 				),
 			);
 		}
-		if ( $this->gateway->is_subscriptions_activated && ( wcs_order_contains_subscription( $order ) || wcs_order_contains_renewal( $order ) ) ) {
+		if ( $this->gateway->is_subscriptions_activated && ( wcs_order_contains_subscription( $order ) || wcs_order_contains_renewal( $order ) || wcs_is_subscription( $order ) ) ) {
 			if ( $is_stored_card ) {
 				$processing_information = $subscriptions->saved_token_subscriptions_payload( $order, $processing_information, $merchant_initiated );
 			} elseif ( VISA_ACCEPTANCE_YES === $is_save_card ) {
@@ -520,7 +611,7 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 		$action_list_dm    = array();
 		$action_list_token = array();
 		$action_list_3ds   = array();
-		if ( isset( $gateway_settings[ VISA_ACCEPTANCE_SETTING_ENABLE_DECISION_MANAGER ] ) && VISA_ACCEPTANCE_NO === $gateway_settings[ VISA_ACCEPTANCE_SETTING_ENABLE_DECISION_MANAGER ] ) {
+		if ( isset( $gateway_settings[ VISA_ACCEPTANCE_SETTING_ENABLE_FRAUD_WEBHOOK ] ) && VISA_ACCEPTANCE_NO === $gateway_settings[ VISA_ACCEPTANCE_SETTING_ENABLE_FRAUD_WEBHOOK ] ) {
 			$action_list_dm = array( VISA_ACCEPTANCE_DECISION_SKIP );
 		}
 
@@ -548,13 +639,11 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 * @return boolean $capture
 	 */
 	public function get_capture( $gateway_settings, $order ) {
-		$capture = false;
-		if ( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $gateway_settings['transaction_type'] || $this->check_virtual_order_enabled( $gateway_settings, $order ) ) {
-			if ( VISA_ACCEPTANCE_ZERO_AMOUNT === $order->get_total() && wcs_order_contains_subscription( $order ) ) {
-				$capture = false;
-			} else {
-				$capture = true;
-			}
+		// Plugin-managed behavior: only force capture for virtual-only orders when enabled.
+		// All other orders remain authorization-first and can be captured later (manual/auto-capture flow).
+		$capture = $this->check_virtual_order_enabled( $gateway_settings, $order );
+		if ( VISA_ACCEPTANCE_ZERO_AMOUNT === $order->get_total() && function_exists( 'wcs_order_contains_subscription' ) && wcs_order_contains_subscription( $order ) ) {
+			$capture = false;
 		}
 		return $capture;
 	}
@@ -562,14 +651,14 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	/**
 	 * Generates the device information for the request.
 	 *
-	 * @param mixed  $merchant_initiated merchant initiated transaction.
-	 * @param bool   $is_enrollment Whether this is a payer auth enrollment request.
+	 * @param bool $merchant_initiated Whether the transaction is merchant-initiated (default: false).
+	 * @return object Device information object.
 	 */
-	public function get_device_information( $merchant_initiated = false, $is_enrollment = false ) {
+	public function get_device_information( $merchant_initiated = false ) {
 		$settings = $this->gateway->get_config_settings();
 		$session_id = VISA_ACCEPTANCE_STRING_EMPTY;
 		
-		if ( isset( $settings[ VISA_ACCEPTANCE_SETTING_ENABLE_DECISION_MANAGER ] ) && VISA_ACCEPTANCE_YES === $settings[ VISA_ACCEPTANCE_SETTING_ENABLE_DECISION_MANAGER ] && ! $merchant_initiated ) {
+		if ( isset( $settings[ VISA_ACCEPTANCE_SETTING_ENABLE_FRAUD_WEBHOOK ] ) && VISA_ACCEPTANCE_YES === $settings[ VISA_ACCEPTANCE_SETTING_ENABLE_FRAUD_WEBHOOK ] && ! $merchant_initiated ) {
 			$gateway_id = $this->gateway->get_id();
 			$session_id = isset( WC()->session ) ? WC()->session->get( "wc_{$gateway_id}_device_data_session_id", VISA_ACCEPTANCE_STRING_EMPTY ) : VISA_ACCEPTANCE_STRING_EMPTY;
 		}
@@ -588,104 +677,11 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 			$device_info_array['ipAddress'] = $ip_address;
 		}
 		
-		// Add browser information for 3DS - ONLY for enrollment requests.
-		if ( $is_enrollment && ! $merchant_initiated ) {
-			// HTTP headers.
-			if ( isset( $_SERVER['HTTP_ACCEPT'] ) ) {
-				$device_info_array['httpAcceptBrowserValue'] = sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT'] ) );
-			}
-			
-			if ( isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
-				$lang = sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) );
-				// CyberSource only accepts a simple language tag (e.g. "en-US"), not the full header with quality values.
-				if ( strpos( $lang, ',' ) !== false ) {
-					$lang = trim( strstr( $lang, ',', true ) );
-				}
-				$device_info_array['httpBrowserLanguage'] = $lang;
-			}
-			
-			if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
-				$device_info_array['userAgentBrowserValue'] = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
-			}
-			
-			// Browser capabilities from session.
-			if ( isset( WC()->session ) ) {
-				$gateway_id = $this->gateway->get_id();
-				
-				$java_enabled = WC()->session->get( "wc_{$gateway_id}_browser_java_enabled", null );
-				if ( null !== $java_enabled ) {
-					$device_info_array['httpBrowserJavaEnabled'] = (bool) $java_enabled;
-				}
-				
-				$js_enabled = WC()->session->get( "wc_{$gateway_id}_browser_js_enabled", null );
-				if ( null !== $js_enabled ) {
-					$device_info_array['httpBrowserJavaScriptEnabled'] = (bool) $js_enabled;
-				}
-				
-				$color_depth = WC()->session->get( "wc_{$gateway_id}_browser_color_depth", null );
-				if ( $color_depth ) {
-					$device_info_array['httpBrowserColorDepth'] = (string) $color_depth;
-				}
-				
-				$screen_height = WC()->session->get( "wc_{$gateway_id}_browser_screen_height", null );
-				if ( $screen_height ) {
-					$device_info_array['httpBrowserScreenHeight'] = (string) $screen_height;
-				}
-				
-				$screen_width = WC()->session->get( "wc_{$gateway_id}_browser_screen_width", null );
-				if ( $screen_width ) {
-					$device_info_array['httpBrowserScreenWidth'] = (string) $screen_width;
-				}
-				
-				$tz_offset = WC()->session->get( "wc_{$gateway_id}_browser_tz_offset", null );
-				if ( null !== $tz_offset ) {
-					$device_info_array['httpBrowserTimeDifference'] = (string) $tz_offset;
-				}
-			}
-		}
-		
 		$device_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsDeviceInformation( $device_info_array );
 		return ! empty( $device_info_array ) ? $device_information : null;
 	}
 
 	/**
-	 * Get client IP address with fallback options
-	 *
-	 * @return string
-	 */
-	private function get_client_ip_address() {
-		$ip_keys = array(
-			'HTTP_CLIENT_IP',
-			'HTTP_X_FORWARDED_FOR',
-			'HTTP_X_FORWARDED',
-			'HTTP_X_CLUSTER_CLIENT_IP',
-			'HTTP_FORWARDED_FOR',
-			'HTTP_FORWARDED',
-			'REMOTE_ADDR'
-		);
-
-		foreach ( $ip_keys as $key ) {
-			if ( array_key_exists( $key, $_SERVER ) === true ) {
-				$ip = sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) );
-				if ( ! empty( $ip ) ) {
-					// Handle comma-separated IPs (X-Forwarded-For can contain multiple IPs).
-					if ( strpos( $ip, ',' ) !== false ) {
-						$ip = trim( explode( ',', $ip )[VISA_ACCEPTANCE_VAL_ZERO] );
-					}
-					
-					// Validate IP address.
-					if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
-						return $ip;
-					}
-				}
-			}
-		}
-
-		// Fallback to REMOTE_ADDR even if it's a private IP.
-		return isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : VISA_ACCEPTANCE_STRING_EMPTY;
-	}
-
-    /**
      * Checks whether Auth Reversal Exists or not.
      *
      * @param \WC_Order $order order data.
@@ -735,25 +731,11 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
      * @return array Response array with http_code and body.
      */
     public function get_transaction_details_sdk( $transaction_id ) {
-        $settings   = $this->gateway->get_config_settings();
-        $log_header = ( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE === $settings['transaction_type'] ) ? ucfirst( VISA_ACCEPTANCE_TRANSACTION_TYPE_CHARGE ) : VISA_ACCEPTANCE_AUTHORIZATION;
-       
         try {
             $api_client      = $this->get_api_client(true);
             $transaction_api = new TransactionDetailsApi( $api_client );
            
-            $this->gateway->add_logs_data( wp_json_encode( array( 'transaction_id' => $transaction_id ) ), true, $log_header . ' - Get Transaction' );
-           
             $api_response = $transaction_api->getTransaction( $transaction_id );
-           
-            $correlation_id = isset( $api_response[VISA_ACCEPTANCE_VAL_TWO]['v-c-correlation-id'] ) ? $api_response[VISA_ACCEPTANCE_VAL_TWO]['v-c-correlation-id'] : VISA_ACCEPTANCE_NOT_APPLICABLE;
-           
-            $this->gateway->add_logs_service_response(
-                $api_response[VISA_ACCEPTANCE_VAL_ZERO],
-                $correlation_id,
-                true,
-                $log_header . ' - Get Transaction Response'
-            );
            
             return array(
                 'http_code' => $api_response[VISA_ACCEPTANCE_VAL_ONE],
@@ -799,7 +781,7 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 	 */
 	public function check_virtual_order_enabled( $gateway_settings, $order ) {
 		$is_virtual = false;
-		if ( VISA_ACCEPTANCE_YES === $gateway_settings['charge_virtual_orders'] ) {
+		if ( isset( $gateway_settings['charge_virtual_orders'] ) && VISA_ACCEPTANCE_YES === $gateway_settings['charge_virtual_orders'] ) {
 			$is_virtual = true;
 			foreach ( $order->get_items() as $item ) {
 				$product = $item->get_product();
@@ -877,11 +859,12 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 		$return_response['reason'] = $error_msg;
 		return $return_response;
 	}
-		/**
-		 * Returns the list of error messages.
-		 *
-		 * @return array
-		 */
+	
+	/**
+	 * Returns the list of error messages.
+	 *
+	 * @return array
+	 */
 	public function get_error_messages() {
 		return array(
 			'SERVER_ERROR',
@@ -910,4 +893,174 @@ class Visa_Acceptance_Payment_Adapter extends Visa_Acceptance_Request {
 			'SUSPENDED_ACCOUNT',
 		);
 	}
+	/**
+	 * Refresh payment status using CyberSource SDK.
+	 *
+	 * @param string $transaction_id CyberSource transaction ID.
+	 * @param string $order_id       WooCommerce order ID.
+	 * @return array Response with status, http_code, body, and data.
+	 */
+	public function get_refresh_payment_status_sdk( $transaction_id, $order_id ) {
+		try {
+			// Build request payload.
+			$refresh_request = new \Pymt_Vas\Dependencies\CyberSource\Model\RefreshPaymentStatusRequest(
+				array(
+					'clientReferenceInformation' => new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsClientReferenceInformation(
+						array( 'code' => $order_id )
+					),
+					'processingInformation' => new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformation(
+						array( 'actionList' => array( 'AP_STATUS' ) )
+					),
+				)
+			);
+
+			// Use SDK PaymentsApi - disable MLE for this call (not required).
+			$api_client = $this->get_api_client( false, false );
+			$payments_api = new PaymentsApi( $api_client );
+			
+			// Call refresh payment status.
+			list( $response, $http_code, $headers ) = $payments_api->refreshPaymentStatus( $transaction_id, $refresh_request );
+			
+			// Convert response object to array.
+			$response_array = json_decode( wp_json_encode( $response ), true );
+			
+			$this->gateway->add_logs_data(
+				array(
+					'http_code' => $http_code,
+					'status' => $response_array['status'] ?? 'UNKNOWN',
+				),
+				true,
+				'Refresh Payment Status'
+			);
+			
+			return array(
+				'status' => $response_array['status'] ?? 'UNKNOWN',
+				'http_code' => $http_code,
+				'body' => wp_json_encode( $response_array ),
+				'data' => $response_array,
+			);
+			
+		} catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
+			$this->gateway->add_logs_data(
+				array(
+					'ApiException',
+					'code' => $e->getCode(),
+					'message' => $e->getMessage(),
+					'response' => $e->getResponseBody(),
+				),
+				false,
+				'Refresh Payment Status',
+				true
+			);
+			
+			return array(
+				'status' => 'error',
+				'http_code' => $e->getCode(),
+				'body' => $e->getResponseBody() ?? $e->getMessage(),
+			);
+		} catch ( \Exception $e ) {
+			$this->gateway->add_logs_data(
+				array( 'Exception: ' . $e->getMessage() ),
+				false,
+				'Refresh Payment Status',
+				true
+			);
+			
+			return array(
+				'status' => 'error',
+				'http_code' => VISA_ACCEPTANCE_FIVE_ZERO_ZERO,
+				'body' => $e->getMessage(),
+			);
+		}
+	}
+
+	/**
+     * Refresh payment status.
+     *
+     * @param string $transaction_id Transaction ID.
+     * @param int    $order_id Order ID.
+     * @return array Response array with http_code and body.
+     */
+    public function refresh_payment_status( $transaction_id, $order_id ) {
+        try {
+            $merchant_config = $this->get_merchant_configuration( false );
+            $configuration   = $merchant_config[ VISA_ACCEPTANCE_VAL_ZERO ];
+            $merchant_configuration = $merchant_config[ VISA_ACCEPTANCE_VAL_ONE ];
+            $api_client = new CyberSourceClient( $configuration, $merchant_configuration );
+ 
+            // Use Payments API to refresh payment status.
+            $payments_api = new PaymentsApi( $api_client );
+ 
+            // Create the refresh payment status request.
+            $client_reference_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2refreshpaymentstatusidClientReferenceInformation();
+            $client_reference_information->setCode( (string) $order_id );
+            
+            // Create processing information with required action list.
+            $processing_information = new \Pymt_Vas\Dependencies\CyberSource\Model\Ptsv2paymentsProcessingInformation();
+            $processing_information->setActionList( array( 'AP_STATUS' ) );
+           
+            $refresh_request = new \Pymt_Vas\Dependencies\CyberSource\Model\RefreshPaymentStatusRequest();
+            $refresh_request->setClientReferenceInformation( $client_reference_information );
+            $refresh_request->setProcessingInformation( $processing_information );
+ 
+            // Call the API to refresh payment status.
+            list( $response, $status_code, $headers ) = $payments_api->refreshPaymentStatus( $transaction_id, $refresh_request );
+ 
+            $this->gateway->add_logs_data(
+                array(
+                    'transaction_id' => $transaction_id,
+                    'order_id' => $order_id,
+                ),
+                false,
+                'Refresh Payment Status Request'
+            );
+ 
+            $this->gateway->add_logs_data(
+                array(
+                    'http_code' => $status_code,
+                    'response' => $response ? wp_json_encode( $response ) : VISA_ACCEPTANCE_STRING_EMPTY,
+                ),
+                false,
+                'Refresh Payment Status Response'
+            );
+            
+            // Convert response to array for consistent handling.
+            $response_array = is_object( $response ) ? json_decode( wp_json_encode( $response ), true ) : $response;
+            
+            return array(
+                'http_code' => $status_code,
+                'body' => is_array( $response_array ) ? wp_json_encode( $response_array ) : ( $response ? wp_json_encode( $response ) : VISA_ACCEPTANCE_STRING_EMPTY ),
+                'data' => $response_array,
+            );
+        } catch ( \Pymt_Vas\Dependencies\CyberSource\ApiException $e ) {
+            $this->gateway->add_logs_data(
+                array(
+                    'http_code' => $e->getCode(),
+                    'error' => $e->getMessage(),
+                    'response_body' => $e->getResponseBody(),
+                ),
+                false,
+                'Refresh Payment Status Error',
+                true
+            );
+ 
+            return array(
+                'http_code' => $e->getCode(),
+                'body' => $e->getResponseBody() ? $e->getResponseBody() : $e->getMessage(),
+            );
+        } catch ( \Exception $e ) {
+            $this->gateway->add_logs_data(
+                array(
+                    'error' => $e->getMessage(),
+                ),
+                false,
+                'Refresh Payment Status Exception',
+                true
+            );
+            return array(
+                'http_code' => VISA_ACCEPTANCE_FIVE_ZERO_ZERO,
+                'body' => $e->getMessage(),
+            );
+        }
+    }
 }

@@ -25,7 +25,7 @@ class Authentication
         }
     }
     //call http signature and jwt
-    function generateToken($resourcePath, $inputData, $method, $merchantConfig, $isResponseMLEForAPI)
+    function generateToken($resourcePath, $inputData, $method, $merchantConfig, $date, $isResponseMLEForAPI)
     {
         if (is_null($merchantConfig)) {
             $exception = new AuthException(GlobalParameter::MERCHANTCONFIGERR, 0);
@@ -38,7 +38,7 @@ class Authentication
         if (null !== self::$logger) {
             self::$logger->close();
         }
-        return $tokenGenerator->generateToken($resourcePath, $inputData, $method, $merchantConfig, $isResponseMLEForAPI);
+        return $tokenGenerator->generateToken($resourcePath, $inputData, $method, $merchantConfig, $date, $isResponseMLEForAPI);
     }
     function getTokenGenerator($merchantConfig)
     {

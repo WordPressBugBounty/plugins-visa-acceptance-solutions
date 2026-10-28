@@ -48,12 +48,12 @@ class RiskProducts implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['fraudManagementEssentials' => '\Pymt_Vas\Dependencies\CyberSource\Model\RiskProductsFraudManagementEssentials', 'decisionManager' => '\Pymt_Vas\Dependencies\CyberSource\Model\RiskProductsDecisionManager', 'portfolioRiskControls' => '\Pymt_Vas\Dependencies\CyberSource\Model\RiskProductsPortfolioRiskControls'];
+    protected static $swaggerTypes = ['fraudManagementEssentials' => '\Pymt_Vas\Dependencies\CyberSource\Model\RiskProductsFraudManagementEssentials', 'decisionManager' => '\Pymt_Vas\Dependencies\CyberSource\Model\RiskProductsDecisionManager', 'portfolioRiskControls' => '\Pymt_Vas\Dependencies\CyberSource\Model\RiskProductsPortfolioRiskControls', 'enhancedAuthentication' => '\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsPayerAuthentication'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerFormats = ['fraudManagementEssentials' => null, 'decisionManager' => null, 'portfolioRiskControls' => null];
+    protected static $swaggerFormats = ['fraudManagementEssentials' => null, 'decisionManager' => null, 'portfolioRiskControls' => null, 'enhancedAuthentication' => null];
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
@@ -66,17 +66,17 @@ class RiskProducts implements ArrayAccess
      * Array of attributes where the key is the local name, and the value is the original name
      * @var string[]
      */
-    protected static $attributeMap = ['fraudManagementEssentials' => 'fraudManagementEssentials', 'decisionManager' => 'decisionManager', 'portfolioRiskControls' => 'portfolioRiskControls'];
+    protected static $attributeMap = ['fraudManagementEssentials' => 'fraudManagementEssentials', 'decisionManager' => 'decisionManager', 'portfolioRiskControls' => 'portfolioRiskControls', 'enhancedAuthentication' => 'enhancedAuthentication'];
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
      */
-    protected static $setters = ['fraudManagementEssentials' => 'setFraudManagementEssentials', 'decisionManager' => 'setDecisionManager', 'portfolioRiskControls' => 'setPortfolioRiskControls'];
+    protected static $setters = ['fraudManagementEssentials' => 'setFraudManagementEssentials', 'decisionManager' => 'setDecisionManager', 'portfolioRiskControls' => 'setPortfolioRiskControls', 'enhancedAuthentication' => 'setEnhancedAuthentication'];
     /**
      * Array of attributes to getter functions (for serialization of requests)
      * @var string[]
      */
-    protected static $getters = ['fraudManagementEssentials' => 'getFraudManagementEssentials', 'decisionManager' => 'getDecisionManager', 'portfolioRiskControls' => 'getPortfolioRiskControls'];
+    protected static $getters = ['fraudManagementEssentials' => 'getFraudManagementEssentials', 'decisionManager' => 'getDecisionManager', 'portfolioRiskControls' => 'getPortfolioRiskControls', 'enhancedAuthentication' => 'getEnhancedAuthentication'];
     public static function attributeMap()
     {
         return self::$attributeMap;
@@ -103,6 +103,7 @@ class RiskProducts implements ArrayAccess
         $this->container['fraudManagementEssentials'] = isset($data['fraudManagementEssentials']) ? $data['fraudManagementEssentials'] : null;
         $this->container['decisionManager'] = isset($data['decisionManager']) ? $data['decisionManager'] : null;
         $this->container['portfolioRiskControls'] = isset($data['portfolioRiskControls']) ? $data['portfolioRiskControls'] : null;
+        $this->container['enhancedAuthentication'] = isset($data['enhancedAuthentication']) ? $data['enhancedAuthentication'] : null;
     }
     /**
      * show all the invalid properties with reasons.
@@ -176,6 +177,24 @@ class RiskProducts implements ArrayAccess
     public function setPortfolioRiskControls($portfolioRiskControls)
     {
         $this->container['portfolioRiskControls'] = $portfolioRiskControls;
+        return $this;
+    }
+    /**
+     * Gets enhancedAuthentication
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsPayerAuthentication
+     */
+    public function getEnhancedAuthentication()
+    {
+        return $this->container['enhancedAuthentication'];
+    }
+    /**
+     * Sets enhancedAuthentication
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\PaymentsProductsPayerAuthentication $enhancedAuthentication
+     * @return $this
+     */
+    public function setEnhancedAuthentication($enhancedAuthentication)
+    {
+        $this->container['enhancedAuthentication'] = $enhancedAuthentication;
         return $this;
     }
     /**

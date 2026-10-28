@@ -48,7 +48,7 @@ class RiskV1AddressVerificationsPost201Response implements ArrayAccess
      * Array of property to type mappings. Used for (de)serialization
      * @var string[]
      */
-    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2IncrementalAuthorizationPatch201ResponseLinks', 'id' => 'string', 'submitTimeUtc' => 'string', 'submitTimeLocal' => 'string', 'status' => 'string', 'message' => 'string', 'clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\RiskV1DecisionsPost201ResponseClientReferenceInformation', 'addressVerificationInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\RiskV1AddressVerificationsPost201ResponseAddressVerificationInformation', 'errorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\RiskV1AddressVerificationsPost201ResponseErrorInformation'];
+    protected static $swaggerTypes = ['links' => '\Pymt_Vas\Dependencies\CyberSource\Model\PtsV2IncrementalAuthorizationPatch201ResponseLinks', 'id' => 'string', 'submitTimeUtc' => 'string', 'submitTimeLocal' => 'string', 'status' => 'string', 'message' => 'string', 'clientReferenceInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\RiskV1DecisionsPost201ResponseClientReferenceInformation', 'addressVerificationInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\RiskAddressVerificationInformation', 'errorInformation' => '\Pymt_Vas\Dependencies\CyberSource\Model\RiskV1AddressVerificationsPost201ResponseErrorInformation'];
     /**
      * Array of property to format mappings. Used for (de)serialization
      * @var string[]
@@ -258,7 +258,7 @@ class RiskV1AddressVerificationsPost201Response implements ArrayAccess
     }
     /**
      * Gets addressVerificationInformation
-     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\RiskV1AddressVerificationsPost201ResponseAddressVerificationInformation
+     * @return \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\RiskAddressVerificationInformation
      */
     public function getAddressVerificationInformation()
     {
@@ -266,7 +266,7 @@ class RiskV1AddressVerificationsPost201Response implements ArrayAccess
     }
     /**
      * Sets addressVerificationInformation
-     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\RiskV1AddressVerificationsPost201ResponseAddressVerificationInformation $addressVerificationInformation
+     * @param \Pymt_Vas\Dependencies\Pymt_Vas\Dependencies\CyberSource\Model\RiskAddressVerificationInformation $addressVerificationInformation
      * @return $this
      */
     public function setAddressVerificationInformation($addressVerificationInformation)

@@ -13,6 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once plugin_dir_path( __FILE__ ) . '../trait-visa-acceptance-payment-gateway-admin.php';
+require_once plugin_dir_path( __FILE__ ) . '../trait-visa-acceptance-payment-gateway-public.php';
+require_once plugin_dir_path( __FILE__ ) . '../trait-visa-acceptance-payment-gateway-includes.php';
+
 // Load translation constants for API error messages.
 require_once __DIR__ . '/visa-acceptance-response-constants.php';
 

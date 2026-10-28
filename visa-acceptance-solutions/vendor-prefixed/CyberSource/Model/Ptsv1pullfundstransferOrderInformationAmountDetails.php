@@ -148,7 +148,7 @@ class Ptsv1pullfundstransferOrderInformationAmountDetails implements ArrayAccess
     }
     /**
      * Sets totalAmount
-     * @param string $totalAmount The total amount of the funds transfer including all fees.  This value cannot be negative.   Field must also be greater than zero: minimum value is the smallest amount in any given currency.   You can include a decimal point (.), but no other special characters.
+     * @param string $totalAmount The total amount of the funds transfer including all fees.  This value cannot be negative.   You can include a decimal point (.), but no other special characters.
      * @return $this
      */
     public function setTotalAmount($totalAmount)

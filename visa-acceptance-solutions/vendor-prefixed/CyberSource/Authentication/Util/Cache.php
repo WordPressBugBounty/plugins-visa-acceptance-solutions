@@ -2,11 +2,11 @@
 
 namespace Pymt_Vas\Dependencies\CyberSource\Authentication\Util;
 
-use Pymt_Vas\Dependencies\Jose\Component\KeyManagement\JWKFactory;
 use Pymt_Vas\Dependencies\CyberSource\Authentication\Util\GlobalParameter as GlobalParameter;
 use Pymt_Vas\Dependencies\CyberSource\Authentication\Core\AuthException as AuthException;
 use Pymt_Vas\Dependencies\CyberSource\Logging\LogFactory as LogFactory;
 use Pymt_Vas\Dependencies\CyberSource\Authentication\Util\MLEException as MLEException;
+use Pymt_Vas\Dependencies\CyberSource\Authentication\Util\JWE\JWEUtility as JWEUtility;
 class Cache
 {
     private static $file_cache = array();
@@ -75,12 +75,10 @@ class Cache
     }
     private function loadKeyFromPEMFile($path)
     {
-        return JWKFactory::createFromKeyFile(
-            $path,
-            '',
-            // Secret if the key is encrypted
-            ['use' => 'enc']
-        );
+        // Build a SimpleJWT RSAKey (JWK) from the PEM file so the raw PEM
+        // private-key material is not retained as a string in the cache.
+        $pem = file_get_contents($path);
+        return JWEUtility::createRSAKeyFromPem($pem);
     }
     public function grabKeyFromPEM($filePath)
     {
@@ -114,7 +112,7 @@ class Cache
         if (!empty($merchantConfig->getMleForRequestPublicCertPath())) {
             $mleCertPath = $merchantConfig->getMleForRequestPublicCertPath();
             $cacheKey = $merchantId . GlobalParameter::MLE_CACHE_IDENTIFIER_FOR_CONFIG_CERT;
-        } elseif (GlobalParameter::JWT == $merchantConfig->getAuthenticationType()) {
+        } elseif (GlobalParameter::JWT == $merchantConfig->getAuthenticationType() && !$merchantConfig->isSharedSecretKeyType()) {
             $mleCertPath = self::getFilePath($merchantConfig);
             if (!file_exists($mleCertPath) || !is_readable($mleCertPath)) {
                 self::$logger->warning("MLE certificate file not found or not readable: " . $mleCertPath);
@@ -329,17 +327,18 @@ class Cache
         try {
             $filePath = $merchantConfig->getResponseMlePrivateKeyFilePath();
             $cacheKey = $filePath . GlobalParameter::RESPONSE_MLE_P12_PFX_CACHE_IDENTIFIER;
-            // Get certificate from P12 file using merchant ID as alias
-            $merchantCert = Utility::getCertificateByAliasFromPKCS($filePath, $merchantConfig->getResponseMlePrivateKeyFilePassword(), $merchantConfig->getMerchantID());
+            // Use portfolioID as alias for MetaKey mode, merchantID otherwise (matching Java SDK)
+            $responseMleKeyAlias = $merchantConfig->getUseMetaKey() ? $merchantConfig->getPortfolioID() : $merchantConfig->getMerchantID();
+            $merchantCert = Utility::getCertificateByAliasFromPKCS($filePath, $merchantConfig->getResponseMlePrivateKeyFilePassword(), $responseMleKeyAlias);
             if ($merchantCert === null) {
-                throw new MLEException("No certificate found for Response MLE Private Key file with merchant ID alias " . $merchantConfig->getMerchantID());
+                throw new MLEException("No certificate found for Response MLE Private Key file with alias " . $responseMleKeyAlias);
             }
             // Check if this is a CyberSource-generated P12 file
             $isCyberSourceP12 = Utility::isP12GeneratedByCyberSource($filePath, $merchantConfig->getResponseMlePrivateKeyFilePassword());
             $cachedMLEKId = ['kid' => null, 'file_mod_time' => file_exists($filePath) ? filemtime($filePath) : 0];
             if ($isCyberSourceP12) {
                 try {
-                    $mleKID = MLEUtility::extractSerialNumber($merchantCert, "Serial number not found in certificate subject field for Response MLE Private Key with merchant ID alias " . $merchantConfig->getMerchantID());
+                    $mleKID = MLEUtility::extractSerialNumber($merchantCert, "Serial number not found in certificate subject field for Response MLE Private Key with alias " . $responseMleKeyAlias);
                     $cachedMLEKId['kid'] = $mleKID;
                 } catch (\Exception $e) {
                     throw new MLEException("Failed to extract serial number from certificate for Response MLE: " . $e->getMessage(), 0, $e);
